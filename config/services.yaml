@@ -1,0 +1,64 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    applicationName: 'snaapi'
+
+    # these parameters are required to logstash format logs
+    log.app_image: '%env(string:APP_IMAGE)%'
+    env(APP_IMAGE): null
+    log.node_name: '%env(string:NODE_NAME)%'
+    env(NODE_NAME): null
+    log.pod_id: '%env(string:POD_ID)%'
+    env(POD_ID): null
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    # Framework
+    App\EventListener\ResponseListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.response }
+
+    # Monolog services required
+    Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler:
+        class: Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler
+        arguments:
+            $endpoint: '%env(LOGSTASH_ENDPOINT)%'
+            $index: 'snaapi'
+            $level: !php/const Monolog\Logger::ERROR
+        calls:
+            -   setFormatter: [ '@App\Logs\LogstashFormatter' ]
+
+    App\Logs\LogstashFormatter:
+        class: App\Logs\LogstashFormatter
+        arguments:
+            $applicationName: 'snaapi'
+            $environment: '%env(APP_ENV)%'
+            $applicationImage: '%log.app_image%'
+            $nodeName: '%log.node_name%'
+            $podId: '%log.pod_id%'
+
+    # Controllers
+    App\Controller\HealthcheckController:
+        class: App\Controller\HealthcheckController
+        arguments:
+            $applicationName: '%applicationName%'
+            $environment: '%env(APP_ENV)%'
