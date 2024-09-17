@@ -62,3 +62,9 @@ services:
         arguments:
             $applicationName: '%applicationName%'
             $environment: '%env(APP_ENV)%'
+
+    Ec\Editorial\Infrastructure\Client\Http\QueryEditorialClient:
+        lazy: true
+        shared: true
+        arguments:
+            $hostname: '%env(LEGACY_HOST)%'

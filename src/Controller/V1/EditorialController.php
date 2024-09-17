@@ -26,6 +26,11 @@ class EditorialController extends AbstractController
     {
         $request->attributes->set('id', $id);
 
-        $editorialData = $this->orchestratorChain->handler('editorial', $request);
+        $editorialDataFromEditorial = $this->orchestratorChain->handler('editorial', $request);
+        $editorial = $editorialDataFromEditorial['editorial'];
+
+        if ($editorial->getSource() === 1) {
+            $editorialDataFromLegacy = $this->orchestratorChain->handler('legacy', $request);
+        }
     }
 }
