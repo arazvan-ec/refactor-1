@@ -28,6 +28,7 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Controller/V1/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -63,6 +64,15 @@ services:
             $applicationName: '%applicationName%'
             $environment: '%env(APP_ENV)%'
 
+    App\Controller\V1\:
+        resource: '../src/Controller/V1/'
+        tags: [ 'controller.service_arguments' ]
+
+    App\Controller\V1\EditorialController:
+        class: App\Controller\V1\EditorialController
+        tags: [ 'controller.service_arguments' ]
+
+    # Ec
     Ec\Editorial\Infrastructure\Client\Http\QueryEditorialClient:
         lazy: true
         shared: true
