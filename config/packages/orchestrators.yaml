@@ -1,0 +1,16 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    App\Orchestrator\Chain\:
+        resource: '../../src/Orchestrator/Chain/'
+        tags: ['app.orchestrators']
+        lazy: true
+        shared: true
+
+    App\Orchestrator\OrchestratorChainHandler:
+        lazy: true
+        shared: true
+    App\Orchestrator\OrchestratorChain: '@App\Orchestrator\OrchestratorChainHandler'
