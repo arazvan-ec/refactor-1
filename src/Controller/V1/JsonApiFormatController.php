@@ -18,8 +18,8 @@ abstract class JsonApiFormatController extends AbstractController
 {
     public function __construct(
         private readonly int $sMaxAge = 0,
-        protected readonly OrchestratorChain $orchestratorChain)
-    {
+        protected readonly OrchestratorChain $orchestratorChain
+    ) {
         parent::__construct($this->sMaxAge, 'v1.0.0');
     }
 

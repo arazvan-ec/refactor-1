@@ -5,7 +5,6 @@
 
 namespace App\Orchestrator\Chain;
 
-use App\Orchestrator\Chain\Orchestrator;
 use Ec\Editorial\Domain\Model\Editorial;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -19,6 +18,7 @@ class LegacyOrchestrator implements Orchestrator
         private readonly QueryEditorial $queryEditorialClient
     ) {
     }
+
     public function execute(Request $request): array
     {
         $id = $request->get('id');

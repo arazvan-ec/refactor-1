@@ -18,8 +18,7 @@ class EditorialController extends AbstractController
     public function __construct(
         private readonly OrchestratorChain $orchestratorChain,
         private readonly int $sMaxAge = 0,
-    )
-    {
+    ) {
         parent::__construct($this->sMaxAge, 'v1.0.0');
     }
 

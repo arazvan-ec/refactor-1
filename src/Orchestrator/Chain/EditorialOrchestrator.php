@@ -5,7 +5,6 @@
 
 namespace App\Orchestrator\Chain;
 
-use App\Orchestrator\Chain\Orchestrator;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
