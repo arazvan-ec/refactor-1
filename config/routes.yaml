@@ -1,10 +1,5 @@
-healthcheckCdn:
-    path: /healthcheck_cdn
-    controller: App\Controller\HealthcheckController::healthCheck
-    condition: (context.getHost() matches '/snaapi\.elconfidencial\.(dev|pre|com)/') or (request.headers.get('User-Agent') == 'ELB-HealthChecker/2.0')
-    methods: GET
-    requirements:
-        extension: dev|pre|com
+microservice:
+    resource: "@MicroserviceBundle/Resources/config/routing/base.yaml"
 
 v1:
     resource: ./routes/v1.yaml

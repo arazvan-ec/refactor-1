@@ -63,12 +63,6 @@ services:
             $podId: '%log.pod_id%'
 
     # Controllers
-    App\Controller\HealthcheckController:
-        class: App\Controller\HealthcheckController
-        arguments:
-            $applicationName: '%applicationName%'
-            $environment: '%env(APP_ENV)%'
-
     App\Controller\V1\:
         resource: '../src/Controller/V1/'
         tags: [ 'controller.service_arguments' ]
