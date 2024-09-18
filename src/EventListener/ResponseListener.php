@@ -14,7 +14,7 @@ class ResponseListener
         $response = $event->getResponse();
         $response->headers->set(
             'x-system',
-            \str_replace('ecskeleton-api-', '', $this->getHostname())
+            \str_replace('ecsnaapi-service', '', $this->getHostname())
         );
     }
 

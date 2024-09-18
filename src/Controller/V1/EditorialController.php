@@ -5,10 +5,7 @@
 
 namespace App\Controller\V1;
 
-use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Orchestrator\OrchestratorChain;
-use Ec\Editorial\Domain\Model\Editorial;
-use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\MicroserviceBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
