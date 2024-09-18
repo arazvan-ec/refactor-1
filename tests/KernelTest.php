@@ -3,6 +3,7 @@
  * @copyright
  */
 
+namespace App\Tests;
 
 use App\DependencyInjection\Compiler\EditorialOrchestratorCompiler;
 use App\Kernel;
