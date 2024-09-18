@@ -10,7 +10,9 @@ use Ec\Infrastructure\Client\Http\ServiceClient;
 use Http\Client\HttpAsyncClient;
 use Http\Promise\Promise;
 use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\SimpleCache\CacheInterface;
 use Throwable;
 
@@ -43,7 +45,7 @@ class QueryLegacyClient extends ServiceClient
      * @param bool $async
      * @param bool $cached
      * @param int $ttlCache
-     * @return Editorial|Promise
+     * @return array|Promise
      *
      * @throws Throwable
      */
@@ -52,7 +54,7 @@ class QueryLegacyClient extends ServiceClient
         bool $async = false,
         bool $cached = false,
         int $ttlCache = 60
-    ): Editorial|Promise
+    ): array|Promise
     {
         $url = $this->buildUrl("/service/content/{$editorialIdString}");
 
@@ -61,6 +63,13 @@ class QueryLegacyClient extends ServiceClient
         /** @var Promise $promise */
         $promise = $this->execute($request, true, $cached, $ttlCache);
 
+        $promise = $promise->then($this->createCallback([$this, 'buildEditorialFromArray'], $request));
+
         return $async ? $promise : $promise->wait(true);
+    }
+
+    protected function buildEditorialFromArray(ResponseInterface $response, RequestInterface $request): array
+    {
+        return \json_decode($response->getBody()->__toString(), true);
     }
 }
