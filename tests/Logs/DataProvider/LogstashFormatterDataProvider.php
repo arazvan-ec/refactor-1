@@ -13,7 +13,7 @@ class LogstashFormatterDataProvider
     public static function formatData(): \Generator
     {
         $datetime = '2022-06-24T08:52:18+00:00';
-        $applicationName = 'Weather-service';
+        $applicationName = 'Snaapi';
         $environment = 'dev';
 
         yield [
@@ -35,8 +35,8 @@ class LogstashFormatterDataProvider
             ],
         ];
 
-        $applicationImage = 'docker_weather-service';
-        $nodeName = 'node_name_weather-service';
+        $applicationImage = 'docker_snaapi';
+        $nodeName = 'node_name_snaapi';
         $podIp = '127.0.0.1';
         $podEnvironment = 'pod-dev';
         $message = 'message';
