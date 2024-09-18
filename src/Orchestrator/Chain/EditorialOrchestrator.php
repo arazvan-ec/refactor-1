@@ -28,7 +28,7 @@ class EditorialOrchestrator implements Orchestrator
         $id = $request->get('id');
         $editorial = $this->queryEditorialClient->findEditorialById($id);
 
-        if (is_null($editorial->sourceEditorial()) {
+        if ($editorial->sourceEditorial() === null) {
             return $this->queryLegacyClient->findEditorialById($id);
         }
 
