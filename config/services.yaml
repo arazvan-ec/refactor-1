@@ -25,6 +25,7 @@ services:
     App\:
         resource: '../src/'
         exclude:
+            - '../src/Orchestrator'
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
@@ -72,7 +73,7 @@ services:
         tags: [ 'controller.service_arguments' ]
 
     # Ec
-    Ec\Editorial\Infrastructure\Client\Http\QueryEditorialClient:
+    App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient:
         lazy: true
         shared: true
         arguments:

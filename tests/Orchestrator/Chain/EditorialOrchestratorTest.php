@@ -131,4 +131,12 @@ class EditorialOrchestratorTest extends TestCase
 
         $this->assertSame($legacyResponse, $result);
     }
+
+    /**
+     * @test
+     */
+    public function canOrchestrateShouldReturnExpectedValue(): void
+    {
+        static::assertSame('editorial', $this->editorialOrchestrator->canOrchestrate());
+    }
 }
