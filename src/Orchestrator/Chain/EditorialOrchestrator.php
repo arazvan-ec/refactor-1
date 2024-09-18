@@ -33,7 +33,7 @@ class EditorialOrchestrator implements Orchestrator
             return $this->queryLegacyClient->findEditorialById($id);
         }
 
-        return ['editorial' => $editorial];
+        return ['editorial' => ['id' => $editorial->id()->id()]];
     }
 
     public function canOrchestrate(): string
