@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f47d59e59d812923f6f481d55b7b350f",
+    "content-hash": "09457ce03b01a73806bc9a06a54c34b6",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -802,16 +802,16 @@
         },
         {
             "name": "ec/editorial-client",
-            "version": "v1.115.0",
+            "version": "v1.116.0-alpha4",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ecawesomemakers/editorial-client.git",
-                "reference": "2ac6751b58393e56b6e859d2d1ddffbaabf57008"
+                "reference": "b9ff04f11b94fffc3ebe43a012b9e5281bf46e29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/editorial-client/get/2ac6751b58393e56b6e859d2d1ddffbaabf57008.zip",
-                "reference": "2ac6751b58393e56b6e859d2d1ddffbaabf57008",
+                "url": "https://bitbucket.org/ecawesomemakers/editorial-client/get/b9ff04f11b94fffc3ebe43a012b9e5281bf46e29.zip",
+                "reference": "b9ff04f11b94fffc3ebe43a012b9e5281bf46e29",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -823,7 +823,7 @@
             "require": {
                 "beberlei/assert": "^3.0",
                 "ec/collection-library": "^1.3",
-                "ec/editorial-domain": "^1.0",
+                "ec/editorial-domain": "v1.1.0-alpha5",
                 "ec/ids-library": "^1.0",
                 "ec/mock-client": "^1.4",
                 "ec/persistence-library": "^4.0",
@@ -883,22 +883,22 @@
             "description": "Editorial client",
             "homepage": "https://bitbucket.org/ecawesomemakers/editorial-client",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/editorial-client/src/2ac6751b58393e56b6e859d2d1ddffbaabf57008/?at=v1.115.0"
+                "source": "https://bitbucket.org/ecawesomemakers/editorial-client/src/b9ff04f11b94fffc3ebe43a012b9e5281bf46e29/?at=v1.116.0-alpha4"
             },
-            "time": "2024-09-12T09:59:17+00:00"
+            "time": "2024-09-18T11:17:51+00:00"
         },
         {
             "name": "ec/editorial-domain",
-            "version": "v1.0.0",
+            "version": "v1.1.0-alpha5",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ecawesomemakers/editorial-domain.git",
-                "reference": "53811cb9507b516363a17fe43804fe1dcd58238f"
+                "reference": "459b26948dc7e84e49a01fd5f0dae4cd55b9e45b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/editorial-domain/get/53811cb9507b516363a17fe43804fe1dcd58238f.zip",
-                "reference": "53811cb9507b516363a17fe43804fe1dcd58238f",
+                "url": "https://bitbucket.org/ecawesomemakers/editorial-domain/get/459b26948dc7e84e49a01fd5f0dae4cd55b9e45b.zip",
+                "reference": "459b26948dc7e84e49a01fd5f0dae4cd55b9e45b",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -922,7 +922,8 @@
                 "infection/infection": "^0.21.5",
                 "phpstan/phpstan": "^1.10",
                 "phpstan/phpstan-phpunit": "^1.3",
-                "phpunit/phpunit": "^9.6"
+                "phpunit/phpunit": "^9.6",
+                "symfony/maker-bundle": "^1.39"
             },
             "type": "library",
             "extra": {
@@ -957,9 +958,9 @@
             "description": "Editorial Domain",
             "homepage": "https://bitbucket.org/ecawesomemakers/editorial-domain",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/editorial-domain/src/53811cb9507b516363a17fe43804fe1dcd58238f/?at=v1.0.0"
+                "source": "https://bitbucket.org/ecawesomemakers/editorial-domain/src/459b26948dc7e84e49a01fd5f0dae4cd55b9e45b/?at=v1.1.0-alpha5"
             },
-            "time": "2024-09-12T09:38:44+00:00"
+            "time": "2024-09-18T11:09:03+00:00"
         },
         {
             "name": "ec/ids-library",
@@ -11688,8 +11689,9 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "alpha",
     "stability-flags": {
+        "ec/editorial-client": 15,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,

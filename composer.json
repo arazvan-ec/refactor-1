@@ -7,7 +7,7 @@
         "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "ec/editorial-client": "^1.0",
+        "ec/editorial-client": "v1.116.0-alpha4",
         "ec/microservice-bundle": "*",
         "nelmio/api-doc-bundle": "^4.11",
         "nelmio/cors-bundle": "^2.2",

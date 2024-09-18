@@ -6,7 +6,6 @@
 namespace App\Orchestrator\Chain;
 
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
-use App\Orchestrator\OrchestratorChain;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Symfony\Component\HttpFoundation\Request;
