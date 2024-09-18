@@ -5,7 +5,6 @@
 
 namespace App\Ec\Snaapi\Infrastructure\Client\Http;
 
-use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Infrastructure\Client\Http\ServiceClient;
 use Http\Client\HttpAsyncClient;
 use Http\Promise\Promise;
@@ -14,7 +13,6 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\SimpleCache\CacheInterface;
-use Throwable;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
@@ -26,7 +24,7 @@ class QueryLegacyClient extends ServiceClient
         ?HttpAsyncClient $client = null,
         ?RequestFactoryInterface $requestFactory = null,
         ?ResponseFactoryInterface $responseFactory = null,
-        CacheInterface $cacheAdapter = null
+        ?CacheInterface $cacheAdapter = null,
     ) {
         parent::__construct(
             $hostname,
@@ -41,21 +39,14 @@ class QueryLegacyClient extends ServiceClient
     }
 
     /**
-     * @param string $editorialIdString
-     * @param bool $async
-     * @param bool $cached
-     * @param int $ttlCache
-     * @return array|Promise
-     *
-     * @throws Throwable
+     * @throws \Throwable
      */
     public function findEditorialById(
         string $editorialIdString,
         bool $async = false,
         bool $cached = false,
-        int $ttlCache = 60
-    ): array|Promise
-    {
+        int $ttlCache = 60,
+    ): array|Promise {
         $url = $this->buildUrl("/service/content/{$editorialIdString}");
 
         $request = $this->createRequest('GET', $url);

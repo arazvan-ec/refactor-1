@@ -17,7 +17,7 @@ class EditorialOrchestrator implements Orchestrator
 {
     public function __construct(
         private readonly QueryLegacyClient $queryLegacyClient,
-        private readonly QueryEditorialClient $queryEditorialClient
+        private readonly QueryEditorialClient $queryEditorialClient,
     ) {
     }
 
@@ -28,7 +28,7 @@ class EditorialOrchestrator implements Orchestrator
         /** @var Editorial $editorial */
         $editorial = $this->queryEditorialClient->findEditorialById($id);
 
-        if ($editorial->sourceEditorial() === null) {
+        if (null === $editorial->sourceEditorial()) {
             return $this->queryLegacyClient->findEditorialById($id);
         }
 

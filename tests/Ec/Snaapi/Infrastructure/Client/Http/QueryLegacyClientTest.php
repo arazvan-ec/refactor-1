@@ -44,7 +44,7 @@ class QueryLegacyClientTest extends TestCase
     {
         $statusCode = 200;
         $id = '12345';
-        $requestUrlExpected = self::HTTP_HOSTNAME_TEST . '/service/content/' . $id;
+        $requestUrlExpected = self::HTTP_HOSTNAME_TEST.'/service/content/'.$id;
         $responseData = [];
 
         /** @var string $bodyResponse */
