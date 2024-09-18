@@ -38,6 +38,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.response }
 
+    App\EventSubscriber\ExceptionSubscriber:
+        arguments:
+            $appEnv: '%env(APP_ENV)%'
+        tags: [ kernel.event_subscriber ]
+
     # Monolog services required
     Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler:
         class: Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler
