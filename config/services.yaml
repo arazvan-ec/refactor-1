@@ -30,6 +30,7 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Controller/V1/'
+            - '../src/Ec/Snaapi/Infrastructure/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -67,14 +68,3 @@ services:
     App\Controller\V1\:
         resource: '../src/Controller/V1/'
         tags: [ 'controller.service_arguments' ]
-
-    App\Controller\V1\EditorialController:
-        class: App\Controller\V1\EditorialController
-        tags: [ 'controller.service_arguments' ]
-
-    # Ec
-    App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient:
-        lazy: true
-        shared: true
-        arguments:
-            $hostname: '%env(LEGACY_HOST)%'
