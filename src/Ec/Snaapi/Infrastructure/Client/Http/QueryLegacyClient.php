@@ -48,7 +48,7 @@ class QueryLegacyClient extends ServiceClient
         bool $async = false,
         bool $cached = false,
         int $ttlCache = 60,
-    ): array|Promise {
+    ): array {
         $url = $this->buildUrl("/service/content/{$editorialIdString}/");
 
         $request = $this->createRequest('GET', $url);

@@ -46,7 +46,7 @@ class LogstashFormatter extends NormalizerFormatter
         $recordNormalized = parent::format($record);
 
         if (empty($recordNormalized['datetime'])) {
-            $recordNormalized['datetime'] = gmdate('c');
+            $recordNormalized['datetime'] = $this->getGmdate();
         }
 
         $message = [
