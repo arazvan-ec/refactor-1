@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class EditorialControllerTest extends TestCase
 {
-    /** @var OrchestratorChain|MockObject  */
+    /** @var OrchestratorChain|MockObject $orchestratorChain */
     private OrchestratorChain $orchestratorChain;
 
     private EditorialController $controller;
