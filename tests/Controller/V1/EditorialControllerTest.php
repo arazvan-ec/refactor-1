@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class EditorialControllerTest extends TestCase
 {
-    /** @var OrchestratorChain|MockObject $orchestratorChain */
+    /** @var OrchestratorChain|MockObject */
     private OrchestratorChain $orchestratorChain;
 
     private EditorialController $controller;
@@ -60,6 +60,10 @@ class EditorialControllerTest extends TestCase
         $response = $this->controller->getEditorialById($request, $id);
 
         $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertSame($orchestratorResponse, json_decode($response->getContent(), true));
+        $content = $response->getContent();
+        $this->assertIsString($content, 'Expected content to be a string.');
+
+        $decodedResponse = json_decode($content, true);
+        $this->assertSame($orchestratorResponse, $decodedResponse);
     }
 }

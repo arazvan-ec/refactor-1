@@ -40,7 +40,7 @@ class QueryLegacyClientTest extends TestCase
     /**
      * @test
      */
-    public function findEditorialByIdShouldReturnEditorialArray()
+    public function findEditorialByIdShouldReturnEditorialArray(): void
     {
         $statusCode = 200;
         $id = '12345';

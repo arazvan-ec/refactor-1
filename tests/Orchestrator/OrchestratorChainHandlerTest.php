@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class OrchestratorChainHandlerTest extends TestCase
 {
-    /** @var Orchestrator|MockObject $orchestratorChainMock */
+    /** @var Orchestrator|MockObject */
     private Orchestrator $orchestratorChainMock;
     private OrchestratorChainHandler $orchestratorChainHandler;
 

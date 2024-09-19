@@ -39,6 +39,8 @@ class QueryLegacyClient extends ServiceClient
     }
 
     /**
+     * @return array<string, mixed>
+     *
      * @throws \Throwable
      */
     public function findEditorialById(
@@ -59,6 +61,9 @@ class QueryLegacyClient extends ServiceClient
         return $async ? $promise : $promise->wait(true);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function buildEditorialFromArray(ResponseInterface $response, RequestInterface $request): array
     {
         return \json_decode($response->getBody()->__toString(), true);

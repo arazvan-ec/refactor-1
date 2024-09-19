@@ -21,6 +21,11 @@ class EditorialOrchestrator implements Orchestrator
     ) {
     }
 
+    /**
+     * @return array<string, mixed>
+     *
+     * @throws \Throwable
+     */
     public function execute(Request $request): array
     {
         $id = $request->get('id');
