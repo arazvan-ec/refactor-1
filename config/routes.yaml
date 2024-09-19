@@ -1,7 +1,15 @@
-healthcheckCdn:
-    path: /healthcheck_cdn
-    controller: App\Controller\HealthcheckController::healthCheck
-    condition: (context.getHost() matches '/snaapi\.elconfidencial\.(dev|pre|com)/') or (request.headers.get('User-Agent') == 'ELB-HealthChecker/2.0')
-    methods: GET
+v1:
+    resource: ./routes/v1.yaml
+    condition: "request.headers.get('Accept') matches '/application\\\\/vnd.%microserviceName%.v1/i'"
+    host: "{hostname}"
     requirements:
-        extension: dev|pre|com
+        hostname: "snaapi(-prod-[0-9]+)?.elconfidencial.(local|dev|pre|com|ims|efim)|ecsnaapi-service"
+
+currentVersion:
+    resource: ./routes/v1.yaml
+    host: "{hostname}"
+    requirements:
+        hostname: "snaapi.elconfidencial.(dev|pre|com|ims)|ecsnaapi-service"
+
+microservice:
+    resource: "@MicroserviceBundle/Resources/config/routing/base.yaml"
