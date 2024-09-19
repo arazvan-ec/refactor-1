@@ -21,9 +21,11 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class EditorialOrchestratorTest extends TestCase
 {
-    private QueryEditorialClient|MockObject $queryEditorialClient;
+    /** @var QueryEditorialClient|MockObject  */
+    private QueryEditorialClient $queryEditorialClient;
 
-    private QueryLegacyClient|MockObject $queryLegacyClient;
+    /** @var QueryLegacyClient|MockObject  */
+    private QueryLegacyClient $queryLegacyClient;
 
     private EditorialOrchestrator $editorialOrchestrator;
 
