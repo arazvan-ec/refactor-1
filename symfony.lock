@@ -63,6 +63,15 @@
             "config/packages/http_discovery.yaml"
         ]
     },
+    "php-http/httplug-bundle": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.6",
+            "ref": "87b3d491d593d2c6e3b90bf0689ac69a188bfa5f"
+        }
+    },
     "phpstan/phpstan": {
         "version": "1.10",
         "recipe": {
