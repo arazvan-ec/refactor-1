@@ -19,13 +19,15 @@ class LogstashFormatter extends NormalizerFormatter
     private ?string $applicationImage;
     private ?string $nodeName;
     private ?string $podId;
+    private ?string $podEnvironment;
 
     public function __construct(
         string $applicationName,
         string $environment,
         ?string $applicationImage = null,
         ?string $nodeName = null,
-        ?string $podId = null
+        ?string $podId = null,
+        ?string $podEnvironment = null,
     ) {
         // logstash requires a ISO 8601 format date with optional millisecond precision.
         parent::__construct('Y-m-d\TH:i:s.uP');
@@ -36,6 +38,7 @@ class LogstashFormatter extends NormalizerFormatter
         $this->applicationImage = $applicationImage;
         $this->nodeName = $nodeName;
         $this->podId = $podId;
+        $this->podEnvironment = $podEnvironment;
     }
 
     public function format(array $record): string
@@ -43,7 +46,7 @@ class LogstashFormatter extends NormalizerFormatter
         $recordNormalized = parent::format($record);
 
         if (empty($recordNormalized['datetime'])) {
-            $recordNormalized['datetime'] = gmdate('c');
+            $recordNormalized['datetime'] = $this->getGmdate();
         }
 
         $message = [
@@ -55,6 +58,7 @@ class LogstashFormatter extends NormalizerFormatter
             'hostname' => (string) gethostname(),
             'node_name' => $this->nodeName ?? self::DEFAULT_VALUE,
             'pod_ip' => $this->podId ?? self::DEFAULT_VALUE,
+            'pod_environment' => $this->podEnvironment ?? self::DEFAULT_VALUE,
         ];
 
         if (isset($recordNormalized['message'])) {
@@ -82,6 +86,14 @@ class LogstashFormatter extends NormalizerFormatter
         }
 
         return $this->toJson($message)."\n";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    protected function getGmdate(): string
+    {
+        return gmdate('c');
     }
 
     private function normalizeApplicationName(string $applicationName): string

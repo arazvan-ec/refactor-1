@@ -25,9 +25,12 @@ services:
     App\:
         resource: '../src/'
         exclude:
+            - '../src/Orchestrator'
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Controller/V1/'
+            - '../src/Ec/Snaapi/Infrastructure/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -36,6 +39,11 @@ services:
     App\EventListener\ResponseListener:
         tags:
             - { name: kernel.event_listener, event: kernel.response }
+
+    App\EventSubscriber\ExceptionSubscriber:
+        arguments:
+            $appEnv: '%env(APP_ENV)%'
+        tags: [ kernel.event_subscriber ]
 
     # Monolog services required
     Symfony\Bridge\Monolog\Handler\ElasticsearchLogstashHandler:
@@ -57,8 +65,6 @@ services:
             $podId: '%log.pod_id%'
 
     # Controllers
-    App\Controller\HealthcheckController:
-        class: App\Controller\HealthcheckController
-        arguments:
-            $applicationName: '%applicationName%'
-            $environment: '%env(APP_ENV)%'
+    App\Controller\V1\:
+        resource: '../src/Controller/V1/'
+        tags: [ 'controller.service_arguments' ]
