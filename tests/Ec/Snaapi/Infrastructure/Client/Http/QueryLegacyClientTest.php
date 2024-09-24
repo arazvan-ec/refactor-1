@@ -27,7 +27,11 @@ class QueryLegacyClientTest extends TestCase
     protected function setUp(): void
     {
         $this->httpClient = new Client();
-        $this->queryLegacyClient = new QueryLegacyClient(self::HTTP_HOSTNAME_TEST, $this->httpClient);
+        $this->queryLegacyClient = new QueryLegacyClient(
+            self::HTTP_HOSTNAME_TEST,
+            self::HTTP_HOSTNAME_TEST,
+            $this->httpClient
+        );
     }
 
     protected function tearDown(): void
@@ -68,6 +72,7 @@ class QueryLegacyClientTest extends TestCase
 
         $queryClientMock = $this->getMockBuilder(QueryLegacyClient::class)
             ->setConstructorArgs([
+                self::HTTP_HOSTNAME_TEST,
                 self::HTTP_HOSTNAME_TEST,
                 $this->httpClient,
             ])
