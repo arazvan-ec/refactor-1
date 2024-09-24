@@ -9,6 +9,7 @@ services:
         shared: true
         arguments:
             $hostname: '%env(EDITORIAL_CLIENT_HOST)%'
+            $client: '@httplug.client.app_guzzle7.http_methods.inner'
 
     Ec\Editorial\Domain\Model\QueryEditorialClient: '@Ec\Editorial\Infrastructure\Client\Http\QueryEditorialClient'
 
