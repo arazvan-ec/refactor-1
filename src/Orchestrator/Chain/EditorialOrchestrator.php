@@ -6,8 +6,12 @@
 namespace App\Orchestrator\Chain;
 
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Infrastructure\Enum\SitesEnum;
+use App\Orchestrator\Trait\SectionTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
+use Ec\Section\Domain\Model\QuerySectionClient;
+use Ec\Section\Domain\Model\Section;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -15,10 +19,15 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class EditorialOrchestrator implements Orchestrator
 {
+    use SectionTrait;
+
     public function __construct(
         private readonly QueryLegacyClient $queryLegacyClient,
         private readonly QueryEditorialClient $queryEditorialClient,
+        private readonly QuerySectionClient $querySectionClient,
+        private readonly string $extension
     ) {
+        $this->setSectionClient($querySectionClient);
     }
 
     /**
@@ -37,11 +46,31 @@ class EditorialOrchestrator implements Orchestrator
             return $this->queryLegacyClient->findEditorialById($id);
         }
 
-        return ['editorial' => ['id' => $editorial->id()->id()]];
+        $section = $this->getSectionById($editorial->sectionId());
+
+        return [
+            'editorial' => $editorial,
+            'section' => $this->sectionDataTransformer($section),
+        ];
     }
 
     public function canOrchestrate(): string
     {
         return 'editorial';
+    }
+
+    private function sectionDataTransformer(Section $section): array
+    {
+        return [
+            'section' => [
+                'id' => $section->id()->id(),
+                'name' => $section->name(),
+                'url' => sprintf('https://%s.%s.%s/%s',
+                    $section->isBlog() ? 'blog' : 'www',
+                    SitesEnum::getHostnameById($section->siteId()),
+                    $this->extension,
+                    trim($section->getPath(), '/')),
+            ]
+        ];
     }
 }

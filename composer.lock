@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "85bbb42a7c505194f75eb4be5a135fbf",
+    "content-hash": "c9ce29b6778a77e6a153fe3ee9fc1a35",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1892,16 +1892,16 @@
         },
         {
             "name": "ec/section-client",
-            "version": "v2.30.0-alpha2",
+            "version": "v2.30.0-alpha3",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ecawesomemakers/section-client.git",
-                "reference": "03065c9fc876a7405a2234964066e7a955683c8a"
+                "reference": "ffbec6245503ac1af6d6892ba3a6cac1d3cda9f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/section-client/get/03065c9fc876a7405a2234964066e7a955683c8a.zip",
-                "reference": "03065c9fc876a7405a2234964066e7a955683c8a",
+                "url": "https://bitbucket.org/ecawesomemakers/section-client/get/ffbec6245503ac1af6d6892ba3a6cac1d3cda9f3.zip",
+                "reference": "ffbec6245503ac1af6d6892ba3a6cac1d3cda9f3",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1966,9 +1966,9 @@
             "description": "Section Client",
             "homepage": "https://bitbucket.org/ecawesomemakers/section-client",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/section-client/src/03065c9fc876a7405a2234964066e7a955683c8a/?at=v2.30.0-alpha2"
+                "source": "https://bitbucket.org/ecawesomemakers/section-client/src/ffbec6245503ac1af6d6892ba3a6cac1d3cda9f3/?at=v2.30.0-alpha3"
             },
-            "time": "2024-09-23T15:00:23+00:00"
+            "time": "2024-09-24T11:17:06+00:00"
         },
         {
             "name": "ec/section-domain",
@@ -3063,16 +3063,16 @@
         },
         {
             "name": "php-http/client-common",
-            "version": "2.7.1",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/client-common.git",
-                "reference": "1e19c059b0e4d5f717bf5d524d616165aeab0612"
+                "reference": "0cfe9858ab9d3b213041b947c881d5b19ceeca46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/client-common/zipball/1e19c059b0e4d5f717bf5d524d616165aeab0612",
-                "reference": "1e19c059b0e4d5f717bf5d524d616165aeab0612",
+                "url": "https://api.github.com/repos/php-http/client-common/zipball/0cfe9858ab9d3b213041b947c881d5b19ceeca46",
+                "reference": "0cfe9858ab9d3b213041b947c881d5b19ceeca46",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3132,9 +3132,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-http/client-common/issues",
-                "source": "https://github.com/php-http/client-common/tree/2.7.1"
+                "source": "https://github.com/php-http/client-common/tree/2.7.2"
             },
-            "time": "2023-11-30T10:31:25+00:00"
+            "time": "2024-09-24T06:21:48+00:00"
         },
         {
             "name": "php-http/discovery",
