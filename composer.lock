@@ -1672,16 +1672,16 @@
         },
         {
             "name": "ec/microservice-bundle",
-            "version": "v1.8.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/library/microservice-bundle.git",
-                "reference": "c8553f55352b6453a48120cd15d5e61bfce08139"
+                "reference": "1fb9eaebca02649cc42549c502edfd00875fb8e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Flibrary%2Fmicroservice-bundle/repository/archive.zip?sha=c8553f55352b6453a48120cd15d5e61bfce08139",
-                "reference": "c8553f55352b6453a48120cd15d5e61bfce08139",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Flibrary%2Fmicroservice-bundle/repository/archive.zip?sha=1fb9eaebca02649cc42549c502edfd00875fb8e9",
+                "reference": "1fb9eaebca02649cc42549c502edfd00875fb8e9",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1730,10 +1730,10 @@
             ],
             "description": "Base bundle for Microservice projects",
             "support": {
-                "source": "https://gitlab.com/ec-awesomemakers1/microservices/library/microservice-bundle/-/tree/v1.8.0",
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/library/microservice-bundle/-/tree/v1.10.0",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/library/microservice-bundle/-/issues"
             },
-            "time": "2024-09-07T10:08:05+00:00"
+            "time": "2024-09-24T07:31:08+00:00"
         },
         {
             "name": "ec/mock-client",
