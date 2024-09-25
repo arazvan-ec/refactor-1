@@ -3,7 +3,7 @@
 namespace App\Orchestrator\Trait;
 
 use Ec\Section\Domain\Model\Section;
-use Ec\Section\Infrastructure\Client\Http\QuerySectionClient;
+use Ec\Section\Domain\Model\QuerySectionClient;
 
 trait SectionTrait
 {
