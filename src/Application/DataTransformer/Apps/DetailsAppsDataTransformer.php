@@ -3,6 +3,7 @@
 namespace App\Application\DataTransformer\Apps;
 
 use App\Infrastructure\Enum\SitesEnum;
+use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\Signature;
 use Ec\Journalist\Domain\Model\Alias;
@@ -16,6 +17,8 @@ use Thumbor\Url\BuilderFactory;
  */
 class DetailsAppsDataTransformer implements AppsDataTransformer
 {
+    use UrlGeneratorTrait;
+
     private Editorial $editorial;
 
     private Journalists $journalists;
@@ -24,13 +27,14 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private string $extension;
 
-    public function __construct(string $extension,string $thumborServerUrl, string $thumborSecret, string $awsBucket)
+    public function __construct(string $extension, string $thumborServerUrl, string $thumborSecret, string $awsBucket)
     {
-        $this->extension = $extension;
         $this->thumborServerUrl = $thumborServerUrl;
         $this->thumborSecret = $thumborSecret;
         $this->awsBucket = $awsBucket;
         $this->thumborFactory = BuilderFactory::construct($thumborServerUrl, $thumborSecret);
+
+        $this->setExtension($extension);
     }
 
     public function write(Editorial $editorial, Journalists $journalists, Section $section): DetailsAppsDataTransformer
@@ -119,20 +123,19 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private function transformerSection(): array
     {
+        $url = $this->generateUrl(
+            'https://%s.%s.%s/%s',
+            $this->section->isBlog() ? 'blog' : 'www',
+            $this->section->siteId(),
+            $this->section->getPath()
+        );
+
         return [
             'id' => $this->section->id()->id(),
             'name' => $this->section->name(),
-            'url' => sprintf(
-                'https://%s.%s.%s/%s',
-                $this->section->isBlog() ? 'blog' : 'www',
-                SitesEnum::getHostnameById($this->section->siteId()),
-                $this->extension,
-                trim($this->section->getPath(), '/')
-            ),
+            'url' => $url,
         ];
     }
-
-
 
     private function createOriginalAWSImage(string $fileImage): string
     {
