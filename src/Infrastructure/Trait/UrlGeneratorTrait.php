@@ -18,11 +18,11 @@ trait UrlGeneratorTrait
         $this->extension = $extension;
     }
 
-    protected function generateUrl(string $format, string $hostname, string $siteId, string $urlPath): string
+    protected function generateUrl(string $format, string $subdomain, string $siteId, string $urlPath): string
     {
         return sprintf(
             $format,
-            $this->section->isBlog() ? 'blog' : 'www',
+            $subdomain,
             SitesEnum::getHostnameById($siteId),
             $this->extension,
             trim($urlPath, '/')
