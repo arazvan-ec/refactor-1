@@ -1,0 +1,16 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    Ec\Journalist\Infrastructure\Client\Http\QueryJournalistClient:
+        lazy: true
+        shared: true
+        arguments:
+            $hostname: '%env(JOURNALIST_CLIENT_HOST)%'
+
+    Ec\Journalist\Domain\Model\QueryEditorialClient: '@Ec\Journalist\Infrastructure\Client\Http\QueryJournalistClient'
+
+    Ec\Journalist\Application\Service\JournalistFactory: ~
+    Ec\Journalist\Domain\Model\JournalistFactory: '@Ec\Journalist\Application\Service\JournalistFactory'

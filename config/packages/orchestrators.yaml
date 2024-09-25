@@ -14,3 +14,9 @@ services:
         lazy: true
         shared: true
     App\Orchestrator\OrchestratorChain: '@App\Orchestrator\OrchestratorChainHandler'
+
+    App\Orchestrator\Chain\EditorialOrchestrator:
+        class: App\Orchestrator\Chain\EditorialOrchestrator
+        arguments:
+            $extension: '%env(URL_ENV)%'
+        tags: [ 'app.orchestrators' ]
