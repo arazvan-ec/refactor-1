@@ -2,7 +2,6 @@
 
 namespace App\Application\DataTransformer\Apps;
 
-
 use App\Infrastructure\Enum\SitesEnum;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\Signature;
@@ -14,7 +13,7 @@ use Ec\Section\Domain\Model\Section;
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  */
-class DetailsAppsDataTransformer implements AppsDatatransformer
+class DetailsAppsDataTransformer implements AppsDataTransformer
 {
     private Editorial $editorial;
 
@@ -22,7 +21,7 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
 
     private Section $section;
 
-    private string $extension ;
+    private string $extension;
 
     public function __construct(string $extension)
     {
@@ -40,14 +39,14 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
 
     public function read(): array
     {
-          $editorial = $this->transformerEditorial();
-          $editorial['signatures'] = $this->transformerJournalists();
-          $editorial['section'] = $this->transformerSection();
+        $editorial = $this->transformerEditorial();
+        $editorial['signatures'] = $this->transformerJournalists();
+        $editorial['section'] = $this->transformerSection();
 
-          return $editorial;
+        return $editorial;
     }
 
-    private function transformerEditorial() : array
+    private function transformerEditorial(): array
     {
         return ['id' => $this->editorial->id()->id()];
     }
@@ -56,36 +55,37 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
     {
         $signatures = [];
         /** @var Signature $signature */
-        foreach ($this->editorial->signatures() as $signature){
+        foreach ($this->editorial->signatures() as $signature) {
 
             /** @var Journalist $journalist */
-            foreach ($this->journalists as $journalist){
+            foreach ($this->journalists as $journalist) {
 
                 /** @var Alias $alias */
-                foreach ($journalist->aliases() as $alias){
-                    if($alias->id()->id() === $signature->id()->id()){
+                foreach ($journalist->aliases() as $alias) {
+                    if ($alias->id()->id() === $signature->id()->id()) {
 
                         $departments = [];
 
-                        foreach ($journalist->departments() as $department){
+                        foreach ($journalist->departments() as $department) {
                             $departments[] = [
                                 'id' => $department->id()->id(),
-                                'name' => $department->name()
+                                'name' => $department->name(),
                             ];
                         }
 
-                        $signatures[]= [
+                        $signatures[] = [
                             'journalistId' => $journalist->id()->id(),
                             'aliasId' => $alias->id()->id(),
                             'name' => $alias->name(),
-                            'url' => sprintf('https://www.%s.%s/autores/%s-%s/',
+                            'url' => sprintf(
+                                'https://www.%s.%s/autores/%s-%s/',
                                 SitesEnum::getHostnameById($this->section->siteId()),
                                 $this->extension,
                                 urlencode($journalist->name()),
                                 $journalist->id()->id()
                             ),
                             'photo' => $journalist->photo(),
-                            'departments' => $departments
+                            'departments' => $departments,
 
 
                         ];
@@ -94,6 +94,7 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
                 }
             }
         }
+
         return $signatures;
     }
 
@@ -102,11 +103,13 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
         return [
             'id' => $this->section->id()->id(),
             'name' => $this->section->name(),
-            'url' => sprintf('https://%s.%s.%s/%s',
+            'url' => sprintf(
+                'https://%s.%s.%s/%s',
                 $this->section->isBlog() ? 'blog' : 'www',
                 SitesEnum::getHostnameById($this->section->siteId()),
                 $this->extension,
-                trim($this->section->getPath(), '/')),
+                trim($this->section->getPath(), '/')
+            ),
         ];
     }
 }

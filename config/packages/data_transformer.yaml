@@ -11,4 +11,4 @@ services:
 
 
 
-    App\Application\DataTransformer\Apps\AppsDatatransformer: '@App\Application\DataTransformer\Apps\DetailsAppsDataTransformer'
+    App\Application\DataTransformer\Apps\AppsDataTransformer: '@App\Application\DataTransformer\Apps\DetailsAppsDataTransformer'

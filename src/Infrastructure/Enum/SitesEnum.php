@@ -14,7 +14,7 @@ enum SitesEnum: string
             self::ELCONFIDENCIAL->value => 'elconfidencial',
             self::VANITATIS->value => 'vanitatis.elconfidencial',
             self::ALIMENTE->value => 'alimente.elconfidencial',
-            default => 'elconfidencial'
+            default => 'elconfidencial',
         };
     }
 }

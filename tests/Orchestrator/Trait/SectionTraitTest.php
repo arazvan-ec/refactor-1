@@ -58,7 +58,6 @@ class SectionTraitTest extends TestCase
     public function getSectionByIdShouldReturnNullWhenExceptionIsThrown(): void
     {
         $id = '90';
-
         $exceptionMock = $this->createMock(\Exception::class);
 
         $this->querySectionClient
@@ -80,8 +79,7 @@ class SectionTraitTest extends TestCase
         $this->querySectionClient
             ->method('findSectionById')
             ->with($id)
-            ->will($this->throwException(new \Exception("Section not found")));
-
+            ->will($this->throwException(new \Exception('Section not found')));
 
         $result = $this->getSectionById($id);
 
