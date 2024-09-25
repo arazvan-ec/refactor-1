@@ -19,13 +19,18 @@ use Psr\SimpleCache\CacheInterface;
  */
 class QueryLegacyClient extends ServiceClient
 {
+    private string $legacyHostHeader;
+
     public function __construct(
         string $hostname,
+        string $legacyHostHeader,
         ?HttpAsyncClient $client = null,
         ?RequestFactoryInterface $requestFactory = null,
         ?ResponseFactoryInterface $responseFactory = null,
         ?CacheInterface $cacheAdapter = null,
     ) {
+        $this->legacyHostHeader = $legacyHostHeader;
+
         parent::__construct(
             $hostname,
             $client,
@@ -51,7 +56,9 @@ class QueryLegacyClient extends ServiceClient
     ): array {
         $url = $this->buildUrl("/service/content/{$editorialIdString}/");
 
-        $request = $this->createRequest('GET', $url);
+        $request = $this->createRequest('GET', $url, [
+            'Host' => $this->legacyHostHeader,
+        ]);
 
         /** @var Promise $promise */
         $promise = $this->execute($request, true, $cached, $ttlCache);
