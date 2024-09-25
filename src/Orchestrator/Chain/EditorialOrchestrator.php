@@ -31,7 +31,6 @@ class EditorialOrchestrator implements Orchestrator
         private readonly QuerySectionClient $querySectionClient,
         private readonly JournalistFactory $journalistFactory,
         private readonly AppsDatatransformer $detailsAppsDataTransformer,
-        private readonly string $extension
     ) {
         $this->setSectionClient($querySectionClient);
     }

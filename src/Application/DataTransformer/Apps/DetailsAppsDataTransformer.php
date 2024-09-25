@@ -3,6 +3,7 @@
 namespace App\Application\DataTransformer\Apps;
 
 
+use App\Infrastructure\Enum\SitesEnum;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\Signature;
 use Ec\Journalist\Domain\Model\Alias;
@@ -20,11 +21,9 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
     private Journalists $journalists;
 
     private Section $section;
+    private string $extension ='dev';
 
-    public function __construct(string $extension)
-    {
-        $this->extension = $extension;
-    }
+
 
 
     public function write(Editorial $editorial, Journalists $journalists,Section $section): DetailsAppsDataTransformer
@@ -40,6 +39,7 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
     {
       $editorial = $this->transformerEditorial();
       $editorial['signatures'] = $this->transformerJournalists();
+      $editorial['section'] = $this->sectionDataTransformer();
 
       return $editorial;
     }
@@ -91,6 +91,21 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
             }
         }
         return $signatures;
+    }
+
+    private function sectionDataTransformer(): array
+    {
+        return [
+
+                'id' => $this->section->id()->id(),
+                'name' => $this->section->name(),
+                'url' => sprintf('https://%s.%s.%s/%s',
+                    $this->section->isBlog() ? 'blog' : 'www',
+                    SitesEnum::getHostnameById($this->section->siteId()),
+                    $this->extension,
+                    trim($this->section->getPath(), '/')),
+
+        ];
     }
 
 

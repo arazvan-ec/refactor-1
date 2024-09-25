@@ -18,8 +18,7 @@ services:
 
     App\Application\DataTransformer\Apps\DetailsAppsDataTransformer:
         class: App\Application\DataTransformer\Apps\DetailsAppsDataTransformer
-        arguments:
-            $extension: '%env(URL_ENV)%'
+
 
     App\Application\DataTransformer\Apps\AppsDatatransformer: '@App\Application\DataTransformer\Apps\DetailsAppsDataTransformer'
 
