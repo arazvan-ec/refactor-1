@@ -57,6 +57,7 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
 
             /** @var Journalist $journalist */
             foreach ($this->journalists as $journalist){
+
                 /** @var Alias $alias */
                 foreach ($journalist->aliases() as $alias){
                     if($alias->id()->id() === $signature->id()->id()){

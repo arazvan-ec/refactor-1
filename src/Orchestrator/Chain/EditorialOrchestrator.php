@@ -55,6 +55,7 @@ class EditorialOrchestrator implements Orchestrator
         foreach ($editorial->signatures() as $signature) {
             $aliasId= $this->journalistFactory->buildAliasId($signature->id()->id());
             $journalist= $this->queryJournalistClient->findJournalistByAliasId($aliasId);
+
             if ($journalist->isActive() && $journalist->isVisible())
             $journalists->addItem($journalist);
         }

@@ -24,6 +24,7 @@ trait SectionTrait
         try {
             return $this->sectionClient->findSectionById($id);
         } catch (\Throwable $exception) {
+            var_dump($exception);
             return null;
         }
     }
