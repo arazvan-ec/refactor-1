@@ -21,18 +21,15 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
     private Journalists $journalists;
 
     private Section $section;
+
     private string $extension ;
 
-    /**
-     * @param string $extension
-     */
     public function __construct(string $extension)
     {
         $this->extension = $extension;
     }
 
-
-    public function write(Editorial $editorial, Journalists $journalists,Section $section): DetailsAppsDataTransformer
+    public function write(Editorial $editorial, Journalists $journalists, Section $section): DetailsAppsDataTransformer
     {
         $this->editorial = $editorial;
         $this->journalists = $journalists;
@@ -103,17 +100,13 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
     private function sectionDataTransformer(): array
     {
         return [
-
-                'id' => $this->section->id()->id(),
-                'name' => $this->section->name(),
-                'url' => sprintf('https://%s.%s.%s/%s',
-                    $this->section->isBlog() ? 'blog' : 'www',
-                    SitesEnum::getHostnameById($this->section->siteId()),
-                    $this->extension,
-                    trim($this->section->getPath(), '/')),
-
+            'id' => $this->section->id()->id(),
+            'name' => $this->section->name(),
+            'url' => sprintf('https://%s.%s.%s/%s',
+                $this->section->isBlog() ? 'blog' : 'www',
+                SitesEnum::getHostnameById($this->section->siteId()),
+                $this->extension,
+                trim($this->section->getPath(), '/')),
         ];
     }
-
-
 }

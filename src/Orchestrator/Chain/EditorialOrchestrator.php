@@ -5,7 +5,7 @@
 
 namespace App\Orchestrator\Chain;
 
-use App\Application\DataTransformer\Apps\AppsDatatransformer;
+use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Enum\SitesEnum;
 use App\Orchestrator\Trait\SectionTrait;
@@ -25,12 +25,12 @@ class EditorialOrchestrator implements Orchestrator
     use SectionTrait;
 
     public function __construct(
-        private readonly QueryLegacyClient $queryLegacyClient,
-        private readonly QueryEditorialClient $queryEditorialClient,
+        private readonly QueryLegacyClient     $queryLegacyClient,
+        private readonly QueryEditorialClient  $queryEditorialClient,
         private readonly QueryJournalistClient $queryJournalistClient,
-        private readonly QuerySectionClient $querySectionClient,
-        private readonly JournalistFactory $journalistFactory,
-        private readonly AppsDatatransformer $detailsAppsDataTransformer,
+        private readonly QuerySectionClient    $querySectionClient,
+        private readonly JournalistFactory     $journalistFactory,
+        private readonly AppsDataTransformer   $detailsAppsDataTransformer,
     ) {
         $this->setSectionClient($querySectionClient);
     }
@@ -50,6 +50,7 @@ class EditorialOrchestrator implements Orchestrator
         if (null === $editorial->sourceEditorial()) {
             return $this->queryLegacyClient->findEditorialById($id);
         }
+
         $journalists = $this->journalistFactory->buildJournalists();
 
         foreach ($editorial->signatures() as $signature) {
@@ -62,28 +63,11 @@ class EditorialOrchestrator implements Orchestrator
 
         $section = $this->getSectionById($editorial->sectionId());
 
-        return $this->detailsAppsDataTransformer->write($editorial,$journalists,$section)->read();
-
+        return $this->detailsAppsDataTransformer->write($editorial, $journalists, $section)->read();
     }
 
     public function canOrchestrate(): string
     {
         return 'editorial';
-    }
-
-
-    private function sectionDataTransformer(Section $section): array
-    {
-        return [
-            'section' => [
-                'id' => $section->id()->id(),
-                'name' => $section->name(),
-                'url' => sprintf('https://%s.%s.%s/%s',
-                    $section->isBlog() ? 'blog' : 'www',
-                    SitesEnum::getHostnameById($section->siteId()),
-                    $this->extension,
-                    trim($section->getPath(), '/')),
-            ]
-        ];
     }
 }

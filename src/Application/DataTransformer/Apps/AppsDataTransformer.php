@@ -10,10 +10,9 @@ use Ec\Section\Domain\Model\Section;
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  */
-interface AppsDatatransformer
+interface AppsDataTransformer
 {
-
-    public function write(Editorial $editorial,Journalists $journalists, Section $section): AppsDatatransformer;
+    public function write(Editorial $editorial,Journalists $journalists, Section $section): AppsDataTransformer;
 
     public function read(): array;
 }
