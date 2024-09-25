@@ -21,7 +21,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     use UrlGeneratorTrait;
 
     private Editorial $editorial;
-
     private Journalists $journalists;
 
     private Section $section;
