@@ -1,7 +1,7 @@
 {
     "type": "project",
     "license": "proprietary",
-    "minimum-stability": "alpha",
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
         "php": ">=8.1",
@@ -10,7 +10,6 @@
         "ec/editorial-client": "^1.0",
         "ec/journalist-client": "v4.26.0-alpha1",
         "ec/microservice-bundle": "^1.0",
-        "ec/section-client": "v2.30.0-alpha3",
         "nelmio/api-doc-bundle": "^4.11",
         "nelmio/cors-bundle": "^2.2",
         "nyholm/psr7": "v1.8.1",

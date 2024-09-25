@@ -7,10 +7,14 @@ namespace App\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDatatransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Infrastructure\Enum\SitesEnum;
+use App\Orchestrator\Trait\SectionTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Journalist\Application\Service\JournalistFactory;
 use Ec\Journalist\Infrastructure\Client\Http\QueryJournalistClient;
+use Ec\Section\Domain\Model\QuerySectionClient;
+use Ec\Section\Domain\Model\Section;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -18,14 +22,18 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class EditorialOrchestrator implements Orchestrator
 {
+    use SectionTrait;
+
     public function __construct(
         private readonly QueryLegacyClient $queryLegacyClient,
         private readonly QueryEditorialClient $queryEditorialClient,
         private readonly QueryJournalistClient $queryJournalistClient,
+        private readonly QuerySectionClient $querySectionClient,
         private readonly JournalistFactory $journalistFactory,
         private readonly AppsDatatransformer $detailsAppsDataTransformer,
         private readonly string $extension
     ) {
+        $this->setSectionClient($querySectionClient);
     }
 
     /**
@@ -51,6 +59,8 @@ class EditorialOrchestrator implements Orchestrator
             if ($journalist->isActive() && $journalist->isVisible())
             $journalists->addItem($journalist);
         }
+
+        $section = $this->getSectionById($editorial->sectionId());
 
         return $this->detailsAppsDataTransformer->write($editorial,$journalists,$section)->read();
 
