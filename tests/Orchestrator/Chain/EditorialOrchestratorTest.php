@@ -11,7 +11,8 @@ use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\SourceEditorial;
 use Ec\Editorial\Domain\Model\SourceEditorialId;
-use Ec\Editorial\Infrastructure\Client\Http\QueryEditorialClient;
+use Ec\Editorial\Domain\Model\QueryEditorialClient;
+use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,6 +27,9 @@ class EditorialOrchestratorTest extends TestCase
 
     /** @var QueryLegacyClient|MockObject */
     private QueryLegacyClient $queryLegacyClient;
+
+    /** @var QueryJournalistClient|MockObject */
+    private QueryJournalistClient $queryJournalistClient;
 
     private EditorialOrchestrator $editorialOrchestrator;
 

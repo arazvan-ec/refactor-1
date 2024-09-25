@@ -11,7 +11,7 @@ use App\Orchestrator\Trait\SectionTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Journalist\Application\Service\JournalistFactory;
-use Ec\Journalist\Infrastructure\Client\Http\QueryJournalistClient;
+use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Symfony\Component\HttpFoundation\Request;
 
