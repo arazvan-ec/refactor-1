@@ -40,11 +40,11 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
 
     public function read(): array
     {
-      $editorial = $this->transformerEditorial();
-      $editorial['signatures'] = $this->transformerJournalists();
-      $editorial['section'] = $this->sectionDataTransformer();
+          $editorial = $this->transformerEditorial();
+          $editorial['signatures'] = $this->transformerJournalists();
+          $editorial['section'] = $this->transformerSection();
 
-      return $editorial;
+          return $editorial;
     }
 
     private function transformerEditorial() : array
@@ -97,7 +97,7 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
         return $signatures;
     }
 
-    private function sectionDataTransformer(): array
+    private function transformerSection(): array
     {
         return [
             'id' => $this->section->id()->id(),
