@@ -21,9 +21,15 @@ class DetailsAppsDataTransformer implements AppsDatatransformer
     private Journalists $journalists;
 
     private Section $section;
-    private string $extension ='dev';
+    private string $extension ;
 
-
+    /**
+     * @param string $extension
+     */
+    public function __construct(string $extension)
+    {
+        $this->extension = $extension;
+    }
 
 
     public function write(Editorial $editorial, Journalists $journalists,Section $section): DetailsAppsDataTransformer

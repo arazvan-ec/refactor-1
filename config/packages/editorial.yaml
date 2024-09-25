@@ -16,10 +16,6 @@ services:
     Ec\Editorial\Application\Service\EditorialFactory: ~
     Ec\Editorial\Domain\Model\EditorialFactory: '@Ec\Editorial\Application\Service\EditorialFactory'
 
-    App\Application\DataTransformer\Apps\DetailsAppsDataTransformer:
-        class: App\Application\DataTransformer\Apps\DetailsAppsDataTransformer
 
-
-    App\Application\DataTransformer\Apps\AppsDatatransformer: '@App\Application\DataTransformer\Apps\DetailsAppsDataTransformer'
 
 
