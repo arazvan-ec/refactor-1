@@ -9,6 +9,7 @@ use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\Journalists;
 use Ec\Section\Domain\Model\Section;
+use Thumbor\Url\BuilderFactory;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
@@ -23,9 +24,13 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private string $extension;
 
-    public function __construct(string $extension)
+    public function __construct(string $extension,string $thumborServerUrl, string $thumborSecret, string $awsBucket)
     {
         $this->extension = $extension;
+        $this->thumborServerUrl = $thumborServerUrl;
+        $this->thumborSecret = $thumborSecret;
+        $this->awsBucket = $awsBucket;
+        $this->thumborFactory = BuilderFactory::construct($thumborServerUrl, $thumborSecret);
     }
 
     public function write(Editorial $editorial, Journalists $journalists, Section $section): DetailsAppsDataTransformer
@@ -84,7 +89,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                                 urlencode($journalist->name()),
                                 $journalist->id()->id()
                             ),
-                            'photo' => $journalist->photo(),
+                            'photo' => $this->photoUrl($journalist),
                             'departments' => $departments,
 
 
@@ -96,6 +101,20 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         }
 
         return $signatures;
+    }
+
+    private function photoUrl(Journalist $journalist) : string
+    {
+        $photo = '';
+        if (!empty($journalist->blogPhoto())) {
+            $photo = $journalist->blogPhoto();
+        }
+        if (!empty($journalist->photo())) {
+            $photo = $journalist->photo();
+        }
+       return $this->thumborFactory->url($this->createOriginalAWSImage($photo));
+
+
     }
 
     private function transformerSection(): array
@@ -111,5 +130,16 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 trim($this->section->getPath(), '/')
             ),
         ];
+    }
+
+
+
+    private function createOriginalAWSImage(string $fileImage): string
+    {
+        $path1 = \substr($fileImage, 0, 3);
+        $path2 = \substr($fileImage, 3, 3);
+        $path3 = \substr($fileImage, 6, 3);
+
+        return $this->awsBucket."/journalist/{$path1}/{$path2}/{$path3}/{$fileImage}";
     }
 }
