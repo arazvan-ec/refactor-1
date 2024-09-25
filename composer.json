@@ -9,7 +9,7 @@
         "ext-iconv": "*",
         "ec/editorial-client": "^1.0",
         "ec/microservice-bundle": "^1.0",
-        "ec/section-client": "v2.30.0-alpha3",
+        "ec/section-client": "^2.0",
         "nelmio/api-doc-bundle": "^4.11",
         "nelmio/cors-bundle": "^2.2",
         "nyholm/psr7": "v1.8.1",

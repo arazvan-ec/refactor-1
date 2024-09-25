@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9ce29b6778a77e6a153fe3ee9fc1a35",
+    "content-hash": "487b414e8bcabc652546e86a6d6c10e0",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1892,16 +1892,16 @@
         },
         {
             "name": "ec/section-client",
-            "version": "v2.30.0-alpha3",
+            "version": "v2.30.0",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ecawesomemakers/section-client.git",
-                "reference": "ffbec6245503ac1af6d6892ba3a6cac1d3cda9f3"
+                "reference": "d1464ee28a7c23cb9760618c9f000ef856c12baf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/section-client/get/ffbec6245503ac1af6d6892ba3a6cac1d3cda9f3.zip",
-                "reference": "ffbec6245503ac1af6d6892ba3a6cac1d3cda9f3",
+                "url": "https://bitbucket.org/ecawesomemakers/section-client/get/d1464ee28a7c23cb9760618c9f000ef856c12baf.zip",
+                "reference": "d1464ee28a7c23cb9760618c9f000ef856c12baf",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1913,7 +1913,7 @@
             "require": {
                 "beberlei/assert": "^3.0",
                 "ec/mock-client": "^1.4",
-                "ec/section-domain": "v1.4.0-alpha1",
+                "ec/section-domain": "^1.0",
                 "ec/service-client": "^2.0",
                 "ext-json": "*",
                 "nyholm/psr7": "^1.8",
@@ -1966,22 +1966,22 @@
             "description": "Section Client",
             "homepage": "https://bitbucket.org/ecawesomemakers/section-client",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/section-client/src/ffbec6245503ac1af6d6892ba3a6cac1d3cda9f3/?at=v2.30.0-alpha3"
+                "source": "https://bitbucket.org/ecawesomemakers/section-client/src/d1464ee28a7c23cb9760618c9f000ef856c12baf/?at=v2.30.0"
             },
-            "time": "2024-09-24T11:17:06+00:00"
+            "time": "2024-09-25T09:33:39+00:00"
         },
         {
             "name": "ec/section-domain",
-            "version": "v1.4.0-alpha1",
+            "version": "v1.4.0-alpha2",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ecawesomemakers/section-domain.git",
-                "reference": "9a0063b78a97d4e9646b2fbe4f608133a8824fca"
+                "reference": "8dae44ddb5a83fad8586db27f351a2237ad8229c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/section-domain/get/9a0063b78a97d4e9646b2fbe4f608133a8824fca.zip",
-                "reference": "9a0063b78a97d4e9646b2fbe4f608133a8824fca",
+                "url": "https://bitbucket.org/ecawesomemakers/section-domain/get/8dae44ddb5a83fad8586db27f351a2237ad8229c.zip",
+                "reference": "8dae44ddb5a83fad8586db27f351a2237ad8229c",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2029,9 +2029,9 @@
             "description": "Section Domain Base",
             "homepage": "https://bitbucket.org/ecawesomemakers/section-domain",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/section-domain/src/9a0063b78a97d4e9646b2fbe4f608133a8824fca/?at=v1.4.0-alpha1"
+                "source": "https://bitbucket.org/ecawesomemakers/section-domain/src/8dae44ddb5a83fad8586db27f351a2237ad8229c/?at=v1.4.0-alpha2"
             },
-            "time": "2024-09-23T14:43:52+00:00"
+            "time": "2024-09-25T07:04:45+00:00"
         },
         {
             "name": "ec/service-client",
