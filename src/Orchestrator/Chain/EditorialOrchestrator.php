@@ -7,7 +7,6 @@ namespace App\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
-use App\Orchestrator\Trait\SectionTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Journalist\Application\Service\JournalistFactory;
@@ -20,8 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class EditorialOrchestrator implements Orchestrator
 {
-    use SectionTrait;
-
     public function __construct(
         private readonly QueryLegacyClient $queryLegacyClient,
         private readonly QueryEditorialClient $queryEditorialClient,
@@ -30,7 +27,6 @@ class EditorialOrchestrator implements Orchestrator
         private readonly JournalistFactory $journalistFactory,
         private readonly AppsDataTransformer $detailsAppsDataTransformer,
     ) {
-        $this->setSectionClient($querySectionClient);
     }
 
     /**
@@ -60,7 +56,7 @@ class EditorialOrchestrator implements Orchestrator
             }
         }
 
-        $section = $this->getSectionById($editorial->sectionId());
+        $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
         return $this->detailsAppsDataTransformer->write($editorial, $journalists, $section)->read();
     }
