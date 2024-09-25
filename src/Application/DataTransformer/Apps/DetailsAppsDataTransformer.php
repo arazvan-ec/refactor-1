@@ -17,6 +17,7 @@ use Thumbor\Url\BuilderFactory;
  */
 class DetailsAppsDataTransformer implements AppsDataTransformer
 {
+
     use UrlGeneratorTrait;
 
     private Editorial $editorial;
@@ -25,7 +26,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private Section $section;
 
-    private string $extension;
+
 
     public function __construct(string $extension, string $thumborServerUrl, string $thumborSecret, string $awsBucket)
     {
@@ -86,13 +87,19 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                             'journalistId' => $journalist->id()->id(),
                             'aliasId' => $alias->id()->id(),
                             'name' => $alias->name(),
-                            'url' => sprintf(
-                                'https://www.%s.%s/autores/%s-%s/',
-                                SitesEnum::getHostnameById($this->section->siteId()),
-                                $this->extension,
-                                urlencode($journalist->name()),
-                                $journalist->id()->id()
-                            ),
+                            'url' => ($alias->private())
+                                ?  $this->generateUrl(
+                                    'https://%s.%s.%s/%s',
+                                    $this->section->isBlog() ? 'blog' : 'www',
+                                    $this->section->siteId(),
+                                    $this->section->getPath()
+                                )
+                                : $this->generateUrl(
+                                    'https://%s.%s.%s/autores/%s/',
+                                    'www',
+                                    $this->section->siteId(),
+                                    sprintf('%s-%s', urlencode($journalist->name()), $journalist->id()->id())
+                                ),
                             'photo' => $this->photoUrl($journalist),
                             'departments' => $departments,
 

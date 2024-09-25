@@ -3,6 +3,8 @@
 namespace App\Infrastructure\Trait;
 
 use App\Infrastructure\Enum\SitesEnum;
+use Ec\Journalist\Domain\Model\Journalist;
+use Ec\Section\Domain\Model\Section;
 
 trait UrlGeneratorTrait
 {
@@ -28,4 +30,11 @@ trait UrlGeneratorTrait
             trim($urlPath, '/')
         );
     }
+
+
+
+
+
+
+
 }
