@@ -3,7 +3,7 @@
 namespace App\Application\DataTransformer\Apps;
 
 use Ec\Editorial\Domain\Model\Editorial;
-use Ec\Journalist\Domain\Model\Journalists;
+use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -11,7 +11,13 @@ use Ec\Section\Domain\Model\Section;
  */
 interface AppsDataTransformer
 {
+    /**
+     * @param Journalist[] $journalists
+     */
     public function write(Editorial $editorial, array $journalists, Section $section): AppsDataTransformer;
 
+    /**
+     * @return Editorial[]
+     */
     public function read(): array;
 }
