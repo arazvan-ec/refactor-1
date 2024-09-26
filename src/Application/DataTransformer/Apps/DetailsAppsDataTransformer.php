@@ -21,7 +21,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     use UrlGeneratorTrait;
 
     private Editorial $editorial;
-    private Journalists $journalists;
+    private array $journalists;
 
     private Section $section;
 
@@ -37,7 +37,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         $this->setExtension($extension);
     }
 
-    public function write(Editorial $editorial, Journalists $journalists, Section $section): DetailsAppsDataTransformer
+    public function write(Editorial $editorial, array $journalists, Section $section): DetailsAppsDataTransformer
     {
         $this->editorial = $editorial;
         $this->journalists = $journalists;
@@ -62,55 +62,57 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private function transformerJournalists(): array
     {
+
         $signatures = [];
-        /** @var Signature $signature */
-        foreach ($this->editorial->signatures() as $signature) {
 
-            /** @var Journalist $journalist */
-            foreach ($this->journalists as $journalist) {
+        foreach ($this->journalists as $aliasId => $journalist) {
+            foreach ($journalist->aliases() as $alias) {
 
-                /** @var Alias $alias */
-                foreach ($journalist->aliases() as $alias) {
-                    if ($alias->id()->id() === $signature->id()->id()) {
+                if ($alias->id()->id() == $aliasId) {
 
-                        $departments = [];
+                    $departments = [];
 
-                        foreach ($journalist->departments() as $department) {
-                            $departments[] = [
-                                'id' => $department->id()->id(),
-                                'name' => $department->name(),
-                            ];
-                        }
-
-                        $signatures[] = [
-                            'journalistId' => $journalist->id()->id(),
-                            'aliasId' => $alias->id()->id(),
-                            'name' => $alias->name(),
-                            'url' => ($alias->private())
-                                ?  $this->generateUrl(
-                                    'https://%s.%s.%s/%s',
-                                    $this->section->isBlog() ? 'blog' : 'www',
-                                    $this->section->siteId(),
-                                    $this->section->getPath()
-                                )
-                                : $this->generateUrl(
-                                    'https://%s.%s.%s/autores/%s/',
-                                    'www',
-                                    $this->section->siteId(),
-                                    sprintf('%s-%s', urlencode($journalist->name()), $journalist->id()->id())
-                                ),
-                            'photo' => $this->photoUrl($journalist),
-                            'departments' => $departments,
-
-
+                    foreach ($journalist->departments() as $department) {
+                        $departments[] = [
+                            'id' => $department->id()->id(),
+                            'name' => $department->name(),
                         ];
                     }
 
+                    $signatures[] = [
+                        'journalistId' => $journalist->id()->id(),
+                        'aliasId' => $alias->id()->id(),
+                        'name' => $alias->name(),
+                        'url' => $this->journalistUrl($alias, $this->section, $journalist),
+                        'photo' => $this->photoUrl($journalist),
+                        'departments' => $departments,
+
+
+                    ];
                 }
             }
+
         }
 
         return $signatures;
+    }
+
+    private function journalistUrl(Alias $alias, Section $section, Journalist $journalist): string
+    {
+        if ($alias->private()){
+            return $this->generateUrl(
+                'https://%s.%s.%s/%s',
+                $this->section->isBlog() ? 'blog' : 'www',
+                $this->section->siteId(),
+                $this->section->getPath());
+        }
+
+            return  $this->generateUrl(
+            'https://%s.%s.%s/autores/%s/',
+            'www',
+            $this->section->siteId(),
+            sprintf('%s-%s', urlencode($journalist->name()), $journalist->id()->id())
+        );
     }
 
     private function photoUrl(Journalist $journalist) : string

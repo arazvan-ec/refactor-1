@@ -11,7 +11,7 @@ use Ec\Section\Domain\Model\Section;
  */
 interface AppsDataTransformer
 {
-    public function write(Editorial $editorial, Journalists $journalists, Section $section): AppsDataTransformer;
+    public function write(Editorial $editorial, array $journalists, Section $section): AppsDataTransformer;
 
     public function read(): array;
 }

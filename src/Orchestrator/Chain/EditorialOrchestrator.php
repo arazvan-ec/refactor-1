@@ -44,15 +44,16 @@ class EditorialOrchestrator implements Orchestrator
         if (null === $editorial->sourceEditorial()) {
             return $this->queryLegacyClient->findEditorialById($id);
         }
-
-        $journalists = $this->journalistFactory->buildJournalists();
-
+        $journalists = [];
         foreach ($editorial->signatures() as $signature) {
+
             $aliasId = $this->journalistFactory->buildAliasId($signature->id()->id());
             $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasId);
 
+
             if ($journalist->isActive() && $journalist->isVisible()) {
-                $journalists->addItem($journalist);
+                $key = strval($aliasId->id());
+                $journalists[($aliasId->id())] = $journalist;
             }
         }
 
