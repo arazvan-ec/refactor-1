@@ -52,8 +52,7 @@ class EditorialOrchestrator implements Orchestrator
 
 
             if ($journalist->isActive() && $journalist->isVisible()) {
-                $key = strval($aliasId->id());
-                $journalists[($aliasId->id())] = $journalist;
+                $journalists[$aliasId->id()] = $journalist;
             }
         }
 
