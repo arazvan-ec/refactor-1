@@ -2,16 +2,14 @@
 
 namespace App\Application\DataTransformer\Apps;
 
-use App\Infrastructure\Enum\SitesEnum;
+
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
-use Ec\Editorial\Domain\Model\Signature;
 use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
-use Ec\Journalist\Domain\Model\Journalists;
 use Ec\Section\Domain\Model\Section;
-use Thumbor\Url\BuilderFactory;
+
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
