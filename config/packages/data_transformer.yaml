@@ -4,14 +4,9 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    App\Application\DataTransformer\Apps\DetailsAppsDataTransformer:
-        class: App\Application\DataTransformer\Apps\DetailsAppsDataTransformer
-        arguments:
-            $extension: '%env(URL_ENV)%'
-            $thumborServerUrl: '%env(THUMBOR_SERVER_URL)%'
-            $thumborSecret: '%env(THUMBOR_SECRET_KEY)%'
-            $awsBucket: '%env(STATICS_AWS_BUCKET)%'
-
-
 
     App\Application\DataTransformer\Apps\AppsDataTransformer: '@App\Application\DataTransformer\Apps\DetailsAppsDataTransformer'
+
+
+
+

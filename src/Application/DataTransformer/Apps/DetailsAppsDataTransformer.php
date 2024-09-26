@@ -3,6 +3,7 @@
 namespace App\Application\DataTransformer\Apps;
 
 use App\Infrastructure\Enum\SitesEnum;
+use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\Signature;
@@ -24,16 +25,12 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     private array $journalists;
 
     private Section $section;
+    private Thumbor $thumbor;
 
 
-
-    public function __construct(string $extension, string $thumborServerUrl, string $thumborSecret, string $awsBucket)
+    public function __construct(string $extension,Thumbor $thumbor)
     {
-        $this->thumborServerUrl = $thumborServerUrl;
-        $this->thumborSecret = $thumborSecret;
-        $this->awsBucket = $awsBucket;
-        $this->thumborFactory = BuilderFactory::construct($thumborServerUrl, $thumborSecret);
-
+        $this->thumbor = $thumbor;
         $this->setExtension($extension);
     }
 
@@ -124,7 +121,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         if (!empty($journalist->photo())) {
             $photo = $journalist->photo();
         }
-       return $this->thumborFactory->url($this->createOriginalAWSImage($photo));
+       return $this->thumbor->createJournalistImage($photo);
 
 
     }
@@ -145,12 +142,5 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         ];
     }
 
-    private function createOriginalAWSImage(string $fileImage): string
-    {
-        $path1 = \substr($fileImage, 0, 3);
-        $path2 = \substr($fileImage, 3, 3);
-        $path3 = \substr($fileImage, 6, 3);
 
-        return $this->awsBucket."/journalist/{$path1}/{$path2}/{$path3}/{$fileImage}";
-    }
 }
