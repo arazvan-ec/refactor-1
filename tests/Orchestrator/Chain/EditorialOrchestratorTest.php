@@ -5,14 +5,24 @@
 
 namespace App\Tests\Orchestrator\Chain;
 
+use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Orchestrator\Chain\EditorialOrchestrator;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
+use Ec\Editorial\Domain\Model\Signature;
+use Ec\Editorial\Domain\Model\SignatureId;
+use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Editorial\Domain\Model\SourceEditorial;
 use Ec\Editorial\Domain\Model\SourceEditorialId;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
+use Ec\Journalist\Domain\Model\AliasId;
+use Ec\Journalist\Domain\Model\Journalist;
+use Ec\Journalist\Domain\Model\JournalistFactory;
+use Ec\Journalist\Domain\Model\JournalistId;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
+use Ec\Section\Domain\Model\QuerySectionClient;
+use Ec\Section\Domain\Model\Section;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,33 +43,66 @@ class EditorialOrchestratorTest extends TestCase
 
     private EditorialOrchestrator $editorialOrchestrator;
 
+    /** @var QuerySectionClient|MockObject */
+    private QuerySectionClient $querySectionClient;
+
+    /** @var JournalistFactory|MockObject */
+    private JournalistFactory $journalistFactory;
+
+    /** @var AppsDataTransformer|MockObject */
+    private AppsDataTransformer $appsDataTransformer;
+
     protected function setUp(): void
     {
         $this->queryEditorialClient = $this->createMock(QueryEditorialClient::class);
         $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
-        $this->editorialOrchestrator = new EditorialOrchestrator($this->queryLegacyClient, $this->queryEditorialClient);
+        $this->queryJournalistClient = $this->createMock(QueryJournalistClient::class);
+        $this->querySectionClient = $this->createMock(QuerySectionClient::class);
+        $this->journalistFactory = $this->createMock(JournalistFactory::class);
+        $this->appsDataTransformer = $this->createMock(AppsDataTransformer::class);
+
+        $this->editorialOrchestrator = new EditorialOrchestrator(
+            $this->queryLegacyClient,
+            $this->queryEditorialClient,
+            $this->queryJournalistClient,
+            $this->querySectionClient,
+            $this->journalistFactory,
+            $this->appsDataTransformer
+        );
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
 
-        unset($this->queryEditorialClient, $this->queryLegacyClient, $this->editorialOrchestrator);
+        unset(
+            $this->queryEditorialClient,
+            $this->queryLegacyClient,
+            $this->editorialOrchestrator,
+            $this->querySectionClient,
+            $this->journalistFactory,
+            $this->appsDataTransformer
+        );
     }
 
     /**
      * @test
      */
-    public function executeShouldReturnEditorialFromEditorialClient(): void
+    public function executeShouldReturnCorrectData(): void
     {
         $id = '12345';
         $editorial = $this->createMock(Editorial::class);
         $sourceEditorial = $this->createMock(SourceEditorial::class);
         $sourceEditorialId = $this->createMock(SourceEditorialId::class);
         $editorialId = $this->createMock(EditorialId::class);
+        $signature = $this->createMock(Signature::class);
+        $signatureId = $this->createMock(SignatureId::class);
+        $aliasId = $this->createMock(AliasId::class);
+        $journalist = $this->createMock(Journalist::class);
+        $journalistId = $this->createMock(JournalistId::class);
+        $section = $this->createMock(Section::class);
 
         $editorialId
-            ->expects($this->once())
             ->method('id')
             ->willReturn($id);
 
@@ -72,14 +115,107 @@ class EditorialOrchestratorTest extends TestCase
             ->willReturn($sourceEditorialId);
 
         $editorial
-            ->expects($this->once())
             ->method('sourceEditorial')
             ->willReturn($sourceEditorial);
 
         $editorial
-            ->expects($this->once())
             ->method('id')
             ->willReturn($editorialId);
+
+        $signatureId
+            ->method('id')
+            ->willReturn('signature-id');
+
+        $signature
+            ->method('id')
+            ->willReturn($signatureId);
+
+        $signatures = new Signatures();
+        $signatures->addItem($signature);
+
+        $editorial
+            ->expects(self::once())
+            ->method('signatures')
+            ->willReturn($signatures);
+
+        $journalistId
+            ->method('id')
+            ->willReturn('alias-id');
+
+        $journalist
+            ->method('id')
+            ->willReturn($journalistId);
+
+        $aliasId
+            ->method('id')
+            ->willReturn('7298');
+
+        $this->journalistFactory
+            ->expects($this->once())
+            ->method('buildAliasId')
+            ->with('signature-id')
+            ->willReturn($aliasId);
+
+        $journalist
+            ->expects($this->once())
+            ->method('isActive')
+            ->willReturn(true);
+
+        $journalist
+            ->expects($this->once())
+            ->method('isVisible')
+            ->willReturn(true);
+
+        $this->queryJournalistClient
+            ->expects($this->once())
+            ->method('findJournalistByAliasId')
+            ->with($aliasId)
+            ->willReturn($journalist);
+
+        $this->querySectionClient
+            ->expects($this->once())
+            ->method('findSectionById')
+            ->with($editorial->sectionId())
+            ->willReturn($section);
+
+        $expectedJournalists = [
+            '7298' => $journalist
+        ];
+
+        $this->appsDataTransformer
+            ->expects(self::any())
+            ->method('write')
+            ->with($editorial, $expectedJournalists, $section)
+            ->willReturnSelf();
+
+        $transformedData = [
+            'id' => '4416',
+            'signatures' => [
+                [
+                    'journalistId' => '2338',
+                    'aliasId' => '7298',
+                    'name' => 'Javier Bocanegra 1',
+                    'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
+                    'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
+                    'departments' => [
+                        [
+                            'id' => '11',
+                            'name' => 'Fin de semana',
+                        ],
+                    ],
+                ],
+            ],
+            'section' => [
+                'id' => '90',
+                'name' => 'Mercados',
+                'url' => 'https://www.elconfidencial.dev/mercados',
+            ],
+        ];
+
+        $this->appsDataTransformer
+            ->expects($this->once())
+            ->method('read')
+            ->willReturn($transformedData);
 
         $this->queryEditorialClient
             ->expects($this->once())
@@ -96,7 +232,7 @@ class EditorialOrchestratorTest extends TestCase
 
         $result = $this->editorialOrchestrator->execute($requestMock);
 
-        $this->assertSame(['editorial' => ['id' => $id]], $result);
+        $this->assertSame($transformedData, $result);
     }
 
     /**
