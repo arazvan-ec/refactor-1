@@ -9,6 +9,7 @@ use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
+use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
@@ -47,6 +48,7 @@ class EditorialOrchestrator implements Orchestrator
         $journalists = [];
         foreach ($editorial->signatures() as $signature) {
             $aliasId = $this->journalistFactory->buildAliasId($signature->id()->id());
+            /** @var Journalist $journalist */
             $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasId);
 
             if ($journalist->isActive() && $journalist->isVisible()) {

@@ -41,6 +41,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         $this->setExtension($extension);
     }
 
+    /**
+     * @param Journalist[] $journalists
+     */
     public function write(Editorial $editorial, array $journalists, Section $section): DetailsAppsDataTransformer
     {
         $this->editorial = $editorial;
