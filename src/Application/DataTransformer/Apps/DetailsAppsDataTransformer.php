@@ -17,16 +17,26 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     use UrlGeneratorTrait;
 
     private Editorial $editorial;
+
+    /** @var Journalist[] */
     private array $journalists;
 
     private Section $section;
+
+    private string $thumborServerUrl;
+
+    private string $thumborSecret;
+
+    private string $awsBucket;
+
+    private BuilderFactory $thumborFactory;
 
     public function __construct(string $extension, string $thumborServerUrl, string $thumborSecret, string $awsBucket)
     {
         $this->thumborServerUrl = $thumborServerUrl;
         $this->thumborSecret = $thumborSecret;
         $this->awsBucket = $awsBucket;
-        $this->thumborFactory = BuilderFactory::construct($thumborServerUrl, $thumborSecret);
+        $this->thumborFactory = BuilderFactory::construct($this->thumborServerUrl, $this->thumborSecret);
 
         $this->setExtension($extension);
     }
@@ -49,11 +59,17 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         return $editorial;
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function transformerEditorial(): array
     {
         return ['id' => $this->editorial->id()->id()];
     }
 
+    /**
+     * @return array<int<0, max>, array<string, mixed>>
+     */
     private function transformerJournalists(): array
     {
         $signatures = [];
@@ -119,6 +135,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         return $this->thumborFactory->url($this->createOriginalAWSImage($photo));
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function transformerSection(): array
     {
         $url = $this->generateUrl(

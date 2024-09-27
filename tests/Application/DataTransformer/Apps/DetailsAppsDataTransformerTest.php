@@ -3,7 +3,6 @@
 namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\DetailsAppsDataTransformer;
-use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Journalist\Domain\Model\Alias;
@@ -21,7 +20,6 @@ use PHPUnit\Framework\TestCase;
 class DetailsAppsDataTransformerTest extends TestCase
 {
     private DetailsAppsDataTransformer $transformer;
-    private Thumbor $thumbor;
 
     protected function setUp(): void
     {
@@ -29,7 +27,6 @@ class DetailsAppsDataTransformerTest extends TestCase
         $thumborSecret = 'thumbor-secret';
         $awsBucket = 'aws-bucket';
 
-        $this->thumbor = $this->createMock(Thumbor::class);
         $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket);
     }
 

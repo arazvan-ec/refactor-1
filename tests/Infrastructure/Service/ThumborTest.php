@@ -21,7 +21,7 @@ class ThumborTest extends TestCase
     /**
      * @test
      */
-    public function testCreateJournalistImage()
+    public function createJournalistImage(): void
     {
         $fileImage = '123456789.jpg';
         $expectedPath = $this->awsBucket.'/journalist/123/456/789/'.$fileImage;
