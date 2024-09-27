@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\Service;
 
-
 use Thumbor\Url\BuilderFactory;
 
 /**
@@ -25,7 +24,7 @@ class Thumbor
         $path2 = \substr($fileImage, 3, 3);
         $path3 = \substr($fileImage, 6, 3);
 
-        $path=  $this->awsBucket."/journalist/{$path1}/{$path2}/{$path3}/{$fileImage}";
+        $path =  $this->awsBucket."/journalist/{$path1}/{$path2}/{$path3}/{$fileImage}";
 
         return $this->thumborFactory->url($path);
     }

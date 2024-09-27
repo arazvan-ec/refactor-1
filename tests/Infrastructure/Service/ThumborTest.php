@@ -24,7 +24,7 @@ class ThumborTest extends TestCase
     public function testCreateJournalistImage()
     {
         $fileImage = '123456789.jpg';
-        $expectedPath = $this->awsBucket . '/journalist/123/456/789/' . $fileImage;
+        $expectedPath = $this->awsBucket.'/journalist/123/456/789/'.$fileImage;
 
         $builderFactoryMock = $this->createMock(BuilderFactory::class);
         $builderFactoryMock->method('url')->with($expectedPath)->willReturn('http://thumbor-url');

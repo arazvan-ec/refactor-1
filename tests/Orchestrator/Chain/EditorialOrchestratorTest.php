@@ -179,7 +179,7 @@ class EditorialOrchestratorTest extends TestCase
             ->willReturn($section);
 
         $expectedJournalists = [
-            '7298' => $journalist
+            '7298' => $journalist,
         ];
 
         $this->appsDataTransformer

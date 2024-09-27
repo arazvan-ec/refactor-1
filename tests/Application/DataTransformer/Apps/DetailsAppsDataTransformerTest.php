@@ -17,7 +17,6 @@ use Ec\Journalist\Domain\Model\JournalistId;
 use Ec\Section\Domain\Model\Section;
 use Ec\Section\Domain\Model\SectionId;
 use PHPUnit\Framework\TestCase;
-use Thumbor\Url\BuilderFactory;
 
 class DetailsAppsDataTransformerTest extends TestCase
 {
@@ -134,7 +133,7 @@ class DetailsAppsDataTransformerTest extends TestCase
             'https://www.elconfidencial.dev/autores/JournalistName-'.$journalist->id()->id().'/',
             $result['signatures'][0]['url']
         );
-        if ($method === 'blogPhoto') {
+        if ('blogPhoto' === $method) {
             $this->assertEquals(
                 'https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg',
                 $result['signatures'][0]['photo']
@@ -213,7 +212,7 @@ class DetailsAppsDataTransformerTest extends TestCase
             'https://www.elconfidencial.dev/section-path',
             $result['signatures'][0]['url']
         );
-        if ($method === 'blogPhoto') {
+        if ('blogPhoto' === $method) {
             $this->assertEquals(
                 'https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg',
                 $result['signatures'][0]['photo']
