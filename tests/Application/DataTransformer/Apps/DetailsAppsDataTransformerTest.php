@@ -5,9 +5,17 @@ namespace App\Tests\Application\DataTransformer\Apps;
 use App\Application\DataTransformer\Apps\DetailsAppsDataTransformer;
 use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Editorial;
+use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Journalist\Domain\Model\Alias;
+use Ec\Journalist\Domain\Model\Aliases;
+use Ec\Journalist\Domain\Model\AliasId;
+use Ec\Journalist\Domain\Model\Department;
+use Ec\Journalist\Domain\Model\DepartmentId;
+use Ec\Journalist\Domain\Model\Departments;
 use Ec\Journalist\Domain\Model\Journalist;
+use Ec\Journalist\Domain\Model\JournalistId;
 use Ec\Section\Domain\Model\Section;
+use Ec\Section\Domain\Model\SectionId;
 use PHPUnit\Framework\TestCase;
 
 class DetailsAppsDataTransformerTest extends TestCase
@@ -17,11 +25,18 @@ class DetailsAppsDataTransformerTest extends TestCase
 
     protected function setUp(): void
     {
+        $thumborServerUrl = 'https://thumbor.server.url';
+        $thumborSecret = 'thumbor-secret';
+        $awsBucket = 'aws-bucket';
+
         $this->thumbor = $this->createMock(Thumbor::class);
-        $this->transformer = new DetailsAppsDataTransformer('jpg', $this->thumbor);
+        $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket);
     }
 
-    public function testWriteAndRead()
+    /**
+     * @test
+     */
+    public function testWriteAndRead(): void
     {
         $editorial = $this->createMock(Editorial::class);
         $journalist = $this->createMock(Journalist::class);
@@ -38,7 +53,10 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertArrayHasKey('section', $result);
     }
 
-    public function testTransformerEditorial()
+    /**
+     * @test
+     */
+    public function testTransformerEditorial(): void
     {
         $editorial = $this->createMock(Editorial::class);
         $editorialId = $this->createMock(EditorialId::class);
@@ -52,40 +70,92 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals('12345', $result['id']);
     }
 
-    public function testTransformerJournalists()
+    /**
+     * @test
+     */
+    public function testTransformerJournalists(): void
     {
-        $journalist = $this->createMock(Journalist::class);
+        $aliasId = $this->createMock(AliasId::class);
+        $aliasId->method('id')->willReturn('aliasId');
+
         $alias = $this->createMock(Alias::class);
-        $aliasId = 'aliasId';
-
-        $journalist->method('aliases')->willReturn([$alias]);
         $alias->method('id')->willReturn($aliasId);
-        $alias->method('name')->willReturn('John Doe');
+        $alias->method('name')->willReturn('Alias Name');
+        $alias->method('private')->willReturn(false);
 
-        $this->thumbor->method('createJournalistImage')->willReturn('http://image.url');
+        $departmentId = $this->createMock(DepartmentId::class);
+        $departmentId->method('id')->willReturn('departmentId');
 
-        $this->transformer->write($this->createMock(Editorial::class), [$aliasId => $journalist], $this->createMock(Section::class));
+        $department = $this->createMock(Department::class);
+        $department->method('id')->willReturn($departmentId);
+        $department->method('name')->willReturn('Department Name');
+
+        $aliases = new Aliases();
+        $aliases->addAlias($alias);
+
+        $departments = new Departments();
+        $departments->addDepartment($department);
+
+        $journalistId = $this->createMock(JournalistId::class);
+        $journalistId->method('id')->willReturn('journalistId');
+
+        $journalist = $this->createMock(Journalist::class);
+        $journalist->method('id')->willReturn($journalistId);
+        $journalist->method('name')->willReturn('JournalistName');
+        $journalist->method('aliases')->willReturn($aliases);
+        $journalist->method('departments')->willReturn($departments);
+
+        $journalists = ['aliasId' => $journalist];
+
+        $sectionId = $this->createMock(SectionId::class);
+        $sectionId->method('id')->willReturn('sectionId');
+
+        $section = $this->createMock(Section::class);
+        $section->method('id')->willReturn($sectionId);
+        $section->method('name')->willReturn('SectionName');
+        $section->method('siteId')->willReturn('siteId');
+        $section->method('isBlog')->willReturn(false);
+        $section->method('getPath')->willReturn('section-path');
+
+        $editorial = $this->createMock(Editorial::class);
+
+        $this->transformer->write($editorial, $journalists, $section);
         $result = $this->transformer->read();
 
-        $this->assertNotEmpty($result['signatures']);
-        $this->assertEquals('John Doe', $result['signatures'][0]['name']);
-        $this->assertEquals('http://image.url', $result['signatures'][0]['photo']);
+        $this->assertArrayHasKey('signatures', $result);
+        $this->assertEquals($journalist->id()->id(), $result['signatures'][0]['journalistId']);
+        $this->assertEquals($aliasId->id(), $result['signatures'][0]['aliasId']);
+        $this->assertEquals($alias->name(), $result['signatures'][0]['name']);
+        $this->assertEquals(
+            'https://www.elconfidencial.dev/autores/JournalistName-'.$journalist->id()->id().'/',
+            $result['signatures'][0]['url']
+        );
+        $this->assertArrayHasKey('departments', $result['signatures'][0]);
+        $this->assertEquals('departmentId', $result['signatures'][0]['departments'][0]['id']);
+        $this->assertEquals('Department Name', $result['signatures'][0]['departments'][0]['name']);
     }
 
-    public function testTransformerSection()
+    /**
+     * @test
+     */
+    public function testTransformerSection(): void
     {
         $section = $this->createMock(Section::class);
-        $section->method('id')->willReturn('sectionId');
+        $sectionId = $this->createMock(SectionId::class);
+        $section->method('id')->willReturn($sectionId);
         $section->method('name')->willReturn('Section Name');
         $section->method('getPath')->willReturn('section-path');
         $section->method('siteId')->willReturn('siteId');
         $section->method('isBlog')->willReturn(false);
+        $editorial = $this->createMock(Editorial::class);
+        $journalist = $this->createMock(Journalist::class);
+        $journalists = ['aliasId' => $journalist];
 
-        $this->transformer->write($this->createMock(Editorial::class), [], $section);
+        $this->transformer->write($editorial, $journalists, $section);
         $result = $this->transformer->read();
 
-        $this->assertEquals('sectionId', $result['section']['id']);
-        $this->assertEquals('Section Name', $result['section']['name']);
-        $this->assertEquals('https://www.siteId.section-path', $result['section']['url']);
+        $this->assertEquals($sectionId, $result['section']['id']);
+        $this->assertEquals($section->name(), $result['section']['name']);
+        $this->assertEquals('https://www.elconfidencial.dev/section-path', $result['section']['url']);
     }
 }

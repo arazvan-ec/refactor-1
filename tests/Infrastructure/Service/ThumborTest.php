@@ -18,6 +18,9 @@ class ThumborTest extends TestCase
         $this->thumbor = new Thumbor($this->thumborServerUrl, $this->thumborSecret, $this->awsBucket);
     }
 
+    /**
+     * @test
+     */
     public function testCreateJournalistImage()
     {
         $fileImage = '123456789.jpg';
@@ -28,7 +31,6 @@ class ThumborTest extends TestCase
 
         $reflection = new \ReflectionClass($this->thumbor);
         $property = $reflection->getProperty('thumborFactory');
-        $property->setAccessible(true);
         $property->setValue($this->thumbor, $builderFactoryMock);
 
         $result = $this->thumbor->createJournalistImage($fileImage);

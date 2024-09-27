@@ -10,7 +10,6 @@ use Thumbor\Url\BuilderFactory;
  */
 class Thumbor
 {
-
     private string $awsBucket;
     private BuilderFactory $thumborFactory;
 
@@ -19,7 +18,6 @@ class Thumbor
         $this->awsBucket = $awsBucket;
         $this->thumborFactory = BuilderFactory::construct($thumborServerUrl, $thumborSecret);
     }
-
 
     public function createJournalistImage(string $fileImage): string
     {
@@ -31,5 +29,4 @@ class Thumbor
 
         return $this->thumborFactory->url($path);
     }
-
 }
