@@ -2,17 +2,3 @@ getEditorialById:
     path: /editorials/{id}
     controller: App\Controller\V1\EditorialController::getEditorialById
     methods: GET
-
-sectionUrl:
-    path: /{path}
-    methods: GET
-    host: "{subdomain}.{hostname}.{tld}"
-    schemes: [http, https]
-    requirements:
-        subdomain: "www|blog"
-        hostname: "elconfidencial|vanitatis.elconfidencial|alimente.elconfidencial"
-        path: ".+"
-        tld: "local|dev|pre|com|ims"
-    defaults:
-        subdomain: "www"
-        hostname: "elconfidencial"
