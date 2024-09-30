@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc48de9c5d4f3fcd8055c4b2b7ab4146",
+    "content-hash": "38cd659aee3cf42c5fa4b3e1ef8c05cb",
     "packages": [
         {
             "name": "99designs/phumbor",
@@ -2176,16 +2176,16 @@
         },
         {
             "name": "ec/section-domain",
-            "version": "v1.4.0-alpha2",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ecawesomemakers/section-domain.git",
-                "reference": "8dae44ddb5a83fad8586db27f351a2237ad8229c"
+                "reference": "c942504b461fffb27771a16bc0ec55bf07702e9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/section-domain/get/8dae44ddb5a83fad8586db27f351a2237ad8229c.zip",
-                "reference": "8dae44ddb5a83fad8586db27f351a2237ad8229c",
+                "url": "https://bitbucket.org/ecawesomemakers/section-domain/get/c942504b461fffb27771a16bc0ec55bf07702e9b.zip",
+                "reference": "c942504b461fffb27771a16bc0ec55bf07702e9b",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2233,9 +2233,9 @@
             "description": "Section Domain Base",
             "homepage": "https://bitbucket.org/ecawesomemakers/section-domain",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/section-domain/src/8dae44ddb5a83fad8586db27f351a2237ad8229c/?at=v1.4.0-alpha2"
+                "source": "https://bitbucket.org/ecawesomemakers/section-domain/src/c942504b461fffb27771a16bc0ec55bf07702e9b/?at=v1.4.0"
             },
-            "time": "2024-09-25T07:04:45+00:00"
+            "time": "2024-09-25T08:02:02+00:00"
         },
         {
             "name": "ec/service-client",
@@ -13392,7 +13392,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
         "roave/security-advisories": 20
     },
