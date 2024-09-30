@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bcafc662df134ce2dfbde9e1df9528f8",
+    "content-hash": "dc48de9c5d4f3fcd8055c4b2b7ab4146",
     "packages": [
         {
             "name": "99designs/phumbor",
@@ -1378,16 +1378,16 @@
         },
         {
             "name": "ec/collection-library",
-            "version": "v1.4.0",
+            "version": "v1.5.1",
             "source": {
                 "type": "git",
-                "url": "git@bitbucket.org:ecawesomemakers/collection-library.git",
-                "reference": "3dc7e37fb2fd36787400a65ee1c31d2cbf16886c"
+                "url": "git@gitlab.com:ec-awesomemakers1/microservices/library/collection-library.git",
+                "reference": "f2b1945caf1494e71d4736ce6e48efc780135aa2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/collection-library/get/3dc7e37fb2fd36787400a65ee1c31d2cbf16886c.zip",
-                "reference": "3dc7e37fb2fd36787400a65ee1c31d2cbf16886c",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Flibrary%2Fcollection-library/repository/archive.zip?sha=f2b1945caf1494e71d4736ce6e48efc780135aa2",
+                "reference": "f2b1945caf1494e71d4736ce6e48efc780135aa2",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1429,24 +1429,24 @@
                 }
             ],
             "description": "Collection library",
-            "homepage": "https://bitbucket.org/ecawesomemakers/collection-library",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/collection-library/src/3dc7e37fb2fd36787400a65ee1c31d2cbf16886c/?at=v1.4.0"
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/library/collection-library/-/tree/v1.5.1",
+                "issues": "https://gitlab.com/ec-awesomemakers1/microservices/library/collection-library/-/issues"
             },
-            "time": "2023-04-05T10:33:02+00:00"
+            "time": "2024-09-27T10:27:03+00:00"
         },
         {
             "name": "ec/cqrs-library",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
-                "url": "git@bitbucket.org:ecawesomemakers/cqrs-library.git",
-                "reference": "f01b6bfa7e3602452799a5af8d4c4a2bd4e390f7"
+                "url": "git@gitlab.com:ec-awesomemakers1/microservices/library/cqrs-library.git",
+                "reference": "f95325bcd6020c51d3b61b5896758aa96099978e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/cqrs-library/get/f01b6bfa7e3602452799a5af8d4c4a2bd4e390f7.zip",
-                "reference": "f01b6bfa7e3602452799a5af8d4c4a2bd4e390f7",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Flibrary%2Fcqrs-library/repository/archive.zip?sha=f95325bcd6020c51d3b61b5896758aa96099978e",
+                "reference": "f95325bcd6020c51d3b61b5896758aa96099978e",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1460,10 +1460,10 @@
                 "symfony/messenger": ">=5.4"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.19",
-                "infection/infection": "^0.21.5",
-                "phpstan/phpstan": "^1.3",
-                "phpstan/phpstan-phpunit": "^1.0",
+                "friendsofphp/php-cs-fixer": "^3.64",
+                "infection/infection": "^0.26.6",
+                "phpstan/phpstan": "^1.12",
+                "phpstan/phpstan-phpunit": "^1.4",
                 "phpunit/phpunit": "^9.5",
                 "symfony/var-dumper": "^4.2"
             },
@@ -1498,11 +1498,11 @@
                 }
             ],
             "description": "CQRS Libraries Base",
-            "homepage": "https://bitbucket.org/ecawesomemakers/cqrs-library",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/cqrs-library/src/f01b6bfa7e3602452799a5af8d4c4a2bd4e390f7/?at=v1.2.0"
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/library/cqrs-library/-/tree/v1.3.0",
+                "issues": "https://gitlab.com/ec-awesomemakers1/microservices/library/cqrs-library/-/issues"
             },
-            "time": "2024-08-20T12:27:19+00:00"
+            "time": "2024-09-25T07:34:30+00:00"
         },
         {
             "name": "ec/editorial-client",
@@ -1721,16 +1721,16 @@
         },
         {
             "name": "ec/journalist-client",
-            "version": "v4.26.0-alpha2",
+            "version": "v4.26.0",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ecawesomemakers/journalist-client.git",
-                "reference": "29f3dcf8858d6ee903bc7b211869f2255bab4667"
+                "reference": "7d0e80a24d229bb1b0d1f277340e1200541b4dad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/journalist-client/get/29f3dcf8858d6ee903bc7b211869f2255bab4667.zip",
-                "reference": "29f3dcf8858d6ee903bc7b211869f2255bab4667",
+                "url": "https://bitbucket.org/ecawesomemakers/journalist-client/get/7d0e80a24d229bb1b0d1f277340e1200541b4dad.zip",
+                "reference": "7d0e80a24d229bb1b0d1f277340e1200541b4dad",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1742,7 +1742,7 @@
             "require": {
                 "beberlei/assert": "^3.0",
                 "ec/collection-library": "^1.0",
-                "ec/journalist-domain": "v1.3.0-alpha2",
+                "ec/journalist-domain": "^1.0",
                 "ec/mock-client": "^1.4",
                 "ec/service-client": "^2.0",
                 "ext-json": "*",
@@ -1796,22 +1796,22 @@
             "description": "Journalist Client",
             "homepage": "https://bitbucket.org/ecawesomemakers/journalist-client",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/journalist-client/src/29f3dcf8858d6ee903bc7b211869f2255bab4667/?at=v4.26.0-alpha2"
+                "source": "https://bitbucket.org/ecawesomemakers/journalist-client/src/7d0e80a24d229bb1b0d1f277340e1200541b4dad/?at=v4.26.0"
             },
-            "time": "2024-09-25T10:13:45+00:00"
+            "time": "2024-09-30T07:24:11+00:00"
         },
         {
             "name": "ec/journalist-domain",
-            "version": "v1.3.0-alpha2",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ecawesomemakers/journalist-domain.git",
-                "reference": "2594beaabf9b79f393af91140438b387bbd13a29"
+                "reference": "cbca38c7a7c6971198389b362ad18a89c1526a00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/journalist-domain/get/2594beaabf9b79f393af91140438b387bbd13a29.zip",
-                "reference": "2594beaabf9b79f393af91140438b387bbd13a29",
+                "url": "https://bitbucket.org/ecawesomemakers/journalist-domain/get/cbca38c7a7c6971198389b362ad18a89c1526a00.zip",
+                "reference": "cbca38c7a7c6971198389b362ad18a89c1526a00",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1870,9 +1870,9 @@
             "description": "Journalist Domain",
             "homepage": "https://bitbucket.org/ecawesomemakers/journalist-domain",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/journalist-domain/src/2594beaabf9b79f393af91140438b387bbd13a29/?at=v1.3.0-alpha2"
+                "source": "https://bitbucket.org/ecawesomemakers/journalist-domain/src/cbca38c7a7c6971198389b362ad18a89c1526a00/?at=v1.3.0"
             },
-            "time": "2024-09-25T10:11:19+00:00"
+            "time": "2024-09-30T07:17:24+00:00"
         },
         {
             "name": "ec/microservice-bundle",
