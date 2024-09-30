@@ -1,0 +1,15 @@
+services:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    Ec\Section\Infrastructure\Client\Http\QuerySectionClient:
+        lazy: true
+        shared: true
+        arguments:
+            $hostname: '%env(SECTION_CLIENT_HOST)%'
+
+    Ec\Section\Domain\Model\QuerySectionClient: '@Ec\Section\Infrastructure\Client\Http\QuerySectionClient'
+
+    Ec\Section\Application\Service\SectionFactory: ~
+    Ec\Section\Domain\Model\SectionFactory: '@Ec\Section\Application\Service\SectionFactory'
