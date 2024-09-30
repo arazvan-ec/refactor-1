@@ -15,3 +15,7 @@ services:
 
     Ec\Editorial\Application\Service\EditorialFactory: ~
     Ec\Editorial\Domain\Model\EditorialFactory: '@Ec\Editorial\Application\Service\EditorialFactory'
+
+
+
+
