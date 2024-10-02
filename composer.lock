@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
     "content-hash": "64d820035bff0b439655103efa6a073a",
-=======
-    "content-hash": "01758cdcd2e06460ebabff94641b2184",
->>>>>>> 9dfa376 (add new fields to transform editorial)
     "packages": [
         {
             "name": "99designs/phumbor",
@@ -1659,68 +1655,6 @@
                 "source": "https://bitbucket.org/ecawesomemakers/editorial-domain/src/bcae9d3b6b97dd2016ae16431720eb785d1a7553/?at=v1.2.0"
             },
             "time": "2024-09-20T10:52:36+00:00"
-        },
-        {
-            "name": "ec/encode-library",
-            "version": "v1.4.0",
-            "source": {
-                "type": "git",
-                "url": "git@bitbucket.org:ecawesomemakers/encode-library.git",
-                "reference": "671ce0d4dc4a57f10ca5e7a8ff2a07e98af724ec"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/encode-library/get/671ce0d4dc4a57f10ca5e7a8ff2a07e98af724ec.zip",
-                "reference": "671ce0d4dc4a57f10ca5e7a8ff2a07e98af724ec",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://repo.packagist.com/el-confidencial/dists/%package%/%version%/r%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "php": ">=7.2"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.15",
-                "infection/infection": "^0.15",
-                "phpstan/phpstan": "^0.12",
-                "phpstan/phpstan-phpunit": "^0.12",
-                "phpunit/phpunit": "^9.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Ec\\Encode\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Ec\\Encode\\Tests\\": "tests/"
-                }
-            },
-            "notification-url": "https://repo.packagist.com/el-confidencial/downloads/",
-            "license": [
-                "proprietary"
-            ],
-            "authors": [
-                {
-                    "name": "Antonio José Cerezo Aranda",
-                    "email": "acerezo@elconfidencial.com"
-                },
-                {
-                    "name": "Juan Manueal Santos Moreno",
-                    "email": "jmsantos@elconfidencial.com"
-                }
-            ],
-            "description": "Encode Library",
-            "homepage": "https://bitbucket.org/ecawesomemakers/encode-library",
-            "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/encode-library/src/671ce0d4dc4a57f10ca5e7a8ff2a07e98af724ec/?at=v1.4.0"
-            },
-            "time": "2021-11-23T08:12:34+00:00"
         },
         {
             "name": "ec/encode-library",
