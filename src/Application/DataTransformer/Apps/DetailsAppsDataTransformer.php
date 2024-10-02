@@ -4,9 +4,11 @@ namespace App\Application\DataTransformer\Apps;
 
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
+use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Section\Domain\Model\Section;
+use Ec\Tag\Domain\Model\Tag;
 use Thumbor\Url\BuilderFactory;
 
 /**
@@ -22,6 +24,8 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     private array $journalists;
 
     private Section $section;
+
+    private array $tags;
 
     private string $thumborServerUrl;
 
@@ -43,12 +47,18 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     /**
      * @param Journalist[] $journalists
+     * @param Tag[] $tags
      */
-    public function write(Editorial $editorial, array $journalists, Section $section): DetailsAppsDataTransformer
-    {
+    public function write(
+        Editorial $editorial,
+        array $journalists,
+        Section $section,
+        array $tags
+    ): DetailsAppsDataTransformer {
         $this->editorial = $editorial;
         $this->journalists = $journalists;
         $this->section = $section;
+        $this->tags = $tags;
 
         return $this;
     }
@@ -58,6 +68,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         $editorial = $this->transformerEditorial();
         $editorial['signatures'] = $this->transformerJournalists();
         $editorial['section'] = $this->transformerSection();
+        $editorial['tags'] = $this->transformerTags();
 
         return $editorial;
     }
@@ -121,7 +132,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             'https://%s.%s.%s/autores/%s/',
             'www',
             $this->section->siteId(),
-            sprintf('%s-%s', urlencode($journalist->name()), $journalist->id()->id())
+            sprintf('%s-%s', Encode::encodeUrl($journalist->name()), $journalist->id()->id())
         );
     }
 
@@ -155,6 +166,33 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             'name' => $this->section->name(),
             'url' => $url,
         ];
+    }
+
+    private function transformerTags(): array
+    {
+        $result = [];
+        foreach ($this->tags as $tag) {
+
+            $urlPath = sprintf(
+                '/tags/%s/%s-%s',
+                Encode::encodeUrl($tag->type()->name()),
+                Encode::encodeUrl($tag->name()),
+                $tag->id()->id(),
+            );
+
+            $result[] = [
+                'id' => $tag->id()->id(),
+                'name' => $tag->name(),
+                'url' => $this->generateUrl(
+                    'https://%s.%s.%s/%s',
+                    'www',
+                    $this->section->siteId(),
+                    $urlPath,
+                ),
+            ];
+        }
+
+        return $result;
     }
 
     private function createOriginalAWSImage(string $fileImage): string
