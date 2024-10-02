@@ -58,7 +58,13 @@ class EditorialOrchestrator implements Orchestrator
 
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
-        return $this->detailsAppsDataTransformer->write($editorial, $journalists, $section)->read();
+        $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
+
+        $editorial= $this->detailsAppsDataTransformer->write($editorial, $journalists, $section)->read();
+        $editorial['countComments']=(isset($comments['options']['totalrecords']))
+            ? $comments['options']['totalrecords'] : 0;
+
+        return $editorial;
     }
 
     public function canOrchestrate(): string
