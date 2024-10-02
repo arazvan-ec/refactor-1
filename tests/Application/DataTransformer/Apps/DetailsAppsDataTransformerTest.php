@@ -31,8 +31,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $awsBucket = 'aws-bucket';
 
 
-        $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
-        $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket,$this->queryLegacyClient);
+        $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket);
     }
 
     /**
@@ -83,8 +82,6 @@ class DetailsAppsDataTransformerTest extends TestCase
         $editorial->method('urlDate')->willReturn(new \DateTime('2023-01-01 00:00:00'));
         $editorial->method('body')->willReturn($this->createMock(Body::class));
 
-        $this->queryLegacyClient->method('findCommentsByEditorialId')->willReturn(['options' => ['totalrecords' => 10]]);
-
         $this->transformer->write($editorial, [], $this->createMock(Section::class));
         $result = $this->transformer->read();
 
@@ -93,7 +90,6 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals('2023-01-01 00:00:00', $result['publicationDate']);
         $this->assertEquals('2023-01-02 00:00:00', $result['endOn']);
         $this->assertEquals('registry', $result['closingModeId']);
-        $this->assertEquals(10, $result['countComments']);
         $this->assertEquals(true, $result['indexable']);
         $this->assertEquals(false, $result['deleted']);
 
