@@ -9,6 +9,7 @@
         "ext-iconv": "*",
         "99designs/phumbor": "^1.2",
         "ec/editorial-client": "^1.0",
+        "ec/encode-library": "^1.0",
         "ec/journalist-client": "^4.0",
         "ec/microservice-bundle": "^1.0",
         "ec/section-client": "^2.0",
