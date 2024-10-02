@@ -3,8 +3,11 @@
 namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\DetailsAppsDataTransformer;
+use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
+use Ec\Editorial\Domain\Model\EditorialTitles;
 use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Aliases;
 use Ec\Journalist\Domain\Model\AliasId;
@@ -30,7 +33,9 @@ class DetailsAppsDataTransformerTest extends TestCase
         $thumborSecret = 'thumbor-secret';
         $awsBucket = 'aws-bucket';
 
-        $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket);
+
+        $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
+        $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket,$this->queryLegacyClient);
     }
 
     /**
@@ -66,10 +71,44 @@ class DetailsAppsDataTransformerTest extends TestCase
         $editorial->method('id')->willReturn($editorialId);
         $editorialId->method('id')->willReturn('12345');
 
+        $editorial->method('editorialType')->willReturn('news');
+        $editorial->method('editorialTitles')->willReturn($this->createMock(EditorialTitles::class));
+        $editorial->method('lead')->willReturn('Lead text');
+        $editorial->method('publicationDate')->willReturn(new \DateTime('2023-01-01 00:00:00'));
+        $editorial->method('endOn')->willReturn(new \DateTime('2023-01-02 00:00:00'));
+        $editorial->method('indexed')->willReturn(true);
+        $editorial->method('isDeleted')->willReturn(false);
+        $editorial->method('isPublished')->willReturn(true);
+        $editorial->method('closingModeId')->willReturn('1');
+        $editorial->method('canComment')->willReturn(true);
+        $editorial->method('isBrand')->willReturn(false);
+        $editorial->method('isAmazonOnsite')->willReturn(false);
+        $editorial->method('contentType')->willReturn('article');
+        $editorial->method('canonicalEditorialId')->willReturn('54321');
+        $editorial->method('urlDate')->willReturn(new \DateTime('2023-01-01 00:00:00'));
+        $editorial->method('body')->willReturn($this->createMock(Body::class));
+
+        $this->queryLegacyClient->method('findCommentsByEditorialId')->willReturn(['options' => ['totalrecords' => 10]]);
+
         $this->transformer->write($editorial, [], $this->createMock(Section::class), []);
         $result = $this->transformer->read();
 
         $this->assertEquals('12345', $result['id']);
+        $this->assertEquals('Lead text', $result['lead']);
+        $this->assertEquals('2023-01-01 00:00:00', $result['publicationDate']);
+        $this->assertEquals('2023-01-02 00:00:00', $result['endOn']);
+        $this->assertEquals('registry', $result['closingModeId']);
+        $this->assertEquals(10, $result['countComments']);
+        $this->assertEquals(true, $result['indexable']);
+        $this->assertEquals(false, $result['deleted']);
+
+        $this->assertEquals(true, $result['published']);
+        $this->assertEquals(true, $result['commentable']);
+        $this->assertEquals(false, $result['isAmazonOnsite']);
+        $this->assertEquals('article', $result['contentType']);
+        $this->assertEquals('54321', $result['canonicalEditorialId']);
+        $this->assertEquals('2023-01-01 00:00:00', $result['urlDate']);
+
     }
 
     /**
