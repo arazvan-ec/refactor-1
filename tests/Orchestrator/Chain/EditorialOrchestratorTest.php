@@ -238,9 +238,9 @@ class EditorialOrchestratorTest extends TestCase
                 [
                     'id' => '15919',
                     'name' => 'Bolsas',
-                    'url' => 'https://www.elconfidencial.dev/tags/temas/bolsas-15919'
-                ]
-            ]
+                    'url' => 'https://www.elconfidencial.dev/tags/temas/bolsas-15919',
+                ],
+            ],
         ];
 
         $this->appsDataTransformer

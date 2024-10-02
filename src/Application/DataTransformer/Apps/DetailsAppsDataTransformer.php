@@ -48,13 +48,13 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     /**
      * @param Journalist[] $journalists
-     * @param Tag[] $tags
+     * @param Tag[]        $tags
      */
     public function write(
         Editorial $editorial,
         array $journalists,
         Section $section,
-        array $tags
+        array $tags,
     ): DetailsAppsDataTransformer {
         $this->editorial = $editorial;
         $this->journalists = $journalists;
@@ -169,6 +169,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         ];
     }
 
+    /**
+     * @return array<int<0, max>, array<string, mixed>>
+     */
     private function transformerTags(): array
     {
         $result = [];
