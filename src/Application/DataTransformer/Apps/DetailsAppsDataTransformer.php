@@ -2,7 +2,6 @@
 
 namespace App\Application\DataTransformer\Apps;
 
-use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Enum\ClossingModeEnum;
 use App\Infrastructure\Enum\EditorialTypesEnum;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
@@ -44,7 +43,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         string $thumborServerUrl,
         string $thumborSecret,
         string $awsBucket,
-        private readonly QueryLegacyClient $queryLegacyClient,
     )
     {
 
@@ -89,9 +87,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
      */
     private function transformerEditorial(): array
     {
-        $comments = $this->queryLegacyClient->findCommentsByEditorialId($this->editorial->id()->id());
-
-
         $editorialType = EditorialTypesEnum::getNameById($this->editorial->editorialType());
 
         return
@@ -124,9 +119,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'ended' => 'sin definir',
                 'urlDate' => $this->editorial->urlDate()->format('Y-m-d H:i:s'),
                 'countWords' => $this->editorial->body()->countWords(),
-                'countComments' =>
-                    (isset($comments['options']['totalrecords']))
-                        ? $comments['options']['totalrecords'] : 0
 
             ];
     }

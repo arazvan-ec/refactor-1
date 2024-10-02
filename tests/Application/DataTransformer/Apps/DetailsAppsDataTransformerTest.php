@@ -98,7 +98,6 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals('2023-01-01 00:00:00', $result['publicationDate']);
         $this->assertEquals('2023-01-02 00:00:00', $result['endOn']);
         $this->assertEquals('registry', $result['closingModeId']);
-        $this->assertEquals(10, $result['countComments']);
         $this->assertEquals(true, $result['indexable']);
         $this->assertEquals(false, $result['deleted']);
 

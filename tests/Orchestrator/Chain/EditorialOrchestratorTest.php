@@ -234,6 +234,7 @@ class EditorialOrchestratorTest extends TestCase
                 'name' => 'Mercados',
                 'url' => 'https://www.elconfidencial.dev/mercados',
             ],
+            'countComments' => 0,
             'tags' => [
                 [
                     'id' => '15919',
@@ -253,6 +254,13 @@ class EditorialOrchestratorTest extends TestCase
             ->method('findEditorialById')
             ->with($id)
             ->willReturn($editorial);
+
+        $this->queryLegacyClient
+            ->expects($this->once())
+            ->method('findCommentsByEditorialId')
+            ->with($id)
+            ->willReturn(['options' => ['totalrecords' => 0]]);
+
 
         $requestMock = $this->createMock(Request::class);
         $requestMock
