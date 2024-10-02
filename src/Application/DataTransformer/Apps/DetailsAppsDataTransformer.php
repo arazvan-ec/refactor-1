@@ -113,12 +113,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'ended' => 'sin definir',
                 'urlDate' => $this->editorial->urlDate()->format('Y-m-d H:i:s'),
                 'countWords' => $this->editorial->body()->countWords(),
-                'countComments' => $comments['options']['totalrecords'],
-
-
-
-
-
+                'countComments' =>
+                    (isset($comments['options']['totalrecords']))
+                        ? $comments['options']['totalrecords'] : 0
 
             ];
     }
