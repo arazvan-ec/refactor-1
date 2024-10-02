@@ -14,7 +14,7 @@ interface AppsDataTransformer
 {
     /**
      * @param Journalist[] $journalists
-     * @param Tag[]        $tags
+     * @param Tag[] $tags
      */
     public function write(Editorial $editorial, array $journalists, Section $section, array $tags): AppsDataTransformer;
 
