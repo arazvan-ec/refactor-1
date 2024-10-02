@@ -13,6 +13,7 @@ use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
+use Ec\Tag\Domain\Model\QueryTagClient;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -27,6 +28,7 @@ class EditorialOrchestrator implements Orchestrator
         private readonly QuerySectionClient $querySectionClient,
         private readonly JournalistFactory $journalistFactory,
         private readonly AppsDataTransformer $detailsAppsDataTransformer,
+        private readonly QueryTagClient $queryTagClient,
     ) {
     }
 
@@ -58,7 +60,12 @@ class EditorialOrchestrator implements Orchestrator
 
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
-        return $this->detailsAppsDataTransformer->write($editorial, $journalists, $section)->read();
+        $tags = [];
+        foreach ($editorial->tags() as $tag) {
+            $tags[] = $this->queryTagClient->findTagById($tag->id());
+        }
+
+        return $this->detailsAppsDataTransformer->write($editorial, $journalists, $section, $tags)->read();
     }
 
     public function canOrchestrate(): string
