@@ -25,6 +25,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private Section $section;
 
+    /** @var Tag[] */
     private array $tags;
 
     private string $thumborServerUrl;

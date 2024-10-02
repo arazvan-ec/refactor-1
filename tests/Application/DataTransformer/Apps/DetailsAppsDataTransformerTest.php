@@ -17,6 +17,7 @@ use Ec\Section\Domain\Model\Section;
 use Ec\Section\Domain\Model\SectionId;
 use Ec\Tag\Domain\Model\Tag;
 use Ec\Tag\Domain\Model\TagId;
+use Ec\Tag\Domain\Model\TagType;
 use PHPUnit\Framework\TestCase;
 
 class DetailsAppsDataTransformerTest extends TestCase
@@ -270,12 +271,18 @@ class DetailsAppsDataTransformerTest extends TestCase
         $tagId->method('id')->willReturn('tagId');
         $tag->method('id')->willReturn($tagId);
         $tag->method('name')->willReturn('Tag Name');
+        $type = $this->createMock(TagType::class);
+        $type->method('name')->willReturn('Type Name');
+        $tag->method('type')->willReturn($type);
 
         $this->transformer->write($editorial, $journalists, $section, [$tag]);
         $result = $this->transformer->read();
 
         $this->assertEquals($tagId->id(), $result['tags'][0]['id']);
         $this->assertEquals($tag->name(), $result['tags'][0]['name']);
-        $this->assertEquals('https://www.elconfidencial.dev/tags//tag-name-tagId', $result['tags'][0]['url']);
+        $this->assertEquals(
+            'https://www.elconfidencial.dev/tags/type-name/tag-name-tagId',
+            $result['tags'][0]['url']
+        );
     }
 }
