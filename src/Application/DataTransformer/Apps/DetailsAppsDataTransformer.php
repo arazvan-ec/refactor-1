@@ -2,6 +2,9 @@
 
 namespace App\Application\DataTransformer\Apps;
 
+use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Infrastructure\Enum\ClossingModeEnum;
+use App\Infrastructure\Enum\EditorialTypesEnum;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
@@ -36,8 +39,15 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private BuilderFactory $thumborFactory;
 
-    public function __construct(string $extension, string $thumborServerUrl, string $thumborSecret, string $awsBucket)
+    public function __construct(
+        string $extension,
+        string $thumborServerUrl,
+        string $thumborSecret,
+        string $awsBucket,
+        private readonly QueryLegacyClient $queryLegacyClient,
+    )
     {
+
         $this->thumborServerUrl = $thumborServerUrl;
         $this->thumborSecret = $thumborSecret;
         $this->awsBucket = $awsBucket;
@@ -79,7 +89,49 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
      */
     private function transformerEditorial(): array
     {
-        return ['id' => $this->editorial->id()->id()];
+        $comments = $this->queryLegacyClient->findCommentsByEditorialId($this->editorial->id()->id());
+
+
+        $editorialType = EditorialTypesEnum::getNameById($this->editorial->editorialType());
+
+        return
+            [
+                'id' => $this->editorial->id()->id(),
+                'url' =>$this->editorialUrl(),
+                'titles' => [
+                    'title' => $this->editorial->editorialTitles()->title(),
+                    'preTitle' => $this->editorial->editorialTitles()->preTitle(),
+                    'urlTitle' => $this->editorial->editorialTitles()->urlTitle(),
+                    'mobileTitle' => $this->editorial->editorialTitles()->mobileTitle(),
+                ],
+                'lead' => $this->editorial->lead(),
+                'publicationDate' => $this->editorial->publicationDate()->format('Y-m-d H:i:s'),
+                'updatedOn' => $this->editorial->publicationDate()->format('Y-m-d H:i:s'),
+                'endOn' => $this->editorial->endOn()->format('Y-m-d H:i:s'),
+                'type' => [
+                    'id' =>$editorialType['id'],
+                    'name' => $editorialType['name'],
+                ],
+                'indexable' => $this->editorial->indexed(),
+                'deleted' => $this->editorial->isDeleted(),
+                'published' => $this->editorial->isPublished(),
+                'closingModeId' => ClossingModeEnum::getClosingModeById($this->editorial->closingModeId()),
+                'commentable' => $this->editorial->canComment(),
+                'isBrand' => $this->editorial->isBrand(),
+                'isAmazonOnsite' => $this->editorial->isAmazonOnsite(),
+                'contentType' => $this->editorial->contentType(),
+                'canonicalEditorialId' => $this->editorial->canonicalEditorialId(),
+                'ended' => 'sin definir',
+                'urlDate' => $this->editorial->urlDate()->format('Y-m-d H:i:s'),
+                'countWords' => $this->editorial->body()->countWords(),
+                'countComments' => $comments['options']['totalrecords'],
+
+
+
+
+
+
+            ];
     }
 
     /**
@@ -118,6 +170,23 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         return $signatures;
     }
 
+    private function editorialUrl()
+    {
+        $editorialPath =$this->section->getPath().'/'.
+            $this->editorial->publicationDate()->format('Y-m-d').'/'.
+            Encode::encodeUrl($this->editorial->editorialTitles()->urlTitle()).'_'.
+            $this->editorial->id()->id();
+
+        return $this->generateUrl(
+            'https://%s.%s.%s/%s',
+            $this->section->isBlog() ? 'blog' : 'www',
+            $this->section->siteId(),
+            $editorialPath
+
+        );
+
+
+    }
     private function journalistUrl(Alias $alias, Journalist $journalist): string
     {
         if ($alias->private()) {
