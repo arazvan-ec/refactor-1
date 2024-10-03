@@ -176,8 +176,7 @@ class DetailsAppsDataTransformerTest extends TestCase
             $this->thumbor
                 ->method('createJournalistImage')
                 ->willReturn('https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg');
-        }
-        else {
+        } else {
             $this->thumbor
                 ->method('createJournalistImage')
                 ->willReturn('https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg');
@@ -268,8 +267,7 @@ class DetailsAppsDataTransformerTest extends TestCase
             $this->thumbor
                 ->method('createJournalistImage')
                 ->willReturn('https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg');
-        }
-        else {
+        } else {
             $this->thumbor
                 ->method('createJournalistImage')
                 ->willReturn('https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg');

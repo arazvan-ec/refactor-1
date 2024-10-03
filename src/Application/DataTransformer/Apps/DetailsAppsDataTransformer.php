@@ -31,19 +31,11 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     /** @var Tag[] */
     private array $tags;
 
-    private string $thumborServerUrl;
-
-    private string $thumborSecret;
-
-    private string $awsBucket;
-
-    private BuilderFactory $thumborFactory;
-
     public function __construct(
         string $extension,
         private readonly Thumbor $thumbor,
     ) {
-         $this->setExtension($extension);
+        $this->setExtension($extension);
     }
 
     /**
@@ -245,6 +237,4 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
         return $result;
     }
-
-
 }
