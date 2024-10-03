@@ -66,7 +66,7 @@ class QueryLegacyClientTest extends TestCase
     /**
      * @test
      */
-    public function retrieveLandingShouldCallExecuteWithDefaultValuesAndReturnLandingModel(): void
+    public function retrieveEditorialShouldCallExecuteWithDefaultValuesAndReturnEditorialModel(): void
     {
         $id = '12345';
 
@@ -103,5 +103,27 @@ class QueryLegacyClientTest extends TestCase
         $responseMock->method('getStatusCode')->willReturn($statusCode);
 
         return $responseMock;
+    }
+
+    /**
+     * @test
+     */
+    public function findCommentsEditorialByIdShouldReturnCommentsArray(): void
+    {
+        $statusCode = 200;
+        $id = '12345';
+        $requestUrlExpected = self::HTTP_HOSTNAME_TEST.'/service/community/comments/editorial/'.$id.'/0/0/';
+        $responseData = [];
+
+        /** @var string $bodyResponse */
+        $bodyResponse = \json_encode($responseData, JSON_THROW_ON_ERROR);
+        $responseMock = $this->getResponseMock($statusCode, $bodyResponse);
+        $this->httpClient->addResponse($responseMock);
+
+        $result = $this->queryLegacyClient->findCommentsByEditorialId($id);
+        $request = $this->httpClient->getLastRequest();
+
+        static::assertSame($responseData, $result);
+        static::assertSame($requestUrlExpected, (string) $request->getUri());
     }
 }

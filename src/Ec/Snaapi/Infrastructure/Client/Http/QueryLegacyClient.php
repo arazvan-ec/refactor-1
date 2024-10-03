@@ -75,4 +75,27 @@ class QueryLegacyClient extends ServiceClient
     {
         return \json_decode($response->getBody()->__toString(), true);
     }
+
+    public function findCommentsByEditorialId(
+        string $editorialIdString,
+        bool $async = false,
+        bool $cached = false,
+        int $ttlCache = 60,
+    ): array {
+        $url = $this->buildUrl("/service/community/comments/editorial/{$editorialIdString}/0/0/");
+
+        $request = $this->createRequest('GET', $url, [
+            'Host' => $this->legacyHostHeader,
+        ]);
+
+        /** @var Promise $promise */
+        $promise = $this->execute($request, true, $cached, $ttlCache);
+
+        $promise = $promise->then($this->createCallback([$this, 'buildEditorialFromArray'], $request));
+
+        return $async ? $promise : $promise->wait(true);
+    }
+
+
+
 }
