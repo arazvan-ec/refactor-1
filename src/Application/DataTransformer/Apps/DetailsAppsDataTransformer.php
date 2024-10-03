@@ -118,7 +118,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'ended' => 'sin definir',
                 'urlDate' => $this->editorial->urlDate()->format('Y-m-d H:i:s'),
                 'countWords' => $this->editorial->body()->countWords(),
-
             ];
     }
 
@@ -158,7 +157,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         return $signatures;
     }
 
-    private function editorialUrl()
+    private function editorialUrl(): string
     {
         $editorialPath = $this->section->getPath().'/'.
             $this->editorial->publicationDate()->format('Y-m-d').'/'.
@@ -171,8 +170,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             $this->section->siteId(),
             $editorialPath
         );
-
-
     }
 
     private function journalistUrl(Alias $alias, Journalist $journalist): string

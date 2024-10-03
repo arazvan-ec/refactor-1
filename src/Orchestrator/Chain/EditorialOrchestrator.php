@@ -65,10 +65,9 @@ class EditorialOrchestrator implements Orchestrator
             $tags[] = $this->queryTagClient->findTagById($tag->id());
         }
 
-        return $this->detailsAppsDataTransformer->write($editorial, $journalists, $section, $tags)->read();
+        $editorial =  $this->detailsAppsDataTransformer->write($editorial, $journalists, $section, $tags)->read();
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
 
-        $editorial = $this->detailsAppsDataTransformer->write($editorial, $journalists, $section)->read();
         $editorial['countComments'] = (isset($comments['options']['totalrecords']))
             ? $comments['options']['totalrecords'] : 0;
 
