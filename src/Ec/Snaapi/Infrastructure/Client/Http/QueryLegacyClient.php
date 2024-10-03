@@ -95,7 +95,4 @@ class QueryLegacyClient extends ServiceClient
 
         return $async ? $promise : $promise->wait(true);
     }
-
-
-
 }

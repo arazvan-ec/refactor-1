@@ -35,7 +35,7 @@ class DetailsAppsDataTransformerTest extends TestCase
 
 
         $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
-        $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket,$this->queryLegacyClient);
+        $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket, $this->queryLegacyClient);
     }
 
     /**

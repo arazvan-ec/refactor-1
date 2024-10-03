@@ -7,8 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class ClossingModeEnumTest extends TestCase
 {
-
-
     /**
      * @test
      */

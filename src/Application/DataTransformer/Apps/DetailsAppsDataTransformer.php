@@ -43,8 +43,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         string $thumborServerUrl,
         string $thumborSecret,
         string $awsBucket,
-    )
-    {
+    ) {
 
         $this->thumborServerUrl = $thumborServerUrl;
         $this->thumborSecret = $thumborSecret;
@@ -92,7 +91,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         return
             [
                 'id' => $this->editorial->id()->id(),
-                'url' =>$this->editorialUrl(),
+                'url' => $this->editorialUrl(),
                 'titles' => [
                     'title' => $this->editorial->editorialTitles()->title(),
                     'preTitle' => $this->editorial->editorialTitles()->preTitle(),
@@ -104,7 +103,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'updatedOn' => $this->editorial->publicationDate()->format('Y-m-d H:i:s'),
                 'endOn' => $this->editorial->endOn()->format('Y-m-d H:i:s'),
                 'type' => [
-                    'id' =>$editorialType['id'],
+                    'id' => $editorialType['id'],
                     'name' => $editorialType['name'],
                 ],
                 'indexable' => $this->editorial->indexed(),
@@ -161,7 +160,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private function editorialUrl()
     {
-        $editorialPath =$this->section->getPath().'/'.
+        $editorialPath = $this->section->getPath().'/'.
             $this->editorial->publicationDate()->format('Y-m-d').'/'.
             Encode::encodeUrl($this->editorial->editorialTitles()->urlTitle()).'_'.
             $this->editorial->id()->id();
@@ -171,11 +170,11 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             $this->section->isBlog() ? 'blog' : 'www',
             $this->section->siteId(),
             $editorialPath
-
         );
 
 
     }
+
     private function journalistUrl(Alias $alias, Journalist $journalist): string
     {
         if ($alias->private()) {
