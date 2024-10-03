@@ -16,6 +16,8 @@ use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Editorial\Domain\Model\SourceEditorial;
 use Ec\Editorial\Domain\Model\SourceEditorialId;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
+use Ec\Editorial\Domain\Model\Tag;
+use Ec\Editorial\Domain\Model\Tags;
 use Ec\Journalist\Domain\Model\AliasId;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
@@ -23,6 +25,7 @@ use Ec\Journalist\Domain\Model\JournalistId;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
+use Ec\Tag\Domain\Model\QueryTagClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,6 +55,9 @@ class EditorialOrchestratorTest extends TestCase
     /** @var AppsDataTransformer|MockObject */
     private AppsDataTransformer $appsDataTransformer;
 
+    /** @var QueryTagClient|MockObject */
+    private QueryTagClient $queryTagClient;
+
     protected function setUp(): void
     {
         $this->queryEditorialClient = $this->createMock(QueryEditorialClient::class);
@@ -60,6 +66,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->querySectionClient = $this->createMock(QuerySectionClient::class);
         $this->journalistFactory = $this->createMock(JournalistFactory::class);
         $this->appsDataTransformer = $this->createMock(AppsDataTransformer::class);
+        $this->queryTagClient = $this->createMock(QueryTagClient::class);
 
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
@@ -67,7 +74,8 @@ class EditorialOrchestratorTest extends TestCase
             $this->queryJournalistClient,
             $this->querySectionClient,
             $this->journalistFactory,
-            $this->appsDataTransformer
+            $this->appsDataTransformer,
+            $this->queryTagClient
         );
     }
 
@@ -101,6 +109,8 @@ class EditorialOrchestratorTest extends TestCase
         $journalist = $this->createMock(Journalist::class);
         $journalistId = $this->createMock(JournalistId::class);
         $section = $this->createMock(Section::class);
+        $editorialTag = $this->createMock(Tag::class);
+        $tag = $this->createMock(\Ec\Tag\Domain\Model\Tag::class);
 
         $editorialId
             ->method('id')
@@ -132,6 +142,14 @@ class EditorialOrchestratorTest extends TestCase
 
         $signatures = new Signatures();
         $signatures->addItem($signature);
+
+        $tags = new Tags();
+        $tags->addItem($editorialTag);
+
+        $editorial
+            ->expects(self::once())
+            ->method('tags')
+            ->willReturn($tags);
 
         $editorial
             ->expects(self::once())
@@ -178,6 +196,12 @@ class EditorialOrchestratorTest extends TestCase
             ->with($editorial->sectionId())
             ->willReturn($section);
 
+        $this->queryTagClient
+            ->expects($this->once())
+            ->method('findTagById')
+            ->with($editorialTag->id()->id())
+            ->willReturn($tag);
+
         $expectedJournalists = [
             '7298' => $journalist,
         ];
@@ -185,7 +209,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->appsDataTransformer
             ->expects(self::any())
             ->method('write')
-            ->with($editorial, $expectedJournalists, $section)
+            ->with($editorial, $expectedJournalists, $section, [$tag])
             ->willReturnSelf();
 
         $transformedData = [
@@ -210,7 +234,14 @@ class EditorialOrchestratorTest extends TestCase
                 'name' => 'Mercados',
                 'url' => 'https://www.elconfidencial.dev/mercados',
             ],
-            'countComments' => 0
+            'countComments' => 0,
+            'tags' => [
+                [
+                    'id' => '15919',
+                    'name' => 'Bolsas',
+                    'url' => 'https://www.elconfidencial.dev/tags/temas/bolsas-15919',
+                ],
+            ],
         ];
 
         $this->appsDataTransformer

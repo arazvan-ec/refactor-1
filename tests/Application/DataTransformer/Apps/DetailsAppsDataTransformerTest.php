@@ -18,11 +18,18 @@ use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistId;
 use Ec\Section\Domain\Model\Section;
 use Ec\Section\Domain\Model\SectionId;
+use Ec\Tag\Domain\Model\Tag;
+use Ec\Tag\Domain\Model\TagId;
+use Ec\Tag\Domain\Model\TagType;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DetailsAppsDataTransformerTest extends TestCase
 {
     private DetailsAppsDataTransformer $transformer;
+
+    /** @var QueryLegacyClient|MockObject */
+    private QueryLegacyClient $queryLegacyClient;
 
     protected function setUp(): void
     {
@@ -30,7 +37,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $thumborSecret = 'thumbor-secret';
         $awsBucket = 'aws-bucket';
 
-
+        $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
         $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket);
     }
 
@@ -42,16 +49,18 @@ class DetailsAppsDataTransformerTest extends TestCase
         $editorial = $this->createMock(Editorial::class);
         $journalist = $this->createMock(Journalist::class);
         $section = $this->createMock(Section::class);
+        $tag = $this->createMock(Tag::class);
 
         $journalists = ['aliasId' => $journalist];
 
-        $this->transformer->write($editorial, $journalists, $section);
+        $this->transformer->write($editorial, $journalists, $section, [$tag]);
         $result = $this->transformer->read();
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('id', $result);
         $this->assertArrayHasKey('signatures', $result);
         $this->assertArrayHasKey('section', $result);
+        $this->assertArrayHasKey('tags', $result);
     }
 
     /**
@@ -82,7 +91,9 @@ class DetailsAppsDataTransformerTest extends TestCase
         $editorial->method('urlDate')->willReturn(new \DateTime('2023-01-01 00:00:00'));
         $editorial->method('body')->willReturn($this->createMock(Body::class));
 
-        $this->transformer->write($editorial, [], $this->createMock(Section::class));
+        $this->queryLegacyClient->method('findCommentsByEditorialId')->willReturn(['options' => ['totalrecords' => 10]]);
+
+        $this->transformer->write($editorial, [], $this->createMock(Section::class), []);
         $result = $this->transformer->read();
 
         $this->assertEquals('12345', $result['id']);
@@ -101,10 +112,6 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals('2023-01-01 00:00:00', $result['urlDate']);
 
     }
-
-
-
-
 
     /**
      * @test
@@ -157,8 +164,9 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section->method('getPath')->willReturn('section-path');
 
         $editorial = $this->createMock(Editorial::class);
+        $tag = $this->createMock(Tag::class);
 
-        $this->transformer->write($editorial, $journalists, $section);
+        $this->transformer->write($editorial, $journalists, $section, [$tag]);
         $result = $this->transformer->read();
 
         $this->assertArrayHasKey('signatures', $result);
@@ -166,7 +174,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals($aliasId->id(), $result['signatures'][0]['aliasId']);
         $this->assertEquals($alias->name(), $result['signatures'][0]['name']);
         $this->assertEquals(
-            'https://www.elconfidencial.dev/autores/JournalistName-'.$journalist->id()->id().'/',
+            'https://www.elconfidencial.dev/autores/journalistname-'.$journalist->id()->id().'/',
             $result['signatures'][0]['url']
         );
         if ('blogPhoto' === $method) {
@@ -236,8 +244,9 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section->method('getPath')->willReturn('section-path');
 
         $editorial = $this->createMock(Editorial::class);
+        $tag = $this->createMock(Tag::class);
 
-        $this->transformer->write($editorial, $journalists, $section);
+        $this->transformer->write($editorial, $journalists, $section, [$tag]);
         $result = $this->transformer->read();
 
         $this->assertArrayHasKey('signatures', $result);
@@ -279,12 +288,42 @@ class DetailsAppsDataTransformerTest extends TestCase
         $editorial = $this->createMock(Editorial::class);
         $journalist = $this->createMock(Journalist::class);
         $journalists = ['aliasId' => $journalist];
+        $tag = $this->createMock(Tag::class);
 
-        $this->transformer->write($editorial, $journalists, $section);
+        $this->transformer->write($editorial, $journalists, $section, [$tag]);
         $result = $this->transformer->read();
 
         $this->assertEquals($sectionId, $result['section']['id']);
         $this->assertEquals($section->name(), $result['section']['name']);
         $this->assertEquals('https://www.elconfidencial.dev/section-path', $result['section']['url']);
+    }
+
+    /**
+     * @test
+     */
+    public function transformerTagsShouldReturnCorrectTags(): void
+    {
+        $editorial = $this->createMock(Editorial::class);
+        $journalist = $this->createMock(Journalist::class);
+        $journalists = ['aliasId' => $journalist];
+        $section = $this->createMock(Section::class);
+        $tag = $this->createMock(Tag::class);
+        $tagId = $this->createMock(TagId::class);
+        $tagId->method('id')->willReturn('tagId');
+        $tag->method('id')->willReturn($tagId);
+        $tag->method('name')->willReturn('Tag Name');
+        $type = $this->createMock(TagType::class);
+        $type->method('name')->willReturn('Type Name');
+        $tag->method('type')->willReturn($type);
+
+        $this->transformer->write($editorial, $journalists, $section, [$tag]);
+        $result = $this->transformer->read();
+
+        $this->assertEquals($tagId->id(), $result['tags'][0]['id']);
+        $this->assertEquals($tag->name(), $result['tags'][0]['name']);
+        $this->assertEquals(
+            'https://www.elconfidencial.dev/tags/type-name/tag-name-tagId',
+            $result['tags'][0]['url']
+        );
     }
 }

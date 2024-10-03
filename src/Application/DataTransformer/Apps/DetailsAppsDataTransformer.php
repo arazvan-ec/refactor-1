@@ -10,6 +10,7 @@ use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Section\Domain\Model\Section;
+use Ec\Tag\Domain\Model\Tag;
 use Thumbor\Url\BuilderFactory;
 
 /**
@@ -26,6 +27,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private Section $section;
 
+    /** @var Tag[] */
+    private array $tags;
+
     private string $thumborServerUrl;
 
     private string $thumborSecret;
@@ -39,8 +43,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         string $thumborServerUrl,
         string $thumborSecret,
         string $awsBucket,
-    )
-    {
+    ) {
 
         $this->thumborServerUrl = $thumborServerUrl;
         $this->thumborSecret = $thumborSecret;
@@ -52,12 +55,18 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     /**
      * @param Journalist[] $journalists
+     * @param Tag[]        $tags
      */
-    public function write(Editorial $editorial, array $journalists, Section $section): DetailsAppsDataTransformer
-    {
+    public function write(
+        Editorial $editorial,
+        array $journalists,
+        Section $section,
+        array $tags,
+    ): DetailsAppsDataTransformer {
         $this->editorial = $editorial;
         $this->journalists = $journalists;
         $this->section = $section;
+        $this->tags = $tags;
 
         return $this;
     }
@@ -67,12 +76,13 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         $editorial = $this->transformerEditorial();
         $editorial['signatures'] = $this->transformerJournalists();
         $editorial['section'] = $this->transformerSection();
+        $editorial['tags'] = $this->transformerTags();
 
         return $editorial;
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<string, mixed>|bool|int|string>
      */
     private function transformerEditorial(): array
     {
@@ -81,7 +91,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         return
             [
                 'id' => $this->editorial->id()->id(),
-                'url' =>$this->editorialUrl(),
+                'url' => $this->editorialUrl(),
                 'titles' => [
                     'title' => $this->editorial->editorialTitles()->title(),
                     'preTitle' => $this->editorial->editorialTitles()->preTitle(),
@@ -93,7 +103,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'updatedOn' => $this->editorial->publicationDate()->format('Y-m-d H:i:s'),
                 'endOn' => $this->editorial->endOn()->format('Y-m-d H:i:s'),
                 'type' => [
-                    'id' =>$editorialType['id'],
+                    'id' => $editorialType['id'],
                     'name' => $editorialType['name'],
                 ],
                 'indexable' => $this->editorial->indexed(),
@@ -108,7 +118,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'ended' => 'sin definir',
                 'urlDate' => $this->editorial->urlDate()->format('Y-m-d H:i:s'),
                 'countWords' => $this->editorial->body()->countWords(),
-
             ];
     }
 
@@ -148,9 +157,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         return $signatures;
     }
 
-    private function editorialUrl()
+    private function editorialUrl(): string
     {
-        $editorialPath =$this->section->getPath().'/'.
+        $editorialPath = $this->section->getPath().'/'.
             $this->editorial->publicationDate()->format('Y-m-d').'/'.
             Encode::encodeUrl($this->editorial->editorialTitles()->urlTitle()).'_'.
             $this->editorial->id()->id();
@@ -160,11 +169,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             $this->section->isBlog() ? 'blog' : 'www',
             $this->section->siteId(),
             $editorialPath
-
         );
-
-
     }
+
     private function journalistUrl(Alias $alias, Journalist $journalist): string
     {
         if ($alias->private()) {
@@ -180,7 +187,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             'https://%s.%s.%s/autores/%s/',
             'www',
             $this->section->siteId(),
-            sprintf('%s-%s', urlencode($journalist->name()), $journalist->id()->id())
+            sprintf('%s-%s', Encode::encodeUrl($journalist->name()), $journalist->id()->id())
         );
     }
 
@@ -214,6 +221,36 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             'name' => $this->section->name(),
             'url' => $url,
         ];
+    }
+
+    /**
+     * @return array<int<0, max>, array<string, mixed>>
+     */
+    private function transformerTags(): array
+    {
+        $result = [];
+        foreach ($this->tags as $tag) {
+
+            $urlPath = sprintf(
+                '/tags/%s/%s-%s',
+                Encode::encodeUrl($tag->type()->name()),
+                Encode::encodeUrl($tag->name()),
+                $tag->id()->id(),
+            );
+
+            $result[] = [
+                'id' => $tag->id()->id(),
+                'name' => $tag->name(),
+                'url' => $this->generateUrl(
+                    'https://%s.%s.%s/%s',
+                    'www',
+                    $this->section->siteId(),
+                    $urlPath,
+                ),
+            ];
+        }
+
+        return $result;
     }
 
     private function createOriginalAWSImage(string $fileImage): string
