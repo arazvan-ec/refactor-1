@@ -4,6 +4,7 @@ namespace App\Application\DataTransformer\Apps;
 
 use App\Infrastructure\Enum\ClossingModeEnum;
 use App\Infrastructure\Enum\EditorialTypesEnum;
+use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
@@ -40,17 +41,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     public function __construct(
         string $extension,
-        string $thumborServerUrl,
-        string $thumborSecret,
-        string $awsBucket,
+        private readonly Thumbor $thumbor,
     ) {
-
-        $this->thumborServerUrl = $thumborServerUrl;
-        $this->thumborSecret = $thumborSecret;
-        $this->awsBucket = $awsBucket;
-        $this->thumborFactory = BuilderFactory::construct($this->thumborServerUrl, $this->thumborSecret);
-
-        $this->setExtension($extension);
+         $this->setExtension($extension);
     }
 
     /**
@@ -115,9 +108,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'isAmazonOnsite' => $this->editorial->isAmazonOnsite(),
                 'contentType' => $this->editorial->contentType(),
                 'canonicalEditorialId' => $this->editorial->canonicalEditorialId(),
-                'ended' => 'sin definir',
                 'urlDate' => $this->editorial->urlDate()->format('Y-m-d H:i:s'),
                 'countWords' => $this->editorial->body()->countWords(),
+                'caption' => $this->editorial->caption(),
             ];
     }
 
@@ -201,7 +194,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             $photo = $journalist->photo();
         }
 
-        return $this->thumborFactory->url($this->createOriginalAWSImage($photo));
+        return $this->thumbor->createJournalistImage($photo);
     }
 
     /**
@@ -253,12 +246,5 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         return $result;
     }
 
-    private function createOriginalAWSImage(string $fileImage): string
-    {
-        $path1 = \substr($fileImage, 0, 3);
-        $path2 = \substr($fileImage, 3, 3);
-        $path3 = \substr($fileImage, 6, 3);
 
-        return $this->awsBucket."/journalist/{$path1}/{$path2}/{$path3}/{$fileImage}";
-    }
 }
