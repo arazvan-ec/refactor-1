@@ -8,6 +8,7 @@ services:
         shared: true
         arguments:
             $hostname: '%env(TAG_CLIENT_HOST)%'
+            $client: '@httplug.client.app_guzzle7.http_methods.inner'
 
     Ec\Tag\Domain\Model\QueryTagClient: '@Ec\Tag\Infrastructure\Client\Http\QueryTagClient'
 
