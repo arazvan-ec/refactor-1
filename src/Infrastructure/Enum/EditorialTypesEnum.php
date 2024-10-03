@@ -6,9 +6,7 @@ enum EditorialTypesEnum: string
 {
     case NEWS = 'news';
 
-
     case BLOG = 'blog';
-
 
     case LIVESPORT = 'livesport';
 
@@ -27,9 +25,11 @@ enum EditorialTypesEnum: string
      */
     case LOVERS = 'lovers';
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function getNameById(string $id): array
     {
-
         return match ($id) {
             self::NEWS->value => ['id' => '1', 'name' => 'noticia'],
             self::BLOG->value => ['id' => '3', 'name' => 'blog'],

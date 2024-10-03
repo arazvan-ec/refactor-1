@@ -21,11 +21,15 @@ use Ec\Section\Domain\Model\SectionId;
 use Ec\Tag\Domain\Model\Tag;
 use Ec\Tag\Domain\Model\TagId;
 use Ec\Tag\Domain\Model\TagType;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DetailsAppsDataTransformerTest extends TestCase
 {
     private DetailsAppsDataTransformer $transformer;
+
+    /** @var QueryLegacyClient|MockObject */
+    private QueryLegacyClient $queryLegacyClient;
 
     protected function setUp(): void
     {
@@ -33,9 +37,8 @@ class DetailsAppsDataTransformerTest extends TestCase
         $thumborSecret = 'thumbor-secret';
         $awsBucket = 'aws-bucket';
 
-
         $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
-        $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket, $this->queryLegacyClient);
+        $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket);
     }
 
     /**

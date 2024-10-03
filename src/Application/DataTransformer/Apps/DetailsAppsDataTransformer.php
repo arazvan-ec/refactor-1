@@ -82,7 +82,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<string, mixed>|bool|int|string>
      */
     private function transformerEditorial(): array
     {

@@ -76,6 +76,11 @@ class QueryLegacyClient extends ServiceClient
         return \json_decode($response->getBody()->__toString(), true);
     }
 
+    /**
+     * @return array<string, mixed>
+     *
+     * @throws \Throwable
+     */
     public function findCommentsByEditorialId(
         string $editorialIdString,
         bool $async = false,
