@@ -4,6 +4,7 @@ namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\DetailsAppsDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
@@ -31,14 +32,16 @@ class DetailsAppsDataTransformerTest extends TestCase
     /** @var QueryLegacyClient|MockObject */
     private QueryLegacyClient $queryLegacyClient;
 
+    /**
+     * @var Thumbor|MockObject
+     */
+    private Thumbor $thumbor;
+
     protected function setUp(): void
     {
-        $thumborServerUrl = 'https://thumbor.server.url';
-        $thumborSecret = 'thumbor-secret';
-        $awsBucket = 'aws-bucket';
-
+        $this->thumbor = $this->createMock(Thumbor::class);
         $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
-        $this->transformer = new DetailsAppsDataTransformer('dev', $thumborServerUrl, $thumborSecret, $awsBucket);
+        $this->transformer = new DetailsAppsDataTransformer('dev', $this->thumbor);
     }
 
     /**
@@ -90,6 +93,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $editorial->method('canonicalEditorialId')->willReturn('54321');
         $editorial->method('urlDate')->willReturn(new \DateTime('2023-01-01 00:00:00'));
         $editorial->method('body')->willReturn($this->createMock(Body::class));
+        $editorial->method('caption')->willReturn('caption');
 
         $this->queryLegacyClient->method('findCommentsByEditorialId')->willReturn(['options' => ['totalrecords' => 10]]);
 
@@ -103,7 +107,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals('registry', $result['closingModeId']);
         $this->assertEquals(true, $result['indexable']);
         $this->assertEquals(false, $result['deleted']);
-
+        $this->assertEquals('caption', $result['caption']);
         $this->assertEquals(true, $result['published']);
         $this->assertEquals(true, $result['commentable']);
         $this->assertEquals(false, $result['isAmazonOnsite']);
@@ -167,6 +171,17 @@ class DetailsAppsDataTransformerTest extends TestCase
         $tag = $this->createMock(Tag::class);
 
         $this->transformer->write($editorial, $journalists, $section, [$tag]);
+
+        if ('blogPhoto' === $method) {
+            $this->thumbor
+                ->method('createJournalistImage')
+                ->willReturn('https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg');
+        } else {
+            $this->thumbor
+                ->method('createJournalistImage')
+                ->willReturn('https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg');
+        }
+
         $result = $this->transformer->read();
 
         $this->assertArrayHasKey('signatures', $result);
@@ -247,6 +262,17 @@ class DetailsAppsDataTransformerTest extends TestCase
         $tag = $this->createMock(Tag::class);
 
         $this->transformer->write($editorial, $journalists, $section, [$tag]);
+
+        if ('blogPhoto' === $method) {
+            $this->thumbor
+                ->method('createJournalistImage')
+                ->willReturn('https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg');
+        } else {
+            $this->thumbor
+                ->method('createJournalistImage')
+                ->willReturn('https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg');
+        }
+
         $result = $this->transformer->read();
 
         $this->assertArrayHasKey('signatures', $result);
