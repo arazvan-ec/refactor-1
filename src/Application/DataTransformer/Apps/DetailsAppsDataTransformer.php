@@ -12,7 +12,6 @@ use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Section\Domain\Model\Section;
 use Ec\Tag\Domain\Model\Tag;
-use Thumbor\Url\BuilderFactory;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
