@@ -352,4 +352,22 @@ class DetailsAppsDataTransformerTest extends TestCase
             $result['tags'][0]['url']
         );
     }
+
+    /**
+     * @test
+     */
+    public function transformerShouldReturnEmptyTagsArrayWhenNoTagsAreProvided(): void
+    {
+        $editorial = $this->createMock(Editorial::class);
+        $journalist = $this->createMock(Journalist::class);
+        $journalists = ['aliasId' => $journalist];
+        $section = $this->createMock(Section::class);
+        $tags = [];
+
+        $this->transformer->write($editorial, $journalists, $section, $tags);
+        $result = $this->transformer->read();
+
+        $this->assertArrayHasKey('tags', $result);
+        $this->assertEmpty($result['tags']);
+    }
 }
