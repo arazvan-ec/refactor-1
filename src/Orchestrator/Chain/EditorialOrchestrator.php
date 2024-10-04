@@ -62,7 +62,11 @@ class EditorialOrchestrator implements Orchestrator
 
         $tags = [];
         foreach ($editorial->tags() as $tag) {
-            $tags[] = $this->queryTagClient->findTagById($tag->id());
+            try {
+                $tags[] = $this->queryTagClient->findTagById($tag->id());
+            } catch (\Throwable $exception) {
+                continue;
+            }
         }
 
         $editorial =  $this->detailsAppsDataTransformer->write($editorial, $journalists, $section, $tags)->read();
