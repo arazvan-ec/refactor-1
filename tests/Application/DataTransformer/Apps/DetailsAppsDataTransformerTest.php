@@ -153,7 +153,10 @@ class DetailsAppsDataTransformerTest extends TestCase
         $journalist->method('name')->willReturn('JournalistName');
         $journalist->method('aliases')->willReturn($aliases);
         $journalist->method('departments')->willReturn($departments);
-        $journalist->method($method)->willReturn($value);
+
+        if ($method!='fake'){
+            $journalist->method($method)->willReturn($value);
+        }
 
         $journalists = ['aliasId' => $journalist];
 
@@ -172,15 +175,18 @@ class DetailsAppsDataTransformerTest extends TestCase
 
         $this->transformer->write($editorial, $journalists, $section, [$tag]);
 
+        $photo = '';
         if ('blogPhoto' === $method) {
             $this->thumbor
                 ->method('createJournalistImage')
                 ->willReturn('https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg');
-        } else {
+        }
+        if ('photo' === $method) {
             $this->thumbor
                 ->method('createJournalistImage')
                 ->willReturn('https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg');
         }
+
 
         $result = $this->transformer->read();
 
@@ -197,7 +203,8 @@ class DetailsAppsDataTransformerTest extends TestCase
                 'https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg',
                 $result['signatures'][0]['photo']
             );
-        } else {
+        }
+        if ('photo' === $method) {
             $this->assertEquals(
                 'https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg',
                 $result['signatures'][0]['photo']
@@ -244,7 +251,9 @@ class DetailsAppsDataTransformerTest extends TestCase
         $journalist->method('name')->willReturn('JournalistName');
         $journalist->method('aliases')->willReturn($aliases);
         $journalist->method('departments')->willReturn($departments);
-        $journalist->method($method)->willReturn($value);
+        if ($method != 'fake') {
+            $journalist->method($method)->willReturn($value);
+        }
 
         $journalists = ['aliasId' => $journalist];
 
@@ -267,7 +276,8 @@ class DetailsAppsDataTransformerTest extends TestCase
             $this->thumbor
                 ->method('createJournalistImage')
                 ->willReturn('https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg');
-        } else {
+        }
+        if ('photo' === $method) {
             $this->thumbor
                 ->method('createJournalistImage')
                 ->willReturn('https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg');
@@ -288,7 +298,8 @@ class DetailsAppsDataTransformerTest extends TestCase
                 'https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg',
                 $result['signatures'][0]['photo']
             );
-        } else {
+        }
+        if ('photo' === $method) {
             $this->assertEquals(
                 'https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg',
                 $result['signatures'][0]['photo']
