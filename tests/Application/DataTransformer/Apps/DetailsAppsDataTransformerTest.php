@@ -154,7 +154,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $journalist->method('aliases')->willReturn($aliases);
         $journalist->method('departments')->willReturn($departments);
 
-        if ($method!='fake'){
+        if ('fake' != $method) {
             $journalist->method($method)->willReturn($value);
         }
 
@@ -251,7 +251,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $journalist->method('name')->willReturn('JournalistName');
         $journalist->method('aliases')->willReturn($aliases);
         $journalist->method('departments')->willReturn($departments);
-        if ($method != 'fake') {
+        if ('fake' != $method) {
             $journalist->method($method)->willReturn($value);
         }
 
