@@ -126,14 +126,19 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                         ];
                     }
 
-                    $signatures[] = [
+                    $signature = [
                         'journalistId' => $journalist->id()->id(),
                         'aliasId' => $alias->id()->id(),
                         'name' => $alias->name(),
                         'url' => $this->journalistUrl($alias, $journalist),
-                        'photo' => $this->photoUrl($journalist),
                         'departments' => $departments,
                     ];
+
+                    $photo = $this->photoUrl($journalist);
+                    if ('' !== $photo) {
+                        $signature['photo'] = $photo;
+                    }
+                    $signatures[] = $signature;
                 }
             }
         }
@@ -177,15 +182,15 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private function photoUrl(Journalist $journalist): string
     {
-        $photo = '';
         if (!empty($journalist->blogPhoto())) {
-            $photo = $journalist->blogPhoto();
-        }
-        if (!empty($journalist->photo())) {
-            $photo = $journalist->photo();
+            return $this->thumbor->createJournalistImage($journalist->blogPhoto());
         }
 
-        return $this->thumbor->createJournalistImage($photo);
+        if (!empty($journalist->photo())) {
+            return $this->thumbor->createJournalistImage($journalist->photo());
+        }
+
+        return '';
     }
 
     /**
