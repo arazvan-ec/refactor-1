@@ -15,6 +15,7 @@ class EditorialForAppsDataProvider
         return [
             ['method' => 'blogPhoto', 'value' => 'blogPhoto.jpg'],
             ['method' => 'photo', 'value' => 'photo.jpg'],
+            ['method' => 'fake', 'value' => ''],
         ];
     }
 }
