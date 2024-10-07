@@ -7,10 +7,10 @@ use PHPUnit\Framework\TestCase;
 
 class EditorialTypesEnumTest extends TestCase
 {
-    /*
+    /**
      * @test
      */
-    public function testGetNameById()
+    public function testGetNameById(): void
     {
         $this->assertEquals(['id' => '1', 'name' => 'noticia'], EditorialTypesEnum::getNameById('news'));
         $this->assertEquals(['id' => '3', 'name' => 'blog'], EditorialTypesEnum::getNameById('blog'));

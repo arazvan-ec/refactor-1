@@ -4,13 +4,14 @@ namespace App\Application\DataTransformer\Apps;
 
 use App\Infrastructure\Enum\ClossingModeEnum;
 use App\Infrastructure\Enum\EditorialTypesEnum;
+use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Section\Domain\Model\Section;
-use Thumbor\Url\BuilderFactory;
+use Ec\Tag\Domain\Model\Tag;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
@@ -26,38 +27,30 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private Section $section;
 
-    private string $thumborServerUrl;
-
-    private string $thumborSecret;
-
-    private string $awsBucket;
-
-    private BuilderFactory $thumborFactory;
+    /** @var Tag[] */
+    private array $tags;
 
     public function __construct(
         string $extension,
-        string $thumborServerUrl,
-        string $thumborSecret,
-        string $awsBucket,
-    )
-    {
-
-        $this->thumborServerUrl = $thumborServerUrl;
-        $this->thumborSecret = $thumborSecret;
-        $this->awsBucket = $awsBucket;
-        $this->thumborFactory = BuilderFactory::construct($this->thumborServerUrl, $this->thumborSecret);
-
+        private readonly Thumbor $thumbor,
+    ) {
         $this->setExtension($extension);
     }
 
     /**
      * @param Journalist[] $journalists
+     * @param Tag[]        $tags
      */
-    public function write(Editorial $editorial, array $journalists, Section $section): DetailsAppsDataTransformer
-    {
+    public function write(
+        Editorial $editorial,
+        array $journalists,
+        Section $section,
+        array $tags,
+    ): DetailsAppsDataTransformer {
         $this->editorial = $editorial;
         $this->journalists = $journalists;
         $this->section = $section;
+        $this->tags = $tags;
 
         return $this;
     }
@@ -67,12 +60,13 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         $editorial = $this->transformerEditorial();
         $editorial['signatures'] = $this->transformerJournalists();
         $editorial['section'] = $this->transformerSection();
+        $editorial['tags'] = $this->transformerTags();
 
         return $editorial;
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<string, mixed>|bool|int|string>
      */
     private function transformerEditorial(): array
     {
@@ -81,7 +75,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         return
             [
                 'id' => $this->editorial->id()->id(),
-                'url' =>$this->editorialUrl(),
+                'url' => $this->editorialUrl(),
                 'titles' => [
                     'title' => $this->editorial->editorialTitles()->title(),
                     'preTitle' => $this->editorial->editorialTitles()->preTitle(),
@@ -93,7 +87,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'updatedOn' => $this->editorial->publicationDate()->format('Y-m-d H:i:s'),
                 'endOn' => $this->editorial->endOn()->format('Y-m-d H:i:s'),
                 'type' => [
-                    'id' =>$editorialType['id'],
+                    'id' => $editorialType['id'],
                     'name' => $editorialType['name'],
                 ],
                 'indexable' => $this->editorial->indexed(),
@@ -105,10 +99,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'isAmazonOnsite' => $this->editorial->isAmazonOnsite(),
                 'contentType' => $this->editorial->contentType(),
                 'canonicalEditorialId' => $this->editorial->canonicalEditorialId(),
-                'ended' => 'sin definir',
                 'urlDate' => $this->editorial->urlDate()->format('Y-m-d H:i:s'),
                 'countWords' => $this->editorial->body()->countWords(),
-
+                'caption' => $this->editorial->caption(),
             ];
     }
 
@@ -133,14 +126,19 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                         ];
                     }
 
-                    $signatures[] = [
+                    $signature = [
                         'journalistId' => $journalist->id()->id(),
                         'aliasId' => $alias->id()->id(),
                         'name' => $alias->name(),
                         'url' => $this->journalistUrl($alias, $journalist),
-                        'photo' => $this->photoUrl($journalist),
                         'departments' => $departments,
                     ];
+
+                    $photo = $this->photoUrl($journalist);
+                    if ('' !== $photo) {
+                        $signature['photo'] = $photo;
+                    }
+                    $signatures[] = $signature;
                 }
             }
         }
@@ -148,9 +146,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         return $signatures;
     }
 
-    private function editorialUrl()
+    private function editorialUrl(): string
     {
-        $editorialPath =$this->section->getPath().'/'.
+        $editorialPath = $this->section->getPath().'/'.
             $this->editorial->publicationDate()->format('Y-m-d').'/'.
             Encode::encodeUrl($this->editorial->editorialTitles()->urlTitle()).'_'.
             $this->editorial->id()->id();
@@ -160,11 +158,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             $this->section->isBlog() ? 'blog' : 'www',
             $this->section->siteId(),
             $editorialPath
-
         );
-
-
     }
+
     private function journalistUrl(Alias $alias, Journalist $journalist): string
     {
         if ($alias->private()) {
@@ -180,21 +176,21 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             'https://%s.%s.%s/autores/%s/',
             'www',
             $this->section->siteId(),
-            sprintf('%s-%s', urlencode($journalist->name()), $journalist->id()->id())
+            sprintf('%s-%s', Encode::encodeUrl($journalist->name()), $journalist->id()->id())
         );
     }
 
     private function photoUrl(Journalist $journalist): string
     {
-        $photo = '';
         if (!empty($journalist->blogPhoto())) {
-            $photo = $journalist->blogPhoto();
-        }
-        if (!empty($journalist->photo())) {
-            $photo = $journalist->photo();
+            return $this->thumbor->createJournalistImage($journalist->blogPhoto());
         }
 
-        return $this->thumborFactory->url($this->createOriginalAWSImage($photo));
+        if (!empty($journalist->photo())) {
+            return $this->thumbor->createJournalistImage($journalist->photo());
+        }
+
+        return '';
     }
 
     /**
@@ -216,12 +212,33 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         ];
     }
 
-    private function createOriginalAWSImage(string $fileImage): string
+    /**
+     * @return array<int<0, max>, array<string, mixed>>
+     */
+    private function transformerTags(): array
     {
-        $path1 = \substr($fileImage, 0, 3);
-        $path2 = \substr($fileImage, 3, 3);
-        $path3 = \substr($fileImage, 6, 3);
+        $result = [];
+        foreach ($this->tags as $tag) {
 
-        return $this->awsBucket."/journalist/{$path1}/{$path2}/{$path3}/{$fileImage}";
+            $urlPath = sprintf(
+                '/tags/%s/%s-%s',
+                Encode::encodeUrl($tag->type()->name()),
+                Encode::encodeUrl($tag->name()),
+                $tag->id()->id(),
+            );
+
+            $result[] = [
+                'id' => $tag->id()->id(),
+                'name' => $tag->name(),
+                'url' => $this->generateUrl(
+                    'https://%s.%s.%s/%s',
+                    'www',
+                    $this->section->siteId(),
+                    $urlPath,
+                ),
+            ];
+        }
+
+        return $result;
     }
 }

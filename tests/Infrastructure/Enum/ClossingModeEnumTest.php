@@ -7,12 +7,10 @@ use PHPUnit\Framework\TestCase;
 
 class ClossingModeEnumTest extends TestCase
 {
-
-
     /**
      * @test
      */
-    public function testGetClosingModeById()
+    public function testGetClosingModeById(): void
     {
         $this->assertEquals('registry', ClossingModeEnum::getClosingModeById('1'));
         $this->assertEquals('payment', ClossingModeEnum::getClosingModeById('2'));

@@ -13,6 +13,7 @@ use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
+use Ec\Tag\Domain\Model\QueryTagClient;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -27,6 +28,7 @@ class EditorialOrchestrator implements Orchestrator
         private readonly QuerySectionClient $querySectionClient,
         private readonly JournalistFactory $journalistFactory,
         private readonly AppsDataTransformer $detailsAppsDataTransformer,
+        private readonly QueryTagClient $queryTagClient,
     ) {
     }
 
@@ -58,10 +60,15 @@ class EditorialOrchestrator implements Orchestrator
 
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
+        $tags = [];
+        foreach ($editorial->tags() as $tag) {
+            $tags[] = $this->queryTagClient->findTagById($tag->id());
+        }
+
+        $editorial =  $this->detailsAppsDataTransformer->write($editorial, $journalists, $section, $tags)->read();
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
 
-        $editorial= $this->detailsAppsDataTransformer->write($editorial, $journalists, $section)->read();
-        $editorial['countComments']=(isset($comments['options']['totalrecords']))
+        $editorial['countComments'] = (isset($comments['options']['totalrecords']))
             ? $comments['options']['totalrecords'] : 0;
 
         return $editorial;
