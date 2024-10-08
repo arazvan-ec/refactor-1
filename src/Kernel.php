@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\DependencyInjection\Compiler\BodyDataTransformerCompiler;
 use App\DependencyInjection\Compiler\BodyTranslator;
 use App\DependencyInjection\Compiler\EditorialOrchestratorCompiler;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
@@ -18,5 +19,6 @@ class Kernel extends BaseKernel
 
         $container->addCompilerPass(new EditorialOrchestratorCompiler());
         $container->addCompilerPass(new BodyTranslator());
+        $container->addCompilerPass(new BodyDataTransformerCompiler());
     }
 }

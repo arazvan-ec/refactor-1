@@ -1,0 +1,20 @@
+<?php
+/**
+ * @copyright
+ */
+
+namespace App\Application\DataTransformer;
+
+use Ec\Editorial\Domain\Model\Body\BodyElement;
+
+/**
+ * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
+ */
+interface BodyElementDataTransformer
+{
+    public function write(BodyElement $bodyElement): BodyElementDataTransformer;
+
+    public function read(): array;
+
+    public function canTransform(): string;
+}

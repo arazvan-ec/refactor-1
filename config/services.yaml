@@ -38,6 +38,7 @@ services:
             - '../src/Kernel.php'
             - '../src/Controller/V1/'
             - '../src/Ec/Snaapi/Infrastructure/'
+            - '../src/Application/DataTransformer/Apps/Body/'
             - '../src/Application/Translator/'
 
     # add more service definitions when explicit configuration is needed
