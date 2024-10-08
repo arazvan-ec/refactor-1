@@ -5,7 +5,7 @@
 
 namespace App\Application\DataTransformer\Apps\Body;
 
-use Ec\Editorial\Application\DataTransformer\Details\Body\LinksDataTransformer;
+use App\Application\DataTransformer\Apps\Body\Trait\LinksDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\GenericList;
 use Ec\Editorial\Domain\Model\Body\ListItem;
