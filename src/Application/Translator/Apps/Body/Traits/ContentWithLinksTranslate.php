@@ -16,7 +16,7 @@ use Ec\Editorial\Domain\Model\Body\Link;
  */
 trait ContentWithLinksTranslate
 {
-    private function translateContentWithLinkToContract(ElementContentWithLinks $contentWithLinks): array
+    private function translateContentWithLink(ElementContentWithLinks $contentWithLinks): array
     {
         $contentContract = [];
 
