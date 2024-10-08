@@ -31,7 +31,7 @@ class BodyElementDataTransformerHandler
     public function execute(BodyElement $bodyElement): array
     {
         if (empty($this->dataTransformers[\get_class($bodyElement)])) {
-            $message = \sprintf('BodyDataTransformer type %s not found', $bodyElement->type());
+            $message = \sprintf('BodyElement data transformer type %s not found', $bodyElement->type());
             throw new BodyDataTransformerNotFoundException($message);
         }
 
