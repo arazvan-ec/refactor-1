@@ -26,10 +26,11 @@ class LinkItemTranslator implements Translator
             throw new \InvalidArgumentException(get_class($source).' is not instance of '.ListItem::class);
         }
 
-        $link = ['type' => ListItem::TYPE];
-        $link['children'] = $this->translateContentWithLink($source);
-
-        return $link;
+        return [
+            'type' => ListItem::TYPE,
+            'content' => $source->content(),
+            'links' => $this->translateContentWithLink($source)
+        ];
     }
 
     public function canTranslate(): string
@@ -39,6 +40,6 @@ class LinkItemTranslator implements Translator
 
     public function canTranslateTo(): string
     {
-        return ListItem::TYPE;
+        // TODO: Implement canTranslateTo() method.
     }
 }

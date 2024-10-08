@@ -25,11 +25,11 @@ class NumberedListTranslator implements Translator
         }
 
         $orderedList = ['type' => NumberedList::TYPE];
-        $orderedList['item'] = [];
+        $orderedList['items'] = [];
 
         /** @var ListItem $listItem */
         foreach ($source as $listItem) {
-            $orderedList['item'][] = $strategy->execute($listItem);
+            $orderedList['items'][] = $strategy->execute($listItem);
         }
 
         return $orderedList;

@@ -18,33 +18,20 @@ trait ContentWithLinksTranslate
 {
     private function translateContentWithLink(ElementContentWithLinks $contentWithLinks): array
     {
-        $contentContract = [];
+        $links = [];
 
-        $content = $contentWithLinks->content();
-        $offset = 0;
         /**
          * @var Link $link
          */
         foreach ($contentWithLinks->links() as $replace => $link) {
-            $positionReplace = strpos($content, $replace);
-            $linkPosition = $positionReplace - $offset;
-            $contentContract[] = ['content' => substr($content, $offset, $linkPosition)];
-
-            $linkArray = [];
-            $linkArray['type'] = Link::TYPE;
-            $linkArray['href'] = $link->url();
-            $linkArray['target'] = $link->target();
-            $linkArray['children'][0]['content'] = $link->content();
-
-            $contentContract[] = $linkArray;
-
-            $offset = $positionReplace + strlen($replace);
+            $links[$replace] = [
+                'type' => Link::TYPE,
+                'content' => $link->content(),
+                'url' => $link->url(),
+                'target' => $link->target(),
+            ];
         }
 
-        if (empty($content) || ($offset < strlen($content))) {
-            $contentContract[] = ['content' => substr($content, $offset)];
-        }
-
-        return $contentContract;
+        return $links;
     }
 }
