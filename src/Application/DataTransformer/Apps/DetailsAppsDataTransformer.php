@@ -2,6 +2,7 @@
 
 namespace App\Application\DataTransformer\Apps;
 
+use App\Application\Translator\Apps\Body\TranslatorStrategy;
 use App\Infrastructure\Enum\ClossingModeEnum;
 use App\Infrastructure\Enum\EditorialTypesEnum;
 use App\Infrastructure\Service\Thumbor;
@@ -33,6 +34,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     public function __construct(
         string $extension,
         private readonly Thumbor $thumbor,
+        private readonly TranslatorStrategy $translatorStrategy,
     ) {
         $this->setExtension($extension);
     }
@@ -102,6 +104,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'urlDate' => $this->editorial->urlDate()->format('Y-m-d H:i:s'),
                 'countWords' => $this->editorial->body()->countWords(),
                 'caption' => $this->editorial->caption(),
+                'body' => $this->translatorStrategy->execute($this->editorial->body()),
             ];
     }
 

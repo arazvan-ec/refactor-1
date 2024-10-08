@@ -1,0 +1,14 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    App\Application\Translator\Apps\Body\:
+        resource: '../../src/Application/Translator/Apps/Body/'
+        tags: ['app.translators']
+        lazy: true
+        shared: true
+
+    App\Application\Translator\Apps\Body\TranslatorStrategy: ~
+
