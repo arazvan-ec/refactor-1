@@ -19,8 +19,8 @@ class BodyTagHtmlDataTransformer extends ElementContentDataTransformer
 
     public function read(): array
     {
-        $message = 'BodyElement should be instance of '.BodyTagHtml::class;
-        Assertion::isInstanceOf($this->bodyElement, BodyTagHtml::class, $message);
+//        $message = 'BodyElement should be instance of '.BodyTagHtml::class;
+//        Assertion::isInstanceOf($this->bodyElement, BodyTagHtml::class, $message);
 
         return parent::read();
     }

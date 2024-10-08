@@ -1,0 +1,32 @@
+<?php
+/**
+ * @copyright
+ */
+
+namespace App\Application\DataTransformer\Apps\Body\Trait;
+
+use Ec\Editorial\Domain\Model\Body\ElementContentWithLinks;
+use Ec\Editorial\Domain\Model\Body\Link;
+use Ec\Editorial\Domain\Model\Body\MonetizationLink;
+
+/**
+ * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
+ */
+trait LinksDataTransformer
+{
+    private function readLinks(ElementContentWithLinks $elementContentWithLinks): array
+    {
+        $result = [];
+        /** @var Link|MonetizationLink $element */
+        foreach ($elementContentWithLinks->links() as $position => $element) {
+            $result[$position] = [
+                'type' => $element->type(),
+                'content' => $element->content(),
+                'url' => $element->url(),
+                'target' => $element->target(),
+            ];
+        }
+
+        return $result;
+    }
+}
