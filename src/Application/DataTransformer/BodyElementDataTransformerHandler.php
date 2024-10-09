@@ -28,6 +28,11 @@ class BodyElementDataTransformerHandler
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     *
+     * @throws BodyDataTransformerNotFoundException
+     */
     public function execute(BodyElement $bodyElement): array
     {
         if (empty($this->dataTransformers[\get_class($bodyElement)])) {

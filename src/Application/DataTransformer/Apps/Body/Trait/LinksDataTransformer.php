@@ -13,6 +13,9 @@ use Ec\Editorial\Domain\Model\Body\Link;
  */
 trait LinksDataTransformer
 {
+    /**
+     * @return array<string, array<string, string>>
+     */
     private function readLinks(ElementContentWithLinks $elementContentWithLinks): array
     {
         $result = [];

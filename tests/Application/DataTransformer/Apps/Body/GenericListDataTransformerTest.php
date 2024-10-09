@@ -6,7 +6,6 @@
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\GenericListDataTransformer;
-use ArrayIterator;
 use Ec\Editorial\Domain\Model\Body\ListItem;
 use Ec\Editorial\Domain\Model\Body\UnorderedList;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +37,7 @@ class GenericListDataTransformerTest extends TestCase
         $genericListMock->method('type')
             ->willReturn($type);
 
-        $bodyIterator = new ArrayIterator([$listItemMock]);
+        $bodyIterator = new \ArrayIterator([$listItemMock]);
 
         $genericListMock
             ->method('rewind')

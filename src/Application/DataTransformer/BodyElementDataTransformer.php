@@ -14,6 +14,9 @@ interface BodyElementDataTransformer
 {
     public function write(BodyElement $bodyElement): BodyElementDataTransformer;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function read(): array;
 
     public function canTransform(): string;

@@ -52,7 +52,11 @@ class BodyElementDataTransformerHandlerTest extends TestCase
      */
     public function executeShouldUseDataTransformerAndReturnArray(): void
     {
-        $readResult = ['bodyElement'];
+        $readResult = [
+            'type' => 'paragraph',
+            'content' => 'Content',
+            'links' => [],
+        ];
 
         $bodyElementMock = $this->createMock(BodyElement::class);
 
