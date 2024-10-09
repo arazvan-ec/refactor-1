@@ -44,8 +44,8 @@ class BodyDataTransformerCompilerTest extends AbstractCompilerPassTestCase
 
     protected function registerCompilerPass(ContainerBuilder $container): void
     {
-        $orchestratorChainDefinition = new Definition(OrchestratorChainHandler::class);
-        $container->setDefinition(OrchestratorChainHandler::class, $orchestratorChainDefinition);
+        $orchestratorChainDefinition = new Definition(BodyElementDataTransformerHandler::class);
+        $container->setDefinition(BodyElementDataTransformerHandler::class, $orchestratorChainDefinition);
 
         $container->addCompilerPass(new BodyDataTransformerCompiler());
     }
