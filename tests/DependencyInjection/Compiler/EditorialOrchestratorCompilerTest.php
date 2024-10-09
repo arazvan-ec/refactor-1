@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\Definition;
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\DependencyInjection\Compiler\LandingOrchestratorCompiler
+ * @covers \App\DependencyInjection\Compiler\EditorialOrchestratorCompiler
  */
 class EditorialOrchestratorCompilerTest extends AbstractCompilerPassTestCase
 {

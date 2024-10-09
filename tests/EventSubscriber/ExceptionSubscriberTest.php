@@ -8,6 +8,7 @@ namespace App\Tests\EventSubscriber;
 use App\EventSubscriber\ExceptionSubscriber;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -46,7 +47,9 @@ class ExceptionSubscriberTest extends TestCase
         $expected = $event->getResponse();
         $exceptionSubscribed->onKernelException($event);
 
+        /** @var Response $changedResponse */
         $changedResponse = $event->getResponse();
+
         static::assertNotSame($expected, $changedResponse);
         static::assertSame('{"errors":["'.$message.'"]}', $changedResponse->getContent());
         static::assertSame($statusCode, $changedResponse->getStatusCode());
@@ -69,7 +72,9 @@ class ExceptionSubscriberTest extends TestCase
         $expected = $event->getResponse();
         $exceptionSubscribed->onKernelException($event);
 
+        /** @var Response $changedResponse */
         $changedResponse = $event->getResponse();
+
         static::assertNotSame($expected, $changedResponse);
         static::assertSame('{"errors":["'.$message.'"]}', $changedResponse->getContent());
         static::assertSame($statusCode, $changedResponse->getStatusCode());

@@ -7,6 +7,8 @@ services:
 
     App\Application\DataTransformer\Apps\AppsDataTransformer: '@App\Application\DataTransformer\Apps\DetailsAppsDataTransformer'
 
-
-
-
+    App\Application\DataTransformer\Apps\Body\:
+        resource: '../../src/Application/DataTransformer/Apps/Body/'
+        tags: [ 'app.data_transformer' ]
+        lazy: true
+        shared: true
