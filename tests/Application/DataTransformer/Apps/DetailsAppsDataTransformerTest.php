@@ -7,6 +7,7 @@ use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Body\Body;
+use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialTitles;
@@ -103,6 +104,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $editorial->method('urlDate')->willReturn(new \DateTime('2023-01-01 00:00:00'));
         $editorial->method('body')->willReturn($this->createMock(Body::class));
         $editorial->method('caption')->willReturn('caption');
+        $editorial->method('body')->willReturn($this->createMock(Body::class));
 
         $this->queryLegacyClient->method('findCommentsByEditorialId')->willReturn(['options' => ['totalrecords' => 10]]);
 
@@ -114,16 +116,16 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals('2023-01-01 00:00:00', $result['publicationDate']);
         $this->assertEquals('2023-01-02 00:00:00', $result['endOn']);
         $this->assertEquals('registry', $result['closingModeId']);
-        $this->assertEquals(true, $result['indexable']);
-        $this->assertEquals(false, $result['deleted']);
+        $this->assertTrue($result['indexable']);
+        $this->assertFalse($result['deleted']);
         $this->assertEquals('caption', $result['caption']);
-        $this->assertEquals(true, $result['published']);
-        $this->assertEquals(true, $result['commentable']);
-        $this->assertEquals(false, $result['isAmazonOnsite']);
+        $this->assertTrue($result['published']);
+        $this->assertTrue($result['commentable']);
+        $this->assertFalse($result['isAmazonOnsite']);
         $this->assertEquals('article', $result['contentType']);
         $this->assertEquals('54321', $result['canonicalEditorialId']);
         $this->assertEquals('2023-01-01 00:00:00', $result['urlDate']);
-
+        $this->assertIsArray($result['body']);
     }
 
     /**
@@ -378,5 +380,75 @@ class DetailsAppsDataTransformerTest extends TestCase
 
         $this->assertArrayHasKey('tags', $result);
         $this->assertEmpty($result['tags']);
+    }
+
+    /**
+     * @test
+     */
+    public function transformerBodyShouldReturnExpectedArray(): void
+    {
+        $readResult = ['body'];
+        $type = 'normal';
+
+        $bodyMock = $this->createMock(Body::class);
+        $bodyMock->method('type')
+            ->willReturn($type);
+
+        $bodyElementMock = $this->createMock(BodyElement::class);
+        $this->configureArrayIteratorMock($bodyMock, [$bodyElementMock]);
+
+        $expectedResult = [
+            'type' => $type,
+            'elements' => [
+                $readResult,
+            ],
+        ];
+
+        $this->bodyElementDataTransformerHandler->expects(static::once())
+            ->method('execute')
+            ->with($bodyElementMock)
+            ->willReturn($readResult);
+
+        $reflection = new \ReflectionClass($this->transformer);
+        $method = $reflection->getMethod('transformerBody');
+
+        $result = $method->invoke($this->transformer, $bodyMock);
+
+        static::assertSame($expectedResult, $result);
+    }
+
+    private function configureArrayIteratorMock(MockObject $iteratorMock, array $items = []): void
+    {
+        $iterator = new \ArrayIterator($items);
+
+        $iteratorMock
+            ->method('rewind')
+            ->willReturnCallback(function () use ($iterator): void {
+                $iterator->rewind();
+            });
+
+        $iteratorMock
+            ->method('valid')
+            ->willReturnCallback(function () use ($iterator): bool {
+                return $iterator->valid();
+            });
+
+        $iteratorMock
+            ->method('current')
+            ->willReturnCallback(function () use ($iterator) {
+                return $iterator->current();
+            });
+
+        $iteratorMock
+            ->method('key')
+            ->willReturnCallback(function () use ($iterator) {
+                return $iterator->key();
+            });
+
+        $iteratorMock
+            ->method('next')
+            ->willReturnCallback(function () use ($iterator): void {
+                $iterator->next();
+            });
     }
 }
