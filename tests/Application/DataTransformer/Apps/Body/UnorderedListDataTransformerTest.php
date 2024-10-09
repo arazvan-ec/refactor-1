@@ -101,7 +101,7 @@ class UnorderedListDataTransformerTest extends TestCase
     /**
      * @test
      */
-    public function writeShouldReturnExceptionWhenBodyElementIsNotLink(): void
+    public function writeShouldReturnExceptionWhenBodyElementIsNotUnorderedList(): void
     {
         $bodyElementMock = $this->createMock(BodyElement::class);
 
