@@ -3,6 +3,7 @@
 namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\DetailsAppsDataTransformer;
+use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Body\Body;
@@ -37,11 +38,19 @@ class DetailsAppsDataTransformerTest extends TestCase
      */
     private Thumbor $thumbor;
 
+    /** @var BodyElementDataTransformerHandler|MockObject */
+    private BodyElementDataTransformerHandler $bodyElementDataTransformerHandler;
+
     protected function setUp(): void
     {
         $this->thumbor = $this->createMock(Thumbor::class);
         $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
-        $this->transformer = new DetailsAppsDataTransformer('dev', $this->thumbor);
+        $this->bodyElementDataTransformerHandler = $this->createMock(BodyElementDataTransformerHandler::class);
+        $this->transformer = new DetailsAppsDataTransformer(
+            'dev',
+            $this->thumbor,
+            $this->bodyElementDataTransformerHandler,
+        );
     }
 
     /**

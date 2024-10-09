@@ -5,6 +5,7 @@
 
 namespace App\Tests;
 
+use App\DependencyInjection\Compiler\BodyDataTransformerCompiler;
 use App\DependencyInjection\Compiler\EditorialOrchestratorCompiler;
 use App\Kernel;
 use PHPUnit\Framework\TestCase;
@@ -24,9 +25,16 @@ class KernelTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $containerBuilder->expects($this->once())
+        $containerBuilder->expects(self::exactly(2))
             ->method('addCompilerPass')
-            ->with($this->isInstanceOf(EditorialOrchestratorCompiler::class));
+            ->withConsecutive(
+                [$this->callback(function ($compilerPass) {
+                    return $compilerPass instanceof EditorialOrchestratorCompiler;
+                })],
+                [$this->callback(function ($compilerPass) {
+                    return $compilerPass instanceof BodyDataTransformerCompiler;
+                })],
+            );
 
         $kernel = $this->getMockBuilder(Kernel::class)
             ->disableOriginalConstructor()
