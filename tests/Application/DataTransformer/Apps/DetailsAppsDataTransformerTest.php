@@ -417,6 +417,9 @@ class DetailsAppsDataTransformerTest extends TestCase
         static::assertSame($expectedResult, $result);
     }
 
+    /**
+     * @param BodyElement[] $items
+     */
     private function configureArrayIteratorMock(MockObject $iteratorMock, array $items = []): void
     {
         $iterator = new \ArrayIterator($items);

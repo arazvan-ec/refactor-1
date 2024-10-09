@@ -10,7 +10,6 @@ use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Editorial;
-use Ec\Editorial\Exceptions\BodyDataTransformerNotFoundException;
 use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
@@ -244,8 +243,10 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     }
 
     /**
-     * @return array<int<0, max>, array<string, mixed>>
-     * @throws BodyDataTransformerNotFoundException
+     * @return array{
+     *      type: string,
+     *      elements: array<int<0, max>, array<string, mixed>>
+     *  }
      */
     private function transformerBody(Body $body): array
     {
