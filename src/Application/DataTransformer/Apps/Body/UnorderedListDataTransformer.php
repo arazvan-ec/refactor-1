@@ -17,15 +17,15 @@ class UnorderedListDataTransformer extends GenericListDataTransformer
     /** @var UnorderedList */
     protected BodyElement $bodyElement;
 
-    public function canTransform(): string
-    {
-        return UnorderedList::class;
-    }
-
     public function read(): array
     {
         Assertion::isInstanceOf($this->bodyElement, UnorderedList::class);
 
         return parent::read();
+    }
+
+    public function canTransform(): string
+    {
+        return UnorderedList::class;
     }
 }
