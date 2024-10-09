@@ -7,7 +7,6 @@ namespace App\Tests\DependencyInjection\Compiler;
 
 use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\DependencyInjection\Compiler\BodyDataTransformerCompiler;
-use App\Orchestrator\OrchestratorChainHandler;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
