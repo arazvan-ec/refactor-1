@@ -18,11 +18,11 @@ use PHPUnit\Framework\TestCase;
  */
 class UnorderedListDataTransformerTest extends TestCase
 {
-    private UnorderedListDataTransformer $genericListTransformer;
+    private UnorderedListDataTransformer $unorderedListDataTransformer;
 
     protected function setUp(): void
     {
-        $this->genericListTransformer = new UnorderedListDataTransformer();
+        $this->unorderedListDataTransformer = new UnorderedListDataTransformer();
     }
 
     /**
@@ -30,7 +30,7 @@ class UnorderedListDataTransformerTest extends TestCase
      */
     public function canTransformShouldReturnGenericListString(): void
     {
-        static::assertSame(UnorderedList::class, $this->genericListTransformer->canTransform());
+        static::assertSame(UnorderedList::class, $this->unorderedListDataTransformer->canTransform());
     }
 
     /**
@@ -90,7 +90,7 @@ class UnorderedListDataTransformerTest extends TestCase
                 return $bodyIterator->valid();
             });
 
-        $result = $this->genericListTransformer->write($bodyElementMock)->read();
+        $result = $this->unorderedListDataTransformer->write($bodyElementMock)->read();
 
         $expectedListItem['links'] = [$expectedLink];
         $expectedArray['items'] = [$expectedListItem];
@@ -114,6 +114,6 @@ class UnorderedListDataTransformerTest extends TestCase
             )
         );
 
-        $this->genericListTransformer->write($bodyElementMock)->read();
+        $this->unorderedListDataTransformer->write($bodyElementMock)->read();
     }
 }

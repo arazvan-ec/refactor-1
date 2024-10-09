@@ -9,6 +9,8 @@ declare(strict_types=1);
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\NumberedListDataTransformer;
+use Assert\InvalidArgumentException;
+use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
 use Ec\Editorial\Domain\Model\Body\ListItem;
 use Ec\Editorial\Domain\Model\Body\NumberedList;
@@ -102,5 +104,24 @@ class NumberedListDataTransformerTest extends TestCase
         $expectedArray['items'] = [$expectedListItem];
 
         static::assertSame($expectedArray, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function writeShouldReturnExceptionWhenBodyElementIsNotUnorderedList(): void
+    {
+        $bodyElementMock = $this->createMock(BodyElement::class);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            sprintf(
+                'Class "%s" was expected to be instanceof of "%s" but is not.',
+                get_class($bodyElementMock),
+                NumberedList::class
+            )
+        );
+
+        $this->numberedListTransformer->write($bodyElementMock)->read();
     }
 }
