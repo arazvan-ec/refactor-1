@@ -9,6 +9,15 @@ services:
 
     App\Application\DataTransformer\Apps\Body\:
         resource: '../../src/Application/DataTransformer/Apps/Body/'
+        exclude: '../../src/Application/DataTransformer/Apps/Body/BodyTagVideoYoutubeDataTransformer'
+        tags: [ 'app.data_transformer' ]
+        lazy: true
+        shared: true
+
+    App\Application\DataTransformer\Apps\Body\BodyTagVideoYoutubeDataTransformer:
+        class: App\Application\DataTransformer\Apps\Body\BodyTagVideoYoutubeDataTransformer
+        arguments:
+            $playerHost: '%env(PLAYER_HOST)%'
         tags: [ 'app.data_transformer' ]
         lazy: true
         shared: true
