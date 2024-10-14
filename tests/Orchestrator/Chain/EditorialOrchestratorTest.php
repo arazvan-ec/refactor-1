@@ -316,6 +316,181 @@ class EditorialOrchestratorTest extends TestCase
     /**
      * @test
      */
+    public function executeShouldContinueWhenTagClientThrowsException(): void
+    {
+        $id = '12345';
+        $editorial = $this->createMock(Editorial::class);
+        $sourceEditorial = $this->createMock(SourceEditorial::class);
+        $sourceEditorialId = $this->createMock(SourceEditorialId::class);
+        $editorialId = $this->createMock(EditorialId::class);
+        $signature = $this->createMock(Signature::class);
+        $signatureId = $this->createMock(SignatureId::class);
+        $aliasId = $this->createMock(AliasId::class);
+        $journalist = $this->createMock(Journalist::class);
+        $journalistId = $this->createMock(JournalistId::class);
+        $section = $this->createMock(Section::class);
+        $editorialTag = $this->createMock(Tag::class);
+
+        $editorialId
+            ->method('id')
+            ->willReturn($id);
+
+        $sourceEditorialId
+            ->method('id')
+            ->willReturn($id);
+
+        $sourceEditorial
+            ->method('id')
+            ->willReturn($sourceEditorialId);
+
+        $editorial
+            ->method('sourceEditorial')
+            ->willReturn($sourceEditorial);
+
+        $editorial
+            ->method('id')
+            ->willReturn($editorialId);
+
+        $signatureId
+            ->method('id')
+            ->willReturn('signature-id');
+
+        $signature
+            ->method('id')
+            ->willReturn($signatureId);
+
+        $signatures = new Signatures();
+        $signatures->addItem($signature);
+
+        $tags = new Tags();
+        $tags->addItem($editorialTag);
+
+        $editorial
+            ->expects(self::once())
+            ->method('tags')
+            ->willReturn($tags);
+
+        $editorial
+            ->expects(self::once())
+            ->method('signatures')
+            ->willReturn($signatures);
+
+        $journalistId
+            ->method('id')
+            ->willReturn('alias-id');
+
+        $journalist
+            ->method('id')
+            ->willReturn($journalistId);
+
+        $aliasId
+            ->method('id')
+            ->willReturn('7298');
+
+        $this->journalistFactory
+            ->expects($this->once())
+            ->method('buildAliasId')
+            ->with('signature-id')
+            ->willReturn($aliasId);
+
+        $journalist
+            ->expects($this->once())
+            ->method('isActive')
+            ->willReturn(true);
+
+        $journalist
+            ->expects($this->once())
+            ->method('isVisible')
+            ->willReturn(true);
+
+        $this->queryJournalistClient
+            ->expects($this->once())
+            ->method('findJournalistByAliasId')
+            ->with($aliasId)
+            ->willReturn($journalist);
+
+        $this->querySectionClient
+            ->expects($this->once())
+            ->method('findSectionById')
+            ->with($editorial->sectionId())
+            ->willReturn($section);
+
+        $this->queryTagClient
+            ->expects($this->once())
+            ->method('findTagById')
+            ->with($editorialTag->id()->id())
+            ->willThrowException(new \Exception('Tag not found'));
+
+        $expectedJournalists = [
+            '7298' => $journalist,
+        ];
+
+        $this->appsDataTransformer
+            ->expects(self::any())
+            ->method('write')
+            ->with($editorial, $expectedJournalists, $section, [])
+            ->willReturnSelf();
+
+        $transformedData = [
+            'id' => '4416',
+            'signatures' => [
+                [
+                    'journalistId' => '2338',
+                    'aliasId' => '7298',
+                    'name' => 'Javier Bocanegra 1',
+                    'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
+                    'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
+                    'departments' => [
+                        [
+                            'id' => '11',
+                            'name' => 'Fin de semana',
+                        ],
+                    ],
+                ],
+            ],
+            'section' => [
+                'id' => '90',
+                'name' => 'Mercados',
+                'url' => 'https://www.elconfidencial.dev/mercados',
+            ],
+            'countComments' => 0,
+            'tags' => [],
+        ];
+
+        $this->appsDataTransformer
+            ->expects($this->once())
+            ->method('read')
+            ->willReturn($transformedData);
+
+        $this->queryEditorialClient
+            ->expects($this->once())
+            ->method('findEditorialById')
+            ->with($id)
+            ->willReturn($editorial);
+
+        $this->queryLegacyClient
+            ->expects($this->once())
+            ->method('findCommentsByEditorialId')
+            ->with($id)
+            ->willReturn(['options' => ['totalrecords' => 0]]);
+
+
+        $requestMock = $this->createMock(Request::class);
+        $requestMock
+            ->expects($this->once())
+            ->method('get')
+            ->with('id')
+            ->willReturn($id);
+
+        $result = $this->editorialOrchestrator->execute($requestMock);
+
+        $this->assertArrayHasKey('countComments', $result);
+        $this->assertSame(0, $result['countComments']);
+    }
+
+    /**
+     * @test
+     */
     public function canOrchestrateShouldReturnExpectedValue(): void
     {
         static::assertSame('editorial', $this->editorialOrchestrator->canOrchestrate());
