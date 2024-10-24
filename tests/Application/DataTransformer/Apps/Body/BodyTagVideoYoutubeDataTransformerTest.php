@@ -3,7 +3,6 @@
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\BodyTagVideoYoutubeDataTransformer;
-use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\BodyTagVideoYoutube;
 use PHPUnit\Framework\TestCase;
 
@@ -44,11 +43,8 @@ class BodyTagVideoYoutubeDataTransformerTest extends TestCase
         $expectedArray['video'] = 'https://player.host/embed/video/video123/640/360/10/';
 
 
-        $result=$this->bodyTagVideoYoutubeDataTransformer->write($bodyElementMock)->read();
+        $result = $this->bodyTagVideoYoutubeDataTransformer->write($bodyElementMock)->read();
 
         static::assertSame($expectedArray, $result);
     }
-
-
-
 }
