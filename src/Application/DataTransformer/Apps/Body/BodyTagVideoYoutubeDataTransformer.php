@@ -18,7 +18,7 @@ class BodyTagVideoYoutubeDataTransformer extends ElementTypeDataTransformer
     protected BodyElement $bodyElement;
     private string $playerHost;
 
-    public function __construct( string $playerHost)
+    public function __construct(string $playerHost)
     {
         $this->playerHost = $playerHost;
     }
