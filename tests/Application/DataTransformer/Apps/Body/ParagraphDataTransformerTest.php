@@ -15,6 +15,9 @@ use PHPUnit\Framework\TestCase;
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  *
  * @covers \App\Application\DataTransformer\Apps\Body\ParagraphDataTransformer
+ * @covers \App\Application\DataTransformer\Apps\Body\ElementContentWithLinksDataTransformer
+ * @covers \App\Application\DataTransformer\Apps\Body\ElementContentDataTransformer
+ * @covers \App\Application\DataTransformer\Apps\Body\ElementTypeDataTransformer
  */
 class ParagraphDataTransformerTest extends TestCase
 {
