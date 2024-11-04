@@ -7,6 +7,7 @@ namespace App\Tests\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Exception\EditorialNotPublishedYetException;
 use App\Orchestrator\Chain\EditorialOrchestrator;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
@@ -98,6 +99,39 @@ class EditorialOrchestratorTest extends TestCase
     /**
      * @test
      */
+    public function executeShouldThrowEditorialNotPublishedWhenIsNotVisible(): void
+    {
+        $id = '12345';
+        $requestMock = $this->createMock(Request::class);
+        $requestMock
+            ->expects($this->once())
+            ->method('get')
+            ->with('id')
+            ->willReturn($id);
+
+        $editorialMock = $this->createMock(Editorial::class);
+        $editorialMock->expects($this->once())
+            ->method('isVisible')
+            ->willReturn(false);
+
+        $sourceEditorialMock = $this->createMock(SourceEditorial::class);
+        $editorialMock->expects($this->once())
+            ->method('sourceEditorial')
+            ->willReturn($sourceEditorialMock);
+
+        $this->queryEditorialClient->expects($this->once())
+            ->method('findEditorialById')
+            ->with($id)
+            ->willReturn($editorialMock);
+
+        $this->expectException(EditorialNotPublishedYetException::class);
+
+        $this->editorialOrchestrator->execute($requestMock);
+    }
+
+    /**
+     * @test
+     */
     public function executeShouldReturnCorrectData(): void
     {
         $id = '12345';
@@ -114,14 +148,6 @@ class EditorialOrchestratorTest extends TestCase
         $editorialTag = $this->createMock(Tag::class);
         $tag = $this->createMock(\Ec\Tag\Domain\Model\Tag::class);
 
-        $editorial
-            ->method('isPublished')
-            ->willReturn(true);
-
-        $editorial
-            ->method('publicationDate')
-            ->willReturn(new \DateTime('3000-01-01 00:00:00'));
-
         $editorialId
             ->method('id')
             ->willReturn($id);
@@ -137,7 +163,9 @@ class EditorialOrchestratorTest extends TestCase
         $editorial
             ->method('sourceEditorial')
             ->willReturn($sourceEditorial);
-
+        $editorial
+            ->method('isVisible')
+            ->willReturn(true);
         $editorial
             ->method('id')
             ->willReturn($editorialId);
@@ -160,7 +188,6 @@ class EditorialOrchestratorTest extends TestCase
             ->expects(self::once())
             ->method('tags')
             ->willReturn($tags);
-
         $editorial
             ->expects(self::once())
             ->method('signatures')
@@ -188,7 +215,6 @@ class EditorialOrchestratorTest extends TestCase
             ->expects($this->once())
             ->method('isActive')
             ->willReturn(true);
-
         $journalist
             ->expects($this->once())
             ->method('isVisible')
@@ -271,7 +297,6 @@ class EditorialOrchestratorTest extends TestCase
             ->with($id)
             ->willReturn(['options' => ['totalrecords' => 0]]);
 
-
         $requestMock = $this->createMock(Request::class);
         $requestMock
             ->expects($this->once())
@@ -291,14 +316,6 @@ class EditorialOrchestratorTest extends TestCase
     {
         $id = '12345';
         $editorial = $this->createMock(Editorial::class);
-
-        $editorial
-            ->method('isPublished')
-            ->willReturn(true);
-
-        $editorial
-            ->method('publicationDate')
-            ->willReturn(new \DateTime('3000-01-01 00:00:00'));
 
         $this->queryEditorialClient
             ->expects($this->once())
@@ -349,14 +366,6 @@ class EditorialOrchestratorTest extends TestCase
         $section = $this->createMock(Section::class);
         $editorialTag = $this->createMock(Tag::class);
 
-        $editorial
-            ->method('isPublished')
-            ->willReturn(true);
-
-        $editorial
-            ->method('publicationDate')
-            ->willReturn(new \DateTime('3000-01-01 00:00:00'));
-
         $editorialId
             ->method('id')
             ->willReturn($id);
@@ -364,7 +373,6 @@ class EditorialOrchestratorTest extends TestCase
         $sourceEditorialId
             ->method('id')
             ->willReturn($id);
-
         $sourceEditorial
             ->method('id')
             ->willReturn($sourceEditorialId);
@@ -372,7 +380,9 @@ class EditorialOrchestratorTest extends TestCase
         $editorial
             ->method('sourceEditorial')
             ->willReturn($sourceEditorial);
-
+        $editorial
+            ->method('isVisible')
+            ->willReturn(true);
         $editorial
             ->method('id')
             ->willReturn($editorialId);
@@ -380,7 +390,6 @@ class EditorialOrchestratorTest extends TestCase
         $signatureId
             ->method('id')
             ->willReturn('signature-id');
-
         $signature
             ->method('id')
             ->willReturn($signatureId);
@@ -395,7 +404,6 @@ class EditorialOrchestratorTest extends TestCase
             ->expects(self::once())
             ->method('tags')
             ->willReturn($tags);
-
         $editorial
             ->expects(self::once())
             ->method('signatures')
@@ -404,7 +412,6 @@ class EditorialOrchestratorTest extends TestCase
         $journalistId
             ->method('id')
             ->willReturn('alias-id');
-
         $journalist
             ->method('id')
             ->willReturn($journalistId);
@@ -423,7 +430,6 @@ class EditorialOrchestratorTest extends TestCase
             ->expects($this->once())
             ->method('isActive')
             ->willReturn(true);
-
         $journalist
             ->expects($this->once())
             ->method('isVisible')
@@ -500,7 +506,6 @@ class EditorialOrchestratorTest extends TestCase
             ->with($id)
             ->willReturn(['options' => ['totalrecords' => 0]]);
 
-
         $requestMock = $this->createMock(Request::class);
         $requestMock
             ->expects($this->once())
@@ -521,40 +526,4 @@ class EditorialOrchestratorTest extends TestCase
     {
         static::assertSame('editorial', $this->editorialOrchestrator->canOrchestrate());
     }
-
-    /**
-     * @test
-     * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorProvider::EditorialIsValid()
-     */
-    public function executeShouldReturnNotFoundWhenEditorialIsNotValid(bool $isPublished,\DateTime $publicationDate): void
-    {
-        $id = '12345';
-        $editorial = $this->createMock(Editorial::class);
-
-        $this->queryEditorialClient
-            ->expects($this->once())
-            ->method('findEditorialById')
-            ->with($id)
-            ->willReturn($editorial);
-
-        $requestMock = $this->createMock(Request::class);
-        $requestMock
-            ->expects($this->once())
-            ->method('get')
-            ->with('id')
-            ->willReturn($id);
-
-        $editorial
-            ->method('isPublished')
-            ->willReturn($isPublished);
-        $editorial
-            ->method('publicationDate')
-            ->willReturn($publicationDate);
-
-        $result = $this->editorialOrchestrator->execute($requestMock);
-
-        $this->assertSame(['message' => 'No se ha podido recuperar el editorial'], $result);
-    }
-
-
 }

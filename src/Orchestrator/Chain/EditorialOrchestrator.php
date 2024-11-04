@@ -7,6 +7,7 @@ namespace App\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Exception\EditorialNotPublishedYetException;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Journalist\Domain\Model\Journalist;
@@ -44,13 +45,14 @@ class EditorialOrchestrator implements Orchestrator
         /** @var Editorial $editorial */
         $editorial = $this->queryEditorialClient->findEditorialById($id);
 
-        if (!$this->isValidEditorial($editorial)) {
-            return ['message' => 'No se ha podido recuperar el editorial'];
-        }
-
         if (null === $editorial->sourceEditorial()) {
             return $this->queryLegacyClient->findEditorialById($id);
         }
+
+        if (!$editorial->isVisible()) {
+            throw new EditorialNotPublishedYetException();
+        }
+
         $journalists = [];
         foreach ($editorial->signatures() as $signature) {
             $aliasId = $this->journalistFactory->buildAliasId($signature->id()->id());
@@ -85,15 +87,5 @@ class EditorialOrchestrator implements Orchestrator
     public function canOrchestrate(): string
     {
         return 'editorial';
-    }
-
-    private function isValidEditorial(Editorial $editorial): bool
-    {
-        $now = new \DateTime();
-        $date = $editorial->publicationDate();
-        if ($editorial->isPublished() && $date >= $now) {
-            return true;
-        }
-        return false;
     }
 }
