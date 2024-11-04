@@ -13,6 +13,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
+ *
+ * @covers \App\Application\DataTransformer\Apps\Body\ParagraphDataTransformer
  */
 class ParagraphDataTransformerTest extends TestCase
 {

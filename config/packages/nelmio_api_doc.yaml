@@ -8,5 +8,6 @@ when@dev: &dev
         areas: # to filter documented areas
             path_patterns:
                 - /healthcheck_cdn
+                - /editorials
 
 when@test: *dev

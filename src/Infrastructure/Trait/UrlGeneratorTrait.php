@@ -1,9 +1,15 @@
 <?php
+/**
+ * @copyright
+ */
 
 namespace App\Infrastructure\Trait;
 
 use App\Infrastructure\Enum\SitesEnum;
 
+/**
+ * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ */
 trait UrlGeneratorTrait
 {
     private string $extension;

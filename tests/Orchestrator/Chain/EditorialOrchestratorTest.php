@@ -32,6 +32,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ *
+ * @covers \App\Orchestrator\Chain\EditorialOrchestrator
  */
 class EditorialOrchestratorTest extends TestCase
 {

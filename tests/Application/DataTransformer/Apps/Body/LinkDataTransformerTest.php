@@ -12,7 +12,9 @@ use Ec\Editorial\Domain\Model\Body\Link;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author Jose Guillermo Moreu Peso <jgmoreu@ext.elconfidencial.com>
+ * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ *
+ * @covers \App\Application\DataTransformer\Apps\Body\LinkDataTransformer
  */
 class LinkDataTransformerTest extends TestCase
 {

@@ -1,4 +1,7 @@
 <?php
+/**
+ * @copyright
+ */
 
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
@@ -7,6 +10,11 @@ use Ec\Editorial\Domain\Model\Body\BodyTagVideo;
 use Ec\Editorial\Domain\Model\Body\VideoId;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @author Juanma Santos <jmsantos@elconfidencial.com>
+ *
+ * @covers \App\Application\DataTransformer\Apps\Body\BodyTagVideoDataTransformer
+ */
 class BodyTagVideoDataTransformerTest extends TestCase
 {
     private BodyTagVideoDataTransformer $bodyTagVideoDataTransformer;

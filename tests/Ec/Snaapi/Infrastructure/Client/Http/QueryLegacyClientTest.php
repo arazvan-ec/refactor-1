@@ -15,6 +15,8 @@ use Psr\Http\Message\StreamInterface;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ *
+ * @covers \App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient
  */
 class QueryLegacyClientTest extends TestCase
 {

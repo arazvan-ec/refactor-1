@@ -1,4 +1,7 @@
 <?php
+/**
+ * @copyright
+ */
 
 namespace App\Tests\Infrastructure\Service;
 
@@ -6,6 +9,11 @@ use App\Infrastructure\Service\Thumbor;
 use PHPUnit\Framework\TestCase;
 use Thumbor\Url\BuilderFactory;
 
+/**
+ * @author Juanma Santos <jmsantos@elconfidencial.com>
+ *
+ * @covers \App\Infrastructure\Service\Thumbor
+ */
 class ThumborTest extends TestCase
 {
     private Thumbor $thumbor;
