@@ -44,6 +44,10 @@ class EditorialOrchestrator implements Orchestrator
         /** @var Editorial $editorial */
         $editorial = $this->queryEditorialClient->findEditorialById($id);
 
+        if (!$this->isValidEditorial($editorial)) {
+            return ['message' => 'No se ha podido recuperar el editorial'];
+        }
+
         if (null === $editorial->sourceEditorial()) {
             return $this->queryLegacyClient->findEditorialById($id);
         }
@@ -81,5 +85,15 @@ class EditorialOrchestrator implements Orchestrator
     public function canOrchestrate(): string
     {
         return 'editorial';
+    }
+
+    private function isValidEditorial(Editorial $editorial): bool
+    {
+        $now = new \DateTime();
+        $date = $editorial->publicationDate();
+        if ($editorial->isPublished() && $date >= $now) {
+            return true;
+        }
+        return false;
     }
 }
