@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ *
+ * @covers \App\Infrastructure\Trait\UrlGeneratorTrait
  */
 class UrlGeneratorTraitTest extends TestCase
 {

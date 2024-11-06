@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ *
+ * @covers \App\Kernel
  */
 class KernelTest extends TestCase
 {

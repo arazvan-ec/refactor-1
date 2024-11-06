@@ -11,7 +11,9 @@ use Ec\Editorial\Domain\Model\Body\UnorderedList;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author Jose Guillermo Moreu Peso <jgmoreu@ext.elconfidencial.com>
+ * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ *
+ * @covers \App\Application\DataTransformer\Apps\Body\GenericListDataTransformer
  */
 class GenericListDataTransformerTest extends TestCase
 {

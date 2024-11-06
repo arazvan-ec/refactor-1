@@ -1,7 +1,13 @@
 <?php
+/**
+ * @copyright
+ */
 
 namespace App\Infrastructure\Enum;
 
+/**
+ * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ */
 enum SitesEnum: string
 {
     case ELCONFIDENCIAL = '1';

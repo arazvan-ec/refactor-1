@@ -7,6 +7,7 @@ namespace App\Tests\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Exception\EditorialNotPublishedYetException;
 use App\Orchestrator\Chain\EditorialOrchestrator;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
@@ -32,6 +33,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ *
+ * @covers \App\Orchestrator\Chain\EditorialOrchestrator
  */
 class EditorialOrchestratorTest extends TestCase
 {
@@ -96,6 +99,39 @@ class EditorialOrchestratorTest extends TestCase
     /**
      * @test
      */
+    public function executeShouldThrowEditorialNotPublishedWhenIsNotVisible(): void
+    {
+        $id = '12345';
+        $requestMock = $this->createMock(Request::class);
+        $requestMock
+            ->expects($this->once())
+            ->method('get')
+            ->with('id')
+            ->willReturn($id);
+
+        $editorialMock = $this->createMock(Editorial::class);
+        $editorialMock->expects($this->once())
+            ->method('isVisible')
+            ->willReturn(false);
+
+        $sourceEditorialMock = $this->createMock(SourceEditorial::class);
+        $editorialMock->expects($this->once())
+            ->method('sourceEditorial')
+            ->willReturn($sourceEditorialMock);
+
+        $this->queryEditorialClient->expects($this->once())
+            ->method('findEditorialById')
+            ->with($id)
+            ->willReturn($editorialMock);
+
+        $this->expectException(EditorialNotPublishedYetException::class);
+
+        $this->editorialOrchestrator->execute($requestMock);
+    }
+
+    /**
+     * @test
+     */
     public function executeShouldReturnCorrectData(): void
     {
         $id = '12345';
@@ -127,7 +163,9 @@ class EditorialOrchestratorTest extends TestCase
         $editorial
             ->method('sourceEditorial')
             ->willReturn($sourceEditorial);
-
+        $editorial
+            ->method('isVisible')
+            ->willReturn(true);
         $editorial
             ->method('id')
             ->willReturn($editorialId);
@@ -150,7 +188,6 @@ class EditorialOrchestratorTest extends TestCase
             ->expects(self::once())
             ->method('tags')
             ->willReturn($tags);
-
         $editorial
             ->expects(self::once())
             ->method('signatures')
@@ -178,7 +215,6 @@ class EditorialOrchestratorTest extends TestCase
             ->expects($this->once())
             ->method('isActive')
             ->willReturn(true);
-
         $journalist
             ->expects($this->once())
             ->method('isVisible')
@@ -261,7 +297,6 @@ class EditorialOrchestratorTest extends TestCase
             ->with($id)
             ->willReturn(['options' => ['totalrecords' => 0]]);
 
-
         $requestMock = $this->createMock(Request::class);
         $requestMock
             ->expects($this->once())
@@ -338,7 +373,6 @@ class EditorialOrchestratorTest extends TestCase
         $sourceEditorialId
             ->method('id')
             ->willReturn($id);
-
         $sourceEditorial
             ->method('id')
             ->willReturn($sourceEditorialId);
@@ -346,7 +380,9 @@ class EditorialOrchestratorTest extends TestCase
         $editorial
             ->method('sourceEditorial')
             ->willReturn($sourceEditorial);
-
+        $editorial
+            ->method('isVisible')
+            ->willReturn(true);
         $editorial
             ->method('id')
             ->willReturn($editorialId);
@@ -354,7 +390,6 @@ class EditorialOrchestratorTest extends TestCase
         $signatureId
             ->method('id')
             ->willReturn('signature-id');
-
         $signature
             ->method('id')
             ->willReturn($signatureId);
@@ -369,7 +404,6 @@ class EditorialOrchestratorTest extends TestCase
             ->expects(self::once())
             ->method('tags')
             ->willReturn($tags);
-
         $editorial
             ->expects(self::once())
             ->method('signatures')
@@ -378,7 +412,6 @@ class EditorialOrchestratorTest extends TestCase
         $journalistId
             ->method('id')
             ->willReturn('alias-id');
-
         $journalist
             ->method('id')
             ->willReturn($journalistId);
@@ -397,7 +430,6 @@ class EditorialOrchestratorTest extends TestCase
             ->expects($this->once())
             ->method('isActive')
             ->willReturn(true);
-
         $journalist
             ->expects($this->once())
             ->method('isVisible')
@@ -473,7 +505,6 @@ class EditorialOrchestratorTest extends TestCase
             ->method('findCommentsByEditorialId')
             ->with($id)
             ->willReturn(['options' => ['totalrecords' => 0]]);
-
 
         $requestMock = $this->createMock(Request::class);
         $requestMock

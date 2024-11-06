@@ -17,7 +17,9 @@ use Ec\Editorial\Domain\Model\Body\NumberedList;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author Antonio Jose Cerezo Aranda <acerezo@elconfidencial.com>
+ * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ *
+ * @covers \App\Application\DataTransformer\Apps\Body\NumberedListDataTransformer
  */
 class NumberedListDataTransformerTest extends TestCase
 {

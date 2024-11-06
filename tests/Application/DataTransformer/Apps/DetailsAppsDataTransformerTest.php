@@ -1,4 +1,7 @@
 <?php
+/**
+ * @copyright
+ */
 
 namespace App\Tests\Application\DataTransformer\Apps;
 
@@ -27,6 +30,11 @@ use Ec\Tag\Domain\Model\TagType;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @author Juanma Santos <jmsantos@elconfidencial.com>
+ *
+ * @covers \App\Application\DataTransformer\Apps\DetailsAppsDataTransformer
+ */
 class DetailsAppsDataTransformerTest extends TestCase
 {
     private DetailsAppsDataTransformer $transformer;
@@ -103,7 +111,6 @@ class DetailsAppsDataTransformerTest extends TestCase
         $editorial->method('canonicalEditorialId')->willReturn('54321');
         $editorial->method('urlDate')->willReturn(new \DateTime('2023-01-01 00:00:00'));
         $editorial->method('body')->willReturn($this->createMock(Body::class));
-        $editorial->method('caption')->willReturn('caption');
         $editorial->method('body')->willReturn($this->createMock(Body::class));
 
         $this->queryLegacyClient->method('findCommentsByEditorialId')->willReturn(['options' => ['totalrecords' => 10]]);
@@ -118,7 +125,6 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals('registry', $result['closingModeId']);
         $this->assertTrue($result['indexable']);
         $this->assertFalse($result['deleted']);
-        $this->assertEquals('caption', $result['caption']);
         $this->assertTrue($result['published']);
         $this->assertTrue($result['commentable']);
         $this->assertFalse($result['isAmazonOnsite']);
