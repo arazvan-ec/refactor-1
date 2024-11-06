@@ -4,6 +4,7 @@ namespace App\Tests\Infrastructure\Service;
 
 use App\Infrastructure\Service\Thumbor;
 use PHPUnit\Framework\TestCase;
+use Thumbor\Url\Builder;
 use Thumbor\Url\BuilderFactory;
 
 class ThumborTest extends TestCase
@@ -31,10 +32,46 @@ class ThumborTest extends TestCase
 
         $reflection = new \ReflectionClass($this->thumbor);
         $property = $reflection->getProperty('thumborFactory');
+        $property->setAccessible(true);
         $property->setValue($this->thumbor, $builderFactoryMock);
 
         $result = $this->thumbor->createJournalistImage($fileImage);
 
         $this->assertEquals('http://thumbor-url', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function retriveCropBodyTagPicture(): void
+    {
+        $fileImage = '123456789.jpg';
+        $width = '640';
+        $height = '480';
+        $topX = '0';
+        $topY = '0';
+        $bottomX = '640';
+        $bottomY = '480';
+        $expectedPath = $this->awsBucket.'/original/123/456/789/'.$fileImage;
+
+        $builderMock = $this->createMock(Builder::class);
+        $builderMock->expects($this->once())->method('resize')->with($width, $height);
+        $builderMock->expects($this->once())->method('crop')->with($topX, $topY, $bottomX, $bottomY);
+        $builderMock->expects($this->once())->method('addFilter')->withConsecutive(
+            ['fill', 'white'],
+            ['format', 'jpg']
+        );
+
+        $builderFactoryMock = $this->createMock(BuilderFactory::class);
+        $builderFactoryMock->method('url')->with($expectedPath)->willReturn($builderMock);
+
+        $reflection = new \ReflectionClass($this->thumbor);
+        $property = $reflection->getProperty('thumborFactory');
+        $property->setAccessible(true);
+        $property->setValue($this->thumbor, $builderFactoryMock);
+
+        $result = $this->thumbor->retriveCropBodyTagPicture($fileImage, $width, $height, $topX, $topY, $bottomX, $bottomY);
+
+        $this->assertSame($builderMock, $result);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Service;
 
+use Thumbor\Url\Builder;
 use Thumbor\Url\BuilderFactory;
 
 /**
@@ -9,6 +10,9 @@ use Thumbor\Url\BuilderFactory;
  */
 class Thumbor
 {
+    /** @var string */
+    private const DEFAULT_EXTENSION = 'jpg';
+
     private string $awsBucket;
     private BuilderFactory $thumborFactory;
 
@@ -20,12 +24,47 @@ class Thumbor
 
     public function createJournalistImage(string $fileImage): string
     {
-        $path1 = \substr($fileImage, 0, 3);
-        $path2 = \substr($fileImage, 3, 3);
-        $path3 = \substr($fileImage, 6, 3);
+        return $this->getOriginalUrl($fileImage, 'journalist');
+    }
 
-        $path =  $this->awsBucket."/journalist/{$path1}/{$path2}/{$path3}/{$fileImage}";
+
+    public function retriveCropBodyTagPicture(
+        string $fileImage,
+        string $width,
+        string $height,
+        string $topX,
+        string $topY,
+        string $bottomX,
+        string $bottomY ): string
+    {
+
+        $pattern = '/^.*\.(?<extension>.*)$/m';
+        \preg_match($pattern, $fileImage, $matches);
+        $extension = self::DEFAULT_EXTENSION;
+
+        if (!empty($matches['extension'])) {
+            $extension = $matches['extension'];
+        }
+
+        $photo= $this->getOriginalUrl($fileImage, 'original');
+        $photo->resize($width, $height);
+        $photo->crop( $topX, $topY, $bottomX, $bottomY);
+        $photo->addFilter('fill', 'white');
+        $photo->addFilter('format', $extension);
+
+        return $photo;
+    }
+
+    private function getOriginalUrl(string $fileName, string $directory): Builder
+    {
+        $path1 = \substr($fileName, 0, 3);
+        $path2 = \substr($fileName, 3, 3);
+        $path3 = \substr($fileName, 6, 3);
+
+        $path =  $this->awsBucket."/{$directory}/{$path1}/{$path2}/{$path3}/{$fileName}";
 
         return $this->thumborFactory->url($path);
     }
+
+
 }

@@ -131,7 +131,7 @@ class DetailsAppsDataTransformerTest extends TestCase
     /**
      * @test
      *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\DataProvider\EditorialForAppsDataProvider::getPhotoOrBlogPhotoJournalist()
+     * @dataProvider \App\Tests\Application\DataTransformer\Apps\DataProvider\BodyTagPictureDataProvider::getPhotoOrBlogPhotoJournalist()
      */
     public function transformerJournalistsNoPrivateAlias(string $method, string $value): void
     {
@@ -229,7 +229,7 @@ class DetailsAppsDataTransformerTest extends TestCase
     /**
      * @test
      *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\DataProvider\EditorialForAppsDataProvider::getPhotoOrBlogPhotoJournalist()
+     * @dataProvider \App\Tests\Application\DataTransformer\Apps\DataProvider\BodyTagPictureDataProvider::getPhotoOrBlogPhotoJournalist()
      */
     public function transformerJournalistsWithPrivateAlias(string $method, string $value): void
     {

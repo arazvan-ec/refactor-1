@@ -1,0 +1,16 @@
+services:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient:
+        lazy: true
+        shared: true
+        arguments:
+            $hostname: '%env(MULTIMEDIA_CLIENT_HOST)%'
+            $client: '@httplug.client.app_guzzle7.http_methods.inner'
+
+    Ec\Multimedia\Domain\Model\QueryMultimediaClient: '@Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient'
+
+    Ec\Multimedia\Application\Service\MultimediaFactory: ~
+    Ec\Multimedia\Domain\Model\MultimediaFactory: '@Ec\Multimedia\Application\Service\MultimediaFactory'

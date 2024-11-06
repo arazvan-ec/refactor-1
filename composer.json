@@ -12,6 +12,7 @@
         "ec/encode-library": "^1.0",
         "ec/journalist-client": "^4.0",
         "ec/microservice-bundle": "^1.0",
+        "ec/multimedia-client": "^2.0",
         "ec/section-client": "^2.0",
         "ec/tag-client": "^3.0",
         "nelmio/api-doc-bundle": "^4.11",
