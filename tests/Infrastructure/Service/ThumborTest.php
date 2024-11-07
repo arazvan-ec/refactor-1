@@ -22,13 +22,15 @@ class ThumborTest extends TestCase
     /**
      * @test
      */
-    public function createJournalistImage(): void
+    public function createJournalistImageShouldReturnValidUrl(): void
     {
         $fileImage = '123456789.jpg';
         $expectedPath = $this->awsBucket.'/journalist/123/456/789/'.$fileImage;
 
+        $builderMock= $this->createMock(Builder::class);
+        $builderMock->method('__toString')->willReturn('http://thumbor-url');
         $builderFactoryMock = $this->createMock(BuilderFactory::class);
-        $builderFactoryMock->method('url')->with($expectedPath)->willReturn('http://thumbor-url');
+        $builderFactoryMock->method('url')->with($expectedPath)->willReturn($builderMock);
 
         $reflection = new \ReflectionClass($this->thumbor);
         $property = $reflection->getProperty('thumborFactory');
@@ -43,25 +45,35 @@ class ThumborTest extends TestCase
     /**
      * @test
      */
-    public function retriveCropBodyTagPicture(): void
+    public function retriveCropBodyTagPictureShouldReturnValidCrop(): void
     {
-        $fileImage = '123456789.jpg';
-        $width = '640';
-        $height = '480';
-        $topX = '0';
-        $topY = '0';
-        $bottomX = '640';
-        $bottomY = '480';
-        $expectedPath = $this->awsBucket.'/original/123/456/789/'.$fileImage;
+        $toString='https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/615x99:827x381/1440x1920/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg';
+        $fileImage = '0a978399c4be84f3ce367624ca9589ad.jpg';
+        $width = '1440';
+        $height = '1920';
+        $topX = '615';
+        $topY = '99';
+        $bottomX = '827';
+        $bottomY = '381';
+        $expectedPath = $this->awsBucket.'/original/0a9/783/99c/'.$fileImage;
 
         $builderMock = $this->createMock(Builder::class);
-        $builderMock->expects($this->once())->method('resize')->with($width, $height);
-        $builderMock->expects($this->once())->method('crop')->with($topX, $topY, $bottomX, $bottomY);
-        $builderMock->expects($this->once())->method('addFilter')->withConsecutive(
-            ['fill', 'white'],
-            ['format', 'jpg']
-        );
 
+        $thumborArgs=[
+            ['resize', [$width, $height]],
+            ['crop', [$topX, $topY, $bottomX, $bottomY]],
+            ['addFilter', ['fill', 'white']],
+            ['addFilter', ['format', 'jpg']],
+        ];
+        $builderMock
+            ->expects($this->exactly(4))
+            ->method('__call')
+            ->withConsecutive(...$thumborArgs)
+            ->willReturnSelf();
+
+
+
+        $builderMock->method('__toString')->willReturn($toString);
         $builderFactoryMock = $this->createMock(BuilderFactory::class);
         $builderFactoryMock->method('url')->with($expectedPath)->willReturn($builderMock);
 
@@ -72,6 +84,6 @@ class ThumborTest extends TestCase
 
         $result = $this->thumbor->retriveCropBodyTagPicture($fileImage, $width, $height, $topX, $topY, $bottomX, $bottomY);
 
-        $this->assertSame($builderMock, $result);
+        $this->assertSame($toString, $result);
     }
 }

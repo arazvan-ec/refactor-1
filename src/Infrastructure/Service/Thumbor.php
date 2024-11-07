@@ -55,7 +55,7 @@ class Thumbor
         return $photo;
     }
 
-    private function getOriginalUrl(string $fileName, string $directory): Builder
+    private function getOriginalUrl(string $fileName, string $directory) : Builder
     {
         $path1 = \substr($fileName, 0, 3);
         $path2 = \substr($fileName, 3, 3);
