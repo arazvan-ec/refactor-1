@@ -14,6 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
+ *
+ * @covers \App\Application\DataTransformer\BodyElementDataTransformerHandler
  */
 class BodyElementDataTransformerHandlerTest extends TestCase
 {

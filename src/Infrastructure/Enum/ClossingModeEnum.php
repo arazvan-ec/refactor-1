@@ -1,7 +1,13 @@
 <?php
+/**
+ * @copyright
+ */
 
 namespace App\Infrastructure\Enum;
 
+/**
+ * @author Juanma Santos <jmsantos@elconfidencial.com>
+ */
 enum ClossingModeEnum: string
 {
     case REGISTRY = '1';

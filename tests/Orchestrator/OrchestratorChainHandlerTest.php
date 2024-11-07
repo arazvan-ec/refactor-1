@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ *
+ * @covers \App\Orchestrator\OrchestratorChainHandler
  */
 class OrchestratorChainHandlerTest extends TestCase
 {

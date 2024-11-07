@@ -1,4 +1,7 @@
 <?php
+/**
+ * @copyright
+ */
 
 namespace App\Infrastructure\Service;
 

@@ -1,4 +1,7 @@
 <?php
+/**
+ * @copyright
+ */
 
 namespace App\Application\DataTransformer\Apps;
 
