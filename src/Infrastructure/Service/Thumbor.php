@@ -30,7 +30,6 @@ class Thumbor
         return $this->getOriginalUrl($fileImage, 'journalist');
     }
 
-
     public function retriveCropBodyTagPicture(
         string $fileImage,
         string $width,
@@ -38,8 +37,8 @@ class Thumbor
         string $topX,
         string $topY,
         string $bottomX,
-        string $bottomY ): string
-    {
+        string $bottomY,
+    ): string {
 
         $pattern = '/^.*\.(?<extension>.*)$/m';
         \preg_match($pattern, $fileImage, $matches);
@@ -49,16 +48,16 @@ class Thumbor
             $extension = $matches['extension'];
         }
 
-        $photo= $this->getOriginalUrl($fileImage, 'original');
+        $photo = $this->getOriginalUrl($fileImage, 'original');
         $photo->resize($width, $height);
-        $photo->crop( $topX, $topY, $bottomX, $bottomY);
+        $photo->crop($topX, $topY, $bottomX, $bottomY);
         $photo->addFilter('fill', 'white');
         $photo->addFilter('format', $extension);
 
         return $photo;
     }
 
-    private function getOriginalUrl(string $fileName, string $directory) : Builder
+    private function getOriginalUrl(string $fileName, string $directory): Builder
     {
         $path1 = \substr($fileName, 0, 3);
         $path2 = \substr($fileName, 3, 3);
@@ -68,6 +67,4 @@ class Thumbor
 
         return $this->thumborFactory->url($path);
     }
-
-
 }

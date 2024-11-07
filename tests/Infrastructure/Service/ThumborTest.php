@@ -35,7 +35,7 @@ class ThumborTest extends TestCase
         $fileImage = '123456789.jpg';
         $expectedPath = $this->awsBucket.'/journalist/123/456/789/'.$fileImage;
 
-        $builderMock= $this->createMock(Builder::class);
+        $builderMock = $this->createMock(Builder::class);
         $builderMock->method('__toString')->willReturn('http://thumbor-url');
         $builderFactoryMock = $this->createMock(BuilderFactory::class);
         $builderFactoryMock->method('url')->with($expectedPath)->willReturn($builderMock);
@@ -55,7 +55,7 @@ class ThumborTest extends TestCase
      */
     public function retriveCropBodyTagPictureShouldReturnValidCrop(): void
     {
-        $toString='https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/615x99:827x381/1440x1920/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg';
+        $toString = 'https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/615x99:827x381/1440x1920/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg';
         $fileImage = '0a978399c4be84f3ce367624ca9589ad.jpg';
         $width = '1440';
         $height = '1920';
@@ -67,7 +67,7 @@ class ThumborTest extends TestCase
 
         $builderMock = $this->createMock(Builder::class);
 
-        $thumborArgs=[
+        $thumborArgs = [
             ['resize', [$width, $height]],
             ['crop', [$topX, $topY, $bottomX, $bottomY]],
             ['addFilter', ['fill', 'white']],

@@ -9,7 +9,6 @@ use Ec\Editorial\Domain\Model\Body\BodyTagPictureId;
 use Ec\Multimedia\Domain\Model\Photo\Photo;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use PHPUnit\Framework\TestCase;
-use Assert\InvalidArgumentException;
 
 class BodyTagPictureDataTransformerTest extends TestCase
 {
@@ -26,6 +25,7 @@ class BodyTagPictureDataTransformerTest extends TestCase
 
     /**
      * @test
+     *
      * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagPictureDataProvider::getData()
      */
     public function readShouldReturnExpectedArray(
@@ -38,9 +38,8 @@ class BodyTagPictureDataTransformerTest extends TestCase
         int $bottomY,
         string $caption,
         string $alternate,
-        string $orientation
-    ): void
-    {
+        string $orientation,
+    ): void {
         $bodytagPictureId = $this->createMock(BodyTagPictureId::class);
         $bodytagPictureId->method('id')->willReturn('123');
 
@@ -61,8 +60,8 @@ class BodyTagPictureDataTransformerTest extends TestCase
         $this->queryMultimediaClient->method('findPhotoById')->willReturn($photo);
 
 
-        $withConsecutiveArgs=[];
-        $willReturn=[];
+        $withConsecutiveArgs = [];
+        $willReturn = [];
         foreach ($shots as $ratio => $url) {
             $withConsecutiveArgs[] = [
                 $photoFile,
@@ -71,7 +70,7 @@ class BodyTagPictureDataTransformerTest extends TestCase
                 $topX,
                 $topY,
                 $bottomX,
-                $bottomY
+                $bottomY,
             ];
             $willReturn[] = $url;
         }
@@ -97,4 +96,3 @@ class BodyTagPictureDataTransformerTest extends TestCase
         $this->assertEquals(BodyTagPicture::class, $this->dataTransformer->canTransform());
     }
 }
-
