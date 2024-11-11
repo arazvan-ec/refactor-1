@@ -6,6 +6,8 @@
 namespace App\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
+use App\Application\DataTransformer\BodyDataTransformer;
+use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Exception\EditorialNotPublishedYetException;
 use Ec\Editorial\Domain\Model\Editorial;
@@ -30,6 +32,7 @@ class EditorialOrchestrator implements Orchestrator
         private readonly JournalistFactory $journalistFactory,
         private readonly AppsDataTransformer $detailsAppsDataTransformer,
         private readonly QueryTagClient $queryTagClient,
+        private readonly BodyDataTransformer $bodyDataTransformer,
     ) {
     }
 
@@ -78,8 +81,19 @@ class EditorialOrchestrator implements Orchestrator
         $editorial =  $this->detailsAppsDataTransformer->write($editorial, $journalists, $section, $tags)->read();
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
 
+
+
+
         $editorial['countComments'] = (isset($comments['options']['totalrecords']))
             ? $comments['options']['totalrecords'] : 0;
+
+
+
+
+
+        $editorial['body'] = $this->bodyDataTransformer($this->editorial->body());
+
+
 
         return $editorial;
     }
@@ -88,4 +102,6 @@ class EditorialOrchestrator implements Orchestrator
     {
         return 'editorial';
     }
+
+
 }

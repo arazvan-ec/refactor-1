@@ -111,7 +111,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'canonicalEditorialId' => $this->editorial->canonicalEditorialId(),
                 'urlDate' => $this->editorial->urlDate()->format(self::DATE_FORMAT),
                 'countWords' => $this->editorial->body()->countWords(),
-                'body' => $this->transformerBody($this->editorial->body()),
+
             ];
     }
 
@@ -121,6 +121,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     private function transformerJournalists(): array
     {
         $signatures = [];
+
 
         foreach ($this->journalists as $aliasId => $journalist) {
             foreach ($journalist->aliases() as $alias) {
@@ -252,24 +253,5 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         return $result;
     }
 
-    /**
-     * @return array{
-     *      type: string,
-     *      elements: array<int<0, max>, array<string, mixed>>
-     *  }
-     */
-    private function transformerBody(Body $body): array
-    {
-        $parsedBody = [
-            'type' => $body->type(),
-            'elements' => [],
-        ];
 
-        /** @var BodyElement $bodyElement */
-        foreach ($body as $bodyElement) {
-            $parsedBody['elements'][] = $this->bodyElementDataTransformerHandler->execute($bodyElement);
-        }
-
-        return $parsedBody;
-    }
 }
