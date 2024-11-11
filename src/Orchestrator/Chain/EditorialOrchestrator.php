@@ -91,7 +91,7 @@ class EditorialOrchestrator implements Orchestrator
 
 
 
-        $editorial['body'] = $this->bodyDataTransformer($this->editorial->body());
+        $editorial['body'] = $this->bodyDataTransformer->execute($this->editorial->body());
 
 
 
