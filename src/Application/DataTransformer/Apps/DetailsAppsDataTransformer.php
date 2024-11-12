@@ -10,8 +10,6 @@ use App\Infrastructure\Enum\ClossingModeEnum;
 use App\Infrastructure\Enum\EditorialTypesEnum;
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
-use Ec\Editorial\Domain\Model\Body\Body;
-use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
@@ -252,6 +250,4 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
         return $result;
     }
-
-
 }

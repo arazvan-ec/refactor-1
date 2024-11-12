@@ -23,4 +23,14 @@ enum SitesEnum: string
             default => 'elconfidencial',
         };
     }
+
+    public static function getEncodenameById(string $id): string
+    {
+        return match ($id) {
+            self::ELCONFIDENCIAL->value => 'el-confidencial',
+            self::VANITATIS->value => 'vanitatis',
+            self::ALIMENTE->value => 'alimente',
+            default => 'el-confidencial',
+        };
+    }
 }

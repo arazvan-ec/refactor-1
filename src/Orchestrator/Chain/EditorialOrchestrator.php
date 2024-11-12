@@ -7,11 +7,14 @@ namespace App\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
-use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Infrastructure\Enum\SitesEnum;
+use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
 use App\Exception\EditorialNotPublishedYetException;
 use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
+use Ec\Editorial\Domain\Model\Body\Body;
+use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Journalist\Domain\Model\Journalist;
@@ -20,7 +23,10 @@ use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Tag\Domain\Model\QueryTagClient;
+use Http\Promise\Promise;
+use Psr\Http\Message\UriFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Throwable;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
@@ -37,6 +43,8 @@ class EditorialOrchestrator implements Orchestrator
         private readonly AppsDataTransformer $detailsAppsDataTransformer,
         private readonly QueryTagClient $queryTagClient,
         private readonly BodyDataTransformer $bodyDataTransformer,
+        private readonly UriFactoryInterface $uriFactory,
+        private readonly QueryMembershipClient $queryMembershipClient,
     ) {
     }
 
@@ -92,8 +100,11 @@ class EditorialOrchestrator implements Orchestrator
 
 
         $resolveData['photoFromBodyTags'] =$this->retrievePhotosFromBodyTags($editorial);
+        [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
-        $editorialResult['body'] = $this->bodyDataTransformer->execute($editorial->body(),$resolveData);
+        $membershipLinkCombine = $this->resolvePromiseMembershipLinks($promise, $links);
+
+        $editorialResult['body'] = $this->bodyDataTransformer->execute($editorial->body(), $resolveData, $membershipLinkCombine);
 
 
 
@@ -142,6 +153,74 @@ class EditorialOrchestrator implements Orchestrator
 
         return $result;
     }
+    private function getLinksOfBodyTagMembership(Body $body): array
+    {
+        $linksData = [];
 
+        $bodyElementsMembership = $body->bodyElementsOf(BodyTagMembershipCard::class);
+        /** @var BodyTagMembershipCard $bodyElement */
+        foreach ($bodyElementsMembership as $bodyElement) {
+            /** @var MembershipCardButton $button */
+            foreach ($bodyElement->buttons()->buttons() as $button) {
+                $linksData[] = $button->urlMembership();
+            }
+        }
+
+        return $linksData;
+    }
+
+    private function getLinksFromBody(Body $body): array
+    {
+        // $linksOfElementsContentWithLinks = $this->getLinksOfElementContentWithLinks($body);
+        $linksOfBodyTagMembership = $this->getLinksOfBodyTagMembership($body);
+        // $linksOfBodyTagPicture = $this->getLinksOfBodyTagPicture($body);
+
+        return \array_merge(
+        // $linksOfElementsContentWithLinks,
+            $linksOfBodyTagMembership,
+        // $linksOfBodyTagPicture
+        );
+    }
+
+    private function getPromiseMembershipLinks(Editorial $editorial, string $siteId): array
+    {
+        $linksData = $this->getLinksFromBody($editorial->body());
+
+        $links = [];
+        $uris = [];
+        foreach ($linksData as $membershipLink) {
+            $uris[] = $this->uriFactory->createUri($membershipLink);
+            $links[] = $membershipLink;
+        }
+
+        $promise = $this->queryMembershipClient->getMembershipUrl(
+            $editorial->id()->id(),
+            $uris,
+            SitesEnum::getEncodenameById($siteId),
+            true
+        );
+
+        return [$promise, $links];
+    }
+    /**
+     * @param Promise|null $promise
+     */
+    private function resolvePromiseMembershipLinks(?Promise $promise, array $links): array
+    {
+        $membershipLinkResult = [];
+        if ($promise) {
+            try {
+                $membershipLinkResult = $promise->wait();
+            } catch (Throwable $throwable) {
+                return [];
+            }
+        }
+
+        if (empty($membershipLinkResult)) {
+            return [];
+        }
+
+        return \array_combine($links, $membershipLinkResult);
+    }
 
 }
