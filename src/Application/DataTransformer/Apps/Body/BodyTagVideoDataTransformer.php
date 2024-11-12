@@ -8,14 +8,13 @@ namespace App\Application\DataTransformer\Apps\Body;
 use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\BodyTagVideo;
-use Ec\Editorial\Domain\Model\Body\BodyTagVideoYoutube;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  */
 class BodyTagVideoDataTransformer extends ElementTypeDataTransformer
 {
-    /** @var BodyTagVideoDataTransformer */
+    /** @var BodyTagVideo */
     protected BodyElement $bodyElement;
     private string $playerHost;
 

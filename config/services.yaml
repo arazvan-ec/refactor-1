@@ -76,3 +76,5 @@ services:
     App\Controller\V1\:
         resource: '../src/Controller/V1/'
         tags: [ 'controller.service_arguments' ]
+        exclude:
+            - '../src/Controller/V1/Schemas'

@@ -7,6 +7,7 @@ namespace App\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Exception\EditorialNotPublishedYetException;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Journalist\Domain\Model\Journalist;
@@ -47,6 +48,11 @@ class EditorialOrchestrator implements Orchestrator
         if (null === $editorial->sourceEditorial()) {
             return $this->queryLegacyClient->findEditorialById($id);
         }
+
+        if (!$editorial->isVisible()) {
+            throw new EditorialNotPublishedYetException();
+        }
+
         $journalists = [];
         foreach ($editorial->signatures() as $signature) {
             $aliasId = $this->journalistFactory->buildAliasId($signature->id()->id());

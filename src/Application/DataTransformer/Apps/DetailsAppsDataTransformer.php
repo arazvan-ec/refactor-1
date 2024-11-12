@@ -1,4 +1,7 @@
 <?php
+/**
+ * @copyright
+ */
 
 namespace App\Application\DataTransformer\Apps;
 
@@ -22,6 +25,9 @@ use Ec\Tag\Domain\Model\Tag;
 class DetailsAppsDataTransformer implements AppsDataTransformer
 {
     use UrlGeneratorTrait;
+
+    /** @var string */
+    private const DATE_FORMAT = 'Y-m-d H:i:s';
 
     private Editorial $editorial;
 
@@ -87,9 +93,9 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                     'mobileTitle' => $this->editorial->editorialTitles()->mobileTitle(),
                 ],
                 'lead' => $this->editorial->lead(),
-                'publicationDate' => $this->editorial->publicationDate()->format('Y-m-d H:i:s'),
-                'updatedOn' => $this->editorial->publicationDate()->format('Y-m-d H:i:s'),
-                'endOn' => $this->editorial->endOn()->format('Y-m-d H:i:s'),
+                'publicationDate' => $this->editorial->publicationDate()->format(self::DATE_FORMAT),
+                'updatedOn' => $this->editorial->publicationDate()->format(self::DATE_FORMAT),
+                'endOn' => $this->editorial->endOn()->format(self::DATE_FORMAT),
                 'type' => [
                     'id' => $editorialType['id'],
                     'name' => $editorialType['name'],
@@ -103,9 +109,8 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'isAmazonOnsite' => $this->editorial->isAmazonOnsite(),
                 'contentType' => $this->editorial->contentType(),
                 'canonicalEditorialId' => $this->editorial->canonicalEditorialId(),
-                'urlDate' => $this->editorial->urlDate()->format('Y-m-d H:i:s'),
+                'urlDate' => $this->editorial->urlDate()->format(self::DATE_FORMAT),
                 'countWords' => $this->editorial->body()->countWords(),
-                'caption' => $this->editorial->caption(),
                 'body' => $this->transformerBody($this->editorial->body()),
             ];
     }

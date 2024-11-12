@@ -14,7 +14,9 @@ use Ec\Editorial\Domain\Model\Body\UnorderedList;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author José Pérez Moreno <jperez@ext.elconfidencial.com>
+ * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ *
+ * @covers \App\Application\DataTransformer\Apps\Body\UnorderedListDataTransformer
  */
 class UnorderedListDataTransformerTest extends TestCase
 {

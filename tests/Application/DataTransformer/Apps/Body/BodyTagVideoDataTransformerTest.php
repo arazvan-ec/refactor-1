@@ -1,14 +1,20 @@
 <?php
+/**
+ * @copyright
+ */
 
 namespace App\Tests\Application\DataTransformer\Apps\Body;
-
-
 
 use App\Application\DataTransformer\Apps\Body\BodyTagVideoDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyTagVideo;
 use Ec\Editorial\Domain\Model\Body\VideoId;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @author Juanma Santos <jmsantos@elconfidencial.com>
+ *
+ * @covers \App\Application\DataTransformer\Apps\Body\BodyTagVideoDataTransformer
+ */
 class BodyTagVideoDataTransformerTest extends TestCase
 {
     private BodyTagVideoDataTransformer $bodyTagVideoDataTransformer;
@@ -31,8 +37,8 @@ class BodyTagVideoDataTransformerTest extends TestCase
      */
     public function readShouldReturnExpectedArray(): void
     {
-        $videIdValue= 'video123';
-        $videoIdMock= $this->createMock(VideoId::class);
+        $videIdValue = 'video123';
+        $videoIdMock = $this->createMock(VideoId::class);
         $videoIdMock->method('id')->willReturn($videIdValue);
         $expectedArray = [
             'type' => 'bodytagvideo',

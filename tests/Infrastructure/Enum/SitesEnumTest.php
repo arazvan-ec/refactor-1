@@ -10,6 +10,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
+ *
+ * @covers \App\Infrastructure\Enum\SitesEnum
  */
 class SitesEnumTest extends TestCase
 {

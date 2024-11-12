@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
+ *
+ * @covers \App\Application\DataTransformer\Apps\Body\BodyTagHtmlDataTransformer
  */
 class BodyTagHtmlDataTransformerTest extends TestCase
 {
