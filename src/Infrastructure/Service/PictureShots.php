@@ -120,7 +120,7 @@ class PictureShots
         return $shots;
     }
 
-    public function retriveShotsByPhotoId(array $resolveData,BodyTagPictureDefault $bodyTagPicture) : array
+    public function retrieveShotsByPhotoId(array $resolveData, BodyTagPictureDefault $bodyTagPicture) : array
     {
         $photoFile=$this->retrievePhotoFile($resolveData,$bodyTagPicture);
         if ($photoFile){

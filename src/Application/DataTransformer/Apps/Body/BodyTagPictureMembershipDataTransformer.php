@@ -35,7 +35,7 @@ class BodyTagPictureMembershipDataTransformer extends ElementTypeDataTransformer
 
         $elementArray = parent::read();
 
-        $shots=$this->pictureShots->retriveShotsByPhotoId($this->resolveData(),$this->bodyElement);
+        $shots=$this->pictureShots->retrieveShotsByPhotoId($this->resolveData(),$this->bodyElement);
 
         if (count($shots)){
             $elementArray['shots'] = $shots;
