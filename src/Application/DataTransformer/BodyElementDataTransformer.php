@@ -12,7 +12,7 @@ use Ec\Editorial\Domain\Model\Body\BodyElement;
  */
 interface BodyElementDataTransformer
 {
-    public function write(BodyElement $bodyElement): BodyElementDataTransformer;
+    public function write(BodyElement $bodyElement,array $resolveData = []): BodyElementDataTransformer;
 
     /**
      * @return array<string, mixed>

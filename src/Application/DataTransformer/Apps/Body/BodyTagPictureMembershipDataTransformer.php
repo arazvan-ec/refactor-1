@@ -11,12 +11,13 @@ use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureDefault;
+use Ec\Editorial\Domain\Model\Body\BodyTagPictureMembership;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  */
-class BodyTagPictureDataTransformer extends ElementTypeDataTransformer
+class BodyTagPictureMembershipDataTransformer extends ElementTypeDataTransformer
 {
 
     /** @var BodyTagPicture */
@@ -29,8 +30,8 @@ class BodyTagPictureDataTransformer extends ElementTypeDataTransformer
 
     public function read(): array
     {
-        $message = 'BodyElement should be instance of '.BodyTagPicture::class;
-        Assertion::isInstanceOf($this->bodyElement, BodyTagPicture::class, $message);
+        $message = 'BodyElement should be instance of '.BodyTagPictureMembership::class;
+        Assertion::isInstanceOf($this->bodyElement, BodyTagPictureMembership::class, $message);
 
         $elementArray = parent::read();
         $file=$this->retrievePhotoFile($this->bodyElement);

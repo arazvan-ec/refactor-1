@@ -19,7 +19,7 @@ class BodyDataTransformer
     {
     }
 
-    public function execute(Body $body): array
+    public function execute(Body $body,array $resolveData): array
     {
         $parsedBody = [
             'type' => $body->type(),
@@ -28,7 +28,7 @@ class BodyDataTransformer
 
         /** @var BodyElement $bodyElement */
         foreach ($body as $bodyElement) {
-            $parsedBody['elements'][] = $this->bodyElementDataTransformerHandler->execute($bodyElement);
+            $parsedBody['elements'][] = $this->bodyElementDataTransformerHandler->execute($bodyElement,$resolveData);
         }
 
         return $parsedBody;
