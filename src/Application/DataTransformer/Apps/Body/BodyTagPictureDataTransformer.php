@@ -33,14 +33,14 @@ class BodyTagPictureDataTransformer extends ElementTypeDataTransformer
         Assertion::isInstanceOf($this->bodyElement, BodyTagPicture::class, $message);
 
         $elementArray = parent::read();
-        $file=$this->retrievePhotoFile($this->bodyElement);
-        if ($file){
-            $elementArray['shots'] = $this->pictureShots->retriveAllShotsByAspectRatio($file, $this->bodyElement);
-        }
-        $elementArray['caption'] = $this->bodyElement->caption();
-        $elementArray['alternate'] = $this->bodyElement->alternate();
-        $elementArray['orientation'] = $this->bodyElement->orientation();
+        $shots=$this->pictureShots->retriveShotsByPhotoId($this->resolveData(),$this->bodyElement);
 
+        if (count($shots)){
+            $elementArray['shots'] = $shots;
+            $elementArray['caption'] = $this->bodyElement->caption();
+            $elementArray['alternate'] = $this->bodyElement->alternate();
+            $elementArray['orientation'] = $this->bodyElement->orientation();
+        }
         return $elementArray;
     }
 
@@ -48,22 +48,5 @@ class BodyTagPictureDataTransformer extends ElementTypeDataTransformer
     {
         return BodyTagPicture::class;
     }
-
-    private function retrievePhotoFile(BodyTagPictureDefault $bodyTagPicture) : string
-    {
-        $photoFile='';
-        $resolveData=$this->resolveData();
-        if (!isset($resolveData['photoFromBodyTags'])){
-            return $photoFile;
-        }
-        $photoFromBodyTags=$resolveData['photoFromBodyTags'];
-
-        if (isset($photoFromBodyTags[$bodyTagPicture->id()->id()])){
-            return $photoFromBodyTags[$bodyTagPicture->id()->id()]->file();
-        }
-        return $photoFile;
-
-    }
-
 
 }

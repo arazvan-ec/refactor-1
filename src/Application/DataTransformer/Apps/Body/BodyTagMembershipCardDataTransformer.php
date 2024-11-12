@@ -37,7 +37,9 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
         Assertion::isInstanceOf($this->bodyElement, BodyTagMembershipCard::class, $message);
 
         $elementArray = parent::read();
-        $elementArray['picture'] = $this->bodyElementDataTransformerHandler->execute($this->bodyElement,$this->resolveData());
+        $elementArray['picture'] = $this->bodyElementDataTransformerHandler->execute(
+            $this->bodyElement->bodyTagPictureMembership(),$this->resolveData()
+        );
 
         return $elementArray;
     }
