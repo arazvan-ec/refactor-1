@@ -92,21 +92,20 @@ class EditorialOrchestrator implements Orchestrator
 
         $editorialResult =  $this->detailsAppsDataTransformer->write($editorial, $journalists, $section, $tags)->read();
 
-
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
-
         $editorialResult['countComments'] = (isset($comments['options']['totalrecords']))
             ? $comments['options']['totalrecords'] : 0;
 
-
         $resolveData['photoFromBodyTags'] =$this->retrievePhotosFromBodyTags($editorial);
-        [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
+        [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
         $membershipLinkCombine = $this->resolvePromiseMembershipLinks($promise, $links);
 
-        $editorialResult['body'] = $this->bodyDataTransformer->execute($editorial->body(), $resolveData, $membershipLinkCombine);
-
-
+        $editorialResult['body'] = $this->bodyDataTransformer->execute(
+            $editorial->body(),
+            $resolveData,
+            $membershipLinkCombine
+        );
 
         return $editorialResult;
     }
@@ -148,7 +147,7 @@ class EditorialOrchestrator implements Orchestrator
             $photo = $this->queryMultimediaClient->findPhotoById($id);
             $result[$id] = $photo;
         } catch (Throwable $throwable) {
-            $this->logger()->error($throwable->getMessage(), $throwable->getTrace());
+            //$this->logger()->error($throwable->getMessage(), $throwable->getTrace());
         }
 
         return $result;
@@ -202,6 +201,7 @@ class EditorialOrchestrator implements Orchestrator
 
         return [$promise, $links];
     }
+
     /**
      * @param Promise|null $promise
      */

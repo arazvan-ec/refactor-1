@@ -15,11 +15,17 @@ abstract class ElementTypeDataTransformer implements BodyElementDataTransformer
 {
     protected BodyElement $bodyElement;
     private array $resolveData;
+    private array $membershipLinkCombine;
 
-    public function write(BodyElement $bodyElement,array $resolveData = []): BodyElementDataTransformer
+    public function write(
+        BodyElement $bodyElement,
+        array $resolveData = [],
+        array $membershipLinkCombine = []
+    ): BodyElementDataTransformer
     {
         $this->bodyElement = $bodyElement;
         $this->resolveData = $resolveData;
+        $this->membershipLinkCombine = $membershipLinkCombine;
 
         return $this;
     }
@@ -35,5 +41,10 @@ abstract class ElementTypeDataTransformer implements BodyElementDataTransformer
     public function resolveData() : array
     {
         return $this->resolveData;
+    }
+
+    public function membershipLinkCombine() : array
+    {
+        return $this->membershipLinkCombine;
     }
 }

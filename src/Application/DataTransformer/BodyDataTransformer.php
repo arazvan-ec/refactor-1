@@ -24,7 +24,11 @@ class BodyDataTransformer
 
         /** @var BodyElement $bodyElement */
         foreach ($body as $bodyElement) {
-            $parsedBody['elements'][] = $this->bodyElementDataTransformerHandler->execute($bodyElement,$resolveData, $membershipLinkCombine);
+            $parsedBody['elements'][] = $this->bodyElementDataTransformerHandler->execute(
+                $bodyElement,
+                $resolveData,
+                $membershipLinkCombine
+            );
         }
 
         return $parsedBody;
