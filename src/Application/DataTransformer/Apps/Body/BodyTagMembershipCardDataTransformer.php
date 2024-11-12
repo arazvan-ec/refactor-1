@@ -40,11 +40,14 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
 
         $elementArray = parent::read();
         $elementArray['title'] = $this->bodyElement->title();
-        $elementArray['buttons'] = $this->retrieveButtons($this->bodyElement->buttons(), $this->membershipLinkCombine());
+        $elementArray['buttons'] = $this->retrieveButtons(
+            $this->bodyElement->buttons(),
+            $this->resolveData()
+        );
         $elementArray['titleBanner'] = $this->bodyElement->titleBanner();
         $elementArray['classBanner'] = $this->bodyElement->classBanner();
         $elementArray['picture'] = $this->bodyElementDataTransformerHandler->execute(
-            $this->bodyElement->bodyTagPictureMembership(),$this->resolveData(), $this->membershipLinkCombine()
+            $this->bodyElement->bodyTagPictureMembership(),$this->resolveData()
         );
 
         return $elementArray;
@@ -59,6 +62,7 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
     private function retrieveButtons(MembershipCardButtons $buttons, array $membershipLinkCombine): array
     {
         $arrayButtons = [];
+        $membershipLinkCombine = $membershipLinkCombine['membershipLinkCombine'] ?? [];
         /** @var MembershipCardButton $button */
         foreach ($buttons->buttons() as $button) {
             $arrayButtons[] = [

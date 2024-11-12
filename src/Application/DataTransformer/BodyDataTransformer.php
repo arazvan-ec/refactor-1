@@ -15,7 +15,7 @@ class BodyDataTransformer
     ) {
     }
 
-    public function execute(Body $body, array $resolveData, array $membershipLinkCombine): array
+    public function execute(Body $body, array $resolveData): array
     {
         $parsedBody = [
             'type' => $body->type(),
@@ -26,8 +26,7 @@ class BodyDataTransformer
         foreach ($body as $bodyElement) {
             $parsedBody['elements'][] = $this->bodyElementDataTransformerHandler->execute(
                 $bodyElement,
-                $resolveData,
-                $membershipLinkCombine
+                $resolveData
             );
         }
 

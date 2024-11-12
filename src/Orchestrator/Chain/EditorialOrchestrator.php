@@ -99,12 +99,11 @@ class EditorialOrchestrator implements Orchestrator
         $resolveData['photoFromBodyTags'] =$this->retrievePhotosFromBodyTags($editorial);
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
-        $membershipLinkCombine = $this->resolvePromiseMembershipLinks($promise, $links);
+        $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
 
         $editorialResult['body'] = $this->bodyDataTransformer->execute(
             $editorial->body(),
-            $resolveData,
-            $membershipLinkCombine
+            $resolveData
         );
 
         return $editorialResult;
