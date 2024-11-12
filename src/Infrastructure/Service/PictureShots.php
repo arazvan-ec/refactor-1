@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\Service;
 
-
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureDefault;
 
 /**
@@ -10,7 +9,6 @@ use Ec\Editorial\Domain\Model\Body\BodyTagPictureDefault;
  */
 class PictureShots
 {
-
     private const WIDTH = 'width';
 
     /** @var string */
@@ -71,11 +69,9 @@ class PictureShots
     ];
 
     public function __construct(
-        private Thumbor $thumbor
-    )
-    {
+        private Thumbor $thumbor,
+    ) {
     }
-
 
     private function retriveAspectRatio(string $topX, string $topY, string $bottomX, string $bottomY): string
     {
@@ -120,30 +116,30 @@ class PictureShots
         return $shots;
     }
 
-    public function retrieveShotsByPhotoId(array $resolveData, BodyTagPictureDefault $bodyTagPicture) : array
+    public function retrieveShotsByPhotoId(array $resolveData, BodyTagPictureDefault $bodyTagPicture): array
     {
-        $photoFile=$this->retrievePhotoFile($resolveData,$bodyTagPicture);
-        if ($photoFile){
-            return $this->retriveAllShotsByAspectRatio($photoFile,$bodyTagPicture);
+        $photoFile = $this->retrievePhotoFile($resolveData, $bodyTagPicture);
+        if ($photoFile) {
+            return $this->retriveAllShotsByAspectRatio($photoFile, $bodyTagPicture);
         }
+
         return [];
     }
 
-    private function retrievePhotoFile(array $resolveData,BodyTagPictureDefault $bodyTagPicture) : string
+    private function retrievePhotoFile(array $resolveData, BodyTagPictureDefault $bodyTagPicture): string
     {
-        $photoFile='';
+        $photoFile = '';
 
-        if (!isset($resolveData['photoFromBodyTags'])){
+        if (!isset($resolveData['photoFromBodyTags'])) {
             return $photoFile;
         }
-        $photoFromBodyTags=$resolveData['photoFromBodyTags'];
+        $photoFromBodyTags = $resolveData['photoFromBodyTags'];
 
-        if (isset($photoFromBodyTags[$bodyTagPicture->id()->id()])){
+        if (isset($photoFromBodyTags[$bodyTagPicture->id()->id()])) {
             return $photoFromBodyTags[$bodyTagPicture->id()->id()]->file();
         }
+
         return $photoFile;
 
     }
-
-
 }

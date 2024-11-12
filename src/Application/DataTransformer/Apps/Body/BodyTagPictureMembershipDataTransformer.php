@@ -6,20 +6,16 @@
 namespace App\Application\DataTransformer\Apps\Body;
 
 use App\Infrastructure\Service\PictureShots;
-use App\Infrastructure\Service\Thumbor;
 use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
-use Ec\Editorial\Domain\Model\Body\BodyTagPictureDefault;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureMembership;
-use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  */
 class BodyTagPictureMembershipDataTransformer extends ElementTypeDataTransformer
 {
-
     /** @var BodyTagPicture */
     protected BodyElement $bodyElement;
 
@@ -35,12 +31,13 @@ class BodyTagPictureMembershipDataTransformer extends ElementTypeDataTransformer
 
         $elementArray = parent::read();
 
-        $shots=$this->pictureShots->retrieveShotsByPhotoId($this->resolveData(),$this->bodyElement);
+        $shots = $this->pictureShots->retrieveShotsByPhotoId($this->resolveData(), $this->bodyElement);
 
-        if (count($shots)){
+        if (count($shots)) {
             $elementArray['shots'] = $shots;
             $elementArray['orientation'] = $this->bodyElement->orientation();
         }
+
         return $elementArray;
     }
 
@@ -48,8 +45,4 @@ class BodyTagPictureMembershipDataTransformer extends ElementTypeDataTransformer
     {
         return BodyTagPictureMembership::class;
     }
-
-
-
-
 }

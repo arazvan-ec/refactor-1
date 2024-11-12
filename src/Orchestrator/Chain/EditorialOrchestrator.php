@@ -26,7 +26,6 @@ use Ec\Tag\Domain\Model\QueryTagClient;
 use Http\Promise\Promise;
 use Psr\Http\Message\UriFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Throwable;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
@@ -96,7 +95,7 @@ class EditorialOrchestrator implements Orchestrator
         $editorialResult['countComments'] = (isset($comments['options']['totalrecords']))
             ? $comments['options']['totalrecords'] : 0;
 
-        $resolveData['photoFromBodyTags'] =$this->retrievePhotosFromBodyTags($editorial);
+        $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial);
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
         $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
@@ -113,7 +112,6 @@ class EditorialOrchestrator implements Orchestrator
     {
         return 'editorial';
     }
-
 
     protected function retrievePhotosFromBodyTags(Editorial $editorial): array
     {
@@ -134,23 +132,18 @@ class EditorialOrchestrator implements Orchestrator
         return $result;
     }
 
-    /**
-     * @param string $id
-     * @param array  $result
-     *
-     * @return array
-     */
     protected function addPhotoToArray(string $id, array $result): array
     {
         try {
             $photo = $this->queryMultimediaClient->findPhotoById($id);
             $result[$id] = $photo;
-        } catch (Throwable $throwable) {
-            //$this->logger()->error($throwable->getMessage(), $throwable->getTrace());
+        } catch (\Throwable $throwable) {
+            // $this->logger()->error($throwable->getMessage(), $throwable->getTrace());
         }
 
         return $result;
     }
+
     private function getLinksOfBodyTagMembership(Body $body): array
     {
         $linksData = [];
@@ -174,9 +167,9 @@ class EditorialOrchestrator implements Orchestrator
         // $linksOfBodyTagPicture = $this->getLinksOfBodyTagPicture($body);
 
         return \array_merge(
-        // $linksOfElementsContentWithLinks,
+            // $linksOfElementsContentWithLinks,
             $linksOfBodyTagMembership,
-        // $linksOfBodyTagPicture
+            // $linksOfBodyTagPicture
         );
     }
 
@@ -201,16 +194,13 @@ class EditorialOrchestrator implements Orchestrator
         return [$promise, $links];
     }
 
-    /**
-     * @param Promise|null $promise
-     */
     private function resolvePromiseMembershipLinks(?Promise $promise, array $links): array
     {
         $membershipLinkResult = [];
         if ($promise) {
             try {
                 $membershipLinkResult = $promise->wait();
-            } catch (Throwable $throwable) {
+            } catch (\Throwable $throwable) {
                 return [];
             }
         }
@@ -221,5 +211,4 @@ class EditorialOrchestrator implements Orchestrator
 
         return \array_combine($links, $membershipLinkResult);
     }
-
 }

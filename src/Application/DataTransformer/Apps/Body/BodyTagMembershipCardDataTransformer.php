@@ -6,12 +6,9 @@
 namespace App\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\BodyElementDataTransformerHandler;
-use App\Infrastructure\Service\PictureShots;
 use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
-use Ec\Editorial\Domain\Model\Body\BodyTagHtml;
 use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
-use Ec\Editorial\Domain\Model\Body\BodyTagPictureDefault;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButtons;
 
@@ -26,9 +23,8 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
 
 
     public function __construct(
-       private readonly BodyElementDataTransformerHandler $bodyElementDataTransformerHandler,
-    )
-    {
+        private readonly BodyElementDataTransformerHandler $bodyElementDataTransformerHandler,
+    ) {
 
     }
 
