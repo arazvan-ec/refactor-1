@@ -6,6 +6,7 @@
 namespace App\Tests\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
+use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Exception\EditorialNotPublishedYetException;
 use App\Orchestrator\Chain\EditorialOrchestrator;
@@ -24,11 +25,14 @@ use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\JournalistId;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
+use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
+use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
 use Ec\Tag\Domain\Model\QueryTagClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\UriFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -52,14 +56,26 @@ class EditorialOrchestratorTest extends TestCase
     /** @var QuerySectionClient|MockObject */
     private QuerySectionClient $querySectionClient;
 
+    /** @var QueryMultimediaClient|MockObject */
+    private QueryMultimediaClient $queryMultimediaClient;
+
     /** @var JournalistFactory|MockObject */
     private JournalistFactory $journalistFactory;
 
     /** @var AppsDataTransformer|MockObject */
     private AppsDataTransformer $appsDataTransformer;
 
+    /** @var BodyDataTransformer|MockObject */
+    private BodyDataTransformer $bodyDataTransformer;
+
     /** @var QueryTagClient|MockObject */
     private QueryTagClient $queryTagClient;
+
+    /** @var UriFactoryInterface|MockObject */
+    private UriFactoryInterface $uriFactory;
+
+    /** @var QueryMembershipClient|MockObject */
+    private QueryMembershipClient $queryMembershipClient;
 
     protected function setUp(): void
     {
@@ -67,18 +83,26 @@ class EditorialOrchestratorTest extends TestCase
         $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
         $this->queryJournalistClient = $this->createMock(QueryJournalistClient::class);
         $this->querySectionClient = $this->createMock(QuerySectionClient::class);
+        $this->queryMultimediaClient = $this->createMock(QueryMultimediaClient::class);
         $this->journalistFactory = $this->createMock(JournalistFactory::class);
         $this->appsDataTransformer = $this->createMock(AppsDataTransformer::class);
+        $this->bodyDataTransformer = $this->createMock(BodyDataTransformer::class);
         $this->queryTagClient = $this->createMock(QueryTagClient::class);
+        $this->uriFactory = $this->createMock(UriFactoryInterface::class);
+        $this->queryMembershipClient = $this->createMock(QueryMembershipClient::class);
 
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
             $this->queryEditorialClient,
             $this->queryJournalistClient,
             $this->querySectionClient,
+            $this->queryMultimediaClient,
             $this->journalistFactory,
             $this->appsDataTransformer,
-            $this->queryTagClient
+            $this->queryTagClient,
+            $this->bodyDataTransformer,
+            $this->uriFactory,
+            $this->queryMembershipClient
         );
     }
 
@@ -278,6 +302,7 @@ class EditorialOrchestratorTest extends TestCase
                     'url' => 'https://www.elconfidencial.dev/tags/temas/bolsas-15919',
                 ],
             ],
+            'body' => []
         ];
 
         $this->appsDataTransformer
