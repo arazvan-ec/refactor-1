@@ -35,11 +35,13 @@ use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
 use Ec\Tag\Domain\Model\QueryTagClient;
+use Ec\Tag\Domain\Model\Tag as TagAlias;
 use Http\Promise\Promise;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -81,6 +83,9 @@ class EditorialOrchestratorTest extends TestCase
     /** @var UriFactoryInterface|MockObject */
     private UriFactoryInterface $uriFactory;
 
+    /** @var MockObject|LoggerInterface */
+    private LoggerInterface $logger;
+
     /** @var QueryMembershipClient|MockObject */
     private QueryMembershipClient $queryMembershipClient;
 
@@ -97,6 +102,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->queryTagClient = $this->createMock(QueryTagClient::class);
         $this->uriFactory = $this->createMock(UriFactoryInterface::class);
         $this->queryMembershipClient = $this->createMock(QueryMembershipClient::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
@@ -109,7 +115,8 @@ class EditorialOrchestratorTest extends TestCase
             $this->queryTagClient,
             $this->bodyDataTransformer,
             $this->uriFactory,
-            $this->queryMembershipClient
+            $this->queryMembershipClient,
+            $this->logger
         );
     }
 
@@ -118,12 +125,19 @@ class EditorialOrchestratorTest extends TestCase
         parent::tearDown();
 
         unset(
-            $this->queryEditorialClient,
-            $this->queryLegacyClient,
             $this->editorialOrchestrator,
+            $this->queryLegacyClient,
+            $this->queryEditorialClient,
+            $this->queryJournalistClient,
             $this->querySectionClient,
+            $this->queryMultimediaClient,
             $this->journalistFactory,
-            $this->appsDataTransformer
+            $this->appsDataTransformer,
+            $this->queryTagClient,
+            $this->bodyDataTransformer,
+            $this->uriFactory,
+            $this->queryMembershipClient,
+            $this->logger
         );
     }
 
@@ -177,7 +191,7 @@ class EditorialOrchestratorTest extends TestCase
         $journalistId = $this->createMock(JournalistId::class);
         $section = $this->createMock(Section::class);
         $editorialTag = $this->createMock(Tag::class);
-        $tag = $this->createMock(\Ec\Tag\Domain\Model\Tag::class);
+        $tag = $this->createMock(TagAlias::class);
 
         $editorialId
             ->method('id')
@@ -563,8 +577,10 @@ class EditorialOrchestratorTest extends TestCase
      * @test
      *
      * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorProvider::getBodyExpected()
+     *
+     * @param array<mixed> $bodyExpected
      */
-    public function executeShouldReturnCorrectDataWithBodyWithBodyTagMembershipCard($bodyExpected): void
+    public function executeShouldReturnCorrectDataWithBodyWithBodyTagMembershipCard(array $bodyExpected): void
     {
         $id = '12345';
         $editorial = $this->getEditorialMock($id);
@@ -607,7 +623,7 @@ class EditorialOrchestratorTest extends TestCase
             ->with('id')
             ->willReturn($id);
 
-        $body = $this->generateBoody($editorial, []);
+        $body = $this->generateBody($editorial);
 
         $resolveData['photoFromBodyTags'] = ['' => null];
 
@@ -725,7 +741,10 @@ class EditorialOrchestratorTest extends TestCase
         return $editorial;
     }
 
-    private function generateSectionMock(MockObject $editorialMock)
+    /**
+     * @return Section|MockObject
+     */
+    private function generateSectionMock(MockObject $editorialMock): Section
     {
         $sectionId = 'sectionId';
         $section = $this->createMock(Section::class);
@@ -743,7 +762,7 @@ class EditorialOrchestratorTest extends TestCase
         return $section;
     }
 
-    private function generateJournalistMock(MockObject $editorialMock)
+    private function generateJournalistMock(MockObject $editorialMock): Journalist|MockObject
     {
         $signature = $this->createMock(Signature::class);
         $signatureId = $this->createMock(SignatureId::class);
@@ -803,10 +822,10 @@ class EditorialOrchestratorTest extends TestCase
         return $journalist;
     }
 
-    private function generateTagMock(MockObject $editorialMock)
+    private function generateTagMock(MockObject $editorialMock): MockObject|TagAlias
     {
         $editorialTag = $this->createMock(Tag::class);
-        $tag = $this->createMock(\Ec\Tag\Domain\Model\Tag::class);
+        $tag = $this->createMock(TagAlias::class);
 
         $tags = new Tags();
         $tags->addItem($editorialTag);
@@ -825,7 +844,10 @@ class EditorialOrchestratorTest extends TestCase
         return $tag;
     }
 
-    private function generateBoody(MockObject $editorialMock, array $bodyTag)
+    /**
+     * @return BodyNormal|MockObject
+     */
+    private function generateBody(MockObject $editorialMock): BodyNormal
     {
         $body = $this->createMock(BodyNormal::class);
         $editorialMock->expects(static::exactly(3))
@@ -835,7 +857,10 @@ class EditorialOrchestratorTest extends TestCase
         return $body;
     }
 
-    private function getGenericTransformerData()
+    /**
+     * @return array<mixed>
+     */
+    private function getGenericTransformerData(): array
     {
         return [
             'id' => '4416',

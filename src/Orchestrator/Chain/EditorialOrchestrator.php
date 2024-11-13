@@ -25,6 +25,7 @@ use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Tag\Domain\Model\QueryTagClient;
 use Http\Promise\Promise;
 use Psr\Http\Message\UriFactoryInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -44,6 +45,7 @@ class EditorialOrchestrator implements Orchestrator
         private readonly BodyDataTransformer $bodyDataTransformer,
         private readonly UriFactoryInterface $uriFactory,
         private readonly QueryMembershipClient $queryMembershipClient,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -113,6 +115,9 @@ class EditorialOrchestrator implements Orchestrator
         return 'editorial';
     }
 
+    /**
+     * @return array<mixed>
+     */
     protected function retrievePhotosFromBodyTags(Body $body): array
     {
         $result = [];
@@ -132,18 +137,26 @@ class EditorialOrchestrator implements Orchestrator
         return $result;
     }
 
+    /**
+     * @param array<mixed> $result
+     *
+     * @return array<mixed>
+     */
     protected function addPhotoToArray(string $id, array $result): array
     {
         try {
             $photo = $this->queryMultimediaClient->findPhotoById($id);
             $result[$id] = $photo;
         } catch (\Throwable $throwable) {
-            // $this->logger()->error($throwable->getMessage(), $throwable->getTrace());
+            $this->logger->error($throwable->getMessage(), $throwable->getTrace());
         }
 
         return $result;
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getLinksOfBodyTagMembership(Body $body): array
     {
         $linksData = [];
@@ -161,6 +174,9 @@ class EditorialOrchestrator implements Orchestrator
         return $linksData;
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getLinksFromBody(Body $body): array
     {
         // $linksOfElementsContentWithLinks = $this->getLinksOfElementContentWithLinks($body);
@@ -174,6 +190,9 @@ class EditorialOrchestrator implements Orchestrator
         );
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getPromiseMembershipLinks(Editorial $editorial, string $siteId): array
     {
         $linksData = $this->getLinksFromBody($editorial->body());
@@ -181,8 +200,7 @@ class EditorialOrchestrator implements Orchestrator
         $links = [];
         $uris = [];
         foreach ($linksData as $membershipLink) {
-            $pene[] = $this->uriFactory->createUri($membershipLink);
-            $uris[] = '';
+            $uris[] = $this->uriFactory->createUri($membershipLink);
             $links[] = $membershipLink;
         }
 
@@ -196,6 +214,11 @@ class EditorialOrchestrator implements Orchestrator
         return [$promise, $links];
     }
 
+    /**
+     * @param array<string, string> $links
+     *
+     * @return array<mixed>
+     */
     private function resolvePromiseMembershipLinks(?Promise $promise, array $links): array
     {
         $membershipLinkResult = [];
