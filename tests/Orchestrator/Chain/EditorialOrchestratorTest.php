@@ -402,7 +402,7 @@ class EditorialOrchestratorTest extends TestCase
      *
      * @param array<mixed> $bodyExpected
      */
-    public function executeShouldReturnCorrectDataWithBodyWithBodyTagMembershipCard(array $bodyExpected): void
+    public function executeShouldReturnCorrectDataWithBodyWithBody(array $bodyExpected): void
     {
         $id = '12345';
         $editorial = $this->getEditorialMock($id);
