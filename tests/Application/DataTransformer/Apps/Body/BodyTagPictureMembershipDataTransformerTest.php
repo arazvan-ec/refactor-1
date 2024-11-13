@@ -4,7 +4,6 @@ namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\BodyTagPictureMembershipDataTransformer;
 use App\Infrastructure\Service\PictureShots;
-use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureId;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureMembership;
 use PHPUnit\Framework\TestCase;
