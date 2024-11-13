@@ -6,11 +6,15 @@ use App\Application\DataTransformer\Apps\Body\BodyTagPictureDataTransformer;
 use App\Infrastructure\Service\PictureShots;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureId;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class BodyTagPictureDataTransformerTest extends TestCase
 {
     private BodyTagPictureDataTransformer $dataTransformer;
+    /**
+     * @var PictureShots|MockObject
+     */
     private PictureShots $pictureShots;
 
     protected function setUp(): void

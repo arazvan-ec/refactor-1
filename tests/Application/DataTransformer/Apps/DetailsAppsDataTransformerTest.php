@@ -6,10 +6,8 @@
 namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\DetailsAppsDataTransformer;
-use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Service\Thumbor;
-use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialTitles;

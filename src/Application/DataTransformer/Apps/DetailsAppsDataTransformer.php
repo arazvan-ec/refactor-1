@@ -5,7 +5,6 @@
 
 namespace App\Application\DataTransformer\Apps;
 
-use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\Infrastructure\Enum\ClossingModeEnum;
 use App\Infrastructure\Enum\EditorialTypesEnum;
 use App\Infrastructure\Service\Thumbor;
