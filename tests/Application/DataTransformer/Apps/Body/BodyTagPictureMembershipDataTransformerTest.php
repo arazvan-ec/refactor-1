@@ -6,10 +6,17 @@ use App\Application\DataTransformer\Apps\Body\BodyTagPictureMembershipDataTransf
 use App\Infrastructure\Service\PictureShots;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureId;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureMembership;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class BodyTagPictureMembershipDataTransformerTest extends TestCase
 {
+    /**
+     * @var PictureShots|MockObject
+     */
+    private PictureShots $pictureShots;
+    private BodyTagPictureMembershipDataTransformer $dataTransformer;
+
     protected function setUp(): void
     {
         $this->pictureShots = $this->createMock(PictureShots::class);

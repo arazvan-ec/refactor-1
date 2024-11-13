@@ -59,10 +59,10 @@ class ThumborTest extends TestCase
         $fileImage = '0a978399c4be84f3ce367624ca9589ad.jpg';
         $width = '1440';
         $height = '1920';
-        $topX = '615';
-        $topY = '99';
-        $bottomX = '827';
-        $bottomY = '381';
+        $topX = 615;
+        $topY = 99;
+        $bottomX = 827;
+        $bottomY = 381;
         $expectedPath = $this->awsBucket.'/original/0a9/783/99c/'.$fileImage;
 
         $builderMock = $this->createMock(Builder::class);

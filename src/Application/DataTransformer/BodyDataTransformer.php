@@ -18,6 +18,7 @@ class BodyDataTransformer
 
     /**
      * @param array<string, mixed> $resolveData
+     *
      * @return array<string, mixed>
      */
     public function execute(Body $body, array $resolveData): array

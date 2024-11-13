@@ -73,7 +73,7 @@ class PictureShots
     ) {
     }
 
-    private function retriveAspectRatio(string $topX, string $topY, string $bottomX, string $bottomY): string
+    private function retriveAspectRatio(int $topX, int $topY, int $bottomX, int $bottomY): string
     {
 
         $width = $bottomX - $topX;
@@ -92,6 +92,9 @@ class PictureShots
         return $result;
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function retriveAllShotsByAspectRatio(string $fileName, BodyTagPictureDefault $bodytag): array
     {
         $shots = [];
@@ -116,6 +119,11 @@ class PictureShots
         return $shots;
     }
 
+    /**
+     * @param array<string, mixed> $resolveData
+     *
+     * @return array|string[]
+     */
     public function retrieveShotsByPhotoId(array $resolveData, BodyTagPictureDefault $bodyTagPicture): array
     {
         $photoFile = $this->retrievePhotoFile($resolveData, $bodyTagPicture);
@@ -126,6 +134,9 @@ class PictureShots
         return [];
     }
 
+    /**
+     * @param array<string, mixed> $resolveData
+     */
     private function retrievePhotoFile(array $resolveData, BodyTagPictureDefault $bodyTagPicture): string
     {
         $photoFile = '';
