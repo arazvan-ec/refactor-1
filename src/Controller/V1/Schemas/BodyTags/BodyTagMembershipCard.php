@@ -5,41 +5,63 @@
 
 namespace App\Controller\V1\Schemas\BodyTags;
 
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    schema: 'BodyTagPicture',
-    title: 'BodyTagPicture',
+    schema: 'BodyTagMembershipCard',
+    title: 'BodyTagMembershipCard',
     properties: [
         new OA\Property(
             property: 'type',
+            description: 'Tipo de elemento bodytagmembershipcard',
             type: 'string',
-            enum: ['bodytagpicture']
+            enum: ['bodytagmembershipcard']
         ),
         new OA\Property(
-            property: 'shots',
-            type: 'object',
-            additionalProperties: new OA\AdditionalProperties(
-                type: 'string',
-                format: 'url'
+            property: 'title',
+            description: 'Titulo para presentación del producto',
+            type: 'string'
+        ),
+        new OA\Property(
+            property: 'buttons',
+            description: 'Botones relacionados al producto de afiliación',
+            type: 'array',
+            items: new OA\Items(
+                properties: [
+                    new OA\Property(
+                        property: 'url',
+                        description: 'URL del producto' ,
+                        type: 'string'
+                    ),
+                    new OA\Property(
+                        property: 'urlMembership',
+                        description: 'URL relacionada al producto de afiliación',
+                        type: 'string'
+                    ),
+                    new OA\Property(
+                        property: 'text',
+                        description: 'Texto del botón',
+                        type: 'string'
+                    ),
+                ],
+                type: 'object'
             )
         ),
         new OA\Property(
-            property: 'url',
+            property: 'titleBanner',
+            description: 'Titulo del banner destacado',
             type: 'string'
         ),
         new OA\Property(
-            property: 'caption',
+            property: 'classBanner',
+            description: 'Clase del banner',
             type: 'string'
         ),
         new OA\Property(
-            property: 'alternate',
-            type: 'string'
-        ),
-        new OA\Property(
-            property: 'orientation',
-            type: 'string',
-            enum: ['landscape', 'portrait', 'square']
+            property: 'picture',
+            description: 'Objecto de imagen para el producto de afiliación',
+            ref: new Model(type: BodyTagPictureMembership::class)
         ),
     ],
     type: 'object',
