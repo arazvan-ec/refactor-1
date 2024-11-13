@@ -154,6 +154,7 @@ class EditorialOrchestrator implements Orchestrator
             /** @var MembershipCardButton $button */
             foreach ($bodyElement->buttons()->buttons() as $button) {
                 $linksData[] = $button->urlMembership();
+                $linksData[] = $button->url();
             }
         }
 
