@@ -30,7 +30,7 @@ class BodyElementDataTransformerHandler
 
     /**
      * @param array<string, mixed> $resolveData
-     * @return array
+     * @return array<string, mixed>
      * @throws BodyDataTransformerNotFoundException
      */
     public function execute(BodyElement $bodyElement, array $resolveData = []): array

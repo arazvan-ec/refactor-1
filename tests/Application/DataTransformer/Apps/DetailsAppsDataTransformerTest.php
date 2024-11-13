@@ -41,24 +41,14 @@ class DetailsAppsDataTransformerTest extends TestCase
     /** @var QueryLegacyClient|MockObject */
     private QueryLegacyClient $queryLegacyClient;
 
-    /**
-     * @var Thumbor|MockObject
-     */
+    /** @var Thumbor|MockObject */
     private Thumbor $thumbor;
-
-    /** @var BodyElementDataTransformerHandler|MockObject */
-    private BodyElementDataTransformerHandler $bodyElementDataTransformerHandler;
 
     protected function setUp(): void
     {
         $this->thumbor = $this->createMock(Thumbor::class);
         $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
-        $this->bodyElementDataTransformerHandler = $this->createMock(BodyElementDataTransformerHandler::class);
-        $this->transformer = new DetailsAppsDataTransformer(
-            'dev',
-            $this->thumbor,
-            $this->bodyElementDataTransformerHandler,
-        );
+        $this->transformer = new DetailsAppsDataTransformer('dev', $this->thumbor);
     }
 
     /**
@@ -394,43 +384,5 @@ class DetailsAppsDataTransformerTest extends TestCase
 
         $this->assertArrayHasKey('tags', $result);
         $this->assertEmpty($result['tags']);
-    }
-
-    /**
-     * @param BodyElement[] $items
-     */
-    private function configureArrayIteratorMock(MockObject $iteratorMock, array $items = []): void
-    {
-        $iterator = new \ArrayIterator($items);
-
-        $iteratorMock
-            ->method('rewind')
-            ->willReturnCallback(function () use ($iterator): void {
-                $iterator->rewind();
-            });
-
-        $iteratorMock
-            ->method('valid')
-            ->willReturnCallback(function () use ($iterator): bool {
-                return $iterator->valid();
-            });
-
-        $iteratorMock
-            ->method('current')
-            ->willReturnCallback(function () use ($iterator) {
-                return $iterator->current();
-            });
-
-        $iteratorMock
-            ->method('key')
-            ->willReturnCallback(function () use ($iterator) {
-                return $iterator->key();
-            });
-
-        $iteratorMock
-            ->method('next')
-            ->willReturnCallback(function () use ($iterator): void {
-                $iterator->next();
-            });
     }
 }

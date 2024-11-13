@@ -40,7 +40,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     public function __construct(
         string $extension,
         private readonly Thumbor $thumbor,
-        private readonly BodyElementDataTransformerHandler $bodyElementDataTransformerHandler,
     ) {
         $this->setExtension($extension);
     }
@@ -109,7 +108,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'canonicalEditorialId' => $this->editorial->canonicalEditorialId(),
                 'urlDate' => $this->editorial->urlDate()->format(self::DATE_FORMAT),
                 'countWords' => $this->editorial->body()->countWords(),
-
             ];
     }
 
