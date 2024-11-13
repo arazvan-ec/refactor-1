@@ -52,90 +52,58 @@ class BodyTagMembershipCardDataTransformerTest extends TestCase
 
     /**
      * @test
+     *
+     * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagMembershipCardDataProvider::getData()
      */
-    public function readShouldReturnExpectedArray(): void
+    public function readShouldReturnExpectedArray(array $bodyTag, array $combinedLinks, array $expected): void
     {
-        $buttonMock = $this->createMock(MembershipCardButton::class);
-        $buttonMock->expects(static::exactly(2))
-            ->method('url')
-            ->willReturn('url 1');
-        $buttonMock->expects(static::exactly(2))
-            ->method('urlMembership')
-            ->willReturn('urlMembership 1');
-        $buttonMock->expects(static::once())
-            ->method('cta')
-            ->willReturn('text 1');
+        $arrayBtnMock = [];
+        foreach ($bodyTag['btns'] as $btn) {
+            $buttonMock = $this->createMock(MembershipCardButton::class);
 
-        $buttonMock2 = $this->createMock(MembershipCardButton::class);
-        $buttonMock2->expects(static::exactly(2))
-            ->method('url')
-            ->willReturn('url 2');
-        $buttonMock2->expects(static::exactly(2))
-            ->method('urlMembership')
-            ->willReturn('urlMembership 2');
-        $buttonMock2->expects(static::once())
-            ->method('cta')
-            ->willReturn('text 2');
-
+            $buttonMock->expects(static::once())
+                ->method('url')
+                ->willReturn($btn['url']);
+            $buttonMock->expects(static::once())
+                ->method('urlMembership')
+                ->willReturn($btn['urlMembership']);
+            $buttonMock->expects(static::once())
+                ->method('cta')
+                ->willReturn($btn['cta']);
+            $arrayBtnMock[] = $buttonMock;
+        }
         $buttonCollectionMock = $this->createMock(MembershipCardButtons::class);
         $buttonCollectionMock->expects(static::once())
             ->method('buttons')
-            ->willReturn([$buttonMock, $buttonMock2]);
-
-        $type = 'bodytagmembershipcard';
-        $title = 'title';
-        $titleBanner = 'titleBanner';
-        $classBanner = 'classBanner';
-        $expected = [
-            'type' => $type,
-            'title' => $title,
-            'buttons' => [
-                [
-                    'url' => 'url 1',
-                    'urlMembership' => 'urlMembership 1',
-                    'text' => 'text 1',
-                ],
-                [
-                    'url' => 'url 2',
-                    'urlMembership' => 'urlMembership 2',
-                    'text' => 'text 2',
-                ],
-            ],
-            'titleBanner' => $titleBanner,
-            'classBanner' => $classBanner,
-            'picture' => [],
-        ];
+            ->willReturn($arrayBtnMock);
 
         $bodyElementMock = $this->createMock(BodyTagMembershipCard::class);
-
         $bodyElementMock->expects(static::once())
             ->method('type')
-            ->willReturn($type);
+            ->willReturn('bodytagmembershipcard');
         $bodyElementMock->expects(static::once())
             ->method('title')
-            ->willReturn($title);
+            ->willReturn($bodyTag['title']);
         $bodyElementMock->expects(static::once())
             ->method('buttons')
             ->willReturn($buttonCollectionMock);
-
         $bodyElementMock->expects(static::once())
             ->method('titleBanner')
-            ->willReturn($titleBanner);
+            ->willReturn($bodyTag['titleBanner']);
         $bodyElementMock->expects(static::once())
             ->method('classBanner')
-            ->willReturn($classBanner);
+            ->willReturn($bodyTag['classBanner']);
 
         $pictureMock = $this->createMock(BodyTagPictureMembership::class);
-
         $bodyElementMock->expects(static::once())
             ->method('bodyTagPictureMembership')
             ->willReturn($pictureMock);
-
         $this->handler->expects(static::once())
             ->method('execute')
-            ->with($pictureMock, []);
+            ->with($pictureMock, $combinedLinks);
 
-        $result = $this->dataTransformer->write($bodyElementMock)->read();
+
+        $result = $this->dataTransformer->write($bodyElementMock, $combinedLinks)->read();
 
         static::assertSame($expected, $result);
     }

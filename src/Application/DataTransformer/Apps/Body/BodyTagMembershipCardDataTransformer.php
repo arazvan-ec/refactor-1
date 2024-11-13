@@ -28,7 +28,6 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
 
     }
 
-
     public function read(): array
     {
         $message = 'BodyElement should be instance of '.BodyTagMembershipCard::class;
@@ -61,9 +60,11 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
         $membershipLinkCombine = $membershipLinkCombine['membershipLinkCombine'] ?? [];
         /** @var MembershipCardButton $button */
         foreach ($buttons->buttons() as $button) {
+            $url = $button->url();
+            $urlMembership = $button->urlMembership();
             $arrayButtons[] = [
-                'url' => $membershipLinkCombine[$button->url()] ?? $button->url(),
-                'urlMembership' => $membershipLinkCombine[$button->urlMembership()] ?? $button->urlMembership(),
+                'url' => $membershipLinkCombine[$url] ?? $url,
+                'urlMembership' => $membershipLinkCombine[$urlMembership] ?? $urlMembership,
                 'text' => $button->cta(),
             ];
         }
