@@ -18,11 +18,6 @@ class PictureShotsTest extends TestCase
     private Thumbor $thumbor;
     private PictureShots $pictureShot;
 
-    /**
-     * @var BodyTagPicture|MockObject
-     */
-    private BodyTagPicture $bodyTagPicture;
-
     protected function setUp(): void
     {
         $this->thumbor = $this->createMock(Thumbor::class);
@@ -30,24 +25,28 @@ class PictureShotsTest extends TestCase
     }
 
     /**
+     * @param array<string, mixed> $resolveData
+     * @param array<string, mixed> $shots
+     * @param array<string, mixed> $sizes
+     *
      * @test
      *
      * @dataProvider \App\Tests\Infrastructure\Service\DataProvider\PictureShotsDataProvider::getDataShots()
      */
     public function retrieveShotsByPhotoIdShouldReturnValidArray(
-        $id,
-        $resolveData,
-        $shots,
-        $sizes,
-        $photoFile,
-        $topX,
-        $topY,
-        $bottomX,
-        $bottomY,
-        $caption,
-        $alternate,
-        $orientation,
-    ) {
+        string $id,
+        array $resolveData,
+        array $shots,
+        array $sizes,
+        string $photoFile,
+        int $topX,
+        int $topY,
+        int $bottomX,
+        int $bottomY,
+        string $caption,
+        string $alternate,
+        string $orientation,
+    ): void {
         $bodytagPictureId = $this->createMock(BodyTagPictureId::class);
         $bodytagPictureId->method('id')->willReturn($id);
 
@@ -99,15 +98,18 @@ class PictureShotsTest extends TestCase
     }
 
     /**
+     * @param array<string, mixed> $resolveData
+     * @param array<string, mixed> $expected
+     *
      * @test
      *
      * @dataProvider \App\Tests\Infrastructure\Service\DataProvider\PictureShotsDataProvider::getDataEmpty()
      */
     public function retrieveShotsByPhotoIdShouldReturnEmptyArray(
-        $id,
-        $resolveData,
-        $expected,
-    ) {
+        string $id,
+        array $resolveData,
+        array $expected,
+    ): void {
         $resolveDataMock = [];
         $bodyElement = $this->createMock(BodyTagPicture::class);
         if (isset($resolveData['photoFromBodyTags'])) {
