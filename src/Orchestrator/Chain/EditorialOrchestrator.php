@@ -95,7 +95,7 @@ class EditorialOrchestrator implements Orchestrator
         $editorialResult['countComments'] = (isset($comments['options']['totalrecords']))
             ? $comments['options']['totalrecords'] : 0;
 
-        $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial);
+        $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
         $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
@@ -113,17 +113,17 @@ class EditorialOrchestrator implements Orchestrator
         return 'editorial';
     }
 
-    protected function retrievePhotosFromBodyTags(Editorial $editorial): array
+    protected function retrievePhotosFromBodyTags(Body $body): array
     {
         $result = [];
         /** @var BodyTagPicture[] $arrayOfBodyTagPicture */
-        $arrayOfBodyTagPicture = $editorial->body()->bodyElementsOf(BodyTagPicture::class);
+        $arrayOfBodyTagPicture = $body->bodyElementsOf(BodyTagPicture::class);
         foreach ($arrayOfBodyTagPicture as $bodyTagPicture) {
             $result = $this->addPhotoToArray($bodyTagPicture->id()->id(), $result);
         }
 
         /** @var BodyTagMembershipCard[] $arrayOfBodyTagMembershipCard */
-        $arrayOfBodyTagMembershipCard = $editorial->body()->bodyElementsOf(BodyTagMembershipCard::class);
+        $arrayOfBodyTagMembershipCard = $body->bodyElementsOf(BodyTagMembershipCard::class);
         foreach ($arrayOfBodyTagMembershipCard as $bodyTagMembershipCard) {
             $id = $bodyTagMembershipCard->bodyTagPictureMembership()->id()->id();
             $result = $this->addPhotoToArray($id, $result);
@@ -153,8 +153,8 @@ class EditorialOrchestrator implements Orchestrator
         foreach ($bodyElementsMembership as $bodyElement) {
             /** @var MembershipCardButton $button */
             foreach ($bodyElement->buttons()->buttons() as $button) {
-                $linksData[] = $button->urlMembership();
                 $linksData[] = $button->url();
+                $linksData[] = $button->urlMembership();
             }
         }
 
@@ -181,7 +181,8 @@ class EditorialOrchestrator implements Orchestrator
         $links = [];
         $uris = [];
         foreach ($linksData as $membershipLink) {
-            $uris[] = $this->uriFactory->createUri($membershipLink);
+            $pene[] = $this->uriFactory->createUri($membershipLink);
+            $uris[] = '';
             $links[] = $membershipLink;
         }
 

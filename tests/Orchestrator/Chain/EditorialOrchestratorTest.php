@@ -10,6 +10,11 @@ use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Exception\EditorialNotPublishedYetException;
 use App\Orchestrator\Chain\EditorialOrchestrator;
+use Ec\Editorial\Domain\Model\Body\BodyNormal;
+use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
+use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
+use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
+use Ec\Editorial\Domain\Model\Body\MembershipCardButtons;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\Signature;
@@ -30,9 +35,11 @@ use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
 use Ec\Tag\Domain\Model\QueryTagClient;
+use Http\Promise\Promise;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriFactoryInterface;
+use Psr\Http\Message\UriInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -550,5 +557,317 @@ class EditorialOrchestratorTest extends TestCase
     public function canOrchestrateShouldReturnExpectedValue(): void
     {
         static::assertSame('editorial', $this->editorialOrchestrator->canOrchestrate());
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorProvider::getBodyExpected()
+     */
+    public function executeShouldReturnCorrectDataWithBodyWithBodyTagMembershipCard($bodyExpected): void
+    {
+        $id = '12345';
+        $editorial = $this->getEditorialMock($id);
+        $section = $this->generateSectionMock($editorial);
+        $journalist = $this->generateJournalistMock($editorial);
+        $tags = [$this->generateTagMock($editorial)];
+
+        $expectedJournalists = [
+            '7298' => $journalist,
+        ];
+
+        $this->appsDataTransformer
+            ->expects(self::any())
+            ->method('write')
+            ->with($editorial, $expectedJournalists, $section, $tags)
+            ->willReturnSelf();
+        $transformedData = $this->getGenericTransformerData();
+
+        $this->appsDataTransformer
+            ->expects($this->once())
+            ->method('read')
+            ->willReturn($transformedData);
+
+        $this->queryEditorialClient
+            ->expects($this->once())
+            ->method('findEditorialById')
+            ->with($id)
+            ->willReturn($editorial);
+
+        $this->queryLegacyClient
+            ->expects($this->once())
+            ->method('findCommentsByEditorialId')
+            ->with($id)
+            ->willReturn(['options' => ['totalrecords' => 0]]);
+
+        $requestMock = $this->createMock(Request::class);
+        $requestMock
+            ->expects($this->once())
+            ->method('get')
+            ->with('id')
+            ->willReturn($id);
+
+        $body = $this->generateBoody($editorial, []);
+
+        $resolveData['photoFromBodyTags'] = ['' => null];
+
+        $section->expects(static::once())
+            ->method('siteId')
+            ->willReturn('siteId');
+
+        $url1 = 'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios1/dp/B0BJQPQVHP';
+        $url2 = 'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios2/dp/B0BJQPQVHP';
+
+        $bodyTagMembershipCardMock = $this->createMock(BodyTagMembershipCard::class);
+        $btnsMock = $this->createMock(MembershipCardButtons::class);
+        $btnMock = $this->createMock(MembershipCardButton::class);
+        $btnMock->expects(static::once())
+            ->method('url')
+            ->willReturn($url1);
+        $btnMock->expects(static::once())
+            ->method('urlMembership')
+            ->willReturn($url2);
+        $btnsMock->expects(static::once())
+            ->method('buttons')
+            ->willReturn([$btnMock]);
+        $bodyTagMembershipCardMock->expects(static::once())
+            ->method('buttons')
+            ->willReturn($btnsMock);
+        $uriMock = $this->createMock(UriInterface::class);
+        $callArgumentsCreateUri = [];
+        $this->uriFactory->expects(static::exactly(2))
+            ->method('createUri')
+            ->willReturnCallback(function ($strUrl) use (&$callArgumentsCreateUri, $uriMock) {
+                $callArgumentsCreateUri[] = $strUrl;
+
+                return $uriMock;
+            });
+        $expectedArgumentsCreateUri = [$url1, $url2];
+
+        $bodyTagPictureMock = $this->createMock(BodyTagPicture::class);
+        $arrayMocks = [
+            BodyTagPicture::class => $bodyTagPictureMock,
+            BodyTagMembershipCard::class => $bodyTagMembershipCardMock,
+        ];
+        $callArgumentsBodyElements = [];
+        $body->expects(static::exactly(3))
+            ->method('bodyElementsOf')
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsBodyElements, $arrayMocks) {
+                $callArgumentsBodyElements[] = $strClass;
+
+                return [$arrayMocks[$strClass]];
+            });
+        $expectedArgumentsBodyTags = [BodyTagPicture::class, BodyTagMembershipCard::class, BodyTagMembershipCard::class];
+
+        $promiseMock = $this->createMock(Promise::class);
+        $this->queryMembershipClient->expects(static::once())
+            ->method('getMembershipUrl')
+            ->with(
+                $id,
+                [$uriMock, $uriMock],
+                'el-confidencial',
+                true
+            )->willReturn($promiseMock);
+
+        $resolveData['membershipLinkCombine'] = [
+            'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios1/dp/B0BJQPQVHP' => 'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios1/dp/B0BJQPQVHP?tag=cacatuaMan',
+            'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios2/dp/B0BJQPQVHP' => 'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios2/dp/B0BJQPQVHP?tag=cacatuaMan',
+        ];
+
+        $promiseMock->expects(static::once())
+            ->method('wait')
+            ->willReturn($resolveData['membershipLinkCombine']);
+
+        $this->bodyDataTransformer->expects(static::once())
+            ->method('execute')
+            ->with($body, $resolveData)
+            ->willReturn($bodyExpected);
+
+
+        $transformedData['body'] = $bodyExpected;
+        $result = $this->editorialOrchestrator->execute($requestMock);
+
+        self::assertSame($expectedArgumentsCreateUri, $callArgumentsCreateUri);
+        self::assertSame($expectedArgumentsBodyTags, $callArgumentsBodyElements);
+
+        $this->assertSame($transformedData, $result);
+    }
+
+    private function getEditorialMock(string $id): MockObject
+    {
+        $editorial = $this->createMock(Editorial::class);
+        $sourceEditorial = $this->createMock(SourceEditorial::class);
+        $sourceEditorialId = $this->createMock(SourceEditorialId::class);
+        $editorialId = $this->createMock(EditorialId::class);
+
+        $editorialId
+            ->method('id')
+            ->willReturn($id);
+
+        $sourceEditorialId
+            ->method('id')
+            ->willReturn($id);
+
+        $sourceEditorial
+            ->method('id')
+            ->willReturn($sourceEditorialId);
+
+        $editorial
+            ->method('sourceEditorial')
+            ->willReturn($sourceEditorial);
+        $editorial
+            ->method('isVisible')
+            ->willReturn(true);
+        $editorial
+            ->method('id')
+            ->willReturn($editorialId);
+
+        return $editorial;
+    }
+
+    private function generateSectionMock(MockObject $editorialMock)
+    {
+        $sectionId = 'sectionId';
+        $section = $this->createMock(Section::class);
+
+        $editorialMock->expects(static::once())
+            ->method('sectionId')
+            ->willReturn($sectionId);
+
+        $this->querySectionClient
+            ->expects($this->once())
+            ->method('findSectionById')
+            ->with($sectionId)
+            ->willReturn($section);
+
+        return $section;
+    }
+
+    private function generateJournalistMock(MockObject $editorialMock)
+    {
+        $signature = $this->createMock(Signature::class);
+        $signatureId = $this->createMock(SignatureId::class);
+        $aliasId = $this->createMock(AliasId::class);
+        $journalist = $this->createMock(Journalist::class);
+        $journalistId = $this->createMock(JournalistId::class);
+
+        $signatureId
+            ->method('id')
+            ->willReturn('signature-id');
+
+        $signature
+            ->method('id')
+            ->willReturn($signatureId);
+
+        $signatures = new Signatures();
+        $signatures->addItem($signature);
+
+        $editorialMock
+            ->expects(self::once())
+            ->method('signatures')
+            ->willReturn($signatures);
+
+        $journalistId
+            ->method('id')
+            ->willReturn('alias-id');
+
+        $journalist
+            ->method('id')
+            ->willReturn($journalistId);
+
+        $aliasId
+            ->method('id')
+            ->willReturn('7298');
+
+        $this->journalistFactory
+            ->expects($this->once())
+            ->method('buildAliasId')
+            ->with('signature-id')
+            ->willReturn($aliasId);
+
+        $journalist
+            ->expects($this->once())
+            ->method('isActive')
+            ->willReturn(true);
+        $journalist
+            ->expects($this->once())
+            ->method('isVisible')
+            ->willReturn(true);
+
+        $this->queryJournalistClient
+            ->expects($this->once())
+            ->method('findJournalistByAliasId')
+            ->with($aliasId)
+            ->willReturn($journalist);
+
+        return $journalist;
+    }
+
+    private function generateTagMock(MockObject $editorialMock)
+    {
+        $editorialTag = $this->createMock(Tag::class);
+        $tag = $this->createMock(\Ec\Tag\Domain\Model\Tag::class);
+
+        $tags = new Tags();
+        $tags->addItem($editorialTag);
+
+        $editorialMock
+            ->expects(self::once())
+            ->method('tags')
+            ->willReturn($tags);
+
+        $this->queryTagClient
+            ->expects($this->once())
+            ->method('findTagById')
+            ->with($editorialTag->id()->id())
+            ->willReturn($tag);
+
+        return $tag;
+    }
+
+    private function generateBoody(MockObject $editorialMock, array $bodyTag)
+    {
+        $body = $this->createMock(BodyNormal::class);
+        $editorialMock->expects(static::exactly(3))
+            ->method('body')
+            ->willReturn($body);
+
+        return $body;
+    }
+
+    private function getGenericTransformerData()
+    {
+        return [
+            'id' => '4416',
+            'signatures' => [
+                [
+                    'journalistId' => '2338',
+                    'aliasId' => '7298',
+                    'name' => 'Javier Bocanegra 1',
+                    'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
+                    'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
+                    'departments' => [
+                        [
+                            'id' => '11',
+                            'name' => 'Fin de semana',
+                        ],
+                    ],
+                ],
+            ],
+            'section' => [
+                'id' => '90',
+                'name' => 'Mercados',
+                'url' => 'https://www.elconfidencial.dev/mercados',
+            ],
+            'countComments' => 0,
+            'tags' => [
+                [
+                    'id' => '15919',
+                    'name' => 'Bolsas',
+                    'url' => 'https://www.elconfidencial.dev/tags/temas/bolsas-15919',
+                ],
+            ],
+            'body' => [],
+        ];
     }
 }
