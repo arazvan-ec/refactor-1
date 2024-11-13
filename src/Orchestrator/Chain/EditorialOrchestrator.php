@@ -118,7 +118,7 @@ class EditorialOrchestrator implements Orchestrator
     /**
      * @return array<mixed>
      */
-    protected function retrievePhotosFromBodyTags(Body $body): array
+    private function retrievePhotosFromBodyTags(Body $body): array
     {
         $result = [];
         /** @var BodyTagPicture[] $arrayOfBodyTagPicture */
@@ -142,7 +142,7 @@ class EditorialOrchestrator implements Orchestrator
      *
      * @return array<mixed>
      */
-    protected function addPhotoToArray(string $id, array $result): array
+    private function addPhotoToArray(string $id, array $result): array
     {
         try {
             $photo = $this->queryMultimediaClient->findPhotoById($id);

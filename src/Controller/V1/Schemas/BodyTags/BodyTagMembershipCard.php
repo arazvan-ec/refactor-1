@@ -31,7 +31,7 @@ use OpenApi\Attributes as OA;
                 properties: [
                     new OA\Property(
                         property: 'url',
-                        description: 'URL del producto' ,
+                        description: 'URL del producto',
                         type: 'string'
                     ),
                     new OA\Property(
