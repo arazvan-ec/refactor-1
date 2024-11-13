@@ -54,6 +54,19 @@ class BodyTagMembershipCardDataTransformerTest extends TestCase
     /**
      * @test
      *
+     * @param array{
+     *      btns: array<array{
+     *          url: string,
+     *          urlMembership: string,
+     *          cta: string
+     *      }>,
+     *      title: string,
+     *      titleBanner: string,
+     *      classBanner: string
+     *  } $bodyTag
+     * @param array<array<string, string>> $combinedLinks
+     * @param array<array<string, string>> $expected
+     *
      * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagMembershipCardDataProvider::getData()
      */
     public function readShouldReturnExpectedArray(array $bodyTag, array $combinedLinks, array $expected): void

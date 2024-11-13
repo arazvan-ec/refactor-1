@@ -52,6 +52,11 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
         return BodyTagMembershipCard::class;
     }
 
+    /**
+     * @param array<array<string, string>> $membershipLinkCombine
+     *
+     * @return array<array<string, string>>
+     */
     private function retrieveButtons(MembershipCardButtons $buttons, array $membershipLinkCombine): array
     {
         $arrayButtons = [];
