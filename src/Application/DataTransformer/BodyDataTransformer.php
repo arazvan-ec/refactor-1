@@ -5,7 +5,6 @@ namespace App\Application\DataTransformer;
 use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Exceptions\BodyDataTransformerNotFoundException;
-use Throwable;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
