@@ -180,108 +180,10 @@ class EditorialOrchestratorTest extends TestCase
     public function executeShouldReturnCorrectData(): void
     {
         $id = '12345';
-        $editorial = $this->createMock(Editorial::class);
-        $sourceEditorial = $this->createMock(SourceEditorial::class);
-        $sourceEditorialId = $this->createMock(SourceEditorialId::class);
-        $editorialId = $this->createMock(EditorialId::class);
-        $signature = $this->createMock(Signature::class);
-        $signatureId = $this->createMock(SignatureId::class);
-        $aliasId = $this->createMock(AliasId::class);
-        $journalist = $this->createMock(Journalist::class);
-        $journalistId = $this->createMock(JournalistId::class);
-        $section = $this->createMock(Section::class);
-        $editorialTag = $this->createMock(Tag::class);
-        $tag = $this->createMock(TagAlias::class);
-
-        $editorialId
-            ->method('id')
-            ->willReturn($id);
-
-        $sourceEditorialId
-            ->method('id')
-            ->willReturn($id);
-
-        $sourceEditorial
-            ->method('id')
-            ->willReturn($sourceEditorialId);
-
-        $editorial
-            ->method('sourceEditorial')
-            ->willReturn($sourceEditorial);
-        $editorial
-            ->method('isVisible')
-            ->willReturn(true);
-        $editorial
-            ->method('id')
-            ->willReturn($editorialId);
-
-        $signatureId
-            ->method('id')
-            ->willReturn('signature-id');
-
-        $signature
-            ->method('id')
-            ->willReturn($signatureId);
-
-        $signatures = new Signatures();
-        $signatures->addItem($signature);
-
-        $tags = new Tags();
-        $tags->addItem($editorialTag);
-
-        $editorial
-            ->expects(self::once())
-            ->method('tags')
-            ->willReturn($tags);
-        $editorial
-            ->expects(self::once())
-            ->method('signatures')
-            ->willReturn($signatures);
-
-        $journalistId
-            ->method('id')
-            ->willReturn('alias-id');
-
-        $journalist
-            ->method('id')
-            ->willReturn($journalistId);
-
-        $aliasId
-            ->method('id')
-            ->willReturn('7298');
-
-        $this->journalistFactory
-            ->expects($this->once())
-            ->method('buildAliasId')
-            ->with('signature-id')
-            ->willReturn($aliasId);
-
-        $journalist
-            ->expects($this->once())
-            ->method('isActive')
-            ->willReturn(true);
-        $journalist
-            ->expects($this->once())
-            ->method('isVisible')
-            ->willReturn(true);
-
-        $this->queryJournalistClient
-            ->expects($this->once())
-            ->method('findJournalistByAliasId')
-            ->with($aliasId)
-            ->willReturn($journalist);
-
-        $this->querySectionClient
-            ->expects($this->once())
-            ->method('findSectionById')
-            ->with($editorial->sectionId())
-            ->willReturn($section);
-
-        $this->queryTagClient
-            ->expects($this->once())
-            ->method('findTagById')
-            ->with($editorialTag->id()->id())
-            ->willReturn($tag);
+        $editorial = $this->getEditorialMock($id);
+        $section = $this->generateSectionMock($editorial);
+        $journalist = $this->generateJournalistMock($editorial);
+        $tags = [$this->generateTagMock($editorial)];
 
         $expectedJournalists = [
             '7298' => $journalist,
@@ -290,7 +192,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->appsDataTransformer
             ->expects(self::any())
             ->method('write')
-            ->with($editorial, $expectedJournalists, $section, [$tag])
+            ->with($editorial, $expectedJournalists, $section, $tags)
             ->willReturnSelf();
 
         $transformedData = [
@@ -400,48 +302,10 @@ class EditorialOrchestratorTest extends TestCase
     public function executeShouldContinueWhenTagClientThrowsException(): void
     {
         $id = '12345';
-        $editorial = $this->createMock(Editorial::class);
-        $sourceEditorial = $this->createMock(SourceEditorial::class);
-        $sourceEditorialId = $this->createMock(SourceEditorialId::class);
-        $editorialId = $this->createMock(EditorialId::class);
-        $signature = $this->createMock(Signature::class);
-        $signatureId = $this->createMock(SignatureId::class);
-        $aliasId = $this->createMock(AliasId::class);
-        $journalist = $this->createMock(Journalist::class);
-        $journalistId = $this->createMock(JournalistId::class);
-        $section = $this->createMock(Section::class);
+        $editorial = $this->getEditorialMock($id);
+        $section = $this->generateSectionMock($editorial);
+        $journalist = $this->generateJournalistMock($editorial);
         $editorialTag = $this->createMock(Tag::class);
-
-        $editorialId
-            ->method('id')
-            ->willReturn($id);
-
-        $sourceEditorialId
-            ->method('id')
-            ->willReturn($id);
-        $sourceEditorial
-            ->method('id')
-            ->willReturn($sourceEditorialId);
-
-        $editorial
-            ->method('sourceEditorial')
-            ->willReturn($sourceEditorial);
-        $editorial
-            ->method('isVisible')
-            ->willReturn(true);
-        $editorial
-            ->method('id')
-            ->willReturn($editorialId);
-
-        $signatureId
-            ->method('id')
-            ->willReturn('signature-id');
-        $signature
-            ->method('id')
-            ->willReturn($signatureId);
-
-        $signatures = new Signatures();
-        $signatures->addItem($signature);
 
         $tags = new Tags();
         $tags->addItem($editorialTag);
@@ -450,48 +314,6 @@ class EditorialOrchestratorTest extends TestCase
             ->expects(self::once())
             ->method('tags')
             ->willReturn($tags);
-        $editorial
-            ->expects(self::once())
-            ->method('signatures')
-            ->willReturn($signatures);
-
-        $journalistId
-            ->method('id')
-            ->willReturn('alias-id');
-        $journalist
-            ->method('id')
-            ->willReturn($journalistId);
-
-        $aliasId
-            ->method('id')
-            ->willReturn('7298');
-
-        $this->journalistFactory
-            ->expects($this->once())
-            ->method('buildAliasId')
-            ->with('signature-id')
-            ->willReturn($aliasId);
-
-        $journalist
-            ->expects($this->once())
-            ->method('isActive')
-            ->willReturn(true);
-        $journalist
-            ->expects($this->once())
-            ->method('isVisible')
-            ->willReturn(true);
-
-        $this->queryJournalistClient
-            ->expects($this->once())
-            ->method('findJournalistByAliasId')
-            ->with($aliasId)
-            ->willReturn($journalist);
-
-        $this->querySectionClient
-            ->expects($this->once())
-            ->method('findSectionById')
-            ->with($editorial->sectionId())
-            ->willReturn($section);
 
         $this->queryTagClient
             ->expects($this->once())
