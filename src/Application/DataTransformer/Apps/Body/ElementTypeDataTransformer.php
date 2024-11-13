@@ -14,12 +14,15 @@ use Ec\Editorial\Domain\Model\Body\BodyElement;
 abstract class ElementTypeDataTransformer implements BodyElementDataTransformer
 {
     protected BodyElement $bodyElement;
+
+    /** @var array<string, mixed> */
     private array $resolveData;
 
-    public function write(
-        BodyElement $bodyElement,
-        array $resolveData = [],
-    ): BodyElementDataTransformer {
+    /**
+     * @param array<string, mixed> $resolveData
+     */
+    public function write(BodyElement $bodyElement, array $resolveData = []): BodyElementDataTransformer
+    {
         $this->bodyElement = $bodyElement;
         $this->resolveData = $resolveData;
 
@@ -34,6 +37,9 @@ abstract class ElementTypeDataTransformer implements BodyElementDataTransformer
         return $elementArray;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function resolveData(): array
     {
         return $this->resolveData;
