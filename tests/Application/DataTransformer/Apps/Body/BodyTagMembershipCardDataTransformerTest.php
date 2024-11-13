@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class BodyTagMembershipCardDataTransformerTest extends TestCase
 {
-
     /** @var BodyElementDataTransformerHandler|MockObject */
     private BodyElementDataTransformerHandler $handler;
     private BodyTagMembershipCardDataTransformer $dataTransformer;
@@ -30,6 +29,7 @@ class BodyTagMembershipCardDataTransformerTest extends TestCase
         $this->handler = $this->createMock(BodyElementDataTransformerHandler::class);
         $this->dataTransformer = new BodyTagMembershipCardDataTransformer($this->handler);
     }
+
     /**
      * @test
      */
@@ -37,6 +37,7 @@ class BodyTagMembershipCardDataTransformerTest extends TestCase
     {
         static::assertSame(BodyTagMembershipCard::class, $this->dataTransformer->canTransform());
     }
+
     /**
      * @test
      */
@@ -107,5 +108,4 @@ class BodyTagMembershipCardDataTransformerTest extends TestCase
 
         static::assertSame($expected, $result);
     }
-
 }

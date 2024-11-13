@@ -12,7 +12,6 @@ use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButtons;
 
-
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  */
@@ -20,7 +19,6 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
 {
     /** @var BodyTagMembershipCard */
     protected BodyElement $bodyElement;
-
 
     public function __construct(
         private readonly BodyElementDataTransformerHandler $bodyElementDataTransformerHandler,
@@ -42,7 +40,8 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
         $elementArray['titleBanner'] = $this->bodyElement->titleBanner();
         $elementArray['classBanner'] = $this->bodyElement->classBanner();
         $elementArray['picture'] = $this->bodyElementDataTransformerHandler->execute(
-            $this->bodyElement->bodyTagPictureMembership(),$this->resolveData()
+            $this->bodyElement->bodyTagPictureMembership(),
+            $this->resolveData()
         );
 
         return $elementArray;
@@ -52,7 +51,6 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
     {
         return BodyTagMembershipCard::class;
     }
-
 
     private function retrieveButtons(MembershipCardButtons $buttons, array $membershipLinkCombine): array
     {

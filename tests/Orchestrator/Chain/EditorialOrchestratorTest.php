@@ -302,7 +302,7 @@ class EditorialOrchestratorTest extends TestCase
                     'url' => 'https://www.elconfidencial.dev/tags/temas/bolsas-15919',
                 ],
             ],
-            'body' => []
+            'body' => [],
         ];
 
         $this->appsDataTransformer

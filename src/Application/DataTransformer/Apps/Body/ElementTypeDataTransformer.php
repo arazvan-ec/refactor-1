@@ -18,9 +18,8 @@ abstract class ElementTypeDataTransformer implements BodyElementDataTransformer
 
     public function write(
         BodyElement $bodyElement,
-        array $resolveData = []
-    ): BodyElementDataTransformer
-    {
+        array $resolveData = [],
+    ): BodyElementDataTransformer {
         $this->bodyElement = $bodyElement;
         $this->resolveData = $resolveData;
 
@@ -35,9 +34,8 @@ abstract class ElementTypeDataTransformer implements BodyElementDataTransformer
         return $elementArray;
     }
 
-    public function resolveData() : array
+    public function resolveData(): array
     {
         return $this->resolveData;
     }
-
 }
