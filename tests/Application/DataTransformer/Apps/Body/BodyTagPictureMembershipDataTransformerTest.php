@@ -32,6 +32,7 @@ class BodyTagPictureMembershipDataTransformerTest extends TestCase
             '328w' => 'https://images.ecestaticos.dev/YsYE5tLIS_WX3BU6agIfeikYUl8=/615x99:827x381/328x437/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
         ];
         $orientation = 'landscape';
+        $url = 'https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/615x99:827x381/1440x1920/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg';
 
         $this->pictureShots->method('retrieveShotsByPhotoId')->willReturn($shots);
         $bodytagPictureId = $this->createMock(BodyTagPictureId::class);
@@ -46,6 +47,7 @@ class BodyTagPictureMembershipDataTransformerTest extends TestCase
 
         $this->assertEquals($shots, $result['shots']);
         $this->assertEquals($orientation, $result['orientation']);
+        $this->assertEquals($url, $result['url']);
     }
 
     /**

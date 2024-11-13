@@ -37,6 +37,7 @@ class BodyTagPictureDataTransformerTest extends TestCase
         $caption = 'Sample Caption';
         $alternate = 'Sample Alternate';
         $orientation = 'landscape';
+        $url = 'https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/615x99:827x381/1440x1920/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg';
 
         $this->pictureShots->method('retrieveShotsByPhotoId')->willReturn($shots);
         $bodytagPictureId = $this->createMock(BodyTagPictureId::class);
@@ -55,6 +56,7 @@ class BodyTagPictureDataTransformerTest extends TestCase
         $this->assertEquals($caption, $result['caption']);
         $this->assertEquals($alternate, $result['alternate']);
         $this->assertEquals($orientation, $result['orientation']);
+        $this->assertEquals($url, $result['url']);
     }
 
     public function canTransformShouldReturnBodyTagPictureString(): void

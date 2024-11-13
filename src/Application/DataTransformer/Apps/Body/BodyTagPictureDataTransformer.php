@@ -33,6 +33,7 @@ class BodyTagPictureDataTransformer extends ElementTypeDataTransformer
 
         if (count($shots)) {
             $elementArray['shots'] = $shots;
+            $elementArray['url'] = reset($shots);
             $elementArray['caption'] = $this->bodyElement->caption();
             $elementArray['alternate'] = $this->bodyElement->alternate();
             $elementArray['orientation'] = $this->bodyElement->orientation();

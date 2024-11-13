@@ -35,6 +35,7 @@ class BodyTagPictureMembershipDataTransformer extends ElementTypeDataTransformer
 
         if (count($shots)) {
             $elementArray['shots'] = $shots;
+            $elementArray['url'] = reset($shots);
             $elementArray['orientation'] = $this->bodyElement->orientation();
         }
 
