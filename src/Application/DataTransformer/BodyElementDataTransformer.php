@@ -12,6 +12,9 @@ use Ec\Editorial\Domain\Model\Body\BodyElement;
  */
 interface BodyElementDataTransformer
 {
+    /**
+     * @param array<string, mixed> $resolveData
+     */
     public function write(BodyElement $bodyElement, array $resolveData = []): BodyElementDataTransformer;
 
     /**
