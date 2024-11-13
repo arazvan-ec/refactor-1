@@ -23,15 +23,15 @@ class PictureShotsTest extends TestCase
      */
     private BodyTagPicture $bodyTagPicture;
 
-    protected function setUp() :void
+    protected function setUp(): void
     {
         $this->thumbor = $this->createMock(Thumbor::class);
         $this->pictureShot = new PictureShots($this->thumbor);
     }
 
-
     /**
      * @test
+     *
      * @dataProvider \App\Tests\Infrastructure\Service\DataProvider\PictureShotsDataProvider::getDataShots()
      */
     public function retrieveShotsByPhotoIdShouldReturnValidArray(
@@ -46,9 +46,8 @@ class PictureShotsTest extends TestCase
         $bottomY,
         $caption,
         $alternate,
-        $orientation
-    )
-    {
+        $orientation,
+    ) {
         $bodytagPictureId = $this->createMock(BodyTagPictureId::class);
         $bodytagPictureId->method('id')->willReturn($id);
 
@@ -62,16 +61,16 @@ class PictureShotsTest extends TestCase
         $bodyElement->method('alternate')->willReturn($alternate);
         $bodyElement->method('orientation')->willReturn($orientation);
 
-        $resolveDataMock=[];
+        $resolveDataMock = [];
 
 
         $photo = $this->createMock(Photo::class);
         $photo->method('file')->willReturn($photoFile);
-        $resolveDataMock['photoFromBodyTags'] =[$id => $photo];
+        $resolveDataMock['photoFromBodyTags'] = [$id => $photo];
 
 
-        $withConsecutiveArgs=[];
-        $willReturn=[];
+        $withConsecutiveArgs = [];
+        $willReturn = [];
         foreach ($shots as $ratio => $url) {
             $withConsecutiveArgs[] = [
                 $photoFile,
@@ -80,7 +79,7 @@ class PictureShotsTest extends TestCase
                 $topX,
                 $topY,
                 $bottomX,
-                $bottomY
+                $bottomY,
             ];
             $willReturn[] = $url;
         }
@@ -98,29 +97,29 @@ class PictureShotsTest extends TestCase
         }
 
     }
+
     /**
      * @test
+     *
      * @dataProvider \App\Tests\Infrastructure\Service\DataProvider\PictureShotsDataProvider::getDataEmpty()
      */
     public function retrieveShotsByPhotoIdShouldReturnEmptyArray(
         $id,
         $resolveData,
-        $expected
-    )
-    {
-        $resolveDataMock=[];
+        $expected,
+    ) {
+        $resolveDataMock = [];
         $bodyElement = $this->createMock(BodyTagPicture::class);
-        if (isset($resolveData['photoFromBodyTags']))
-        {
+        if (isset($resolveData['photoFromBodyTags'])) {
             $bodytagPictureId = $this->createMock(BodyTagPictureId::class);
             $bodytagPictureId->method('id')->willReturn($resolveData['photoFromBodyTags']['id']['id']);
             $bodyElement->method('id')->willReturn($bodytagPictureId);
             $photo = $this->createMock(Photo::class);
-            $resolveDataMock['photoFromBodyTags'] =[$id => $photo];
+            $resolveDataMock['photoFromBodyTags'] = [$id => $photo];
         }
 
         $result = $this->pictureShot->retrieveShotsByPhotoId($resolveDataMock, $bodyElement);
 
-        $this->assertEquals($expected,$result);
+        $this->assertEquals($expected, $result);
     }
 }

@@ -5,10 +5,7 @@ namespace App\Tests\Application\DataTransformer\Apps\Body;
 use App\Application\DataTransformer\Apps\Body\BodyTagPictureDataTransformer;
 use App\Infrastructure\Service\PictureShots;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
-use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureId;
-use Ec\Multimedia\Domain\Model\Photo\Photo;
-use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use PHPUnit\Framework\TestCase;
 
 class BodyTagPictureDataTransformerTest extends TestCase
@@ -24,10 +21,10 @@ class BodyTagPictureDataTransformerTest extends TestCase
 
     /**
      * @test
-     *
      */
-    public function readShouldReturnExpectedArray(): void {
-        $shots= [
+    public function readShouldReturnExpectedArray(): void
+    {
+        $shots = [
             '1440w' => 'https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/615x99:827x381/1440x1920/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
             '1200w' => 'https://images.ecestaticos.dev/gN2tLeVBCOcV5AKBmZeJhGYztTk=/615x99:827x381/1200x1600/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
             '996w' => 'https://images.ecestaticos.dev/YRLxy6ChIKjekgdg_BN1DirWtJ8=/615x99:827x381/996x1328/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',

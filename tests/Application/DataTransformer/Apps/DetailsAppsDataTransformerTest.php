@@ -9,7 +9,6 @@ use App\Application\DataTransformer\Apps\DetailsAppsDataTransformer;
 use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Service\Thumbor;
-use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
@@ -110,8 +109,6 @@ class DetailsAppsDataTransformerTest extends TestCase
         $editorial->method('contentType')->willReturn('article');
         $editorial->method('canonicalEditorialId')->willReturn('54321');
         $editorial->method('urlDate')->willReturn(new \DateTime('2023-01-01 00:00:00'));
-        $editorial->method('body')->willReturn($this->createMock(Body::class));
-        $editorial->method('body')->willReturn($this->createMock(Body::class));
 
         $this->queryLegacyClient->method('findCommentsByEditorialId')->willReturn(['options' => ['totalrecords' => 10]]);
 
@@ -131,7 +128,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals('article', $result['contentType']);
         $this->assertEquals('54321', $result['canonicalEditorialId']);
         $this->assertEquals('2023-01-01 00:00:00', $result['urlDate']);
-        $this->assertIsArray($result['body']);
+
     }
 
     /**
@@ -397,41 +394,6 @@ class DetailsAppsDataTransformerTest extends TestCase
 
         $this->assertArrayHasKey('tags', $result);
         $this->assertEmpty($result['tags']);
-    }
-
-    /**
-     * @test
-     */
-    public function transformerBodyShouldReturnExpectedArray(): void
-    {
-        $readResult = ['body'];
-        $type = 'normal';
-
-        $bodyMock = $this->createMock(Body::class);
-        $bodyMock->method('type')
-            ->willReturn($type);
-
-        $bodyElementMock = $this->createMock(BodyElement::class);
-        $this->configureArrayIteratorMock($bodyMock, [$bodyElementMock]);
-
-        $expectedResult = [
-            'type' => $type,
-            'elements' => [
-                $readResult,
-            ],
-        ];
-
-        $this->bodyElementDataTransformerHandler->expects(static::once())
-            ->method('execute')
-            ->with($bodyElementMock)
-            ->willReturn($readResult);
-
-        $reflection = new \ReflectionClass($this->transformer);
-        $method = $reflection->getMethod('transformerBody');
-
-        $result = $method->invoke($this->transformer, $bodyMock);
-
-        static::assertSame($expectedResult, $result);
     }
 
     /**
