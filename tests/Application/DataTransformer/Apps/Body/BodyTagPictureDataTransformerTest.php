@@ -63,6 +63,9 @@ class BodyTagPictureDataTransformerTest extends TestCase
         $this->assertEquals($url, $result['url']);
     }
 
+    /**
+     * @test
+     */
     public function canTransformShouldReturnBodyTagPictureString(): void
     {
         $this->assertEquals(BodyTagPicture::class, $this->dataTransformer->canTransform());

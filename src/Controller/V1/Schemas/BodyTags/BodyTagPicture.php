@@ -25,6 +25,10 @@ use OpenApi\Attributes as OA;
             )
         ),
         new OA\Property(
+            property: 'url',
+            type: 'string'
+        ),
+        new OA\Property(
             property: 'caption',
             type: 'string'
         ),
@@ -51,6 +55,7 @@ use OpenApi\Attributes as OA;
             "382w": "https://images.ecestaticos.dev/ws_0oo3JORfvWxI_XKyluvDeGRI=/615x99:827x381/382x509/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg",
             "328w": "https://images.ecestaticos.dev/YsYE5tLIS_WX3BU6agIfeikYUl8=/615x99:827x381/328x437/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg"
         },
+        "url": "https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/615x99:827x381/1440x1920/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg",
         "caption": "",
         "alternate": "Prueba con pepe Astros",
         "orientation": "portrait"
