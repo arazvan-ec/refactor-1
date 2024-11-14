@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bdc2ecf851e769aac9b0cf3968cc1548",
+    "content-hash": "60ed75fb38bc6e0fcc5f7a7715cc4248",
     "packages": [
         {
             "name": "99designs/phumbor",
@@ -2168,6 +2168,174 @@
                 "source": "https://bitbucket.org/ecawesomemakers/journalist-domain/src/aed9e7c52edc4e10b11bf84dd357e3be6d79a11e/?at=v1.5.0"
             },
             "time": "2024-10-09T15:45:41+00:00"
+        },
+        {
+            "name": "ec/membership-client",
+            "version": "v1.4.0",
+            "source": {
+                "type": "git",
+                "url": "git@bitbucket.org:ecawesomemakers/membership-client.git",
+                "reference": "40b836da141c56136682c5bc5b88303fc9c4f943"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://bitbucket.org/ecawesomemakers/membership-client/get/40b836da141c56136682c5bc5b88303fc9c4f943.zip",
+                "reference": "40b836da141c56136682c5bc5b88303fc9c4f943",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://repo.packagist.com/el-confidencial/dists/%package%/%version%/r%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "beberlei/assert": "^3.0",
+                "ec/collection-library": "^1.0",
+                "ec/membership-domain": "^2.0",
+                "ec/mock-client": "^1.0",
+                "ec/service-client": "^2.0",
+                "ext-json": "*",
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "doctrine/orm": "^2.6",
+                "friendsofphp/php-cs-fixer": "^2.15",
+                "infection/infection": "^0.15",
+                "nyholm/psr7": "^1.5",
+                "phpstan/phpstan": "^1.10",
+                "phpstan/phpstan-phpunit": "^1.3",
+                "phpunit/phpunit": "^9.6"
+            },
+            "suggest": {
+                "doctrine/orm": "Doctrine, PHP ORM and Persistence Tools Project",
+                "ext-couchbase": "Couchbase NoSQL Database"
+            },
+            "type": "library",
+            "extra": {
+                "recipes": {
+                    "phalcon": {
+                        "copy-file": {
+                            "config/": "config/packages/skeleton/"
+                        }
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ec\\Membership\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Ec\\Membership\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://repo.packagist.com/el-confidencial/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Antonio José Cerezo Aranda",
+                    "email": "acerezo@elconfidencial.com"
+                }
+            ],
+            "description": "Membership Client",
+            "homepage": "https://bitbucket.org/ecawesomemakers/membership-client",
+            "support": {
+                "source": "https://bitbucket.org/ecawesomemakers/membership-client/src/40b836da141c56136682c5bc5b88303fc9c4f943/?at=v1.4.0"
+            },
+            "time": "2024-11-12T11:33:12+00:00"
+        },
+        {
+            "name": "ec/membership-domain",
+            "version": "v2.1.0",
+            "source": {
+                "type": "git",
+                "url": "git@bitbucket.org:ecawesomemakers/membership-domain.git",
+                "reference": "aa4fc0fa24642c63aaffbe710c588d7f2579d0bd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://bitbucket.org/ecawesomemakers/membership-domain/get/aa4fc0fa24642c63aaffbe710c588d7f2579d0bd.zip",
+                "reference": "aa4fc0fa24642c63aaffbe710c588d7f2579d0bd",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://repo.packagist.com/el-confidencial/dists/%package%/%version%/r%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "beberlei/assert": "^3.0",
+                "ec/collection-library": "^1.0",
+                "ext-json": "*",
+                "php": ">=7.4",
+                "php-http/promise": "^1.1",
+                "psr/http-message": "^2.0"
+            },
+            "require-dev": {
+                "doctrine/orm": "^2.6",
+                "friendsofphp/php-cs-fixer": "^2.15",
+                "infection/infection": "^0.15",
+                "phpstan/phpstan": "^1.10",
+                "phpstan/phpstan-phpunit": "^1.3",
+                "phpunit/phpunit": "^9.6"
+            },
+            "suggest": {
+                "doctrine/orm": "Doctrine, PHP ORM and Persistence Tools Project",
+                "ext-couchbase": "Couchbase NoSQL Database"
+            },
+            "type": "library",
+            "extra": {
+                "recipes": {
+                    "phalcon": {
+                        "copy-file": {
+                            "config/": "config/packages/membership/"
+                        }
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ec\\Membership\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Ec\\Membership\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://repo.packagist.com/el-confidencial/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Antonio José Cerezo Aranda",
+                    "email": "acerezo@elconfidencial.com"
+                },
+                {
+                    "name": "Razvan Alin Monteanu",
+                    "email": "arazvan@elconfidencial.com"
+                },
+                {
+                    "name": "Juanma Santos Moreno",
+                    "email": "jmsantos@elconfidencial.com"
+                },
+                {
+                    "name": "Fernando Guerrero Cabrera",
+                    "email": "fguerrero@elconfidencial.com"
+                }
+            ],
+            "description": "Dominio de Afiliación",
+            "homepage": "https://bitbucket.org/ecawesomemakers/membership-domain",
+            "support": {
+                "source": "https://bitbucket.org/ecawesomemakers/membership-domain/src/aa4fc0fa24642c63aaffbe710c588d7f2579d0bd/?at=v2.1.0"
+            },
+            "time": "2024-11-12T10:40:53+00:00"
         },
         {
             "name": "ec/microservice-bundle",
@@ -7598,16 +7766,16 @@
         },
         {
             "name": "symfony/http-client",
-            "version": "v6.4.14",
+            "version": "v6.4.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-client.git",
-                "reference": "05d88cbd816ad6e0202edd9a9963cb9d615b8826"
+                "reference": "cb4073c905cd12b8496d24ac428a9228c1750670"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-client/zipball/05d88cbd816ad6e0202edd9a9963cb9d615b8826",
-                "reference": "05d88cbd816ad6e0202edd9a9963cb9d615b8826",
+                "url": "https://api.github.com/repos/symfony/http-client/zipball/cb4073c905cd12b8496d24ac428a9228c1750670",
+                "reference": "cb4073c905cd12b8496d24ac428a9228c1750670",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -7677,7 +7845,7 @@
                 "http"
             ],
             "support": {
-                "source": "https://github.com/symfony/http-client/tree/v6.4.14"
+                "source": "https://github.com/symfony/http-client/tree/v6.4.15"
             },
             "funding": [
                 {
@@ -7693,7 +7861,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-05T16:39:55+00:00"
+            "time": "2024-11-13T13:40:18+00:00"
         },
         {
             "name": "symfony/http-client-contracts",

@@ -34,10 +34,10 @@ class Thumbor
         string $fileImage,
         string $width,
         string $height,
-        string $topX,
-        string $topY,
-        string $bottomX,
-        string $bottomY,
+        int $topX,
+        int $topY,
+        int $bottomX,
+        int $bottomY,
     ): string {
 
         $pattern = '/^.*\.(?<extension>.*)$/m';

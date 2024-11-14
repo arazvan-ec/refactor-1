@@ -6,7 +6,9 @@
 namespace App\Controller\V1\Schemas;
 
 use App\Controller\V1\Schemas\BodyTags\BodyTagHtml;
+use App\Controller\V1\Schemas\BodyTags\BodyTagMembershipCard;
 use App\Controller\V1\Schemas\BodyTags\BodyTagPicture;
+use App\Controller\V1\Schemas\BodyTags\BodyTagPictureMembership;
 use App\Controller\V1\Schemas\BodyTags\BodyTagVideoYoutube;
 use App\Controller\V1\Schemas\BodyTags\GenericList;
 use App\Controller\V1\Schemas\BodyTags\Paragraph;
@@ -42,6 +44,12 @@ use OpenApi\Attributes as OA;
                     ),
                     new OA\Schema(
                         ref: new Model(type: BodyTagPicture::class)
+                    ),
+                    new OA\Schema(
+                        ref: new Model(type: BodyTagPictureMembership::class)
+                    ),
+                    new OA\Schema(
+                        ref: new Model(type: BodyTagMembershipCard::class)
                     ),
                 ]
             )

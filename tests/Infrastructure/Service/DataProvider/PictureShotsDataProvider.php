@@ -1,0 +1,181 @@
+<?php
+
+namespace App\Tests\Infrastructure\Service\DataProvider;
+
+/**
+ * @author Juanma Santos <jmsantos@elconfidencial.com>
+ */
+class PictureShotsDataProvider
+{
+    public function getDataShots(): array
+    {
+        return [
+            '19-9' => [
+                'idPhoto' => '695',
+                'resolveData' => [
+                    'photoFromBodyTags' => [
+                        'id' => ['id' => '695'],
+                    ],
+                ],
+                'shots' => [
+                    '1440w' => 'https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/615x99:827x381/1440x1920/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '1200w' => 'https://images.ecestaticos.dev/gN2tLeVBCOcV5AKBmZeJhGYztTk=/615x99:827x381/1200x1600/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '996w' => 'https://images.ecestaticos.dev/YRLxy6ChIKjekgdg_BN1DirWtJ8=/615x99:827x381/996x1328/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '640w' => 'https://images.ecestaticos.dev/WByyZwZDIXdsAikGvHjMd3wOiUI=/615x99:827x381/560x747/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '390w' => 'https://images.ecestaticos.dev/6LRdLT09KxKdAIaRQV6gbHtiZSQ=/615x99:827x381/390x520/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '568w' => 'https://images.ecestaticos.dev/m70h5OCBdQyGjYRqai5qmRVZoUQ=/615x99:827x381/568x757/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '382w' => 'https://images.ecestaticos.dev/ws_0oo3JORfvWxI_XKyluvDeGRI=/615x99:827x381/382x509/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '328w' => 'https://images.ecestaticos.dev/YsYE5tLIS_WX3BU6agIfeikYUl8=/615x99:827x381/328x437/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                ],
+                'sizes' => [
+                    '1440w' => ['width' => '1440', 'height' => '810'],
+                    '1200w' => ['width' => '1200', 'height' => '675'],
+                    '996w' => ['width' => '996', 'height' => '560'],
+                    '640w' => ['width' => '640', 'height' => '360'],
+                    '390w' => ['width' => '390', 'height' => '219'],
+                    '568w' => ['width' => '568', 'height' => '320'],
+                    '382w' => ['width' => '382', 'height' => '215'],
+                    '328w' => ['width' => '328', 'height' => '185'],
+                ],
+                'photoFile' => '0a978399c4be84f3ce367624ca9589ad.jpg',
+                'topX' => 0,
+                'topY' => 0,
+                'bottomX' => 320,
+                'bottomY' => 180,
+                'caption' => 'Sample Caption',
+                'alternate' => 'Sample Alternate',
+                'orientation' => 'landscape',
+            ],
+            '3-4' => [
+                'idPhoto' => '695',
+                'resolveData' => [
+                    'photoFromBodyTags' => [
+                        'id' => ['id' => '695'],
+                    ],
+                ],
+                'shots' => [
+                    '1440w' => 'https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/615x99:827x381/1440x1920/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '1200w' => 'https://images.ecestaticos.dev/gN2tLeVBCOcV5AKBmZeJhGYztTk=/615x99:827x381/1200x1600/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '996w' => 'https://images.ecestaticos.dev/YRLxy6ChIKjekgdg_BN1DirWtJ8=/615x99:827x381/996x1328/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '560w' => 'https://images.ecestaticos.dev/WByyZwZDIXdsAikGvHjMd3wOiUI=/615x99:827x381/560x747/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '390w' => 'https://images.ecestaticos.dev/6LRdLT09KxKdAIaRQV6gbHtiZSQ=/615x99:827x381/390x520/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '568w' => 'https://images.ecestaticos.dev/m70h5OCBdQyGjYRqai5qmRVZoUQ=/615x99:827x381/568x757/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '382w' => 'https://images.ecestaticos.dev/ws_0oo3JORfvWxI_XKyluvDeGRI=/615x99:827x381/382x509/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '328w' => 'https://images.ecestaticos.dev/YsYE5tLIS_WX3BU6agIfeikYUl8=/615x99:827x381/328x437/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                ],
+                'sizes' => [
+                    '1440w' => ['width' => '1440', 'height' => '1920'],
+                    '1200w' => ['width' => '1200', 'height' => '1600'],
+                    '996w' => ['width' => '996', 'height' => '1328'],
+                    '560w' => ['width' => '560', 'height' => '747'],
+                    '390w' => ['width' => '390', 'height' => '520'],
+                    '568w' => ['width' => '568', 'height' => '757'],
+                    '382w' => ['width' => '382', 'height' => '509'],
+                    '328w' => ['width' => '328', 'height' => '437'],
+                ],
+                'photoFile' => '0a978399c4be84f3ce367624ca9589ad.jpg',
+                'topX' => 615,
+                'topY' => 99,
+                'bottomX' => 827,
+                'bottomY' => 381,
+                'caption' => 'Sample Caption',
+                'alternate' => 'Sample Alternate',
+                'orientation' => 'landscape',
+            ],
+            '1-1' => [
+                'idPhoto' => '695',
+                'resolveData' => [
+                    'photoFromBodyTags' => [
+                        'id' => ['id' => '695'],
+                    ],
+                ],
+                'shots' => [
+                    '1440w' => 'https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/0x0x100x100/1440x1440/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '1200w' => 'https://images.ecestaticos.dev/gN2tLeVBCOcV5AKBmZeJhGYztTk=/0x0x100x100/1200x1200/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '996w' => 'https://images.ecestaticos.dev/YRLxy6ChIKjekgdg_BN1DirWtJ8=/0x0x100x100/996x996/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '560w' => 'https://images.ecestaticos.dev/WByyZwZDIXdsAikGvHjMd3wOiUI=/0x0x100x100/560x560/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '390w' => 'https://images.ecestaticos.dev/6LRdLT09KxKdAIaRQV6gbHtiZSQ=/0x0x100x100/390x390/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '568w' => 'https://images.ecestaticos.dev/m70h5OCBdQyGjYRqai5qmRVZoUQ=/0x0x100x100/568x568/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '382w' => 'https://images.ecestaticos.dev/ws_0oo3JORfvWxI_XKyluvDeGRI=/0x0x100x100/382x382/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '328w' => 'https://images.ecestaticos.dev/YsYE5tLIS_WX3BU6agIfeikYUl8=/0x0x100x100/328x328/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                ],
+                'sizes' => [
+                    '1440w' => ['width' => '1440', 'height' => '1440'],
+                    '1200w' => ['width' => '1200', 'height' => '1200'],
+                    '996w' => ['width' => '996', 'height' => '996'],
+                    '560w' => ['width' => '560', 'height' => '560'],
+                    '390w' => ['width' => '390', 'height' => '390'],
+                    '568w' => ['width' => '568', 'height' => '568'],
+                    '382w' => ['width' => '382', 'height' => '382'],
+                    '328w' => ['width' => '328', 'height' => '328'],
+                ],
+                'photoFile' => '0a978399c4be84f3ce367624ca9589ad.jpg',
+                'topX' => 0,
+                'topY' => 0,
+                'bottomX' => 100,
+                'bottomY' => 100,
+                'caption' => 'Sample Caption',
+                'alternate' => 'Sample Alternate',
+                'orientation' => 'square',
+            ],
+            '4-3' => [
+                'idPhoto' => '695',
+                'resolveData' => [
+                    'photoFromBodyTags' => [
+                        'id' => ['id' => '695'],
+                    ],
+                ],
+                'shots' => [
+                    '1440w' => 'https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/0x0:360x300/1440x1920/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '1200w' => 'https://images.ecestaticos.dev/gN2tLeVBCOcV5AKBmZeJhGYztTk=/0x0:360x300/1200x1600/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '996w' => 'https://images.ecestaticos.dev/YRLxy6ChIKjekgdg_BN1DirWtJ8=/0x0:360x300/996x1328/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '560w' => 'https://images.ecestaticos.dev/WByyZwZDIXdsAikGvHjMd3wOiUI=/0x0:360x300/560x747/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '390w' => 'https://images.ecestaticos.dev/6LRdLT09KxKdAIaRQV6gbHtiZSQ=/0x0:360x300/390x520/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '568w' => 'https://images.ecestaticos.dev/m70h5OCBdQyGjYRqai5qmRVZoUQ=/0x0:360x300/568x757/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '382w' => 'https://images.ecestaticos.dev/ws_0oo3JORfvWxI_XKyluvDeGRI=/0x0:360x300/382x509/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                    '328w' => 'https://images.ecestaticos.dev/YsYE5tLIS_WX3BU6agIfeikYUl8=/0x0:360x300/328x437/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg',
+                ],
+                'sizes' => [
+                    '1440w' => ['width' => '1440', 'height' => '1920'],
+                    '1200w' => ['width' => '1200', 'height' => '1600'],
+                    '996w' => ['width' => '996', 'height' => '1328'],
+                    '560w' => ['width' => '560', 'height' => '747'],
+                    '390w' => ['width' => '390', 'height' => '520'],
+                    '568w' => ['width' => '568', 'height' => '757'],
+                    '382w' => ['width' => '382', 'height' => '509'],
+                    '328w' => ['width' => '328', 'height' => '437'],
+                ],
+                'photoFile' => '0a978399c4be84f3ce367624ca9589ad.jpg',
+                'topX' => 0,
+                'topY' => 0,
+                'bottomX' => 360,
+                'bottomY' => 300,
+                'caption' => 'Sample Caption',
+                'alternate' => 'Sample Alternate',
+                'orientation' => '4:3',
+            ],
+
+
+        ];
+    }
+
+    public function getDataEmpty(): array
+    {
+        return [
+            [
+                'idPhoto' => '695',
+                'resolveData' => [
+                    'photoFromBodyTags' => [
+                        'id' => ['id' => '1'],
+                    ],
+                ],
+                'result' => [],
+            ],
+            [
+                'idPhoto' => '695',
+                'resolveData' => [],
+                'result' => [],
+            ],
+        ];
+    }
+}

@@ -54,6 +54,7 @@ class BodyElementDataTransformerHandlerTest extends TestCase
      */
     public function executeShouldUseDataTransformerAndReturnArray(): void
     {
+        $resolveData = ['data' => 'value'];
         $readResult = [
             'type' => 'paragraph',
             'content' => 'Content',
@@ -65,12 +66,13 @@ class BodyElementDataTransformerHandlerTest extends TestCase
         $this->dataTransformerMock->method('canTransform')
             ->willReturn(\get_class($bodyElementMock));
         $this->dataTransformerMock->method('write')
+            ->with($bodyElementMock, $resolveData)
             ->willReturnSelf();
         $this->dataTransformerMock->method('read')
             ->willReturn($readResult);
 
         $this->elementDataTransformer->addDataTransformer($this->dataTransformerMock);
-        $result = $this->elementDataTransformer->execute($bodyElementMock);
+        $result = $this->elementDataTransformer->execute($bodyElementMock, $resolveData);
 
         static::assertSame($readResult, $result);
     }
