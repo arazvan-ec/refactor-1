@@ -12,6 +12,7 @@ services:
         exclude:
             - '../../src/Application/DataTransformer/Apps/Body/BodyTagVideoYoutubeDataTransformer'
             - '../../src/Application/DataTransformer/Apps/Body/BodyTagVideoDataTransformer'
+            - '../../src/Application/DataTransformer/Apps/Body/BodyTagInsertedNewsDataTransformer'
         tags: [ 'app.data_transformer' ]
         lazy: true
         shared: true
@@ -28,6 +29,14 @@ services:
         class: App\Application\DataTransformer\Apps\Body\BodyTagVideoDataTransformer
         arguments:
             $playerHost: '%env(PLAYER_HOST)%'
+        tags: [ 'app.data_transformer' ]
+        lazy: true
+        shared: true
+
+    App\Application\DataTransformer\Apps\Body\BodyTagInsertedNewsDataTransformer:
+        class: App\Application\DataTransformer\Apps\Body\BodyTagInsertedNewsDataTransformer
+        arguments:
+            $extension: '%env(URL_ENV)%'
         tags: [ 'app.data_transformer' ]
         lazy: true
         shared: true

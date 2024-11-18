@@ -38,7 +38,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     public function __construct(
         string $extension,
-        private readonly Thumbor $thumbor,
     ) {
         $this->setExtension($extension);
     }
@@ -64,7 +63,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     public function read(): array
     {
         $editorial = $this->transformerEditorial();
-        $editorial['signatures'] = $this->transformerJournalists();
+        $editorial['signatures'] = $this->getJournalists();
         $editorial['section'] = $this->transformerSection();
         $editorial['tags'] = $this->transformerTags();
 
@@ -110,47 +109,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             ];
     }
 
-    /**
-     * @return array<int<0, max>, array<string, mixed>>
-     */
-    private function transformerJournalists(): array
-    {
-        $signatures = [];
-
-
-        foreach ($this->journalists as $aliasId => $journalist) {
-            foreach ($journalist->aliases() as $alias) {
-
-                if ($alias->id()->id() == $aliasId) {
-
-                    $departments = [];
-
-                    foreach ($journalist->departments() as $department) {
-                        $departments[] = [
-                            'id' => $department->id()->id(),
-                            'name' => $department->name(),
-                        ];
-                    }
-
-                    $signature = [
-                        'journalistId' => $journalist->id()->id(),
-                        'aliasId' => $alias->id()->id(),
-                        'name' => $alias->name(),
-                        'url' => $this->journalistUrl($alias, $journalist),
-                        'departments' => $departments,
-                    ];
-
-                    $photo = $this->photoUrl($journalist);
-                    if ('' !== $photo) {
-                        $signature['photo'] = $photo;
-                    }
-                    $signatures[] = $signature;
-                }
-            }
-        }
-
-        return $signatures;
-    }
 
     private function editorialUrl(): string
     {
@@ -165,38 +123,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             $this->section->siteId(),
             $editorialPath
         );
-    }
-
-    private function journalistUrl(Alias $alias, Journalist $journalist): string
-    {
-        if ($alias->private()) {
-            return $this->generateUrl(
-                'https://%s.%s.%s/%s',
-                $this->section->isBlog() ? 'blog' : 'www',
-                $this->section->siteId(),
-                $this->section->getPath()
-            );
-        }
-
-        return  $this->generateUrl(
-            'https://%s.%s.%s/autores/%s/',
-            'www',
-            $this->section->siteId(),
-            sprintf('%s-%s', Encode::encodeUrl($journalist->name()), $journalist->id()->id())
-        );
-    }
-
-    private function photoUrl(Journalist $journalist): string
-    {
-        if (!empty($journalist->blogPhoto())) {
-            return $this->thumbor->createJournalistImage($journalist->blogPhoto());
-        }
-
-        if (!empty($journalist->photo())) {
-            return $this->thumbor->createJournalistImage($journalist->photo());
-        }
-
-        return '';
     }
 
     /**

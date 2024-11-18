@@ -6,6 +6,7 @@
 namespace App\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
+use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Enum\SitesEnum;
@@ -17,9 +18,6 @@ use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
-use Ec\Journalist\Domain\Model\Journalist;
-use Ec\Journalist\Domain\Model\JournalistFactory;
-use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Tag\Domain\Model\QueryTagClient;
@@ -36,16 +34,15 @@ class EditorialOrchestrator implements Orchestrator
     public function __construct(
         private readonly QueryLegacyClient $queryLegacyClient,
         private readonly QueryEditorialClient $queryEditorialClient,
-        private readonly QueryJournalistClient $queryJournalistClient,
         private readonly QuerySectionClient $querySectionClient,
         private readonly QueryMultimediaClient $queryMultimediaClient,
-        private readonly JournalistFactory $journalistFactory,
         private readonly AppsDataTransformer $detailsAppsDataTransformer,
         private readonly QueryTagClient $queryTagClient,
         private readonly BodyDataTransformer $bodyDataTransformer,
         private readonly UriFactoryInterface $uriFactory,
         private readonly QueryMembershipClient $queryMembershipClient,
         private readonly LoggerInterface $logger,
+        private readonly JournalistsDataTransformer $journalistsDataTransformer,
     ) {
     }
 
@@ -69,18 +66,10 @@ class EditorialOrchestrator implements Orchestrator
             throw new EditorialNotPublishedYetException();
         }
 
-        $journalists = [];
-        foreach ($editorial->signatures() as $signature) {
-            $aliasId = $this->journalistFactory->buildAliasId($signature->id()->id());
-            /** @var Journalist $journalist */
-            $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasId);
-
-            if ($journalist->isActive() && $journalist->isVisible()) {
-                $journalists[$aliasId->id()] = $journalist;
-            }
-        }
-
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
+
+        $journalists = $this->journalistsDataTransformer->write($editorial, $section)->read();
+
 
         $tags = [];
         foreach ($editorial->tags() as $tag) {
@@ -91,7 +80,12 @@ class EditorialOrchestrator implements Orchestrator
             }
         }
 
-        $editorialResult =  $this->detailsAppsDataTransformer->write($editorial, $journalists, $section, $tags)->read();
+        $editorialResult =  $this->detailsAppsDataTransformer->write(
+            $editorial,
+            $journalists,
+            $section,
+            $tags
+        )->read();
 
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
         $editorialResult['countComments'] = (isset($comments['options']['totalrecords']))
