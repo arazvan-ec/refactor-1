@@ -5,13 +5,10 @@
 
 namespace App\Application\DataTransformer\Apps;
 
-use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\Infrastructure\Enum\ClossingModeEnum;
 use App\Infrastructure\Enum\EditorialTypesEnum;
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
-use Ec\Editorial\Domain\Model\Body\Body;
-use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
@@ -42,7 +39,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     public function __construct(
         string $extension,
         private readonly Thumbor $thumbor,
-        private readonly BodyElementDataTransformerHandler $bodyElementDataTransformerHandler,
     ) {
         $this->setExtension($extension);
     }
@@ -111,7 +107,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'canonicalEditorialId' => $this->editorial->canonicalEditorialId(),
                 'urlDate' => $this->editorial->urlDate()->format(self::DATE_FORMAT),
                 'countWords' => $this->editorial->body()->countWords(),
-                'body' => $this->transformerBody($this->editorial->body()),
             ];
     }
 
@@ -121,6 +116,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     private function transformerJournalists(): array
     {
         $signatures = [];
+
 
         foreach ($this->journalists as $aliasId => $journalist) {
             foreach ($journalist->aliases() as $alias) {
@@ -250,26 +246,5 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         }
 
         return $result;
-    }
-
-    /**
-     * @return array{
-     *      type: string,
-     *      elements: array<int<0, max>, array<string, mixed>>
-     *  }
-     */
-    private function transformerBody(Body $body): array
-    {
-        $parsedBody = [
-            'type' => $body->type(),
-            'elements' => [],
-        ];
-
-        /** @var BodyElement $bodyElement */
-        foreach ($body as $bodyElement) {
-            $parsedBody['elements'][] = $this->bodyElementDataTransformerHandler->execute($bodyElement);
-        }
-
-        return $parsedBody;
     }
 }

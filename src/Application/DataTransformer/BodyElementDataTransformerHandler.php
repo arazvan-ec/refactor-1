@@ -29,11 +29,13 @@ class BodyElementDataTransformerHandler
     }
 
     /**
+     * @param array<string, mixed> $resolveData
+     *
      * @return array<string, mixed>
      *
      * @throws BodyDataTransformerNotFoundException
      */
-    public function execute(BodyElement $bodyElement): array
+    public function execute(BodyElement $bodyElement, array $resolveData = []): array
     {
         if (empty($this->dataTransformers[\get_class($bodyElement)])) {
             $message = \sprintf('BodyElement data transformer type %s not found', $bodyElement->type());
@@ -41,7 +43,7 @@ class BodyElementDataTransformerHandler
         }
 
         $transformer = $this->dataTransformers[\get_class($bodyElement)];
-        $transformer->write($bodyElement);
+        $transformer->write($bodyElement, $resolveData);
 
         return $transformer->read();
     }

@@ -6,11 +6,8 @@
 namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\DetailsAppsDataTransformer;
-use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Service\Thumbor;
-use Ec\Editorial\Domain\Model\Body\Body;
-use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialTitles;
@@ -42,24 +39,14 @@ class DetailsAppsDataTransformerTest extends TestCase
     /** @var QueryLegacyClient|MockObject */
     private QueryLegacyClient $queryLegacyClient;
 
-    /**
-     * @var Thumbor|MockObject
-     */
+    /** @var Thumbor|MockObject */
     private Thumbor $thumbor;
-
-    /** @var BodyElementDataTransformerHandler|MockObject */
-    private BodyElementDataTransformerHandler $bodyElementDataTransformerHandler;
 
     protected function setUp(): void
     {
         $this->thumbor = $this->createMock(Thumbor::class);
         $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
-        $this->bodyElementDataTransformerHandler = $this->createMock(BodyElementDataTransformerHandler::class);
-        $this->transformer = new DetailsAppsDataTransformer(
-            'dev',
-            $this->thumbor,
-            $this->bodyElementDataTransformerHandler,
-        );
+        $this->transformer = new DetailsAppsDataTransformer('dev', $this->thumbor);
     }
 
     /**
@@ -110,8 +97,6 @@ class DetailsAppsDataTransformerTest extends TestCase
         $editorial->method('contentType')->willReturn('article');
         $editorial->method('canonicalEditorialId')->willReturn('54321');
         $editorial->method('urlDate')->willReturn(new \DateTime('2023-01-01 00:00:00'));
-        $editorial->method('body')->willReturn($this->createMock(Body::class));
-        $editorial->method('body')->willReturn($this->createMock(Body::class));
 
         $this->queryLegacyClient->method('findCommentsByEditorialId')->willReturn(['options' => ['totalrecords' => 10]]);
 
@@ -131,7 +116,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals('article', $result['contentType']);
         $this->assertEquals('54321', $result['canonicalEditorialId']);
         $this->assertEquals('2023-01-01 00:00:00', $result['urlDate']);
-        $this->assertIsArray($result['body']);
+
     }
 
     /**
@@ -397,78 +382,5 @@ class DetailsAppsDataTransformerTest extends TestCase
 
         $this->assertArrayHasKey('tags', $result);
         $this->assertEmpty($result['tags']);
-    }
-
-    /**
-     * @test
-     */
-    public function transformerBodyShouldReturnExpectedArray(): void
-    {
-        $readResult = ['body'];
-        $type = 'normal';
-
-        $bodyMock = $this->createMock(Body::class);
-        $bodyMock->method('type')
-            ->willReturn($type);
-
-        $bodyElementMock = $this->createMock(BodyElement::class);
-        $this->configureArrayIteratorMock($bodyMock, [$bodyElementMock]);
-
-        $expectedResult = [
-            'type' => $type,
-            'elements' => [
-                $readResult,
-            ],
-        ];
-
-        $this->bodyElementDataTransformerHandler->expects(static::once())
-            ->method('execute')
-            ->with($bodyElementMock)
-            ->willReturn($readResult);
-
-        $reflection = new \ReflectionClass($this->transformer);
-        $method = $reflection->getMethod('transformerBody');
-
-        $result = $method->invoke($this->transformer, $bodyMock);
-
-        static::assertSame($expectedResult, $result);
-    }
-
-    /**
-     * @param BodyElement[] $items
-     */
-    private function configureArrayIteratorMock(MockObject $iteratorMock, array $items = []): void
-    {
-        $iterator = new \ArrayIterator($items);
-
-        $iteratorMock
-            ->method('rewind')
-            ->willReturnCallback(function () use ($iterator): void {
-                $iterator->rewind();
-            });
-
-        $iteratorMock
-            ->method('valid')
-            ->willReturnCallback(function () use ($iterator): bool {
-                return $iterator->valid();
-            });
-
-        $iteratorMock
-            ->method('current')
-            ->willReturnCallback(function () use ($iterator) {
-                return $iterator->current();
-            });
-
-        $iteratorMock
-            ->method('key')
-            ->willReturnCallback(function () use ($iterator) {
-                return $iterator->key();
-            });
-
-        $iteratorMock
-            ->method('next')
-            ->willReturnCallback(function () use ($iterator): void {
-                $iterator->next();
-            });
     }
 }

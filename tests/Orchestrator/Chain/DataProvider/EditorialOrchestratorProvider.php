@@ -14,4 +14,25 @@ class EditorialOrchestratorProvider
             [true, new \DateTime('1900-01-01 00:00:00')],
         ];
     }
+
+    public function getBodyExpected(): array
+    {
+        return [
+            [
+                [
+                    'type' => 'normal',
+                    'elements' => [
+                        [
+                            'buttons' => [
+                                [
+                                    'url' => 'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios1/dp/B0BJQPQVHP?tag=cacatuaMan',
+                                    'urlMembership' =>  'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios2/dp/B0BJQPQVHP?tag=cacatuaMan',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
 }

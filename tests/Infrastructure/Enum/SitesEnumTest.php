@@ -39,13 +39,17 @@ class SitesEnumTest extends TestCase
         $this->assertSame('elconfidencial', SitesEnum::getHostnameById($this->elConfidencial->value));
         $this->assertSame('vanitatis.elconfidencial', SitesEnum::getHostnameById($this->vanitatis->value));
         $this->assertSame('alimente.elconfidencial', SitesEnum::getHostnameById($this->alimente->value));
+        $this->assertSame('elconfidencial', SitesEnum::getHostnameById('999'));
     }
 
     /**
      * @test
      */
-    public function getHostnameByIdReturnDefaultValue(): void
+    public function getEncodenameByIdMustReturnCorrectValue(): void
     {
-        $this->assertSame('elconfidencial', SitesEnum::getHostnameById('999'));
+        $this->assertSame('el-confidencial', SitesEnum::getEncodenameById('69'));
+        $this->assertSame('el-confidencial', SitesEnum::getEncodenameById($this->elConfidencial->value));
+        $this->assertSame('vanitatis', SitesEnum::getEncodenameById($this->vanitatis->value));
+        $this->assertSame('alimente', SitesEnum::getEncodenameById($this->alimente->value));
     }
 }

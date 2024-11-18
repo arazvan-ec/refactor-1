@@ -15,9 +15,16 @@ abstract class ElementTypeDataTransformer implements BodyElementDataTransformer
 {
     protected BodyElement $bodyElement;
 
-    public function write(BodyElement $bodyElement): BodyElementDataTransformer
+    /** @var array<string, mixed> */
+    private array $resolveData;
+
+    /**
+     * @param array<string, mixed> $resolveData
+     */
+    public function write(BodyElement $bodyElement, array $resolveData = []): BodyElementDataTransformer
     {
         $this->bodyElement = $bodyElement;
+        $this->resolveData = $resolveData;
 
         return $this;
     }
@@ -28,5 +35,13 @@ abstract class ElementTypeDataTransformer implements BodyElementDataTransformer
         $elementArray['type'] = $this->bodyElement->type();
 
         return $elementArray;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function resolveData(): array
+    {
+        return $this->resolveData;
     }
 }
