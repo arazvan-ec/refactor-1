@@ -87,7 +87,6 @@ class EditorialOrchestrator implements Orchestrator
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
         $resolveData = [];
-        $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData);
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
@@ -122,6 +121,7 @@ class EditorialOrchestrator implements Orchestrator
             $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
         }
 
+        $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData);
         if (!empty($resolveData['multimedia'])) {
             $resolveData['multimedia'] = Utils::settle($resolveData['multimedia'])
                 ->then($this->createCallback([$this, 'fulfilledMultimedia']))
@@ -146,6 +146,10 @@ class EditorialOrchestrator implements Orchestrator
 
         $journalists = $this->journalistsDataTransformer->write($journalists, $section)->read();
 
+        $resolveData['signatures'] = $journalists;
+        $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
+        $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
+
         $tags = [];
         foreach ($editorial->tags() as $tag) {
             try {
@@ -162,21 +166,17 @@ class EditorialOrchestrator implements Orchestrator
         )->read();
 
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
-        $editorialResult['countComments'] = (isset($comments['options']['totalrecords']))
-            ? $comments['options']['totalrecords'] : 0;
-
-
-        $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
-
-        $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
-
+        $editorialResult['countComments'] = $comments['options']['totalrecords'] ?? 0;
         $editorialResult['signatures'] = $this->retrieveJournalists($editorial, $journalists);
-        $resolveData['signatures'] = $journalists;
-
         $editorialResult['body'] = $this->bodyDataTransformer->execute(
             $editorial->body(),
             $resolveData
         );
+
+        $multimediaId = $this->getMultimediaId($editorial->multimedia());
+        if ($multimediaId && !empty($resolveData['multimedia'][$multimediaId->id()])) {
+            $editorialResult['multimedia'] = $resolveData['multimedia'][$multimediaId->id()]->file();
+        }
 
         return $editorialResult;
     }
