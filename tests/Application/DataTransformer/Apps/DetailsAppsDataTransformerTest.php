@@ -7,18 +7,13 @@ namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\DetailsAppsDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
-use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialTitles;
-use Ec\Journalist\Domain\Model\Alias;
-use Ec\Journalist\Domain\Model\Aliases;
-use Ec\Journalist\Domain\Model\AliasId;
-use Ec\Journalist\Domain\Model\Department;
-use Ec\Journalist\Domain\Model\DepartmentId;
-use Ec\Journalist\Domain\Model\Departments;
+use Ec\Editorial\Domain\Model\Signature;
+use Ec\Editorial\Domain\Model\SignatureId;
+use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Journalist\Domain\Model\Journalist;
-use Ec\Journalist\Domain\Model\JournalistId;
 use Ec\Section\Domain\Model\Section;
 use Ec\Section\Domain\Model\SectionId;
 use Ec\Tag\Domain\Model\Tag;
@@ -118,10 +113,29 @@ class DetailsAppsDataTransformerTest extends TestCase
     /**
      * @test
      *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\DataProvider\EditorialForAppsDataProvider::getJournalists()
+     * @dataProvider \App\Tests\Application\DataTransformer\Apps\DataProvider\DetailsAppsDataProvider::getJournalists()
      */
     public function transformerJournalistsNoPrivateAlias(array $signatures, $aliasIds, array $expected): void
     {
+        $signaturesArrayMock = [];
+        $signaturesMock = $this->createMock(Signatures::class);
+        foreach ($aliasIds as $id) {
+
+            $signatureMock = $this->createMock(Signature::class);
+            $signatureIdMock = $this->createMock(SignatureId::class);
+            $signatureIdMock->expects(static::once())
+                ->method('id')
+                ->willReturn($id);
+            $signatureMock->expects(static::once())
+                ->method('id')
+                ->willReturn($signatureIdMock);
+            $signaturesArrayMock[] = $signatureMock;
+        }
+
+        $signaturesMock->expects(static::once())
+            ->method('getArrayCopy')
+            ->willReturn($signaturesArrayMock);
+
         $sectionId = $this->createMock(SectionId::class);
         $sectionId->method('id')->willReturn('sectionId');
 
@@ -133,13 +147,15 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section->method('getPath')->willReturn('section-path');
 
         $editorial = $this->createMock(Editorial::class);
+        $editorial->expects(static::once())
+            ->method('signatures')
+            ->willReturn($signaturesMock);
         $tag = $this->createMock(Tag::class);
 
-        $this->transformer->write($editorial, [], $section, [$tag]);
-
-        $result = $this->transformer->read();
+        $result = $this->transformer->write($editorial, $signatures, $section, [$tag])->read();
 
         $this->assertArrayHasKey('signatures', $result);
+        $this->assertSame($expected, $result['signatures']);
     }
 
     /**

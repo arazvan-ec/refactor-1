@@ -176,7 +176,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     {
         $journalists = [];
         /** @var Signature $signature */
-        foreach ($this->editorial->signatures() as $signature) {
+        foreach ($this->editorial->signatures()->getArrayCopy() as $signature) {
             $journalists[] = $this->journalists[$signature->id()->id()];
         }
 
