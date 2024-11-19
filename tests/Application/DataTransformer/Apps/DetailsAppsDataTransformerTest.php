@@ -52,12 +52,11 @@ class DetailsAppsDataTransformerTest extends TestCase
 
         $journalists = ['aliasId' => $journalist];
 
-        $this->transformer->write($editorial, $journalists, $section, [$tag]);
+        $this->transformer->write($editorial, $section, [$tag]);
         $result = $this->transformer->read();
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('id', $result);
-        $this->assertArrayHasKey('signatures', $result);
         $this->assertArrayHasKey('section', $result);
         $this->assertArrayHasKey('tags', $result);
     }
@@ -91,7 +90,7 @@ class DetailsAppsDataTransformerTest extends TestCase
 
         $this->queryLegacyClient->method('findCommentsByEditorialId')->willReturn(['options' => ['totalrecords' => 10]]);
 
-        $this->transformer->write($editorial, [], $this->createMock(Section::class), []);
+        $this->transformer->write($editorial, $this->createMock(Section::class), []);
         $result = $this->transformer->read();
 
         $this->assertEquals('12345', $result['id']);
@@ -110,11 +109,6 @@ class DetailsAppsDataTransformerTest extends TestCase
 
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\DataProvider\DetailsAppsDataProvider::getJournalists()
-     */
     public function transformerJournalistsNoPrivateAlias(array $signatures, $aliasIds, array $expected): void
     {
         $signaturesArrayMock = [];
@@ -152,7 +146,7 @@ class DetailsAppsDataTransformerTest extends TestCase
             ->willReturn($signaturesMock);
         $tag = $this->createMock(Tag::class);
 
-        $result = $this->transformer->write($editorial, $signatures, $section, [$tag])->read();
+        $result = $this->transformer->write($editorial, $section, [$tag])->read();
 
         $this->assertArrayHasKey('signatures', $result);
         $this->assertSame($expected, $result['signatures']);
@@ -175,7 +169,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $journalists = ['aliasId' => $journalist];
         $tag = $this->createMock(Tag::class);
 
-        $this->transformer->write($editorial, $journalists, $section, [$tag]);
+        $this->transformer->write($editorial, $section, [$tag]);
         $result = $this->transformer->read();
 
         $this->assertEquals($sectionId, $result['section']['id']);
@@ -201,7 +195,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $type->method('name')->willReturn('Type Name');
         $tag->method('type')->willReturn($type);
 
-        $this->transformer->write($editorial, $journalists, $section, [$tag]);
+        $this->transformer->write($editorial, $section, [$tag]);
         $result = $this->transformer->read();
 
         $this->assertEquals($tagId->id(), $result['tags'][0]['id']);
@@ -223,7 +217,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section = $this->createMock(Section::class);
         $tags = [];
 
-        $this->transformer->write($editorial, $journalists, $section, $tags);
+        $this->transformer->write($editorial, $section, $tags);
         $result = $this->transformer->read();
 
         $this->assertArrayHasKey('tags', $result);
