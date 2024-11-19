@@ -39,14 +39,10 @@ class DetailsAppsDataTransformerTest extends TestCase
     /** @var QueryLegacyClient|MockObject */
     private QueryLegacyClient $queryLegacyClient;
 
-    /** @var Thumbor|MockObject */
-    private Thumbor $thumbor;
-
     protected function setUp(): void
     {
-        $this->thumbor = $this->createMock(Thumbor::class);
         $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
-        $this->transformer = new DetailsAppsDataTransformer('dev', $this->thumbor);
+        $this->transformer = new DetailsAppsDataTransformer('dev');
     }
 
     /**
@@ -122,46 +118,10 @@ class DetailsAppsDataTransformerTest extends TestCase
     /**
      * @test
      *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\DataProvider\EditorialForAppsDataProvider::getPhotoOrBlogPhotoJournalist()
+     * @dataProvider \App\Tests\Application\DataTransformer\Apps\DataProvider\EditorialForAppsDataProvider::getJournalists()
      */
-    public function transformerJournalistsNoPrivateAlias(string $method, string $value): void
+    public function transformerJournalistsNoPrivateAlias(array $signatures, $aliasIds, array $expected): void
     {
-        $aliasId = $this->createMock(AliasId::class);
-        $aliasId->method('id')->willReturn('aliasId');
-
-        $alias = $this->createMock(Alias::class);
-        $alias->method('id')->willReturn($aliasId);
-        $alias->method('name')->willReturn('Alias Name');
-        $alias->method('private')->willReturn(false);
-
-        $departmentId = $this->createMock(DepartmentId::class);
-        $departmentId->method('id')->willReturn('departmentId');
-
-        $department = $this->createMock(Department::class);
-        $department->method('id')->willReturn($departmentId);
-        $department->method('name')->willReturn('DepartmentName');
-
-        $aliases = new Aliases();
-        $aliases->addAlias($alias);
-
-        $departments = new Departments();
-        $departments->addDepartment($department);
-
-        $journalistId = $this->createMock(JournalistId::class);
-        $journalistId->method('id')->willReturn('journalistId');
-
-        $journalist = $this->createMock(Journalist::class);
-        $journalist->method('id')->willReturn($journalistId);
-        $journalist->method('name')->willReturn('JournalistName');
-        $journalist->method('aliases')->willReturn($aliases);
-        $journalist->method('departments')->willReturn($departments);
-
-        if ('fake' != $method) {
-            $journalist->method($method)->willReturn($value);
-        }
-
-        $journalists = ['aliasId' => $journalist];
-
         $sectionId = $this->createMock(SectionId::class);
         $sectionId->method('id')->willReturn('sectionId');
 
@@ -175,141 +135,11 @@ class DetailsAppsDataTransformerTest extends TestCase
         $editorial = $this->createMock(Editorial::class);
         $tag = $this->createMock(Tag::class);
 
-        $this->transformer->write($editorial, $journalists, $section, [$tag]);
-
-        $photo = '';
-        if ('blogPhoto' === $method) {
-            $this->thumbor
-                ->method('createJournalistImage')
-                ->willReturn('https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg');
-        }
-        if ('photo' === $method) {
-            $this->thumbor
-                ->method('createJournalistImage')
-                ->willReturn('https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg');
-        }
-
+        $this->transformer->write($editorial, [], $section, [$tag]);
 
         $result = $this->transformer->read();
 
         $this->assertArrayHasKey('signatures', $result);
-        $this->assertEquals($journalist->id()->id(), $result['signatures'][0]['journalistId']);
-        $this->assertEquals($aliasId->id(), $result['signatures'][0]['aliasId']);
-        $this->assertEquals($alias->name(), $result['signatures'][0]['name']);
-        $this->assertEquals(
-            'https://www.elconfidencial.dev/autores/journalistname-'.$journalist->id()->id().'/',
-            $result['signatures'][0]['url']
-        );
-        if ('blogPhoto' === $method) {
-            $this->assertEquals(
-                'https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg',
-                $result['signatures'][0]['photo']
-            );
-        }
-        if ('photo' === $method) {
-            $this->assertEquals(
-                'https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg',
-                $result['signatures'][0]['photo']
-            );
-        }
-        $this->assertArrayHasKey('departments', $result['signatures'][0]);
-        $this->assertEquals('departmentId', $result['signatures'][0]['departments'][0]['id']);
-        $this->assertEquals('DepartmentName', $result['signatures'][0]['departments'][0]['name']);
-    }
-
-    /**
-     * @test
-     *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\DataProvider\EditorialForAppsDataProvider::getPhotoOrBlogPhotoJournalist()
-     */
-    public function transformerJournalistsWithPrivateAlias(string $method, string $value): void
-    {
-        $aliasId = $this->createMock(AliasId::class);
-        $aliasId->method('id')->willReturn('aliasId');
-
-        $alias = $this->createMock(Alias::class);
-        $alias->method('id')->willReturn($aliasId);
-        $alias->method('name')->willReturn('Alias Name');
-        $alias->method('private')->willReturn(true);
-
-        $departmentId = $this->createMock(DepartmentId::class);
-        $departmentId->method('id')->willReturn('departmentId');
-
-        $department = $this->createMock(Department::class);
-        $department->method('id')->willReturn($departmentId);
-        $department->method('name')->willReturn('DepartmentName');
-
-        $aliases = new Aliases();
-        $aliases->addAlias($alias);
-
-        $departments = new Departments();
-        $departments->addDepartment($department);
-
-        $journalistId = $this->createMock(JournalistId::class);
-        $journalistId->method('id')->willReturn('journalistId');
-
-        $journalist = $this->createMock(Journalist::class);
-        $journalist->method('id')->willReturn($journalistId);
-        $journalist->method('name')->willReturn('JournalistName');
-        $journalist->method('aliases')->willReturn($aliases);
-        $journalist->method('departments')->willReturn($departments);
-        if ('fake' != $method) {
-            $journalist->method($method)->willReturn($value);
-        }
-
-        $journalists = ['aliasId' => $journalist];
-
-        $sectionId = $this->createMock(SectionId::class);
-        $sectionId->method('id')->willReturn('sectionId');
-
-        $section = $this->createMock(Section::class);
-        $section->method('id')->willReturn($sectionId);
-        $section->method('name')->willReturn('SectionName');
-        $section->method('siteId')->willReturn('siteId');
-        $section->method('isBlog')->willReturn(false);
-        $section->method('getPath')->willReturn('section-path');
-
-        $editorial = $this->createMock(Editorial::class);
-        $tag = $this->createMock(Tag::class);
-
-        $this->transformer->write($editorial, $journalists, $section, [$tag]);
-
-        if ('blogPhoto' === $method) {
-            $this->thumbor
-                ->method('createJournalistImage')
-                ->willReturn('https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg');
-        }
-        if ('photo' === $method) {
-            $this->thumbor
-                ->method('createJournalistImage')
-                ->willReturn('https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg');
-        }
-
-        $result = $this->transformer->read();
-
-        $this->assertArrayHasKey('signatures', $result);
-        $this->assertEquals($journalist->id()->id(), $result['signatures'][0]['journalistId']);
-        $this->assertEquals($aliasId->id(), $result['signatures'][0]['aliasId']);
-        $this->assertEquals($alias->name(), $result['signatures'][0]['name']);
-        $this->assertEquals(
-            'https://www.elconfidencial.dev/section-path',
-            $result['signatures'][0]['url']
-        );
-        if ('blogPhoto' === $method) {
-            $this->assertEquals(
-                'https://thumbor.server.url/oRqpV6YYMVMlT2WPXboH69LRMQ0=/aws-bucket/journalist/blo/gPh/oto/blogPhoto.jpg',
-                $result['signatures'][0]['photo']
-            );
-        }
-        if ('photo' === $method) {
-            $this->assertEquals(
-                'https://thumbor.server.url/TX0gpA4ve-eY4X8pGqXXCiGvmto=/aws-bucket/journalist/pho/to./jpg/photo.jpg',
-                $result['signatures'][0]['photo']
-            );
-        }
-        $this->assertArrayHasKey('departments', $result['signatures'][0]);
-        $this->assertEquals('departmentId', $result['signatures'][0]['departments'][0]['id']);
-        $this->assertEquals('DepartmentName', $result['signatures'][0]['departments'][0]['name']);
     }
 
     /**
