@@ -13,7 +13,7 @@
         "ec/journalist-client": "^4.0",
         "ec/membership-client": "^1.0",
         "ec/microservice-bundle": "^1.0",
-        "ec/multimedia-client": "^2.0",
+        "ec/multimedia-client": "v2.49.0-alpha1",
         "ec/section-client": "^2.0",
         "ec/tag-client": "^3.0",
         "nelmio/api-doc-bundle": "^4.11",

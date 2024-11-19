@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "60ed75fb38bc6e0fcc5f7a7715cc4248",
+    "content-hash": "9e17862e080d3fed976c340721b3bd88",
     "packages": [
         {
             "name": "99designs/phumbor",
@@ -2480,16 +2480,16 @@
         },
         {
             "name": "ec/multimedia-client",
-            "version": "v2.48.0",
+            "version": "v2.49.0-alpha1",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ecawesomemakers/multimedia-client.git",
-                "reference": "f23df116b2a43061dbc5e7dadb62ee1cceadbd82"
+                "reference": "b3a8de0dccd62174e20cbdf11370e065ddc211a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/multimedia-client/get/f23df116b2a43061dbc5e7dadb62ee1cceadbd82.zip",
-                "reference": "f23df116b2a43061dbc5e7dadb62ee1cceadbd82",
+                "url": "https://bitbucket.org/ecawesomemakers/multimedia-client/get/b3a8de0dccd62174e20cbdf11370e065ddc211a0.zip",
+                "reference": "b3a8de0dccd62174e20cbdf11370e065ddc211a0",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2562,9 +2562,9 @@
             "description": "Multimedia",
             "homepage": "https://bitbucket.org/ecawesomemakers/multimedia-client",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/multimedia-client/src/f23df116b2a43061dbc5e7dadb62ee1cceadbd82/?at=v2.48.0"
+                "source": "https://bitbucket.org/ecawesomemakers/multimedia-client/src/b3a8de0dccd62174e20cbdf11370e065ddc211a0/?at=v2.49.0"
             },
-            "time": "2024-11-05T11:21:20+00:00"
+            "time": "2024-11-12T14:15:26+00:00"
         },
         {
             "name": "ec/multimedia-domain",
@@ -14572,6 +14572,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "ec/multimedia-client": 15,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
