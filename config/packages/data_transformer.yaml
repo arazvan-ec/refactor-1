@@ -3,7 +3,8 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
+        bind:
+            $extension: '%env(URL_ENV)%'
 
     App\Application\DataTransformer\Apps\AppsDataTransformer: '@App\Application\DataTransformer\Apps\DetailsAppsDataTransformer'
 
@@ -12,7 +13,6 @@ services:
         exclude:
             - '../../src/Application/DataTransformer/Apps/Body/BodyTagVideoYoutubeDataTransformer'
             - '../../src/Application/DataTransformer/Apps/Body/BodyTagVideoDataTransformer'
-            - '../../src/Application/DataTransformer/Apps/Body/BodyTagInsertedNewsDataTransformer'
         tags: [ 'app.data_transformer' ]
         lazy: true
         shared: true
@@ -33,10 +33,3 @@ services:
         lazy: true
         shared: true
 
-    App\Application\DataTransformer\Apps\Body\BodyTagInsertedNewsDataTransformer:
-        class: App\Application\DataTransformer\Apps\Body\BodyTagInsertedNewsDataTransformer
-        arguments:
-            $extension: '%env(URL_ENV)%'
-        tags: [ 'app.data_transformer' ]
-        lazy: true
-        shared: true

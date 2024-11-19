@@ -80,7 +80,7 @@ class EditorialOrchestrator implements Orchestrator
             }
         }
 
-        $editorialResult =  $this->detailsAppsDataTransformer->write(
+        $editorialResult = $this->detailsAppsDataTransformer->write(
             $editorial,
             $journalists,
             $section,

@@ -7,12 +7,16 @@ namespace App\Application\DataTransformer\Apps;
 
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
-use Ec\Editorial\Application\DataTransformer\DataTransformer;
+use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
+use Ec\Editorial\Domain\Model\QueryEditorialClient;
+use Ec\Editorial\Domain\Model\Signature;
+use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
+use Ec\Journalist\Domain\Model\Journalists;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Section\Domain\Model\Section;
 
@@ -23,6 +27,7 @@ class JournalistsDataTransformer implements JournalistDataTransformer
 {
     use UrlGeneratorTrait;
     public function __construct(
+        private readonly QueryEditorialClient $queryEditorialClient,
         private readonly QueryJournalistClient $queryJournalistClient,
         private readonly JournalistFactory $journalistFactory,
         string $extension,
@@ -42,12 +47,35 @@ class JournalistsDataTransformer implements JournalistDataTransformer
 
     public function read(): array
     {
-        foreach ($this->editorial->signatures() as $signature) {
+        /** @var Journalists $journalists */
+        $journalists = [];
+
+        $editorialSignatures = $this->editorial->signatures();
+
+        /** @var BodyTagInsertedNews[] $insertedNews */
+        $insertedNews = $this->editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
+
+        for ($i = 0; $i < count($insertedNews); ++$i) {
+            $id = $insertedNews[$i]->editorialId()->id();
+
+            /** @var Editorial $editorial */
+            $editorial = $this->queryEditorialClient->findEditorialById($id);
+
+            foreach ($editorial->signatures() as $signature) {
+                if (!$this->hasSignature($editorialSignatures, $signature->id()->id())) {
+                    $editorialSignatures->addItem($signature);
+                }
+            }
+        }
+
+        foreach ($editorialSignatures as $signature) {
             $aliasId = $this->journalistFactory->buildAliasId($signature->id()->id());
+
             /** @var Journalist $journalist */
             $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasId);
 
             if ($journalist->isActive() && $journalist->isVisible()) {
+                // Todo: fix index object
                 $journalists[$aliasId->id()] = $journalist;
             }
         }
@@ -66,9 +94,19 @@ class JournalistsDataTransformer implements JournalistDataTransformer
             foreach ($journalist->aliases() as $alias) {
 
                 if ($alias->id()->id() == $aliasId) {
+                    $signature = [
+                        'journalistId' => $journalist->id()->id(),
+                        'aliasId' => $alias->id()->id(),
+                        'name' => $alias->name(),
+                        'url' => $this->journalistUrl($alias, $journalist),
+                    ];
+
+                    $photo = $this->photoUrl($journalist);
+                    if ('' !== $photo) {
+                        $signature['photo'] = $photo;
+                    }
 
                     $departments = [];
-
                     foreach ($journalist->departments() as $department) {
                         $departments[] = [
                             'id' => $department->id()->id(),
@@ -76,18 +114,8 @@ class JournalistsDataTransformer implements JournalistDataTransformer
                         ];
                     }
 
-                    $signature = [
-                        'journalistId' => $journalist->id()->id(),
-                        'aliasId' => $alias->id()->id(),
-                        'name' => $alias->name(),
-                        'url' => $this->journalistUrl($alias, $journalist),
-                        'departments' => $departments,
-                    ];
+                    $signature['departments'] = $departments;
 
-                    $photo = $this->photoUrl($journalist);
-                    if ('' !== $photo) {
-                        $signature['photo'] = $photo;
-                    }
                     $signatures[$alias->id()->id()] = $signature;
                 }
             }
@@ -128,5 +156,16 @@ class JournalistsDataTransformer implements JournalistDataTransformer
         }
 
         return '';
+    }
+
+    private function hasSignature(Signatures $signatures, string $aliasId): bool
+    {
+        foreach ($signatures->getArrayCopy() as $signature) {
+            if ($signature->id()->id() == $aliasId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -10,6 +10,7 @@ use App\Infrastructure\Enum\EditorialTypesEnum;
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
+use Ec\Editorial\Domain\Model\Signature;
 use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
@@ -172,5 +173,16 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         }
 
         return $result;
+    }
+
+    private function getJournalists(): array
+    {
+        $journalists = [];
+        /** @var Signature $signature */
+        foreach ($this->editorial->signatures() as $signature) {
+            $journalists[] = $this->journalists[$signature->id()->id()];
+        }
+
+        return $journalists;
     }
 }

@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace App\Application\DataTransformer\Apps\Body;
 
 use App\Infrastructure\Trait\UrlGeneratorTrait;
+use App\Application\DataTransformer\Apps\JournalistDataTransformer;
 use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
@@ -27,6 +28,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
     public function __construct(
         private readonly QueryEditorialClient $queryEditorialClient,
         private readonly QuerySectionClient $querySectionClient,
+        private readonly JournalistDataTransformer $journalistDataTransformer,
         string $extension,
     ) {
         $this->setExtension($extension);
@@ -47,13 +49,19 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         /** @var Editorial $editorial */
         $editorial = $this->queryEditorialClient->findEditorialById($this->bodyElement->editorialId()->id());
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
-
+        $journalists = $this->journalistDataTransformer->write($editorial, $section)->read();
 
         $elementArray['editorialId'] = $editorial->id()->id();
         $elementArray['title'] = $editorial->editorialTitles()->title();
-        $elementArray['signatures'] =[];
+
+        // avoid this approach
+        $elementArray['signatures'] = [];
+        foreach ($journalists as $index => $journalist) {
+            $elementArray['signatures'][] = $journalist;
+        }
+
         $elementArray['editorial'] = $this->editorialUrl($editorial, $section);
-        $elementArray['photo'] =[];
+        $elementArray['photo'] = [];
 
         return $elementArray;
     }
