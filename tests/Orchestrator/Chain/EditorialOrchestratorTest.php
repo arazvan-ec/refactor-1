@@ -18,17 +18,11 @@ use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButtons;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
-use Ec\Editorial\Domain\Model\Signature;
-use Ec\Editorial\Domain\Model\SignatureId;
-use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Editorial\Domain\Model\SourceEditorial;
 use Ec\Editorial\Domain\Model\SourceEditorialId;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Editorial\Domain\Model\Tag;
 use Ec\Editorial\Domain\Model\Tags;
-use Ec\Journalist\Domain\Model\AliasId;
-use Ec\Journalist\Domain\Model\Journalist;
-use Ec\Journalist\Domain\Model\JournalistId;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
@@ -176,17 +170,13 @@ class EditorialOrchestratorTest extends TestCase
         $id = '12345';
         $editorial = $this->getEditorialMock($id);
         $section = $this->generateSectionMock($editorial);
-        $journalist = $this->generateJournalistMock($editorial);
+        $journalist = $this->generateJournalistMock($editorial, $section);
         $tags = [$this->generateTagMock($editorial)];
-
-        $expectedJournalists = [
-            '7298' => $journalist,
-        ];
 
         $this->appsDataTransformer
             ->expects(self::any())
             ->method('write')
-            ->with($editorial, $expectedJournalists, $section, $tags)
+            ->with($editorial, $journalist, $section, $tags)
             ->willReturnSelf();
 
         $transformedData = [
@@ -298,7 +288,7 @@ class EditorialOrchestratorTest extends TestCase
         $id = '12345';
         $editorial = $this->getEditorialMock($id);
         $section = $this->generateSectionMock($editorial);
-        $journalist = $this->generateJournalistMock($editorial);
+        $journalist = $this->generateJournalistMock($editorial, $section);
         $editorialTag = $this->createMock(Tag::class);
 
         $tags = new Tags();
@@ -315,14 +305,10 @@ class EditorialOrchestratorTest extends TestCase
             ->with($editorialTag->id()->id())
             ->willThrowException(new \Exception('Tag not found'));
 
-        $expectedJournalists = [
-            '7298' => $journalist,
-        ];
-
         $this->appsDataTransformer
             ->expects(self::any())
             ->method('write')
-            ->with($editorial, $expectedJournalists, $section, [])
+            ->with($editorial, $journalist, $section, [])
             ->willReturnSelf();
 
         $transformedData = [
@@ -401,17 +387,13 @@ class EditorialOrchestratorTest extends TestCase
         $id = '12345';
         $editorial = $this->getEditorialMock($id);
         $section = $this->generateSectionMock($editorial);
-        $journalist = $this->generateJournalistMock($editorial);
+        $journalist = $this->generateJournalistMock($editorial, $section);
         $tags = [$this->generateTagMock($editorial)];
-
-        $expectedJournalists = [
-            '7298' => $journalist,
-        ];
 
         $this->appsDataTransformer
             ->expects(self::any())
             ->method('write')
-            ->with($editorial, $expectedJournalists, $section, $tags)
+            ->with($editorial, $journalist, $section, $tags)
             ->willReturnSelf();
         $transformedData = $this->getGenericTransformerData();
 
@@ -578,64 +560,30 @@ class EditorialOrchestratorTest extends TestCase
         return $section;
     }
 
-    private function generateJournalistMock(MockObject $editorialMock): Journalist|MockObject
+    private function generateJournalistMock(MockObject $editorialMock, MockObject $sectionMock): array
     {
-        $signature = $this->createMock(Signature::class);
-        $signatureId = $this->createMock(SignatureId::class);
-        $aliasId = $this->createMock(AliasId::class);
-        $journalist = $this->createMock(Journalist::class);
-        $journalistId = $this->createMock(JournalistId::class);
+        $expected =  [
+            'journalistId' => 'journalistId',
+            'aliasId' => 'aliasId',
+            'name' => 'name',
+            'url' => 'url',
+            'departments' => [
+                [
+                    'id' => 'id',
+                    'name' => 'name',
+                ],
+            ],
+            'photo' => 'photo',
+        ];
+        $this->journalistDataTransformer->expects(static::once())
+            ->method('write')
+            ->with($editorialMock, $sectionMock)
+            ->willReturnSelf();
+        $this->journalistDataTransformer->expects(static::once())
+            ->method('read')
+            ->willReturn($expected);
 
-        $signatureId
-            ->method('id')
-            ->willReturn('signature-id');
-
-        $signature
-            ->method('id')
-            ->willReturn($signatureId);
-
-        $signatures = new Signatures();
-        $signatures->addItem($signature);
-
-        $editorialMock
-            ->expects(self::once())
-            ->method('signatures')
-            ->willReturn($signatures);
-
-        $journalistId
-            ->method('id')
-            ->willReturn('alias-id');
-
-        $journalist
-            ->method('id')
-            ->willReturn($journalistId);
-
-        $aliasId
-            ->method('id')
-            ->willReturn('7298');
-
-        $this->journalistFactory
-            ->expects($this->once())
-            ->method('buildAliasId')
-            ->with('signature-id')
-            ->willReturn($aliasId);
-
-        $journalist
-            ->expects($this->once())
-            ->method('isActive')
-            ->willReturn(true);
-        $journalist
-            ->expects($this->once())
-            ->method('isVisible')
-            ->willReturn(true);
-
-        $this->queryJournalistClient
-            ->expects($this->once())
-            ->method('findJournalistByAliasId')
-            ->with($aliasId)
-            ->willReturn($journalist);
-
-        return $journalist;
+        return $expected;
     }
 
     private function generateTagMock(MockObject $editorialMock): MockObject|TagAlias
