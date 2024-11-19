@@ -7,12 +7,10 @@ namespace App\Application\DataTransformer\Apps;
 
 use App\Infrastructure\Enum\ClossingModeEnum;
 use App\Infrastructure\Enum\EditorialTypesEnum;
-use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\Signature;
 use Ec\Encode\Encode;
-use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Section\Domain\Model\Section;
 use Ec\Tag\Domain\Model\Tag;
@@ -109,7 +107,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
                 'countWords' => $this->editorial->body()->countWords(),
             ];
     }
-
 
     private function editorialUrl(): string
     {

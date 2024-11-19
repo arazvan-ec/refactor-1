@@ -10,7 +10,6 @@ use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
-use Ec\Editorial\Domain\Model\Signature;
 use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
@@ -26,14 +25,14 @@ use Ec\Section\Domain\Model\Section;
 class JournalistsDataTransformer implements JournalistDataTransformer
 {
     use UrlGeneratorTrait;
+
     public function __construct(
         private readonly QueryEditorialClient $queryEditorialClient,
         private readonly QueryJournalistClient $queryJournalistClient,
         private readonly JournalistFactory $journalistFactory,
         string $extension,
         private readonly Thumbor $thumbor,
-    )
-    {
+    ) {
         $this->setExtension($extension);
     }
 
@@ -124,7 +123,6 @@ class JournalistsDataTransformer implements JournalistDataTransformer
         return $signatures;
     }
 
-
     private function journalistUrl(Alias $alias, Journalist $journalist): string
     {
         if ($alias->private()) {
@@ -143,7 +141,6 @@ class JournalistsDataTransformer implements JournalistDataTransformer
             sprintf('%s-%s', Encode::encodeUrl($journalist->name()), $journalist->id()->id())
         );
     }
-
 
     private function photoUrl(Journalist $journalist): string
     {
