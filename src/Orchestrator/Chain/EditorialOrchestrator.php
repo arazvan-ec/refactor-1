@@ -10,8 +10,10 @@ use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Enum\SitesEnum;
+use App\Infrastructure\Trait\MultimediaTrait;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
+use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
 use Ec\Editorial\Domain\Model\Signature;
 use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Journalist\Domain\Model\Journalist;
@@ -29,6 +31,7 @@ use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Tag\Domain\Model\QueryTagClient;
+use GuzzleHttp\Promise\Utils;
 use Http\Promise\Promise;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -40,6 +43,7 @@ use Symfony\Component\HttpFoundation\Request;
 class EditorialOrchestrator implements Orchestrator
 {
     use UrlGeneratorTrait;
+    use MultimediaTrait;
 
     public function __construct(
         private readonly QueryLegacyClient $queryLegacyClient,
@@ -82,6 +86,9 @@ class EditorialOrchestrator implements Orchestrator
 
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
+        $resolveData = [];
+        $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData);
+
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
         $editorialSignatures = [];
@@ -98,22 +105,27 @@ class EditorialOrchestrator implements Orchestrator
         foreach ($insertedNews as $insertedNew) {
             $id = $insertedNew->editorialId()->id();
 
-            /** @var Editorial $editorialinserted */
-            $editorialinserted = $this->queryEditorialClient->findEditorialById($id);
-            $sectionInserted = $this->querySectionClient->findSectionById($editorialinserted->sectionId());
+            /** @var Editorial $insertedEditorials */
+            $insertedEditorials = $this->queryEditorialClient->findEditorialById($id);
+            $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
 
-            $resolveData['insertedNews'][$id]['editorial'] = $editorialinserted;
+            $resolveData['insertedNews'][$id]['editorial'] = $insertedEditorials;
             $resolveData['insertedNews'][$id]['section'] = $sectionInserted;
 
             /** @var Signature $signature */
-            foreach ($editorialinserted->signatures() as $signature) {
+            foreach ($insertedEditorials->signatures() as $signature) {
                 $aliasId = $signature->id()->id();
                 $resolveData['insertedNews'][$id]['signatures'][] = $aliasId;
                 $editorialSignatures[$aliasId] = $aliasId;
             }
 
-            $resolveData['insertedNews'][$id]['photo'] = 'cacatua';
+            $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
+        }
 
+        if (!empty($resolveData['multimedia'])) {
+            $resolveData['multimedia'] = Utils::settle($resolveData['multimedia'])
+                ->then($this->createCallback([$this, 'fulfilledMultimedia']))
+                ->wait(true);
         }
 
         /** @var Journalists $journalists */
@@ -323,5 +335,43 @@ class EditorialOrchestrator implements Orchestrator
         }
 
         return false;
+    }
+
+    /**
+     * @return array<string, array<int, Promise>>
+     */
+    private function getAsyncMultimedia(Multimedia $multimedia, array $resolveData): array
+    {
+        $multimediaId = $this->getMultimediaId($multimedia);
+
+        if (null !== $multimediaId) {
+            $resolveData['multimedia'][] = $this->queryMultimediaClient->findMultimediaById($multimediaId, true);
+        }
+
+        return $resolveData;
+    }
+
+    protected function createCallback(callable $callable, ...$parameters): \Closure
+    {
+        return static function ($element) use ($callable, $parameters) {
+            return $callable($element, ...$parameters);
+        };
+    }
+
+    /**
+     * @return array<string, \Ec\Multimedia\Domain\Model\Multimedia>
+     */
+    protected function fulfilledMultimedia(array $promises): array
+    {
+        $result = [];
+        foreach ($promises as $promise) {
+            if (Promise::FULFILLED === $promise['state']) {
+                /** @var \Ec\Multimedia\Domain\Model\Multimedia $multimedia */
+                $multimedia = $promise['value'];
+                $result[$multimedia->id()] = $multimedia;
+            }
+        }
+
+        return $result;
     }
 }

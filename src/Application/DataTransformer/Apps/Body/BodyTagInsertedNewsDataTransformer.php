@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Application\DataTransformer\Apps\Body;
 
+use App\Infrastructure\Trait\MultimediaTrait;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
@@ -21,6 +22,7 @@ use Ec\Section\Domain\Model\Section;
 class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 {
     use UrlGeneratorTrait;
+    use MultimediaTrait;
 
     public function __construct(
         string $extension,
@@ -42,7 +44,6 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 
         $elementArray = parent::read();
 
-        $photo = $this->resolveData()['insertedNews'][$bodyElement->editorialId()->id()]['photo'];
         $signatures = $this->resolveData()['insertedNews'][$bodyElement->editorialId()->id()]['signatures'];
 
         /** @var Editorial $editorial */
@@ -54,7 +55,12 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         $elementArray['title'] = $editorial->editorialTitles()->title();
         $elementArray['signatures'] = $this->retrieveJournalists($signatures, $this->resolveData()['signatures']);
         $elementArray['editorial'] =  $this->editorialUrl($editorial, $section);
-        $elementArray['photo'] = $photo;
+
+        $elementArray['photo'] = '';
+        $multimediaId = $this->getMultimediaId($editorial->multimedia());
+        if ($multimediaId && !empty($this->resolveData()['multimedia'][$multimediaId->id()])) {
+            $elementArray['photo'] = $this->resolveData()['multimedia'][$multimediaId->id()]->file();
+        }
 
         return $elementArray;
     }
