@@ -35,4 +35,17 @@ class EditorialOrchestratorProvider
             ],
         ];
     }
+
+    public function getOrchestratorExpected(): array
+    {
+        return [
+            'one-case' => [
+                [],
+                [],
+                [],
+                [],
+                [],
+            ],
+        ];
+    }
 }

@@ -4,6 +4,8 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+        bind:
+            $extension: '%env(URL_ENV)%'
 
     App\Application\DataTransformer\Apps\AppsDataTransformer: '@App\Application\DataTransformer\Apps\DetailsAppsDataTransformer'
 

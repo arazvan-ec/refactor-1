@@ -14,7 +14,6 @@ use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Signature;
 use Ec\Editorial\Domain\Model\Signatures;
-use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\Journalists;
@@ -29,7 +28,6 @@ use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
-use Ec\Section\Domain\Model\Section;
 use Ec\Tag\Domain\Model\QueryTagClient;
 use Http\Promise\Promise;
 use Psr\Http\Message\UriFactoryInterface;
@@ -88,23 +86,24 @@ class EditorialOrchestrator implements Orchestrator
 
         $editorialSignatures = [];
         /** @var Signature $signature */
-        foreach ($editorial->signatures() as $signature) {
-            $editorialSignatures[$signature->id()->id()] = $signature->id()->id();
+        foreach ($editorial->signatures()->getArrayCopy() as $signature) {
+            $id = $signature->id()->id();
+            $editorialSignatures[$id] = $id;
         }
 
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
 
-        for ($i = 0; $i < count($insertedNews); ++$i) {
-            $id = $insertedNews[$i]->editorialId()->id();
+        /** @var BodyTagInsertedNews $insertedNews */
+        foreach ($insertedNews as $insertedNew) {
+            $id = $insertedNew->editorialId()->id();
 
             /** @var Editorial $editorialinserted */
             $editorialinserted = $this->queryEditorialClient->findEditorialById($id);
             $sectionInserted = $this->querySectionClient->findSectionById($editorialinserted->sectionId());
 
-            $resolveData['insertedNews'][$id]['editorialId'] = $id;
-            $resolveData['insertedNews'][$id]['title'] = $editorialinserted->editorialTitles()->title();
-            $resolveData['insertedNews'][$id]['editorial'] = $this->editorialUrl($editorialinserted, $sectionInserted);
+            $resolveData['insertedNews'][$id]['editorial'] = $editorialinserted;
+            $resolveData['insertedNews'][$id]['section'] = $sectionInserted;
 
             /** @var Signature $signature */
             foreach ($editorialinserted->signatures() as $signature) {
@@ -324,20 +323,5 @@ class EditorialOrchestrator implements Orchestrator
         }
 
         return false;
-    }
-
-    private function editorialUrl(Editorial $editorial, Section $section): string
-    {
-        $editorialPath = $section->getPath().'/'.
-            $editorial->publicationDate()->format('Y-m-d').'/'.
-            Encode::encodeUrl($editorial->editorialTitles()->urlTitle()).'_'.
-            $editorial->id()->id();
-
-        return $this->generateUrl(
-            'https://%s.%s.%s/%s',
-            $section->isBlog() ? 'blog' : 'www',
-            $section->siteId(),
-            $editorialPath
-        );
     }
 }

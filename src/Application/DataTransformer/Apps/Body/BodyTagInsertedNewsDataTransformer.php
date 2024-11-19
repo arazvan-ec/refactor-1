@@ -8,14 +8,26 @@ declare(strict_types=1);
 
 namespace App\Application\DataTransformer\Apps\Body;
 
+use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
+use Ec\Editorial\Domain\Model\Editorial;
+use Ec\Encode\Encode;
+use Ec\Section\Domain\Model\Section;
 
 /**
  * @author Jose Guillermo Moreu Peso <jgmoreu@ext.elconfidencial.com>
  */
 class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 {
+    use UrlGeneratorTrait;
+
+    public function __construct(
+        string $extension,
+    ) {
+        $this->setExtension($extension);
+    }
+
     public function canTransform(): string
     {
         return BodyTagInsertedNews::class;
@@ -30,14 +42,19 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 
         $elementArray = parent::read();
 
+        $photo = $this->resolveData()['insertedNews'][$bodyElement->editorialId()->id()]['photo'];
+        $signatures = $this->resolveData()['insertedNews'][$bodyElement->editorialId()->id()]['signatures'];
 
-        $insertedNews = $this->resolveData()['insertedNews'][$bodyElement->editorialId()->id()];
+        /** @var Editorial $editorial */
+        $editorial = $this->resolveData()['insertedNews'][$bodyElement->editorialId()->id()]['editorial'];
+        /** @var Section $section */
+        $section = $this->resolveData()['insertedNews'][$bodyElement->editorialId()->id()]['section'];
 
-        $elementArray['editorialId'] = $insertedNews['editorialId'];
-        $elementArray['title'] = $insertedNews['title'];
-        $elementArray['signatures'] = $this->retrieveJournalists($insertedNews['signatures'], $this->resolveData()['signatures']);
-        $elementArray['editorial'] = $insertedNews['editorial'];
-        $elementArray['photo'] = $insertedNews['photo'];
+        $elementArray['editorialId'] = $editorial->id()->id();
+        $elementArray['title'] = $editorial->editorialTitles()->title();
+        $elementArray['signatures'] = $this->retrieveJournalists($signatures, $this->resolveData()['signatures']);
+        $elementArray['editorial'] =  $this->editorialUrl($editorial, $section);
+        $elementArray['photo'] = $photo;
 
         return $elementArray;
     }
@@ -51,5 +68,20 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         }
 
         return $result;
+    }
+
+    private function editorialUrl(Editorial $editorial, Section $section): string
+    {
+        $editorialPath = $section->getPath().'/'.
+            $editorial->publicationDate()->format('Y-m-d').'/'.
+            Encode::encodeUrl($editorial->editorialTitles()->urlTitle()).'_'.
+            $editorial->id()->id();
+
+        return $this->generateUrl(
+            'https://%s.%s.%s/%s',
+            $section->isBlog() ? 'blog' : 'www',
+            $section->siteId(),
+            $editorialPath
+        );
     }
 }
