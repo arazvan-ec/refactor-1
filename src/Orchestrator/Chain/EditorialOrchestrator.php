@@ -71,7 +71,9 @@ class EditorialOrchestrator implements Orchestrator
 
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
-        $editorialSignatures = $editorial->signatures();
+        [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
+
+        $editorialSignatures = $editorial->signatures()->getArrayCopy();
 
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
@@ -85,7 +87,7 @@ class EditorialOrchestrator implements Orchestrator
             /** @var Signature $signature */
             foreach ($editorial->signatures() as $signature) {
                 if (!$this->hasSignature($editorialSignatures, $signature->id()->id())) {
-                    $editorialSignatures->addItem($signature);
+                    $editorialSignatures[]=$signature;
                 }
             }
         }
@@ -111,13 +113,13 @@ class EditorialOrchestrator implements Orchestrator
         $editorialResult['countComments'] = (isset($comments['options']['totalrecords']))
             ? $comments['options']['totalrecords'] : 0;
 
-        $editorialResult['signatures'] = $this->retrieveJournalists($editorial, $journalists);
-        $resolveData['signatures'] = $journalists;
 
         $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
 
-        [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
         $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
+
+        $editorialResult['signatures'] = $this->retrieveJournalists($editorial, $journalists);
+        $resolveData['signatures'] = $journalists;
 
         $editorialResult['body'] = $this->bodyDataTransformer->execute(
             $editorial->body(),
@@ -268,17 +270,12 @@ class EditorialOrchestrator implements Orchestrator
 
     private function getJournalistByAliasId(string $aliasId, array $journalists): array
     {
-        foreach ($journalists as $journalist) {
-            if ($journalist['aliasId'] === $aliasId) {
-                return $journalist;
-            }
-        }
-
-        return [];
+        return $journalists[$aliasId];
     }
 
     private function hasSignature(Signatures $signatures, string $aliasId): bool
     {
+        // TODO
         foreach ($signatures->getArrayCopy() as $signature) {
             if ($signature->id()->id() == $aliasId) {
                 return true;
