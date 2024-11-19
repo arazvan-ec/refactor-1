@@ -6,6 +6,7 @@
 namespace App\Tests\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
+use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Exception\EditorialNotPublishedYetException;
@@ -27,9 +28,7 @@ use Ec\Editorial\Domain\Model\Tag;
 use Ec\Editorial\Domain\Model\Tags;
 use Ec\Journalist\Domain\Model\AliasId;
 use Ec\Journalist\Domain\Model\Journalist;
-use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\JournalistId;
-use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
@@ -57,9 +56,6 @@ class EditorialOrchestratorTest extends TestCase
     /** @var QueryLegacyClient|MockObject */
     private QueryLegacyClient $queryLegacyClient;
 
-    /** @var QueryJournalistClient|MockObject */
-    private QueryJournalistClient $queryJournalistClient;
-
     private EditorialOrchestrator $editorialOrchestrator;
 
     /** @var QuerySectionClient|MockObject */
@@ -68,8 +64,8 @@ class EditorialOrchestratorTest extends TestCase
     /** @var QueryMultimediaClient|MockObject */
     private QueryMultimediaClient $queryMultimediaClient;
 
-    /** @var JournalistFactory|MockObject */
-    private JournalistFactory $journalistFactory;
+    /** @var JournalistsDataTransformer|MockObject */
+    private JournalistsDataTransformer $journalistsDataTransformer;
 
     /** @var AppsDataTransformer|MockObject */
     private AppsDataTransformer $appsDataTransformer;
@@ -93,10 +89,9 @@ class EditorialOrchestratorTest extends TestCase
     {
         $this->queryEditorialClient = $this->createMock(QueryEditorialClient::class);
         $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
-        $this->queryJournalistClient = $this->createMock(QueryJournalistClient::class);
         $this->querySectionClient = $this->createMock(QuerySectionClient::class);
         $this->queryMultimediaClient = $this->createMock(QueryMultimediaClient::class);
-        $this->journalistFactory = $this->createMock(JournalistFactory::class);
+        $this->journalistDataTransformer = $this->createMock(JournalistsDataTransformer::class);
         $this->appsDataTransformer = $this->createMock(AppsDataTransformer::class);
         $this->bodyDataTransformer = $this->createMock(BodyDataTransformer::class);
         $this->queryTagClient = $this->createMock(QueryTagClient::class);
@@ -107,16 +102,15 @@ class EditorialOrchestratorTest extends TestCase
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
             $this->queryEditorialClient,
-            $this->queryJournalistClient,
             $this->querySectionClient,
             $this->queryMultimediaClient,
-            $this->journalistFactory,
             $this->appsDataTransformer,
             $this->queryTagClient,
             $this->bodyDataTransformer,
             $this->uriFactory,
             $this->queryMembershipClient,
-            $this->logger
+            $this->logger,
+            $this->journalistDataTransformer
         );
     }
 

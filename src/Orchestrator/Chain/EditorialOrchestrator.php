@@ -70,7 +70,6 @@ class EditorialOrchestrator implements Orchestrator
 
         $journalists = $this->journalistsDataTransformer->write($editorial, $section)->read();
 
-
         $tags = [];
         foreach ($editorial->tags() as $tag) {
             try {
