@@ -10,9 +10,15 @@ use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Enum\SitesEnum;
+use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Signature;
 use Ec\Editorial\Domain\Model\Signatures;
+use Ec\Encode\Encode;
+use Ec\Journalist\Domain\Model\Journalist;
+use Ec\Journalist\Domain\Model\JournalistFactory;
+use Ec\Journalist\Domain\Model\Journalists;
+use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
 use App\Exception\EditorialNotPublishedYetException;
 use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
@@ -23,6 +29,7 @@ use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
+use Ec\Section\Domain\Model\Section;
 use Ec\Tag\Domain\Model\QueryTagClient;
 use Http\Promise\Promise;
 use Psr\Http\Message\UriFactoryInterface;
@@ -34,6 +41,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class EditorialOrchestrator implements Orchestrator
 {
+    use UrlGeneratorTrait;
+
     public function __construct(
         private readonly QueryLegacyClient $queryLegacyClient,
         private readonly QueryEditorialClient $queryEditorialClient,
@@ -46,7 +55,11 @@ class EditorialOrchestrator implements Orchestrator
         private readonly QueryMembershipClient $queryMembershipClient,
         private readonly LoggerInterface $logger,
         private readonly JournalistsDataTransformer $journalistsDataTransformer,
+        private readonly QueryJournalistClient $queryJournalistClient,
+        private readonly JournalistFactory $journalistFactory,
+        string $extension,
     ) {
+        $this->setExtension($extension);
     }
 
     /**
@@ -73,7 +86,14 @@ class EditorialOrchestrator implements Orchestrator
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
-        $editorialSignatures = $editorial->signatures()->getArrayCopy();
+
+
+
+        $editorialSignatures = [];
+        /** @var Signature $signature */
+        foreach ($editorial->signatures() as $signature) {
+            $editorialSignatures[$signature->id()->id()] = $signature->id()->id();
+        }
 
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
@@ -81,18 +101,42 @@ class EditorialOrchestrator implements Orchestrator
         for ($i = 0; $i < count($insertedNews); ++$i) {
             $id = $insertedNews[$i]->editorialId()->id();
 
-            /** @var Editorial $editorial */
-            $editorial = $this->queryEditorialClient->findEditorialById($id);
+            /** @var Editorial $editorialinserted */
+            $editorialinserted = $this->queryEditorialClient->findEditorialById($id);
+            $sectionInserted = $this->querySectionClient->findSectionById($editorialinserted->sectionId());
+
+            $resolveData['insertedNews'][$id]['editorialId'] = $id;
+            $resolveData['insertedNews'][$id]['title'] = $editorialinserted->editorialTitles()->title();
+            $resolveData['insertedNews'][$id]['editorial'] = $this->editorialUrl($editorialinserted, $sectionInserted);
 
             /** @var Signature $signature */
-            foreach ($editorial->signatures() as $signature) {
-                if (!$this->hasSignature($editorialSignatures, $signature->id()->id())) {
-                    $editorialSignatures[]=$signature;
-                }
+            foreach ($editorialinserted->signatures() as $signature) {
+                $aliasId = $signature->id()->id();
+                $resolveData['insertedNews'][$id]['signatures'][] = $aliasId;
+                $editorialSignatures[$aliasId] = $aliasId;
+            }
+
+            $resolveData['insertedNews'][$id]['photo'] = 'cacatua';
+
+        }
+
+        /** @var Journalists $journalists */
+        $journalists = [];
+
+        foreach ($editorialSignatures as $signatureId) {
+            $aliasId = $this->journalistFactory->buildAliasId($signatureId);
+
+            /** @var Journalist $journalist */
+            $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasId);
+
+            if ($journalist->isActive() && $journalist->isVisible()) {
+                // Todo: fix index object
+                $journalists[$aliasId->id()] = $journalist;
             }
         }
 
-        $journalists = $this->journalistsDataTransformer->write($editorialSignatures, $section)->read();
+
+        $journalists = $this->journalistsDataTransformer->write($journalists, $section)->read();
 
         $tags = [];
         foreach ($editorial->tags() as $tag) {
@@ -283,5 +327,20 @@ class EditorialOrchestrator implements Orchestrator
         }
 
         return false;
+    }
+
+    private function editorialUrl(Editorial $editorial, Section $section): string
+    {
+        $editorialPath = $section->getPath().'/'.
+            $editorial->publicationDate()->format('Y-m-d').'/'.
+            Encode::encodeUrl($editorial->editorialTitles()->urlTitle()).'_'.
+            $editorial->id()->id();
+
+        return $this->generateUrl(
+            'https://%s.%s.%s/%s',
+            $section->isBlog() ? 'blog' : 'www',
+            $section->siteId(),
+            $editorialPath
+        );
     }
 }

@@ -8,13 +8,9 @@ namespace App\Application\DataTransformer\Apps;
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
-use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
-use Ec\Journalist\Domain\Model\JournalistFactory;
-use Ec\Journalist\Domain\Model\Journalists;
-use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -26,17 +22,20 @@ class JournalistsDataTransformer implements JournalistDataTransformer
 
     public function __construct(
         private readonly QueryEditorialClient $queryEditorialClient,
-        private readonly QueryJournalistClient $queryJournalistClient,
-        private readonly JournalistFactory $journalistFactory,
         string $extension,
         private readonly Thumbor $thumbor,
     ) {
         $this->setExtension($extension);
     }
 
-    public function write(Signatures $signatures, Section $section): JournalistsDataTransformer
+    /**
+     * @param Journalist[] $journalists
+     *
+     * @return $this
+     */
+    public function write(array $journalists, Section $section): JournalistsDataTransformer
     {
-        $this->signatures = $signatures;
+        $this->journalists = $journalists;
         $this->section = $section;
 
         return $this;
@@ -44,32 +43,19 @@ class JournalistsDataTransformer implements JournalistDataTransformer
 
     public function read(): array
     {
-        /** @var Journalists $journalists */
-        $journalists = [];
 
-        foreach ($this->signatures as $signature) {
-            $aliasId = $this->journalistFactory->buildAliasId($signature->id()->id());
 
-            /** @var Journalist $journalist */
-            $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasId);
-
-            if ($journalist->isActive() && $journalist->isVisible()) {
-                // Todo: fix index object
-                $journalists[$aliasId->id()] = $journalist;
-            }
-        }
-
-        return $this->transformerJournalists($journalists);
+        return $this->transformerJournalists();
     }
 
     /**
      * @return Journalist[] $journalists
      */
-    private function transformerJournalists(array $journalists): array
+    private function transformerJournalists(): array
     {
         $signatures = [];
 
-        foreach ($journalists as $aliasId => $journalist) {
+        foreach ($this->journalists as $aliasId => $journalist) {
             foreach ($journalist->aliases() as $alias) {
 
                 if ($alias->id()->id() == $aliasId) {

@@ -6,7 +6,6 @@
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\BodyTagInsertedNewsDataTransformer;
-use Ec\Editorial\Domain\Model\Body\BodyTagHtml;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
@@ -43,8 +42,6 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
 
     /**
      * @test
-     *
-     * @param array $signatures
      *
      * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagInsertedNewsDataProvider::getData()
      */

@@ -15,7 +15,7 @@ class BodyTagInsertedNewsDataProvider
     {
         return [
             'no-signature' => [
-                []
+                [],
             ],
             'one-signature' => [
                 [

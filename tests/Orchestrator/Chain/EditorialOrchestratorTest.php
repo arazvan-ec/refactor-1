@@ -550,8 +550,6 @@ class EditorialOrchestratorTest extends TestCase
 
     /**
      * @param MockObject|Editorial $editorialMock
-     * @param MockObject $sectionMock
-     * @return array
      */
     private function generateJournalistMock($editorialMock, MockObject $sectionMock): array
     {
