@@ -86,9 +86,6 @@ class EditorialOrchestrator implements Orchestrator
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
-
-
-
         $editorialSignatures = [];
         /** @var Signature $signature */
         foreach ($editorial->signatures() as $signature) {
