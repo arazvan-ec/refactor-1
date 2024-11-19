@@ -7,8 +7,6 @@ namespace App\Application\DataTransformer\Apps;
 
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
-use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
-use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Encode\Encode;
@@ -36,9 +34,9 @@ class JournalistsDataTransformer implements JournalistDataTransformer
         $this->setExtension($extension);
     }
 
-    public function write(Editorial $editorial, Section $section): JournalistsDataTransformer
+    public function write(Signatures $signatures, Section $section): JournalistsDataTransformer
     {
-        $this->editorial = $editorial;
+        $this->signatures = $signatures;
         $this->section = $section;
 
         return $this;
@@ -49,25 +47,7 @@ class JournalistsDataTransformer implements JournalistDataTransformer
         /** @var Journalists $journalists */
         $journalists = [];
 
-        $editorialSignatures = $this->editorial->signatures();
-
-        /** @var BodyTagInsertedNews[] $insertedNews */
-        $insertedNews = $this->editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
-
-        for ($i = 0; $i < count($insertedNews); ++$i) {
-            $id = $insertedNews[$i]->editorialId()->id();
-
-            /** @var Editorial $editorial */
-            $editorial = $this->queryEditorialClient->findEditorialById($id);
-
-            foreach ($editorial->signatures() as $signature) {
-                if (!$this->hasSignature($editorialSignatures, $signature->id()->id())) {
-                    $editorialSignatures->addItem($signature);
-                }
-            }
-        }
-
-        foreach ($editorialSignatures as $signature) {
+        foreach ($this->signatures as $signature) {
             $aliasId = $this->journalistFactory->buildAliasId($signature->id()->id());
 
             /** @var Journalist $journalist */
@@ -153,16 +133,5 @@ class JournalistsDataTransformer implements JournalistDataTransformer
         }
 
         return '';
-    }
-
-    private function hasSignature(Signatures $signatures, string $aliasId): bool
-    {
-        foreach ($signatures->getArrayCopy() as $signature) {
-            if ($signature->id()->id() == $aliasId) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

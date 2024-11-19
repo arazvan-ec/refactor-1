@@ -9,11 +9,11 @@ declare(strict_types=1);
 namespace App\Application\DataTransformer\Apps\Body;
 
 use App\Infrastructure\Trait\UrlGeneratorTrait;
-use App\Application\DataTransformer\Apps\JournalistDataTransformer;
 use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
+use Ec\Editorial\Domain\Model\Signature;
 use Ec\Encode\Encode;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
@@ -28,7 +28,6 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
     public function __construct(
         private readonly QueryEditorialClient $queryEditorialClient,
         private readonly QuerySectionClient $querySectionClient,
-        private readonly JournalistDataTransformer $journalistDataTransformer,
         string $extension,
     ) {
         $this->setExtension($extension);
@@ -49,17 +48,10 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         /** @var Editorial $editorial */
         $editorial = $this->queryEditorialClient->findEditorialById($this->bodyElement->editorialId()->id());
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
-        $journalists = $this->journalistDataTransformer->write($editorial, $section)->read();
 
         $elementArray['editorialId'] = $editorial->id()->id();
         $elementArray['title'] = $editorial->editorialTitles()->title();
-
-        // avoid this approach
-        $elementArray['signatures'] = [];
-        foreach ($journalists as $index => $journalist) {
-            $elementArray['signatures'][] = $journalist;
-        }
-
+        $elementArray['signatures'] = $this->retrieveJournalists($editorial, $this->resolveData()['signatures']);
         $elementArray['editorial'] = $this->editorialUrl($editorial, $section);
         $elementArray['photo'] = [];
 
@@ -79,5 +71,28 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
             $section->siteId(),
             $editorialPath
         );
+    }
+
+    private function retrieveJournalists(Editorial $editorial, array $journalists): array
+    {
+        $result = [];
+
+        /** @var Signature $signature */
+        foreach ($editorial->signatures()->getArrayCopy() as $signature) {
+            $result[] = $this->getJournalistByAliasId($signature->id()->id(), $journalists);
+        }
+
+        return $result;
+    }
+
+    private function getJournalistByAliasId(string $aliasId, array $journalists): array
+    {
+        foreach ($journalists as $journalist) {
+            if ($journalist['aliasId'] === $aliasId) {
+                return $journalist;
+            }
+        }
+
+        return [];
     }
 }

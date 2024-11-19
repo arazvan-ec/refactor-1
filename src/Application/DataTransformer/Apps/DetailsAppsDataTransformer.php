@@ -9,9 +9,7 @@ use App\Infrastructure\Enum\ClossingModeEnum;
 use App\Infrastructure\Enum\EditorialTypesEnum;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
-use Ec\Editorial\Domain\Model\Signature;
 use Ec\Encode\Encode;
-use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Section\Domain\Model\Section;
 use Ec\Tag\Domain\Model\Tag;
 
@@ -27,9 +25,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private Editorial $editorial;
 
-    /** @var Journalist[] */
-    private array $journalists;
-
     private Section $section;
 
     /** @var Tag[] */
@@ -42,17 +37,14 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     }
 
     /**
-     * @param Journalist[] $journalists
-     * @param Tag[]        $tags
+     * @param Tag[] $tags
      */
     public function write(
         Editorial $editorial,
-        array $journalists,
         Section $section,
         array $tags,
     ): DetailsAppsDataTransformer {
         $this->editorial = $editorial;
-        $this->journalists = $journalists;
         $this->section = $section;
         $this->tags = $tags;
 
@@ -62,7 +54,6 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     public function read(): array
     {
         $editorial = $this->transformerEditorial();
-        $editorial['signatures'] = $this->getJournalists();
         $editorial['section'] = $this->transformerSection();
         $editorial['tags'] = $this->transformerTags();
 
@@ -170,16 +161,5 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         }
 
         return $result;
-    }
-
-    private function getJournalists(): array
-    {
-        $journalists = [];
-        /** @var Signature $signature */
-        foreach ($this->editorial->signatures()->getArrayCopy() as $signature) {
-            $journalists[] = $this->journalists[$signature->id()->id()];
-        }
-
-        return $journalists;
     }
 }

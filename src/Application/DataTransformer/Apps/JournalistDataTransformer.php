@@ -5,7 +5,7 @@
 
 namespace App\Application\DataTransformer\Apps;
 
-use Ec\Editorial\Domain\Model\Editorial;
+use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -13,7 +13,7 @@ use Ec\Section\Domain\Model\Section;
  */
 interface JournalistDataTransformer
 {
-    public function write(Editorial $editorial, Section $section): JournalistDataTransformer;
+    public function write(Signatures $signatures, Section $section): JournalistDataTransformer;
 
     public function read(): array;
 }

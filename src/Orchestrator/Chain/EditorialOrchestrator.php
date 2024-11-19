@@ -10,6 +10,9 @@ use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Enum\SitesEnum;
+use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
+use Ec\Editorial\Domain\Model\Signature;
+use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
 use App\Exception\EditorialNotPublishedYetException;
 use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
@@ -68,7 +71,26 @@ class EditorialOrchestrator implements Orchestrator
 
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
-        $journalists = $this->journalistsDataTransformer->write($editorial, $section)->read();
+        $editorialSignatures = $editorial->signatures();
+
+        /** @var BodyTagInsertedNews[] $insertedNews */
+        $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
+
+        for ($i = 0; $i < count($insertedNews); ++$i) {
+            $id = $insertedNews[$i]->editorialId()->id();
+
+            /** @var Editorial $editorial */
+            $editorial = $this->queryEditorialClient->findEditorialById($id);
+
+            /** @var Signature $signature */
+            foreach ($editorial->signatures() as $signature) {
+                if (!$this->hasSignature($editorialSignatures, $signature->id()->id())) {
+                    $editorialSignatures->addItem($signature);
+                }
+            }
+        }
+
+        $journalists = $this->journalistsDataTransformer->write($editorialSignatures, $section)->read();
 
         $tags = [];
         foreach ($editorial->tags() as $tag) {
@@ -81,7 +103,6 @@ class EditorialOrchestrator implements Orchestrator
 
         $editorialResult = $this->detailsAppsDataTransformer->write(
             $editorial,
-            $journalists,
             $section,
             $tags
         )->read();
@@ -89,6 +110,9 @@ class EditorialOrchestrator implements Orchestrator
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
         $editorialResult['countComments'] = (isset($comments['options']['totalrecords']))
             ? $comments['options']['totalrecords'] : 0;
+
+        $editorialResult['signatures'] = $this->retrieveJournalists($editorial, $journalists);
+        $resolveData['signatures'] = $journalists;
 
         $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
 
@@ -228,5 +252,39 @@ class EditorialOrchestrator implements Orchestrator
         }
 
         return \array_combine($links, $membershipLinkResult);
+    }
+
+    private function retrieveJournalists(Editorial $editorial, array $journalists): array
+    {
+        $result = [];
+
+        /** @var Signature $signature */
+        foreach ($editorial->signatures()->getArrayCopy() as $signature) {
+            $result[] = $this->getJournalistByAliasId($signature->id()->id(), $journalists);
+        }
+
+        return $result;
+    }
+
+    private function getJournalistByAliasId(string $aliasId, array $journalists): array
+    {
+        foreach ($journalists as $journalist) {
+            if ($journalist['aliasId'] === $aliasId) {
+                return $journalist;
+            }
+        }
+
+        return [];
+    }
+
+    private function hasSignature(Signatures $signatures, string $aliasId): bool
+    {
+        foreach ($signatures->getArrayCopy() as $signature) {
+            if ($signature->id()->id() == $aliasId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
