@@ -239,15 +239,8 @@ class EditorialOrchestratorTest extends TestCase
 
         $withBodyTags[] = BodyTagPicture::class;
         $promiseBodyTagPictures = [];
-
         $withBodyTags[] = BodyTagMembershipCard::class;
 
-        $arrayMocks = [
-            BodyTagMembershipCard::class => $membershipCardsPromise,
-            BodyTagInsertedNews::class => $insertedNewsPromise,
-            BodyTagPicture::class => $promiseBodyTagPictures,
-            // BodyTagMembershipCard::class => $membershipCardsPromise,
-        ];
         $arrayMocks = [
             [BodyTagMembershipCard::class => $membershipCardsPromise],
             [BodyTagInsertedNews::class => $insertedNewsPromise],
@@ -315,51 +308,38 @@ class EditorialOrchestratorTest extends TestCase
             ->method('read')
             ->willReturn($expectedResult);
 
-        $this->querySectionClient
-            ->expects(static::exactly(count($withSections)))
+        $arrayMocks = array_combine($withSections, $promisesSections);
+        $expectedArgumentsSections = $withSections;
+        $callArgumentsSections = [];
+        $this->querySectionClient->expects(static::exactly(count($expectedArgumentsSections)))
             ->method('findSectionById')
-            ->withConsecutive(
-                [$withSections[0]],
-                [$withSections[1]],
-                [$withSections[2]]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $promisesSections[0],
-                $promisesSections[1],
-                $promisesSections[2]
-            );
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsSections, $arrayMocks) {
+                $callArgumentsSections[] = $strClass;
 
-        $this->queryEditorialClient
-            ->expects(static::exactly(count($withEditorials)))
+                return $arrayMocks[$strClass];
+            });
+
+        $arrayMocks = array_combine($withEditorials, $promisesEditorials);
+        $expectedArgumentsEditorials = $withEditorials;
+        $callArgumentsEditorials = [];
+        $this->queryEditorialClient->expects(static::exactly(count($expectedArgumentsEditorials)))
             ->method('findEditorialById')
-            ->withConsecutive(
-                [$withEditorials[0]],
-                [$withEditorials[1]],
-                [$withEditorials[2]]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $promisesEditorials[0],
-                $promisesEditorials[1],
-                $promisesEditorials[2]
-            );
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsEditorials, $arrayMocks) {
+                $callArgumentsEditorials[] = $strClass;
 
-        $this->journalistFactory
-            ->expects(static::exactly(count($withJournalistId)))
+                return $arrayMocks[$strClass];
+            });
+
+        $arrayMocks = array_combine($withJournalistId, $withAlias);
+        $expectedArgumentsAlias = $withJournalistId;
+        $callArgumentsAlias = [];
+        $this->journalistFactory->expects(static::exactly(count($expectedArgumentsAlias)))
             ->method('buildAliasId')
-            ->withConsecutive(
-                [$withJournalistId[0]],
-                [$withJournalistId[1]],
-                [$withJournalistId[2]],
-                [$withJournalistId[3]],
-                [$withJournalistId[4]]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $withAlias[0],
-                $withAlias[1],
-                $withAlias[2],
-                $withAlias[3],
-                $withAlias[4]
-            );
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsAlias, $arrayMocks) {
+                $callArgumentsAlias[] = $strClass;
+
+                return $arrayMocks[$strClass];
+            });
 
         $this->queryJournalistClient
             ->expects(static::exactly(count($withAlias)))
@@ -401,7 +381,9 @@ class EditorialOrchestratorTest extends TestCase
         $result = $this->editorialOrchestrator->execute($requestMock);
 
         $this->assertSame($expectedArgumentsBodyTags, $callArgumentsBodyElements);
-
+        $this->assertSame($expectedArgumentsSections, $callArgumentsSections);
+        $this->assertSame($expectedArgumentsEditorials, $callArgumentsEditorials);
+        $this->assertSame($expectedArgumentsAlias, $callArgumentsAlias);
         $this->assertSame($expectedResult, $result);
     }
 
