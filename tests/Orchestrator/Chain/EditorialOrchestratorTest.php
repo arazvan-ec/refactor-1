@@ -196,7 +196,6 @@ class EditorialOrchestratorTest extends TestCase
     ): void {
 
         $journalistsEditorial = $editorial['signatures'];
-        $bodytagsInsertedNews = $editorial['insertedNews'];
         $bodytagsMembershipCards = $editorial['membershipCards'];
 
         $requestMock = $this->getRequestMock($editorial['id']);
@@ -213,17 +212,15 @@ class EditorialOrchestratorTest extends TestCase
         $withJournalistId = $editorial['signatures'];
 
         $withBodyTags = [];
-        $promiseBodyTags = [];
 
         $withBodyTags[] = BodyTagMembershipCard::class;
         $membershipCardsPromise = [];
         foreach ($bodytagsMembershipCards as $bodytagsMembershipCard) {
-            $membershipCardsPromise = [];
+            $membershipCardsPromise = $bodytagsMembershipCard;
         }
-        $promiseBodyTags[] = $membershipCardsPromise;
 
         [
-            $promiseBodyTags[],
+            $insertedNewsPromise,
             $expectedInsertedNews,
             $promisesEditorialsInserted,
             $withEditorialsInserted,
@@ -231,6 +228,7 @@ class EditorialOrchestratorTest extends TestCase
             $withSectionsInserted,
             $withJournalistIdInserted,
         ] = $this->getBodyTagsInsertedNewsByEditorial($editorial);
+
         $promisesEditorials = array_merge($promisesEditorials, $promisesEditorialsInserted);
         $withEditorials = array_merge($withEditorials, $withEditorialsInserted);
         $withBodyTags[] = BodyTagInsertedNews::class;
@@ -238,53 +236,31 @@ class EditorialOrchestratorTest extends TestCase
         $withSections = array_merge($withSections, $withSectionsInserted);
         $withJournalistId = array_merge($withJournalistId, $withJournalistIdInserted);
 
-
         $withBodyTags[] = BodyTagPicture::class;
-        $membershipPicturesPromise = [];
-        foreach ($membershipPicturesPromise as $membershipPicturePromise) {
-            $membershipCardsPromise = [];
-        }
-        $promiseBodyTags[] = $membershipPicturesPromise;
+        $promiseBodyTagPictures = [];
 
         $withBodyTags[] = BodyTagMembershipCard::class;
-        $promiseBodyTags[] = $membershipCardsPromise;
 
-
+        $arrayMocks = [
+            BodyTagMembershipCard::class => $membershipCardsPromise,
+            BodyTagInsertedNews::class => $insertedNewsPromise,
+            BodyTagPicture::class => $promiseBodyTagPictures,
+            // BodyTagMembershipCard::class => $membershipCardsPromise,
+        ];
+        $expectedArgumentsBodyTags = $withBodyTags;
+        $callArgumentsBodyElements = [];
         $bodyMock = $this->createMock(Body::class);
-        $bodyMock
-            ->expects(static::exactly(count($withBodyTags)))
+        $bodyMock->expects(static::exactly(count($expectedArgumentsBodyTags)))
             ->method('bodyElementsOf')
-            ->withConsecutive(
-                [$withBodyTags[0]],
-                [$withBodyTags[1]],
-                [$withBodyTags[2]],
-                [$withBodyTags[3]],
-            )
-            ->willReturnOnConsecutiveCalls(
-                $promiseBodyTags[0],
-                $promiseBodyTags[1],
-                $promiseBodyTags[2],
-                $promiseBodyTags[3],
-            );
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsBodyElements, $arrayMocks) {
+                $callArgumentsBodyElements[] = $strClass;
+
+                return $arrayMocks[$strClass];
+            });
 
         $editorialMock->expects(self::exactly(4))
             ->method('body')
             ->willReturn($bodyMock);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         $withAlias = [];
         $promisesJournalist = [];
@@ -433,6 +409,8 @@ class EditorialOrchestratorTest extends TestCase
         $expectedResult['body'] = $bodyArray;
 
         $result = $this->editorialOrchestrator->execute($requestMock);
+
+        $this->assertSame($expectedArgumentsBodyTags, $callArgumentsBodyElements);
 
         $this->assertSame($expectedResult, $result);
     }
@@ -827,7 +805,7 @@ class EditorialOrchestratorTest extends TestCase
         return $body;
     }
 
-    private function getRequestMock(string $editorialId): MockObject
+    private function getRequestMock(string $editorialId): MockObject|Request
     {
         $requestMock = $this->createMock(Request::class);
         $requestMock
@@ -978,6 +956,11 @@ class EditorialOrchestratorTest extends TestCase
             $withSections,
             $withJournalistId,
         ];
+    }
+
+    private function bodyElementsOfMock(array $arrayMocks, array $expectedArgumentsBodyTags)
+    {
+
     }
 
     /**
