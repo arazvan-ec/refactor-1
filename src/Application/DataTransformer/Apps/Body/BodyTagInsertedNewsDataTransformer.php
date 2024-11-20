@@ -8,12 +8,15 @@ declare(strict_types=1);
 
 namespace App\Application\DataTransformer\Apps\Body;
 
+use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\MultimediaTrait;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
+use Ec\Multimedia\Domain\Model\Clipping;
+use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -24,7 +27,28 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
     use UrlGeneratorTrait;
     use MultimediaTrait;
 
+    /** @var string */
+    private const WIDTH = 'width';
+
+    /** @var string */
+    private const HEIGHT = 'height';
+    private const ASPECT_RATIO_4_3 = [
+        '202w' => [
+            self::WIDTH => '202',
+            self::HEIGHT => '152',
+        ],
+        '144w' => [
+            self::WIDTH => '144',
+            self::HEIGHT => '108',
+        ],
+        '128w' => [
+            self::WIDTH => '128',
+            self::HEIGHT => '96',
+        ],
+    ];
+
     public function __construct(
+        private readonly Thumbor $thumbor,
         string $extension,
     ) {
         $this->setExtension($extension);
@@ -58,11 +82,8 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         $elementArray['signatures'] = $this->retrieveJournalists($signatures, $this->resolveData()['signatures']);
         $elementArray['editorial'] =  $this->editorialUrl($editorial, $sectionInserted);
 
-        $elementArray['photo'] = '';
-        $multimediaId = $this->getMultimediaId($editorial->multimedia());
-        if ($multimediaId && !empty($this->resolveData()['multimedia'][$multimediaId->id()])) {
-            $elementArray['photo'] = $this->resolveData()['multimedia'][$multimediaId->id()]->file();
-        }
+        $multimedia = $this->resolveData()['multimedia'][$this->resolveData()['insertedNews'][$editorialId]['multimediaId']];
+        $elementArray['photo'] = $this->getMultimedia($multimedia);
 
         return $elementArray;
     }
@@ -91,5 +112,35 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
             $section->siteId(),
             $editorialPath
         );
+    }
+
+    public function getMultimedia($multimedia): array
+    {
+        $clippings = $multimedia->clippings();
+
+        /** @var Clipping $clipping */
+        $clipping = $clippings->clippingByType(ClippingTypes::SIZE_ARTICLE_4_3);
+
+        $shots = [];
+        $sizes = self::ASPECT_RATIO_4_3;
+        foreach ($sizes as $type => $size) {
+            $shots[$type] = $this->thumbor->retriveCropBodyTagPicture(
+                $multimedia->file(),
+                $size[self::WIDTH],
+                $size[self::HEIGHT],
+                $clipping->topLeftX(),
+                $clipping->topLeftY(),
+                $clipping->bottomRightX(),
+                $clipping->bottomRightY()
+            );
+        }
+
+        return [
+            'id' => $multimedia->id(),
+            'type' => 'photo',
+            'caption' => $multimedia->caption(),
+            'shots' => (object) $shots,
+            'photo' => empty($shots) ? '' : reset($shots),
+        ];
     }
 }
