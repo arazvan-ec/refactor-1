@@ -317,7 +317,7 @@ class EditorialOrchestrator implements Orchestrator
         return $result;
     }
 
-    private function getJournalistByAliasId(string $aliasId, array $journalists): Journalist
+    private function getJournalistByAliasId(string $aliasId, array $journalists): array
     {
         return $journalists[$aliasId];
     }
