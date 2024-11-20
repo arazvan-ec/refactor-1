@@ -5,7 +5,7 @@ namespace App\Tests\Orchestrator\Chain\DataProvider;
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  */
-class EditorialOrchestratorProvider
+class EditorialOrchestratorDataProvider
 {
     public function EditorialIsValid(): array
     {
@@ -18,19 +18,26 @@ class EditorialOrchestratorProvider
     public function getBodyExpected(): array
     {
         return [
-            [
+            'case1' => [
                 [
-                    'type' => 'normal',
-                    'elements' => [
+                    'id' => 'editorialId',
+                    'sectionId' => 'editorialSectionId',
+                    'signatures' => ['1', '2'],
+                    'insertedNews' => [
                         [
-                            'buttons' => [
-                                [
-                                    'url' => 'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios1/dp/B0BJQPQVHP?tag=cacatuaMan',
-                                    'urlMembership' =>  'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios2/dp/B0BJQPQVHP?tag=cacatuaMan',
-                                ],
-                            ],
+                            'id' => '3',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['5', '6'],
+                            'multimediaId' => '56',
+                        ],
+                        [
+                            'id' => '4',
+                            'sectionId' => 'sectionId4',
+                            'signatures' => ['7'],
+                            'multimediaId' => '69',
                         ],
                     ],
+                    'membershipCards' => [],
                 ],
             ],
         ];

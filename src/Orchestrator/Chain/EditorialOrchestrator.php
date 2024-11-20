@@ -145,11 +145,8 @@ class EditorialOrchestrator implements Orchestrator
 
         $journalists = $this->journalistsDataTransformer->write($journalists, $section)->read();
 
-        // TODO:: filtrado editorial
-
         $resolveData['signatures'] = $journalists;
         $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
-        $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
 
         $tags = [];
         foreach ($editorial->tags() as $tag) {
@@ -169,6 +166,9 @@ class EditorialOrchestrator implements Orchestrator
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
         $editorialResult['countComments'] = $comments['options']['totalrecords'] ?? 0;
         $editorialResult['signatures'] = $this->retrieveJournalists($editorial, $journalists);
+
+        $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
+
         $editorialResult['body'] = $this->bodyDataTransformer->execute(
             $editorial->body(),
             $resolveData
