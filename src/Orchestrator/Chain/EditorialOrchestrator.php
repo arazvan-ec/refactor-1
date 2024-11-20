@@ -7,6 +7,7 @@ namespace App\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
+use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Enum\SitesEnum;
@@ -58,6 +59,7 @@ class EditorialOrchestrator implements Orchestrator
         private readonly JournalistsDataTransformer $journalistsDataTransformer,
         private readonly QueryJournalistClient $queryJournalistClient,
         private readonly JournalistFactory $journalistFactory,
+        private readonly MultimediaDataTransformer $multimediaDataTransformer,
         string $extension,
     ) {
         $this->setExtension($extension);
@@ -174,7 +176,9 @@ class EditorialOrchestrator implements Orchestrator
 
         $multimediaId = $this->getMultimediaId($editorial->multimedia());
         if ($multimediaId && !empty($resolveData['multimedia'][$multimediaId->id()])) {
-            $editorialResult['multimedia'] = $resolveData['multimedia'][$multimediaId->id()]->file();
+            $editorialResult['multimedia'] = $this->multimediaDataTransformer
+                ->write($resolveData['multimedia'][$multimediaId->id()])
+                ->read();
         }
 
         return $editorialResult;
