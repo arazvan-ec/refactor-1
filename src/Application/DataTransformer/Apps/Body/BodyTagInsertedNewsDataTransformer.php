@@ -44,17 +44,19 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 
         $elementArray = parent::read();
 
-        $signatures = $this->resolveData()['insertedNews'][$bodyElement->editorialId()->id()]['signatures'];
+        $editorialId = $bodyElement->editorialId()->id();
+
+        $signatures = $this->resolveData()['insertedNews'][$editorialId]['signatures'];
 
         /** @var Editorial $editorial */
-        $editorial = $this->resolveData()['insertedNews'][$bodyElement->editorialId()->id()]['editorial'];
+        $editorial = $this->resolveData()['insertedNews'][$editorialId]['editorial'];
         /** @var Section $section */
-        $section = $this->resolveData()['insertedNews'][$bodyElement->editorialId()->id()]['section'];
+        $sectionInserted = $this->resolveData()['insertedNews'][$editorialId]['section'];
 
         $elementArray['editorialId'] = $editorial->id()->id();
         $elementArray['title'] = $editorial->editorialTitles()->title();
         $elementArray['signatures'] = $this->retrieveJournalists($signatures, $this->resolveData()['signatures']);
-        $elementArray['editorial'] =  $this->editorialUrl($editorial, $section);
+        $elementArray['editorial'] =  $this->editorialUrl($editorial, $sectionInserted);
 
         $elementArray['photo'] = '';
         $multimediaId = $this->getMultimediaId($editorial->multimedia());
