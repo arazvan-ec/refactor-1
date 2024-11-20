@@ -18,7 +18,6 @@ use Ec\Editorial\Domain\Model\Signature;
 use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
-use Ec\Journalist\Domain\Model\Journalists;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
 use App\Exception\EditorialNotPublishedYetException;
@@ -93,8 +92,7 @@ class EditorialOrchestrator implements Orchestrator
         $editorialSignatures = [];
         /** @var Signature $signature */
         foreach ($editorial->signatures()->getArrayCopy() as $signature) {
-            $id = $signature->id()->id();
-            $editorialSignatures[$id] = $id;
+            $editorialSignatures[] = $signature->id()->id();
         }
 
         /** @var BodyTagInsertedNews[] $insertedNews */
@@ -102,23 +100,26 @@ class EditorialOrchestrator implements Orchestrator
 
         /** @var BodyTagInsertedNews $insertedNews */
         foreach ($insertedNews as $insertedNew) {
-            $id = $insertedNew->editorialId()->id();
+            $idInserted = $insertedNew->editorialId()->id();
 
             /** @var Editorial $insertedEditorials */
-            $insertedEditorials = $this->queryEditorialClient->findEditorialById($id);
+            $insertedEditorials = $this->queryEditorialClient->findEditorialById($idInserted);
+
             $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
 
-            $resolveData['insertedNews'][$id]['editorial'] = $insertedEditorials;
-            $resolveData['insertedNews'][$id]['section'] = $sectionInserted;
+            $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
+            $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
 
             /** @var Signature $signature */
-            foreach ($insertedEditorials->signatures() as $signature) {
+            foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
                 $aliasId = $signature->id()->id();
-                $resolveData['insertedNews'][$id]['signatures'][] = $aliasId;
-                $editorialSignatures[$aliasId] = $aliasId;
+                $resolveData['insertedNews'][$idInserted]['signatures'][] = $aliasId;
+                $editorialSignatures[] = $aliasId;
             }
 
             $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
+
+            $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
         }
 
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData);
@@ -128,9 +129,7 @@ class EditorialOrchestrator implements Orchestrator
                 ->wait(true);
         }
 
-        /** @var Journalists $journalists */
         $journalists = [];
-
         foreach ($editorialSignatures as $signatureId) {
             $aliasId = $this->journalistFactory->buildAliasId($signatureId);
 
@@ -138,11 +137,9 @@ class EditorialOrchestrator implements Orchestrator
             $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasId);
 
             if ($journalist->isActive() && $journalist->isVisible()) {
-                // Todo: fix index object
                 $journalists[$aliasId->id()] = $journalist;
             }
         }
-
 
         $journalists = $this->journalistsDataTransformer->write($journalists, $section)->read();
 
@@ -320,7 +317,7 @@ class EditorialOrchestrator implements Orchestrator
         return $result;
     }
 
-    private function getJournalistByAliasId(string $aliasId, array $journalists): array
+    private function getJournalistByAliasId(string $aliasId, array $journalists): Journalist
     {
         return $journalists[$aliasId];
     }
