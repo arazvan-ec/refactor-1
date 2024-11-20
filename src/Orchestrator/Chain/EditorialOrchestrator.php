@@ -143,6 +143,8 @@ class EditorialOrchestrator implements Orchestrator
 
         $journalists = $this->journalistsDataTransformer->write($journalists, $section)->read();
 
+        // TODO:: filtrado editorial
+
         $resolveData['signatures'] = $journalists;
         $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
         $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);

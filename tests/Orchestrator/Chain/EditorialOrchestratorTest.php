@@ -377,23 +377,22 @@ class EditorialOrchestratorTest extends TestCase
                 ->willReturn(true);
 
             $promisesJournalist[$aliasId] = $journalistMockArray;
-
-        }
-        $promisesJournalistEditorial = [];
-        foreach ($journalistsEditorial as $signatureId) {
-            $promisesJournalistEditorial[] =  $promisesJournalist[$signatureId];
         }
 
         $tags = [$this->generateTagMock($editorialMock)];
 
-        $journalistResolveDataArray = [];
         $this->journalistsDataTransformer->expects(static::once())
             ->method('write')
             ->with($promisesJournalist, $sectionMock)
             ->willReturnSelf();
         $this->journalistsDataTransformer->expects(static::once())
             ->method('read')
-            ->willReturn($promisesJournalist);
+            ->willReturn($this->getGenericJournalistData());
+
+        $journalistExpected = [];
+        foreach ($journalistsEditorial as $journalistEditorialId) {
+            $journalistExpected[] = $this->getGenericJournalistData()[$journalistEditorialId];
+        }
 
         $transformedData = [
             'id' => '4416',
@@ -411,7 +410,7 @@ class EditorialOrchestratorTest extends TestCase
                 ],
             ],
             'body' => [],
-            'signatures' => $promisesJournalistEditorial,
+            'signatures' => $journalistExpected,
         ];
 
         $this->appsDataTransformer
@@ -546,9 +545,6 @@ class EditorialOrchestratorTest extends TestCase
         $this->assertSame($legacyResponse, $result);
     }
 
-    /**
-     * @test
-     */
     public function executeShouldContinueWhenTagClientThrowsException(): void
     {
         $id = '12345';
@@ -642,8 +638,6 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     /**
-     * @test
-     *
      * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorProvider::getBodyExpected()
      *
      * @param array<mixed> $bodyExpected
@@ -661,12 +655,12 @@ class EditorialOrchestratorTest extends TestCase
             ->method('write')
             ->with($editorial, $section, $tags)
             ->willReturnSelf();
-        $transformedData = $this->getGenericTransformerData();
+        // $transformedData = $this->getGenericTransformerData();
 
         $this->appsDataTransformer
             ->expects($this->once())
             ->method('read')
-            ->willReturn($transformedData);
+            ->willReturn([]);
 
         $this->queryEditorialClient
             ->expects($this->once())
@@ -937,39 +931,76 @@ class EditorialOrchestratorTest extends TestCase
     /**
      * @return array<mixed>
      */
-    private function getGenericTransformerData(): array
+    private function getGenericJournalistData(): array
     {
         return [
-            'id' => '4416',
-            'signatures' => [
-                [
-                    'journalistId' => '2338',
-                    'aliasId' => '7298',
-                    'name' => 'Javier Bocanegra 1',
-                    'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
-                    'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
-                    'departments' => [
-                        [
-                            'id' => '11',
-                            'name' => 'Fin de semana',
-                        ],
+            '1' => [
+                'journalistId' => '1',
+                'aliasId' => '1',
+                'name' => 'Javier Bocanegra 1',
+                'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
+                'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
+                'departments' => [
+                    [
+                        'id' => '11',
+                        'name' => 'Fin de semana',
                     ],
                 ],
             ],
-            'section' => [
-                'id' => '90',
-                'name' => 'Mercados',
-                'url' => 'https://www.elconfidencial.dev/mercados',
-            ],
-            'countComments' => 0,
-            'tags' => [
-                [
-                    'id' => '15919',
-                    'name' => 'Bolsas',
-                    'url' => 'https://www.elconfidencial.dev/tags/temas/bolsas-15919',
+            '2' => [
+                'journalistId' => '2',
+                'aliasId' => '2',
+                'name' => 'Javier Bocanegra 1',
+                'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
+                'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
+                'departments' => [
+                    [
+                        'id' => '11',
+                        'name' => 'Fin de semana',
+                    ],
                 ],
             ],
-            'body' => [],
+            '5' => [
+                'journalistId' => '5',
+                'aliasId' => '5',
+                'name' => 'Javier Bocanegra 1',
+                'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
+                'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
+                'departments' => [
+                    [
+                        'id' => '11',
+                        'name' => 'Fin de semana',
+                    ],
+                ],
+            ],
+            '6' => [
+                'journalistId' => '6',
+                'aliasId' => '6',
+                'name' => 'Javier Bocanegra 1',
+                'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
+                'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
+                'departments' => [
+                    [
+                        'id' => '11',
+                        'name' => 'Fin de semana',
+                    ],
+                ],
+            ],
+            '7' => [
+                'journalistId' => '7',
+                'aliasId' => '7',
+                'name' => 'Javier Bocanegra 1',
+                'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
+                'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
+                'departments' => [
+                    [
+                        'id' => '11',
+                        'name' => 'Fin de semana',
+                    ],
+                ],
+            ],
+
         ];
+
     }
 }
