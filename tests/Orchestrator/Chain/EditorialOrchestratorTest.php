@@ -7,6 +7,7 @@ namespace App\Tests\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
+use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Exception\EditorialNotPublishedYetException;
 use App\Orchestrator\Chain\EditorialOrchestrator;
@@ -79,6 +80,9 @@ class EditorialOrchestratorTest extends TestCase
     /** @var BodyDataTransformer|MockObject */
     private BodyDataTransformer $bodyDataTransformer;
 
+    /** @var MultimediaDataTransformer|MockObject */
+    private MultimediaDataTransformer $multimediaDataTransformer;
+
     /** @var QueryTagClient|MockObject */
     private QueryTagClient $queryTagClient;
 
@@ -106,6 +110,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->queryJournalistClient = $this->createMock(QueryJournalistClient::class);
         $this->journalistFactory = $this->createMock(JournalistFactory::class);
+        $this->multimediaDataTransformer = $this->createMock(MultimediaDataTransformer::class);
 
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
@@ -121,6 +126,7 @@ class EditorialOrchestratorTest extends TestCase
             $this->journalistsDataTransformer,
             $this->queryJournalistClient,
             $this->journalistFactory,
+            $this->multimediaDataTransformer,
             'dev'
         );
     }
