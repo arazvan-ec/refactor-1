@@ -76,7 +76,9 @@ class BodyTagInsertedNewsDataProvider
                         ],
                     ],
                     'editorial' => 'https://www.elconfidencial.dev/_editorial_id',
-                    'photo' => '',
+                    'photo' => [
+
+                    ],
                 ],
             ],
             'inserted-news-with-two-signature' => [
@@ -181,7 +183,9 @@ class BodyTagInsertedNewsDataProvider
                         ],
                     ],
                     'editorial' => 'https://www.elconfidencial.dev/_editorial_id',
-                    'photo' => '',
+                    'photo' => [
+
+                    ],
                 ],
             ],
         ];

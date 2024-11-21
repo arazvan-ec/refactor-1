@@ -6,13 +6,13 @@
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\BodyTagInsertedNewsDataTransformer;
+use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialTitles;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
 use Ec\Section\Domain\Model\Section;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,11 +22,11 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
 {
     private BodyTagInsertedNewsDataTransformer $transformer;
 
-    private MockObject $trait;
-
     protected function setUp(): void
     {
+        $this->thumbor = $this->createMock(Thumbor::class);
         $this->transformer = new BodyTagInsertedNewsDataTransformer(
+            $this->thumbor,
             'dev'
         );
     }
@@ -41,6 +41,7 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
         $resolveData = [];
         $id = 'editorial_id';
         $title = 'title body tag inserted news';
+        $multimediaId = '1';
 
         $editorialMock = $this->createMock(Editorial::class);
         $sectionMock = $this->createMock(Section::class);
@@ -87,11 +88,15 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
                 'editorial' => $editorialMock,
                 'signatures' => $data['signaturesIndexes'],
                 'section' => $sectionMock,
+                'multimediaId' => $multimediaId
             ],
         ];
 
         $resolveData['photo'] = $data['photo'];
         $resolveData['signatures'] = $allSignatures['signaturesWithIndexId'];
+
+        $resolveData['multimedia'] = [];
+        $resolveData['multimedia'][$multimediaId] = $multimedia;
 
         $result = $this->transformer->write($bodyElementMock, $resolveData)->read();
 
