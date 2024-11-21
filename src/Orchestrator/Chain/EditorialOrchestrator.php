@@ -29,6 +29,7 @@ use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
+use Ec\Section\Domain\Model\Section;
 use Ec\Tag\Domain\Model\QueryTagClient;
 use GuzzleHttp\Promise\Utils;
 use Http\Promise\Promise;
@@ -92,7 +93,7 @@ class EditorialOrchestrator implements Orchestrator
 
         $editorialSignatures = [];
         /** @var Signature $signature */
-        foreach ($editorial->signatures()->getArrayCopy() as $signature) {
+        foreach ($editorial->signatures() as $signature) {
             $editorialSignatures[] = $signature->id()->id();
         }
 
@@ -112,10 +113,9 @@ class EditorialOrchestrator implements Orchestrator
             $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
 
             /** @var Signature $signature */
-            foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
-                $aliasId = $signature->id()->id();
-                $resolveData['insertedNews'][$idInserted]['signatures'][] = $aliasId;
-                $editorialSignatures[] = $aliasId;
+            foreach ($insertedEditorials->signatures() as $signature) {
+                $resolveData['insertedNews'][$idInserted]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(),$sectionInserted);
+
             }
 
             $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
@@ -130,21 +130,7 @@ class EditorialOrchestrator implements Orchestrator
                 ->wait(true);
         }
 
-        $journalists = [];
-        foreach ($editorialSignatures as $signatureId) {
-            $aliasId = $this->journalistFactory->buildAliasId($signatureId);
 
-            /** @var Journalist $journalist */
-            $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasId);
-
-            if ($journalist->isActive() && $journalist->isVisible()) {
-                $journalists[$aliasId->id()] = $journalist;
-            }
-        }
-
-        $journalists = $this->journalistsDataTransformer->write($journalists, $section)->read();
-
-        $resolveData['signatures'] = $journalists;
         $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
 
         $tags = [];
@@ -164,7 +150,12 @@ class EditorialOrchestrator implements Orchestrator
 
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
         $editorialResult['countComments'] = $comments['options']['totalrecords'] ?? 0;
-        $editorialResult['signatures'] = $this->retrieveJournalists($editorial, $journalists);
+
+        foreach ($editorial->signatures() as $signature) {
+            $editorialResult['signatures'][] = $this->retriveAliasFormat($signature->id()->id(),$section);
+
+        }
+
 
         $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
 
@@ -182,6 +173,28 @@ class EditorialOrchestrator implements Orchestrator
 
         return $editorialResult;
     }
+
+
+    private function retriveAliasFormat(string $aliasId,Section $section)
+    {
+        $signature = [];
+
+        $aliasId = $this->journalistFactory->buildAliasId($aliasId);
+
+        /** @var Journalist $journalist */
+        $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasId);
+
+        if ($journalist->isActive() &&  $journalist->isVisible()) {
+
+            $signature = $this->journalistsDataTransformer->write($aliasId,$journalist,$section)->read();
+        }
+        return $signature;
+
+    }
+
+
+
+
 
     public function canOrchestrate(): string
     {
