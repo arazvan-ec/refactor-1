@@ -7,7 +7,6 @@ namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Infrastructure\Service\Thumbor;
-use Ec\Editorial\Domain\Model\Body\ListItem;
 use Ec\Journalist\Domain\Model\Aliases;
 use Ec\Journalist\Domain\Model\AliasId;
 use Ec\Journalist\Domain\Model\Departments;
@@ -76,7 +75,7 @@ class JournalistsDataTransformerTest extends TestCase
         $expectedAlias = [
             'id' => new AliasId($aliasId),
             'name' => $journalistName,
-            'private' => false
+            'private' => false,
         ];
 
         $aliasItemMock = $this->createConfiguredMock(Alias::class, $expectedAlias);
