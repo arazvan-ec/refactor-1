@@ -761,7 +761,9 @@ class EditorialOrchestratorTest extends TestCase
                 ->willReturn($bodyElementEditorialIdInsertedMock);
 
             $editorialInsertedMock = $this->createMock(Editorial::class);
-
+            $editorialInsertedMock->expects(static::once())
+                ->method('isVisible')
+                ->willReturn(true);
             $promisesEditorials[] = $editorialInsertedMock;
             $withEditorials[] = $bodyTag['id'];
             $sectionInsertedMock = $this->createMock(Section::class);
