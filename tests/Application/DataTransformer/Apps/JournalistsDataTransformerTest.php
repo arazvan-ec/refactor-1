@@ -7,11 +7,11 @@ namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Infrastructure\Service\Thumbor;
+use Ec\Editorial\Domain\Model\Body\ListItem;
 use Ec\Journalist\Domain\Model\Aliases;
 use Ec\Journalist\Domain\Model\AliasId;
 use Ec\Journalist\Domain\Model\Departments;
 use Ec\Journalist\Domain\Model\JournalistId;
-use Ec\Journalist\Domain\Model\Journalists;
 use PHPUnit\Framework\TestCase;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\Alias;
@@ -71,53 +71,95 @@ class JournalistsDataTransformerTest extends TestCase
             ],
         ];
         $journalistMock = $this->createMock(Journalist::class);
-        $journalistsMock = $this->createMock(Journalists::class);
         $sectionMock = $this->createMock(Section::class);
+
+        $expectedAlias = [
+            'id' => new AliasId($aliasId),
+            'name' => $journalistName,
+            'private' => false
+        ];
+
+        $aliasItemMock = $this->createConfiguredMock(Alias::class, $expectedAlias);
+
+        $bodyIterator = new \ArrayIterator([$aliasItemMock]);
+
         $aliasesMock = $this->createMock(Aliases::class);
+
+        $aliasesMock
+            ->method('rewind')
+            ->willReturnCallback(static function () use ($bodyIterator) {
+                $bodyIterator->rewind();
+            });
+
+        $aliasesMock
+            ->method('current')
+            ->willReturnCallback(static function () use ($bodyIterator) {
+                return $bodyIterator->current();
+            });
+
+        $aliasesMock
+            ->method('key')
+            ->willReturnCallback(static function () use ($bodyIterator) {
+                return $bodyIterator->key();
+            });
+
+        $aliasesMock
+            ->method('next')
+            ->willReturnCallback(static function () use ($bodyIterator) {
+                $bodyIterator->next();
+            });
+
+        $aliasesMock
+            ->method('valid')
+            ->willReturnCallback(static function () use ($bodyIterator) {
+                return $bodyIterator->valid();
+            });
+
         $journalistIdMock = $this->createMock(JournalistId::class);
         $departmentsMock = $this->createMock(Departments::class);
         $aliasMock = $this->createMock(Alias::class);
         $aliasIdMock = $this->createMock(AliasId::class);
 
-        $aliasesMock->method('addAlias')
-            ->with($aliasMock)
-            ->willReturnSelf();
-
-        $aliasMock->expects(static::once())
-            ->method('id')
-            ->willReturn($aliasIdMock);
-
-        $aliasIdMock->expects(static::once())
-            ->method('id')
-            ->willReturn($aliasId);
-
         $journalistMock->expects(static::once())
             ->method('aliases')
             ->willReturn($aliasesMock);
 
-        $journalistMock->expects(static::once())
-            ->method('id')
-            ->willReturn($journalistIdMock);
+        $aliasMock->method('id')
+            ->willReturn($aliasIdMock);
 
-        $journalistIdMock->expects(static::once())
-            ->method('id')
+        $aliasIdMock->method('id')
             ->willReturn($aliasId);
 
-        $aliasMock->expects(static::once())
+        $journalistMock->method('id')
+            ->willReturn($journalistIdMock);
+
+        $journalistIdMock
+            ->method('id')
+            ->willReturn($journalistId);
+
+        $aliasMock
             ->method('name')
             ->willReturn($journalistName);
 
-        $journalistMock->expects(static::once())
+        $journalistMock
+            ->method('name')
+            ->willReturn($journalistName);
+
+        $journalistMock
             ->method('departments')
             ->willReturn($departmentsMock);
 
-        $journalistMock->expects(static::once())
+        $journalistMock
             ->method('photo')
             ->willReturn($photoUrl);
 
-        $result = $this->transformer->write([$journalistMock], $sectionMock)->read();
 
-        $this->assertEquals($expectedJournalist, $result);
+        $result = $this->transformer->write([$aliasId => $journalistMock], $sectionMock)->read();
+
+        $this->assertEquals($expectedJournalist[$aliasId]['journalistId'], $result[$aliasId]['journalistId']);
+        $this->assertEquals($expectedJournalist[$aliasId]['aliasId'], $result[$aliasId]['aliasId']);
+        $this->assertEquals($expectedJournalist[$aliasId]['name'], $result[$aliasId]['name']);
+        $this->assertEquals($expectedJournalist[$aliasId]['url'], $result[$aliasId]['url']);
     }
 
     /**
