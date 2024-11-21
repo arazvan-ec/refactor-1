@@ -100,6 +100,7 @@ class EditorialOrchestrator implements Orchestrator
 
             /** @var Editorial $insertedEditorials */
             $insertedEditorials = $this->queryEditorialClient->findEditorialById($idInserted);
+            if ($insertedEditorials->isVisible()) {
 
             $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
 
@@ -114,7 +115,10 @@ class EditorialOrchestrator implements Orchestrator
             /** @var array<string, array<string, mixed>> $resolveData */
             $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
 
-            $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
+                $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
+
+
+            }
         }
 
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData);
