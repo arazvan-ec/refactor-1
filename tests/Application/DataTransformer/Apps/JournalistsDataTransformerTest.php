@@ -11,6 +11,7 @@ use Ec\Journalist\Domain\Model\Aliases;
 use Ec\Journalist\Domain\Model\AliasId;
 use Ec\Journalist\Domain\Model\Departments;
 use Ec\Journalist\Domain\Model\JournalistId;
+use Ec\Journalist\Domain\Model\Journalists;
 use PHPUnit\Framework\TestCase;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\Alias;
@@ -69,8 +70,8 @@ class JournalistsDataTransformerTest extends TestCase
                 'departments' => $departments,
             ],
         ];
-
         $journalistMock = $this->createMock(Journalist::class);
+        $journalistsMock = $this->createMock(Journalists::class);
         $sectionMock = $this->createMock(Section::class);
         $aliasesMock = $this->createMock(Aliases::class);
         $journalistIdMock = $this->createMock(JournalistId::class);
@@ -78,13 +79,9 @@ class JournalistsDataTransformerTest extends TestCase
         $aliasMock = $this->createMock(Alias::class);
         $aliasIdMock = $this->createMock(AliasId::class);
 
-
-        $aliasesMock->method('hasAlias')
-            ->willReturn(true);
-
-        $journalistMock->expects(static::once())
-            ->method('aliases')
-            ->willReturn($aliasesMock);
+        $aliasesMock->method('addAlias')
+            ->with($aliasMock)
+            ->willReturnSelf();
 
         $aliasMock->expects(static::once())
             ->method('id')
@@ -93,6 +90,10 @@ class JournalistsDataTransformerTest extends TestCase
         $aliasIdMock->expects(static::once())
             ->method('id')
             ->willReturn($aliasId);
+
+        $journalistMock->expects(static::once())
+            ->method('aliases')
+            ->willReturn($aliasesMock);
 
         $journalistMock->expects(static::once())
             ->method('id')
