@@ -80,7 +80,11 @@ class BodyTagInsertedNewsDataProvider
                         'id' => '',
                         'type' => 'photo',
                         'caption' => '',
-                        'shots' => [],
+                        'shots' => [
+                            '202w' => '',
+                            '144w' => '',
+                            '128w' => '',
+                        ],
                         'photo' => '',
                     ],
                 ],
@@ -188,7 +192,15 @@ class BodyTagInsertedNewsDataProvider
                     ],
                     'editorial' => 'https://www.elconfidencial.dev/_editorial_id',
                     'photo' => [
-
+                        'id' => '',
+                        'type' => 'photo',
+                        'caption' => '',
+                        'shots' => [
+                            '202w' => '',
+                            '144w' => '',
+                            '128w' => '',
+                        ],
+                        'photo' => '',
                     ],
                 ],
             ],

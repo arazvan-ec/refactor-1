@@ -105,7 +105,8 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
         $expected['photo']['shots'] = [
             '202w' => '',
             '144w' => '',
-            '128w' => ''];
+            '128w' => '',
+        ];
 
         $this->assertSame($expected, $result);
     }
