@@ -88,7 +88,7 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
                 'editorial' => $editorialMock,
                 'signatures' => $data['signaturesIndexes'],
                 'section' => $sectionMock,
-                'multimediaId' => $multimediaId
+                'multimediaId' => $multimediaId,
             ],
         ];
 

@@ -7,7 +7,6 @@ namespace App\Application\DataTransformer\Apps;
 
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
-use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Journalist;
@@ -21,7 +20,6 @@ class JournalistsDataTransformer implements JournalistDataTransformer
     use UrlGeneratorTrait;
 
     public function __construct(
-        private readonly QueryEditorialClient $queryEditorialClient,
         string $extension,
         private readonly Thumbor $thumbor,
     ) {
@@ -43,8 +41,6 @@ class JournalistsDataTransformer implements JournalistDataTransformer
 
     public function read(): array
     {
-
-
         return $this->transformerJournalists();
     }
 

@@ -7,6 +7,10 @@ namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Infrastructure\Service\Thumbor;
+use Ec\Journalist\Domain\Model\Aliases;
+use Ec\Journalist\Domain\Model\AliasId;
+use Ec\Journalist\Domain\Model\Departments;
+use Ec\Journalist\Domain\Model\JournalistId;
 use PHPUnit\Framework\TestCase;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\Alias;
@@ -25,7 +29,10 @@ class JournalistsDataTransformerTest extends TestCase
         $this->transformer = new JournalistsDataTransformer('dev', $this->thumbor);
     }
 
-    public function testWriteAndRead(): void
+    /**
+     * @test
+     */
+    public function shouldWriteAndRead(): void
     {
         $journalistMock = $this->createMock(Journalist::class);
         $sectionMock = $this->createMock(Section::class);
@@ -36,43 +43,101 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertIsArray($result);
     }
 
-    public function testTransformerJournalists(): void
+    /**
+     * @test
+     */
+    public function shouldTransformAJournalist(): void
     {
+        $aliasId = '20116';
+        $journalistId = '5164';
+        $journalistName = 'Juan Carlos';
+        $journalistUrl = 'https://www.elconfidencial.dev/autores/juan-carlos-5164/';
+        $photoUrl = 'https://images.ecestaticos.dev/FGsmLp_UG1BtJpvlkXA8tzDqltY=/dev.f.elconfidencial.com/journalist/953/855/f9d/953855f9d072b9cd509c3f6c5f9dc77f.png';
+        $departments = [
+            [
+                'id' => '1',
+                'name' => 'Técnico',
+            ],
+        ];
+        $expectedJournalist = [
+            $aliasId => [
+                'journalistId' => $journalistId,
+                'aliasId' => $aliasId,
+                'name' => $journalistName,
+                'url' => $journalistUrl,
+                'photo' => $photoUrl,
+                'departments' => $departments,
+            ],
+        ];
+
         $journalistMock = $this->createMock(Journalist::class);
-        $aliasMock = $this->createMock(Alias::class);
-
-        $aliasMock->method('id')->willReturn((object)['id' => fn() => 'alias-123']);
-        $aliasMock->method('name')->willReturn('Alias Name');
-        $aliasMock->method('private')->willReturn(false);
-
-        $journalistMock->method('aliases')->willReturn([$aliasMock]);
-        $journalistMock->method('id')->willReturn((object)['id' => fn() => 'journalist-123']);
-        $journalistMock->method('departments')->willReturn([]);
-        $journalistMock->method('photo')->willReturn('');
-        $journalistMock->method('blogPhoto')->willReturn('');
-
         $sectionMock = $this->createMock(Section::class);
-        $sectionMock->method('siteId')->willReturn('site-id');
-        $sectionMock->method('getPath')->willReturn('path');
-        $sectionMock->method('isBlog')->willReturn(false);
+        $aliasesMock = $this->createMock(Aliases::class);
+        $journalistIdMock = $this->createMock(JournalistId::class);
+        $departmentsMock = $this->createMock(Departments::class);
+        $aliasMock = $this->createMock(Alias::class);
+        $aliasIdMock = $this->createMock(AliasId::class);
 
-        $this->transformer->write([$journalistMock], $sectionMock);
-        $result = $this->transformer->read();
 
-        $this->assertArrayHasKey('alias-123', $result);
-        $this->assertEquals('Alias Name', $result['alias-123']['name']);
+        $aliasesMock->method('hasAlias')
+            ->willReturn(true);
+
+        $journalistMock->expects(static::once())
+            ->method('aliases')
+            ->willReturn($aliasesMock);
+
+        $aliasMock->expects(static::once())
+            ->method('id')
+            ->willReturn($aliasIdMock);
+
+        $aliasIdMock->expects(static::once())
+            ->method('id')
+            ->willReturn($aliasId);
+
+        $journalistMock->expects(static::once())
+            ->method('id')
+            ->willReturn($journalistIdMock);
+
+        $journalistIdMock->expects(static::once())
+            ->method('id')
+            ->willReturn($aliasId);
+
+        $aliasMock->expects(static::once())
+            ->method('name')
+            ->willReturn($journalistName);
+
+        $journalistMock->expects(static::once())
+            ->method('departments')
+            ->willReturn($departmentsMock);
+
+        $journalistMock->expects(static::once())
+            ->method('photo')
+            ->willReturn($photoUrl);
+
+        $result = $this->transformer->write([$journalistMock], $sectionMock)->read();
+
+        $this->assertEquals($expectedJournalist, $result);
     }
 
-    public function testJournalistUrlForPrivateAlias(): void
+    /**
+     * @test
+     */
+    public function shouldReturnJournalistUrlForPrivateAlias(): void
     {
+        $siteId = 'elconfidencial';
+
         $aliasMock = $this->createMock(Alias::class);
         $journalistMock = $this->createMock(Journalist::class);
         $sectionMock = $this->createMock(Section::class);
 
-        $aliasMock->method('private')->willReturn(true);
-        $sectionMock->method('siteId')->willReturn('site-id');
-        $sectionMock->method('getPath')->willReturn('path');
-        $sectionMock->method('isBlog')->willReturn(false);
+        $aliasMock->method('private')
+            ->willReturn(true);
+        $sectionMock->method('siteId')
+            ->willReturn($siteId);
+        $sectionMock->method('getPath')
+            ->willReturn('path');
+        $sectionMock->method('isBlog')
+            ->willReturn(false);
 
         $this->transformer->write([], $sectionMock);
 
@@ -81,26 +146,100 @@ class JournalistsDataTransformerTest extends TestCase
         $method->setAccessible(true);
 
         $result = $method->invokeArgs($this->transformer, [$aliasMock, $journalistMock]);
-        $this->assertStringContainsString('https://www.site-id.path/', $result);
+        $this->assertStringContainsString('https://www.elconfidencial.dev/path', $result);
     }
 
-    public function testPhotoUrlWithBlogPhoto(): void
+    /**
+     * @test
+     */
+    public function shouldReturnJournalistUrlForNonPrivateAlias(): void
+    {
+        $siteId = 'elconfidencial';
+
+        $aliasMock = $this->createMock(Alias::class);
+        $journalistMock = $this->createMock(Journalist::class);
+        $sectionMock = $this->createMock(Section::class);
+
+        $aliasMock->method('private')
+            ->willReturn(false);
+        $sectionMock->method('siteId')
+            ->willReturn($siteId);
+        $sectionMock->method('getPath')
+            ->willReturn('path');
+
+        $this->transformer->write([], $sectionMock);
+
+        $reflection = new \ReflectionClass($this->transformer);
+        $method = $reflection->getMethod('journalistUrl');
+        $method->setAccessible(true);
+
+        $result = $method->invokeArgs($this->transformer, [$aliasMock, $journalistMock]);
+        $this->assertStringContainsString('https://www.elconfidencial.dev/autores/-/', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnPhotoUrlWithPhoto(): void
     {
         $journalistMock = $this->createMock(Journalist::class);
 
-        $journalistMock->method('blogPhoto')->willReturn('blog-photo.jpg');
-        $this->thumborMock->method('createJournalistImage')->willReturn('https://thumbor.example.com/blog-photo.jpg');
+        $journalistMock->expects(static::exactly(2))
+            ->method('photo')
+            ->willReturn('blog-photo.jpg');
+        $this->thumbor->expects(static::once())
+            ->method('createJournalistImage')
+            ->willReturn('https://thumbor.example.com/blog-photo.jpg');
+
+        $reflection = new \ReflectionClass($this->transformer);
+        $method = $reflection->getMethod('photoUrl');
+
+        $result = $method->invokeArgs($this->transformer, [$journalistMock]);
+        $this->assertEquals('https://thumbor.example.com/blog-photo.jpg', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnPhotoUrlWithBlogPhoto(): void
+    {
+        $blogPhoto = 'blog-photo.jpg';
+        $journalistMock = $this->createMock(Journalist::class);
+
+        $journalistMock->expects(static::exactly(2))
+            ->method('blogPhoto')
+            ->willReturn($blogPhoto);
+
+        $this->thumbor->expects(static::once())
+            ->method('createJournalistImage')
+            ->willReturn('https://thumbor.example.com/blog-photo.jpg');
+
+        $reflection = new \ReflectionClass($this->transformer);
+        $method = $reflection->getMethod('photoUrl');
+
+        $result = $method->invokeArgs($this->transformer, [$journalistMock]);
+        $this->assertEquals('https://thumbor.example.com/blog-photo.jpg', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnEmptyPhotoUrl(): void
+    {
+        $journalistMock = $this->createMock(Journalist::class);
+
+        $journalistMock->expects(static::exactly(1))
+            ->method('blogPhoto')
+            ->willReturn('');
+        $journalistMock->expects(static::exactly(1))
+            ->method('photo')
+            ->willReturn('');
 
         $reflection = new \ReflectionClass($this->transformer);
         $method = $reflection->getMethod('photoUrl');
         $method->setAccessible(true);
 
         $result = $method->invokeArgs($this->transformer, [$journalistMock]);
-        $this->assertEquals('https://thumbor.example.com/blog-photo.jpg', $result);
+        $this->assertEquals('', $result);
     }
-
-    public function testPhotoUrlWithPhoto(): void
-    {
-        $journalistMock = $this->createMock(Journalist::class);
-
-        $journalistMock
+}
