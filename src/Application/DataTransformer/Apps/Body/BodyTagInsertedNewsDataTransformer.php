@@ -17,6 +17,7 @@ use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
 use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
+use Ec\Multimedia\Domain\Model\Multimedia;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -114,7 +115,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         );
     }
 
-    public function getMultimedia($multimedia): array
+    public function getMultimedia(Multimedia $multimedia): array
     {
         $clippings = $multimedia->clippings();
 
@@ -139,7 +140,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
             'id' => $multimedia->id(),
             'type' => 'photo',
             'caption' => $multimedia->caption(),
-            'shots' => (object) $shots,
+            'shots' => $shots,
             'photo' => empty($shots) ? '' : reset($shots),
         ];
     }

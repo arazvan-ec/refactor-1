@@ -11,7 +11,8 @@ use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialTitles;
-use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
+use Ec\Multimedia\Domain\Model\Clippings;
+use Ec\Multimedia\Domain\Model\Multimedia;
 use Ec\Section\Domain\Model\Section;
 use PHPUnit\Framework\TestCase;
 
@@ -79,9 +80,10 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
             ->willReturn($editorialTitlesMock);
 
         $multimedia = $this->createMock(Multimedia::class);
-        $editorialMock->expects(static::once())
-            ->method('multimedia')
-            ->willReturn($multimedia);
+        $clippings = $this->createMock(Clippings::class);
+        $multimedia->expects(static::once())
+            ->method('clippings')
+            ->willReturn($clippings);
 
         $resolveData['insertedNews'] = [
             $id => [
@@ -98,7 +100,12 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
         $resolveData['multimedia'] = [];
         $resolveData['multimedia'][$multimediaId] = $multimedia;
 
+
         $result = $this->transformer->write($bodyElementMock, $resolveData)->read();
+        $expected['photo']['shots'] = [
+            '202w' => '',
+            '144w' => '',
+            '128w' => ''];
 
         $this->assertSame($expected, $result);
     }
