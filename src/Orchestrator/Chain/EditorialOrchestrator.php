@@ -16,7 +16,6 @@ use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
 use Ec\Editorial\Domain\Model\Signature;
-use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
@@ -240,8 +239,8 @@ class EditorialOrchestrator implements Orchestrator
         foreach ($bodyElementsMembership as $bodyElement) {
             /** @var MembershipCardButton $button */
             foreach ($bodyElement->buttons()->buttons() as $button) {
-                $linksData[] = $button->url();
                 $linksData[] = $button->urlMembership();
+                $linksData[] = $button->url();
             }
         }
 
@@ -326,18 +325,6 @@ class EditorialOrchestrator implements Orchestrator
     private function getJournalistByAliasId(string $aliasId, array $journalists): array
     {
         return $journalists[$aliasId];
-    }
-
-    private function hasSignature(Signatures $signatures, string $aliasId): bool
-    {
-        // TODO
-        foreach ($signatures->getArrayCopy() as $signature) {
-            if ($signature->id()->id() == $aliasId) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
