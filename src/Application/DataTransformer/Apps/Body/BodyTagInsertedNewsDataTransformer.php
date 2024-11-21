@@ -80,7 +80,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 
         $elementArray['editorialId'] = $editorial->id()->id();
         $elementArray['title'] = $editorial->editorialTitles()->title();
-        $elementArray['signatures'] = $this->retrieveJournalists($signatures, $this->resolveData()['signatures']);
+        $elementArray['signatures'] = $signatures;
         $elementArray['editorial'] =  $this->editorialUrl($editorial, $sectionInserted);
 
         $multimedia = $this->resolveData()['multimedia'][$this->resolveData()['insertedNews'][$editorialId]['multimediaId']];
