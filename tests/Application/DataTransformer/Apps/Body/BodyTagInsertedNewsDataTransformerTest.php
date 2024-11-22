@@ -26,6 +26,8 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
     private BodyTagInsertedNewsDataTransformer $transformer;
     private MockObject $thumbor;
 
+    private MockObject $thumbor;
+
     protected function setUp(): void
     {
         $this->thumbor = $this->createMock(Thumbor::class);
