@@ -14,6 +14,7 @@ use Ec\Editorial\Domain\Model\EditorialTitles;
 use Ec\Multimedia\Domain\Model\Clippings;
 use Ec\Multimedia\Domain\Model\Multimedia;
 use Ec\Section\Domain\Model\Section;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,6 +23,8 @@ use PHPUnit\Framework\TestCase;
 class BodyTagInsertedNewsDataTransformerTest extends TestCase
 {
     private BodyTagInsertedNewsDataTransformer $transformer;
+
+    private MockObject $thumbor;
 
     protected function setUp(): void
     {
