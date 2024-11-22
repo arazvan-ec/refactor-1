@@ -105,22 +105,26 @@ class EditorialOrchestrator implements Orchestrator
 
             /** @var Editorial $insertedEditorials */
             $insertedEditorials = $this->queryEditorialClient->findEditorialById($idInserted);
+            if ($insertedEditorials->isVisible()) {
 
-            $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
+                $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
 
-            $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
-            $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
+                $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
+                $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
 
-            /** @var Signature $signature */
-            foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
-                $aliasId = $signature->id()->id();
-                $resolveData['insertedNews'][$idInserted]['signatures'][] = $aliasId;
-                $editorialSignatures[] = $aliasId;
+                /** @var Signature $signature */
+                foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
+                    $aliasId = $signature->id()->id();
+                    $resolveData['insertedNews'][$idInserted]['signatures'][] = $aliasId;
+                    $editorialSignatures[] = $aliasId;
+                }
+
+                $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
+
+                $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
+
+
             }
-
-            $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
-
-            $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
         }
 
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData);
@@ -310,6 +314,11 @@ class EditorialOrchestrator implements Orchestrator
         return \array_combine($links, $membershipLinkResult);
     }
 
+    /**
+     * @param array<mixed> $journalists
+     *
+     * @return array<mixed>
+     */
     private function retrieveJournalists(Editorial $editorial, array $journalists): array
     {
         $result = [];

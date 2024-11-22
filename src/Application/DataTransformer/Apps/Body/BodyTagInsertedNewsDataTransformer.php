@@ -92,7 +92,6 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
     private function retrieveJournalists(array $journalistsInserted, array $journalists): array
     {
         $result = [];
-
         foreach ($journalistsInserted as $signature) {
             $result[] = $journalists[$signature];
         }

@@ -9,8 +9,11 @@ use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Infrastructure\Service\Thumbor;
 use Ec\Journalist\Domain\Model\Aliases;
 use Ec\Journalist\Domain\Model\AliasId;
+use Ec\Journalist\Domain\Model\Department;
+use Ec\Journalist\Domain\Model\DepartmentId;
 use Ec\Journalist\Domain\Model\Departments;
 use Ec\Journalist\Domain\Model\JournalistId;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\Alias;
@@ -22,6 +25,7 @@ use Ec\Section\Domain\Model\Section;
 class JournalistsDataTransformerTest extends TestCase
 {
     private JournalistsDataTransformer $transformer;
+    private MockObject $thumbor;
 
     protected function setUp(): void
     {
@@ -53,22 +57,25 @@ class JournalistsDataTransformerTest extends TestCase
         $journalistName = 'Juan Carlos';
         $journalistUrl = 'https://www.elconfidencial.dev/autores/juan-carlos-5164/';
         $photoUrl = 'https://images.ecestaticos.dev/FGsmLp_UG1BtJpvlkXA8tzDqltY=/dev.f.elconfidencial.com/journalist/953/855/f9d/953855f9d072b9cd509c3f6c5f9dc77f.png';
-        $departments = [
-            [
-                'id' => '1',
-                'name' => 'Técnico',
-            ],
-        ];
+        $department = new Department(new DepartmentId('1122'), 'Técnico');
+        $departments = new Departments($department);
+
         $expectedJournalist = [
             $aliasId => [
                 'journalistId' => $journalistId,
                 'aliasId' => $aliasId,
                 'name' => $journalistName,
                 'url' => $journalistUrl,
+                'departments' => [
+                    [
+                        'id' => '1122',
+                        'name' => 'Técnico',
+                    ],
+                ],
                 'photo' => $photoUrl,
-                'departments' => $departments,
             ],
         ];
+
         $journalistMock = $this->createMock(Journalist::class);
         $sectionMock = $this->createMock(Section::class);
 
@@ -115,9 +122,20 @@ class JournalistsDataTransformerTest extends TestCase
             });
 
         $journalistIdMock = $this->createMock(JournalistId::class);
-        $departmentsMock = $this->createMock(Departments::class);
         $aliasMock = $this->createMock(Alias::class);
         $aliasIdMock = $this->createMock(AliasId::class);
+
+        $this->createMock(Departments::class)
+            ->method('hasDepartment')
+            ->willReturn(true);
+
+        $departmentMock = $this->createMock(Department::class);
+
+        $departmentMock->method('id')
+            ->willReturn($department->id());
+
+        $departmentMock->method('name')
+            ->willReturn($department->name());
 
         $journalistMock->expects(static::once())
             ->method('aliases')
@@ -144,14 +162,17 @@ class JournalistsDataTransformerTest extends TestCase
             ->method('name')
             ->willReturn($journalistName);
 
-        $journalistMock
-            ->method('departments')
-            ->willReturn($departmentsMock);
+        $this->thumbor->expects(static::once())
+            ->method('createJournalistImage')
+            ->willReturn($photoUrl);
 
         $journalistMock
             ->method('photo')
             ->willReturn($photoUrl);
 
+        $journalistMock
+            ->method('departments')
+            ->willReturn($departments);
 
         $result = $this->transformer->write([$aliasId => $journalistMock], $sectionMock)->read();
 
@@ -159,6 +180,11 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals($expectedJournalist[$aliasId]['aliasId'], $result[$aliasId]['aliasId']);
         $this->assertEquals($expectedJournalist[$aliasId]['name'], $result[$aliasId]['name']);
         $this->assertEquals($expectedJournalist[$aliasId]['url'], $result[$aliasId]['url']);
+        $this->assertEquals($expectedJournalist[$aliasId]['departments'], $result[$aliasId]['departments']);
+        $this->assertEquals(
+            $expectedJournalist[$aliasId]['photo'],
+            $result[$aliasId]['photo']
+        );
     }
 
     /**
