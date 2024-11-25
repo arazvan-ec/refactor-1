@@ -30,8 +30,7 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
     /** @var string */
     private const ASPECT_RATIO_4_3 = '4:3';
 
-    /** @var string */
-    private const ASPECT_RATIO_1_1 = '1:1';
+    /** @var array<string, array<string, array<string, string> > > */
 
     private const SIZES_RELATIONS = [
         self::ASPECT_RATIO_4_3 => [
@@ -160,7 +159,7 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
                 self::WIDTH => '360',
                 self::HEIGHT => '480',
             ],
-        ],
+        ]
     ];
 
     private Multimedia $multimedia;
@@ -186,42 +185,31 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
         /** @var Clipping $clipping */
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_MULTIMEDIA_BIG);
 
-        $shots = [];
-        $sizes = self::SIZES_RELATIONS[$this->retrieveAspectRatio($clipping->width(), $clipping->height())];
-        foreach ($sizes as $type => $size) {
-            $shots[$type] = $this->thumbor->retriveCropBodyTagPicture(
-                $this->multimedia->file(),
-                $size[self::WIDTH],
-                $size[self::HEIGHT],
-                $clipping->topLeftX(),
-                $clipping->topLeftY(),
-                $clipping->bottomRightX(),
-                $clipping->bottomRightY()
-            );
+        $allShots = [];
+        foreach (self::SIZES_RELATIONS as $aspectRatio => $sizes) {
+            $shots = array_map(function ($size) use ($clipping) {
+                return $this->thumbor->retriveCropBodyTagPicture(
+                    $this->multimedia->file(),
+                    $size[self::WIDTH],
+                    $size[self::HEIGHT],
+                    $clipping->topLeftX(),
+                    $clipping->topLeftY(),
+                    $clipping->bottomRightX(),
+                    $clipping->bottomRightY()
+                );
+            }, $sizes);
+            $allShots[$aspectRatio] = $shots;
         }
+
+        $aspectRatio16_9Shots = $allShots[self::ASPECT_RATIO_16_9] ?? [];
+        $photo = empty($allShots) || !is_array($aspectRatio16_9Shots) ? '' : reset($aspectRatio16_9Shots);
 
         return [
             'id' => $this->multimedia->id(),
             'type' => 'photo',
             'caption' => $this->multimedia->caption(),
-            'shots' => (object) $shots,
-            'photo' => empty($shots) ? '' : reset($shots),
+            'shots' => $allShots,
+            'photo' => $photo,
         ];
-    }
-
-    private function retrieveAspectRatio(int $width, int $height): string
-    {
-        $aspectRatio = $width / $height;
-        $result = self::ASPECT_RATIO_16_9;
-
-        if (1 === $aspectRatio) {
-            $result = self::ASPECT_RATIO_1_1;
-        } elseif ($aspectRatio < 1) {
-            $result = self::ASPECT_RATIO_3_4;
-        } elseif ($aspectRatio > 1 && $aspectRatio < 1.4) {
-            $result = self::ASPECT_RATIO_4_3;
-        }
-
-        return $result;
     }
 }
