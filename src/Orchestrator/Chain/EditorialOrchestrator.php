@@ -91,12 +91,6 @@ class EditorialOrchestrator implements Orchestrator
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
-        $editorialSignatures = [];
-        /** @var Signature $signature */
-        foreach ($editorial->signatures() as $signature) {
-            $editorialSignatures[] = $signature->id()->id();
-        }
-
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
 
@@ -113,9 +107,8 @@ class EditorialOrchestrator implements Orchestrator
             $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
 
             /** @var Signature $signature */
-            foreach ($insertedEditorials->signatures() as $signature) {
-                $resolveData['insertedNews'][$idInserted]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(),$sectionInserted);
-
+            foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
+                $resolveData['insertedNews'][$idInserted]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
             }
 
             $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
@@ -129,7 +122,6 @@ class EditorialOrchestrator implements Orchestrator
                 ->then($this->createCallback([$this, 'fulfilledMultimedia']))
                 ->wait(true);
         }
-
 
         $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
 
@@ -151,11 +143,9 @@ class EditorialOrchestrator implements Orchestrator
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
         $editorialResult['countComments'] = $comments['options']['totalrecords'] ?? 0;
 
-        foreach ($editorial->signatures() as $signature) {
-            $editorialResult['signatures'][] = $this->retriveAliasFormat($signature->id()->id(),$section);
-
+        foreach ($editorial->signatures()->getArrayCopy() as $signature) {
+            $editorialResult['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $section);
         }
-
 
         $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
 
@@ -174,27 +164,22 @@ class EditorialOrchestrator implements Orchestrator
         return $editorialResult;
     }
 
-
-    private function retriveAliasFormat(string $aliasId,Section $section)
+    private function retriveAliasFormat(string $aliasId, Section $section)
     {
         $signature = [];
 
-        $aliasId = $this->journalistFactory->buildAliasId($aliasId);
+        $aliasIdModel = $this->journalistFactory->buildAliasId($aliasId);
 
         /** @var Journalist $journalist */
-        $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasId);
+        $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasIdModel);
 
         if ($journalist->isActive() &&  $journalist->isVisible()) {
-
-            $signature = $this->journalistsDataTransformer->write($aliasId,$journalist,$section)->read();
+            $signature = $this->journalistsDataTransformer->write($aliasId, $journalist, $section)->read();
         }
+
         return $signature;
 
     }
-
-
-
-
 
     public function canOrchestrate(): string
     {
