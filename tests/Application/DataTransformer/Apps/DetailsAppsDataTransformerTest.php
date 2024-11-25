@@ -109,7 +109,12 @@ class DetailsAppsDataTransformerTest extends TestCase
 
     }
 
-    public function transformerJournalistsNoPrivateAlias(array $signatures, $aliasIds, array $expected): void
+    /**
+     * @param Journalist[]          $signatures
+     * @param array<string, string> $aliasIds
+     * @param array<string, mixed>  $expected
+     */
+    public function transformerJournalistsNoPrivateAlias(array $signatures, array $aliasIds, array $expected): void
     {
         $signaturesArrayMock = [];
         $signaturesMock = $this->createMock(Signatures::class);

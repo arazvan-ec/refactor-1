@@ -74,7 +74,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 
         /** @var Editorial $editorial */
         $editorial = $this->resolveData()['insertedNews'][$editorialId]['editorial'];
-        /** @var Section $section */
+        /** @var Section $sectionInserted */
         $sectionInserted = $this->resolveData()['insertedNews'][$editorialId]['section'];
 
         $elementArray['editorialId'] = $editorial->id()->id();
@@ -106,6 +106,9 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         );
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function getMultimedia(Multimedia $multimedia): array
     {
         $clippings = $multimedia->clippings();

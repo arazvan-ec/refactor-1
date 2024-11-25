@@ -42,6 +42,9 @@ class JournalistsDataTransformer
         return $this;
     }
 
+    /**
+     * @return Journalist[]
+     */
     public function read(): array
     {
         return $this->transformerJournalists();

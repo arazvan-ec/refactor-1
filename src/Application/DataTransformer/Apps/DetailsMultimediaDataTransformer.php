@@ -176,6 +176,9 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
         return $this;
     }
 
+    /**
+     * @return array<string, string[]>
+     */
     public function read(): array
     {
         $clippings = $this->multimedia->clippings();
