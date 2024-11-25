@@ -31,14 +31,12 @@ class JournalistsDataTransformer
     }
 
     /**
-     * @param Journalist[] $journalists
-     *
      * @return $this
      */
     public function write(string $aliasId, Journalist $journalist, Section $section): JournalistsDataTransformer
     {
         $this->aliasId = $aliasId;
-        $this->journalist= $journalist;
+        $this->journalist = $journalist;
         $this->section = $section;
 
         return $this;
@@ -56,33 +54,31 @@ class JournalistsDataTransformer
     {
         $signature = [];
 
-            foreach ($this->journalist->aliases() as $alias) {
+        foreach ($this->journalist->aliases() as $alias) {
 
-                if ($alias->id()->id() == $this->aliasId) {
-                    $signature['journalistId']=$this->journalist->id()->id();
-                    $signature['aliasId']=$alias->id()->id();
-                    $signature['name']=$alias->name();
-                    $signature['url']=$this->journalistUrl($alias, $this->journalist);
-
-
-                    $photo = $this->photoUrl($this->journalist);
-                    if ('' !== $photo) {
-                        $signature['photo'] = $photo;
-                    }
-
-                    $departments = [];
-                    foreach ($this->journalist->departments() as $department) {
-                        $departments[] = [
-                            'id' => $department->id()->id(),
-                            'name' => $department->name(),
-                        ];
-                    }
-
-                    $signature['departments'] = $departments;
+            if ($alias->id()->id() == $this->aliasId) {
+                $signature['journalistId'] = $this->journalist->id()->id();
+                $signature['aliasId'] = $alias->id()->id();
+                $signature['name'] = $alias->name();
+                $signature['url'] = $this->journalistUrl($alias, $this->journalist);
 
 
+                $photo = $this->photoUrl($this->journalist);
+                if ('' !== $photo) {
+                    $signature['photo'] = $photo;
                 }
+
+                $departments = [];
+                foreach ($this->journalist->departments() as $department) {
+                    $departments[] = [
+                        'id' => $department->id()->id(),
+                        'name' => $department->name(),
+                    ];
+                }
+
+                $signature['departments'] = $departments;
             }
+        }
 
 
         return $signature;
