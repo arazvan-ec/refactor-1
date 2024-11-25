@@ -31,7 +31,6 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
     private const ASPECT_RATIO_4_3 = '4:3';
 
     /** @var array<string, array<string, array<string, string> > > */
-
     private const SIZES_RELATIONS = [
         self::ASPECT_RATIO_4_3 => [
             // High density
@@ -159,7 +158,7 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
                 self::WIDTH => '360',
                 self::HEIGHT => '480',
             ],
-        ]
+        ],
     ];
 
     private Multimedia $multimedia;
@@ -198,6 +197,7 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
                     $clipping->bottomRightY()
                 );
             }, $sizes);
+
             $allShots[$aspectRatio] = $shots;
         }
 
