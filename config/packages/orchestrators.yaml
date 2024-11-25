@@ -3,7 +3,8 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
+        bind:
+            $extension: '%env(URL_ENV)%'
     App\Orchestrator\Chain\:
         resource: '../../src/Orchestrator/Chain/'
         tags: ['app.orchestrators']

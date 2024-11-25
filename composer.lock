@@ -2480,16 +2480,16 @@
         },
         {
             "name": "ec/multimedia-client",
-            "version": "v2.48.0",
+            "version": "v2.49.0",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:ecawesomemakers/multimedia-client.git",
-                "reference": "f23df116b2a43061dbc5e7dadb62ee1cceadbd82"
+                "reference": "967983956979bf9576ae3fa7e121e2bb60ef24cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/multimedia-client/get/f23df116b2a43061dbc5e7dadb62ee1cceadbd82.zip",
-                "reference": "f23df116b2a43061dbc5e7dadb62ee1cceadbd82",
+                "url": "https://bitbucket.org/ecawesomemakers/multimedia-client/get/967983956979bf9576ae3fa7e121e2bb60ef24cf.zip",
+                "reference": "967983956979bf9576ae3fa7e121e2bb60ef24cf",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2562,9 +2562,9 @@
             "description": "Multimedia",
             "homepage": "https://bitbucket.org/ecawesomemakers/multimedia-client",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/multimedia-client/src/f23df116b2a43061dbc5e7dadb62ee1cceadbd82/?at=v2.48.0"
+                "source": "https://bitbucket.org/ecawesomemakers/multimedia-client/src/967983956979bf9576ae3fa7e121e2bb60ef24cf/?at=v2.49.0"
             },
-            "time": "2024-11-05T11:21:20+00:00"
+            "time": "2024-11-20T16:37:09+00:00"
         },
         {
             "name": "ec/multimedia-domain",

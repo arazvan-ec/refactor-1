@@ -6,6 +6,7 @@
 namespace App\Controller\V1\Schemas;
 
 use App\Controller\V1\Schemas\BodyTags\BodyTagHtml;
+use App\Controller\V1\Schemas\BodyTags\BodyTagInsertedNews;
 use App\Controller\V1\Schemas\BodyTags\BodyTagMembershipCard;
 use App\Controller\V1\Schemas\BodyTags\BodyTagPicture;
 use App\Controller\V1\Schemas\BodyTags\BodyTagPictureMembership;
@@ -50,6 +51,9 @@ use OpenApi\Attributes as OA;
                     ),
                     new OA\Schema(
                         ref: new Model(type: BodyTagMembershipCard::class)
+                    ),
+                    new OA\Schema(
+                        ref: new Model(type: BodyTagInsertedNews::class)
                     ),
                 ]
             )

@@ -6,11 +6,13 @@
 namespace App\Tests\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
+use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
+use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
-use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Exception\EditorialNotPublishedYetException;
 use App\Orchestrator\Chain\EditorialOrchestrator;
-use Ec\Editorial\Domain\Model\Body\BodyNormal;
+use Ec\Editorial\Domain\Model\Body\Body;
+use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
@@ -21,28 +23,28 @@ use Ec\Editorial\Domain\Model\Signature;
 use Ec\Editorial\Domain\Model\SignatureId;
 use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Editorial\Domain\Model\SourceEditorial;
-use Ec\Editorial\Domain\Model\SourceEditorialId;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Editorial\Domain\Model\Tag;
 use Ec\Editorial\Domain\Model\Tags;
 use Ec\Journalist\Domain\Model\AliasId;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
-use Ec\Journalist\Domain\Model\JournalistId;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
+use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
+use Ec\Section\Domain\Model\SectionId;
 use Ec\Tag\Domain\Model\QueryTagClient;
 use Ec\Tag\Domain\Model\Tag as TagAlias;
-use Http\Promise\Promise;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Http\Promise\Promise;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
@@ -57,9 +59,6 @@ class EditorialOrchestratorTest extends TestCase
     /** @var QueryLegacyClient|MockObject */
     private QueryLegacyClient $queryLegacyClient;
 
-    /** @var QueryJournalistClient|MockObject */
-    private QueryJournalistClient $queryJournalistClient;
-
     private EditorialOrchestrator $editorialOrchestrator;
 
     /** @var QuerySectionClient|MockObject */
@@ -68,14 +67,20 @@ class EditorialOrchestratorTest extends TestCase
     /** @var QueryMultimediaClient|MockObject */
     private QueryMultimediaClient $queryMultimediaClient;
 
-    /** @var JournalistFactory|MockObject */
-    private JournalistFactory $journalistFactory;
+    /** @var QueryJournalistClient|MockObject */
+    private QueryJournalistClient $queryJournalistClient;
+
+    /** @var JournalistsDataTransformer|MockObject */
+    private JournalistsDataTransformer $journalistsDataTransformer;
 
     /** @var AppsDataTransformer|MockObject */
     private AppsDataTransformer $appsDataTransformer;
 
     /** @var BodyDataTransformer|MockObject */
     private BodyDataTransformer $bodyDataTransformer;
+
+    /** @var MultimediaDataTransformer|MockObject */
+    private MultimediaDataTransformer $multimediaDataTransformer;
 
     /** @var QueryTagClient|MockObject */
     private QueryTagClient $queryTagClient;
@@ -93,30 +98,35 @@ class EditorialOrchestratorTest extends TestCase
     {
         $this->queryEditorialClient = $this->createMock(QueryEditorialClient::class);
         $this->queryLegacyClient = $this->createMock(QueryLegacyClient::class);
-        $this->queryJournalistClient = $this->createMock(QueryJournalistClient::class);
         $this->querySectionClient = $this->createMock(QuerySectionClient::class);
         $this->queryMultimediaClient = $this->createMock(QueryMultimediaClient::class);
-        $this->journalistFactory = $this->createMock(JournalistFactory::class);
+        $this->journalistsDataTransformer = $this->createMock(JournalistsDataTransformer::class);
         $this->appsDataTransformer = $this->createMock(AppsDataTransformer::class);
         $this->bodyDataTransformer = $this->createMock(BodyDataTransformer::class);
         $this->queryTagClient = $this->createMock(QueryTagClient::class);
         $this->uriFactory = $this->createMock(UriFactoryInterface::class);
         $this->queryMembershipClient = $this->createMock(QueryMembershipClient::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->queryJournalistClient = $this->createMock(QueryJournalistClient::class);
+        $this->journalistFactory = $this->createMock(JournalistFactory::class);
+        $this->multimediaDataTransformer = $this->createMock(MultimediaDataTransformer::class);
 
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
             $this->queryEditorialClient,
-            $this->queryJournalistClient,
             $this->querySectionClient,
             $this->queryMultimediaClient,
-            $this->journalistFactory,
             $this->appsDataTransformer,
             $this->queryTagClient,
             $this->bodyDataTransformer,
             $this->uriFactory,
             $this->queryMembershipClient,
-            $this->logger
+            $this->logger,
+            $this->journalistsDataTransformer,
+            $this->queryJournalistClient,
+            $this->journalistFactory,
+            $this->multimediaDataTransformer,
+            'dev'
         );
     }
 
@@ -137,7 +147,8 @@ class EditorialOrchestratorTest extends TestCase
             $this->bodyDataTransformer,
             $this->uriFactory,
             $this->queryMembershipClient,
-            $this->logger
+            $this->logger,
+            $this->journalistsDataTransformer
         );
     }
 
@@ -172,89 +183,6 @@ class EditorialOrchestratorTest extends TestCase
         $this->expectException(EditorialNotPublishedYetException::class);
 
         $this->editorialOrchestrator->execute($requestMock);
-    }
-
-    /**
-     * @test
-     */
-    public function executeShouldReturnCorrectData(): void
-    {
-        $id = '12345';
-        $editorial = $this->getEditorialMock($id);
-        $section = $this->generateSectionMock($editorial);
-        $journalist = $this->generateJournalistMock($editorial);
-        $tags = [$this->generateTagMock($editorial)];
-
-        $expectedJournalists = [
-            '7298' => $journalist,
-        ];
-
-        $this->appsDataTransformer
-            ->expects(self::any())
-            ->method('write')
-            ->with($editorial, $expectedJournalists, $section, $tags)
-            ->willReturnSelf();
-
-        $transformedData = [
-            'id' => '4416',
-            'signatures' => [
-                [
-                    'journalistId' => '2338',
-                    'aliasId' => '7298',
-                    'name' => 'Javier Bocanegra 1',
-                    'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
-                    'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
-                    'departments' => [
-                        [
-                            'id' => '11',
-                            'name' => 'Fin de semana',
-                        ],
-                    ],
-                ],
-            ],
-            'section' => [
-                'id' => '90',
-                'name' => 'Mercados',
-                'url' => 'https://www.elconfidencial.dev/mercados',
-            ],
-            'countComments' => 0,
-            'tags' => [
-                [
-                    'id' => '15919',
-                    'name' => 'Bolsas',
-                    'url' => 'https://www.elconfidencial.dev/tags/temas/bolsas-15919',
-                ],
-            ],
-            'body' => [],
-        ];
-
-        $this->appsDataTransformer
-            ->expects($this->once())
-            ->method('read')
-            ->willReturn($transformedData);
-
-        $this->queryEditorialClient
-            ->expects($this->once())
-            ->method('findEditorialById')
-            ->with($id)
-            ->willReturn($editorial);
-
-        $this->queryLegacyClient
-            ->expects($this->once())
-            ->method('findCommentsByEditorialId')
-            ->with($id)
-            ->willReturn(['options' => ['totalrecords' => 0]]);
-
-        $requestMock = $this->createMock(Request::class);
-        $requestMock
-            ->expects($this->once())
-            ->method('get')
-            ->with('id')
-            ->willReturn($id);
-
-        $result = $this->editorialOrchestrator->execute($requestMock);
-
-        $this->assertSame($transformedData, $result);
     }
 
     /**
@@ -298,93 +226,407 @@ class EditorialOrchestratorTest extends TestCase
 
     /**
      * @test
-     */
-    public function executeShouldContinueWhenTagClientThrowsException(): void
-    {
-        $id = '12345';
-        $editorial = $this->getEditorialMock($id);
-        $section = $this->generateSectionMock($editorial);
-        $journalist = $this->generateJournalistMock($editorial);
-        $editorialTag = $this->createMock(Tag::class);
+     *
+     * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorDataProvider::getBodyExpected()
+     **/
+    public function executeShouldContinueWhenTagClientThrowsException(
+        array $editorial,
+        array $allJournalistExpected,
+        array $membershipLinkCombine,
+    ): void {
+        $journalistsEditorial = $editorial['signatures'];
+
+        $requestMock = $this->getRequestMock($editorial['id']);
+
+        $editorialMock = $this->getEditorialMock($editorial);
+        $promisesEditorials[] = $editorialMock;
+        $withEditorials[] = $editorial['id'];
+
+        $sectionMock = $this->getSectionMockByEditorial($editorial);
+        $promisesSections[] = $sectionMock;
+        $withSections[] = $editorial['sectionId'];
+
+        $this->getSignaturesMockByEditorial($editorial, $editorialMock);
+
+        $withJournalistId = $editorial['signatures'];
+
+        $withBodyTags = [];
+
+        $withBodyTags[] = BodyTagMembershipCard::class;
+
+        $callArgumentsCreateUri = [];
+        [
+            $membershipCardsPromise,
+            $expectedArgumentsCreateUri,
+        ] = $this->getBodyTagsMembershipCardsByEditorial($editorial, $membershipLinkCombine, $callArgumentsCreateUri);
+
+        [
+            $insertedNewsPromise,
+            $expectedInsertedNews,
+            $promisesEditorialsInserted,
+            $withEditorialsInserted,
+            $promisesSectionsInserted,
+            $withSectionsInserted,
+            $withJournalistIdInserted,
+        ] = $this->getBodyTagsInsertedNewsByEditorial($editorial);
+
+        $promisesEditorials = array_merge($promisesEditorials, $promisesEditorialsInserted);
+        $withEditorials = array_merge($withEditorials, $withEditorialsInserted);
+        $withBodyTags[] = BodyTagInsertedNews::class;
+        $promisesSections = array_merge($promisesSections, $promisesSectionsInserted);
+        $withSections = array_merge($withSections, $withSectionsInserted);
+        $withJournalistId = array_merge($withJournalistId, $withJournalistIdInserted);
+
+        $withBodyTags[] = BodyTagPicture::class;
+        $promiseBodyTagPictures = [];
+        $withBodyTags[] = BodyTagMembershipCard::class;
+
+        $arrayMocks = [
+            [BodyTagMembershipCard::class => $membershipCardsPromise],
+            [BodyTagInsertedNews::class => $insertedNewsPromise],
+            [BodyTagPicture::class => $promiseBodyTagPictures],
+            [BodyTagMembershipCard::class => $membershipCardsPromise],
+        ];
+        $expectedArgumentsBodyTags = $withBodyTags;
+        $callArgumentsBodyElements = [];
+        $bodyMock = $this->createMock(Body::class);
+        $bodyMock->expects(static::exactly(count($expectedArgumentsBodyTags)))
+            ->method('bodyElementsOf')
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsBodyElements, $arrayMocks) {
+                $callArgumentsBodyElements[] = $strClass;
+
+                return $arrayMocks[count($callArgumentsBodyElements) - 1][$strClass];
+            });
+
+        $editorialMock->expects(self::exactly(4))
+            ->method('body')
+            ->willReturn($bodyMock);
+
+        [$promisesJournalist, $withAlias] = $this->getJournalistPromisesMock($withJournalistId);
 
         $tags = new Tags();
-        $tags->addItem($editorialTag);
-
-        $editorial
+        $editorialMock
             ->expects(self::once())
             ->method('tags')
             ->willReturn($tags);
 
-        $this->queryTagClient
-            ->expects($this->once())
-            ->method('findTagById')
-            ->with($editorialTag->id()->id())
-            ->willThrowException(new \Exception('Tag not found'));
-
-        $expectedJournalists = [
-            '7298' => $journalist,
-        ];
-
-        $this->appsDataTransformer
-            ->expects(self::any())
+        $this->journalistsDataTransformer->expects(static::once())
             ->method('write')
-            ->with($editorial, $expectedJournalists, $section, [])
+            ->with($promisesJournalist, $sectionMock)
             ->willReturnSelf();
+        $this->journalistsDataTransformer->expects(static::once())
+            ->method('read')
+            ->willReturn($allJournalistExpected);
 
-        $transformedData = [
-            'id' => '4416',
-            'signatures' => [
-                [
-                    'journalistId' => '2338',
-                    'aliasId' => '7298',
-                    'name' => 'Javier Bocanegra 1',
-                    'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
-                    'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
-                    'departments' => [
-                        [
-                            'id' => '11',
-                            'name' => 'Fin de semana',
-                        ],
-                    ],
-                ],
-            ],
+        $journalistEditorialExpected = [];
+        foreach ($journalistsEditorial as $journalistEditorialId) {
+            $journalistEditorialExpected[] = $allJournalistExpected[$journalistEditorialId];
+        }
+        $tags = [];
+        $expectedResult = [
+            'id' => $editorial['id'],
             'section' => [
-                'id' => '90',
+                'id' => $editorial['sectionId'],
                 'name' => 'Mercados',
                 'url' => 'https://www.elconfidencial.dev/mercados',
             ],
             'countComments' => 0,
-            'tags' => [],
+            'signatures' => $journalistEditorialExpected,
+            'tags' => $tags,
         ];
 
         $this->appsDataTransformer
-            ->expects($this->once())
-            ->method('read')
-            ->willReturn($transformedData);
+            ->expects(static::once())
+            ->method('write')
+            ->with($editorialMock, $sectionMock, $tags)
+            ->willReturnSelf();
 
-        $this->queryEditorialClient
-            ->expects($this->once())
+        $this->appsDataTransformer
+            ->expects(static::once())
+            ->method('read')
+            ->willReturn($expectedResult);
+
+        $arrayMocks = array_combine($withSections, $promisesSections);
+        $expectedArgumentsSections = $withSections;
+        $callArgumentsSections = [];
+        $this->querySectionClient->expects(static::exactly(count($expectedArgumentsSections)))
+            ->method('findSectionById')
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsSections, $arrayMocks) {
+                $callArgumentsSections[] = $strClass;
+
+                return $arrayMocks[$strClass];
+            });
+
+        $arrayMocks = array_combine($withEditorials, $promisesEditorials);
+        $expectedArgumentsEditorials = $withEditorials;
+        $callArgumentsEditorials = [];
+        $this->queryEditorialClient->expects(static::exactly(count($expectedArgumentsEditorials)))
             ->method('findEditorialById')
-            ->with($id)
-            ->willReturn($editorial);
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsEditorials, $arrayMocks) {
+                $callArgumentsEditorials[] = $strClass;
+
+                return $arrayMocks[$strClass];
+            });
+
+        $arrayMocks = array_combine($withJournalistId, $withAlias);
+        $expectedArgumentsAlias = $withJournalistId;
+        $callArgumentsAlias = [];
+        $this->journalistFactory->expects(static::exactly(count($expectedArgumentsAlias)))
+            ->method('buildAliasId')
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsAlias, $arrayMocks) {
+                $callArgumentsAlias[] = $strClass;
+
+                return $arrayMocks[$strClass];
+            });
+
+        $this->queryJournalistClient
+            ->expects(static::exactly(count($withAlias)))
+            ->method('findJournalistByAliasId')
+            ->withConsecutive(
+                [$withAlias[0]],
+                [$withAlias[1]],
+                [$withAlias[2]],
+                [$withAlias[3]],
+                [$withAlias[4]]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $promisesJournalist[$withJournalistId[0]],
+                $promisesJournalist[$withJournalistId[1]],
+                $promisesJournalist[$withJournalistId[2]],
+                $promisesJournalist[$withJournalistId[3]],
+                $promisesJournalist[$withJournalistId[4]],
+            );
 
         $this->queryLegacyClient
             ->expects($this->once())
             ->method('findCommentsByEditorialId')
-            ->with($id)
+            ->with($editorial['id'])
             ->willReturn(['options' => ['totalrecords' => 0]]);
 
-        $requestMock = $this->createMock(Request::class);
-        $requestMock
-            ->expects($this->once())
-            ->method('get')
-            ->with('id')
-            ->willReturn($id);
+        $resolveData['photoFromBodyTags'] = ['' => null];
+        $resolveData['membershipLinkCombine'] = $membershipLinkCombine;
+        $resolveData['signatures'] = $allJournalistExpected;
+        $resolveData['insertedNews'] = $expectedInsertedNews;
+
+        $this->bodyDataTransformer->expects(static::once())
+            ->method('execute')
+            ->with($bodyMock, $resolveData)
+            ->willReturn($editorial['bodyExpected']);
+
+        $expectedResult['body'] = $editorial['bodyExpected'];
 
         $result = $this->editorialOrchestrator->execute($requestMock);
 
-        $this->assertArrayHasKey('countComments', $result);
-        $this->assertSame(0, $result['countComments']);
+        $this->assertSame($expectedArgumentsBodyTags, $callArgumentsBodyElements);
+        self::assertSame($expectedArgumentsCreateUri, $callArgumentsCreateUri);
+        $this->assertSame($expectedArgumentsSections, $callArgumentsSections);
+        $this->assertSame($expectedArgumentsEditorials, $callArgumentsEditorials);
+        $this->assertSame($expectedArgumentsAlias, $callArgumentsAlias);
+        $this->assertSame($expectedResult, $result);
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorDataProvider::getBodyExpected()
+     **/
+    public function executeShouldReturnCorrectData(
+        array $editorial,
+        array $allJournalistExpected,
+        array $membershipLinkCombine,
+    ): void {
+
+        $journalistsEditorial = $editorial['signatures'];
+
+        $requestMock = $this->getRequestMock($editorial['id']);
+
+        $editorialMock = $this->getEditorialMock($editorial);
+        $promisesEditorials[] = $editorialMock;
+        $withEditorials[] = $editorial['id'];
+
+        $sectionMock = $this->getSectionMockByEditorial($editorial);
+        $promisesSections[] = $sectionMock;
+        $withSections[] = $editorial['sectionId'];
+
+        $this->getSignaturesMockByEditorial($editorial, $editorialMock);
+
+        $withJournalistId = $editorial['signatures'];
+
+        $withBodyTags = [];
+
+        $withBodyTags[] = BodyTagMembershipCard::class;
+
+        $callArgumentsCreateUri = [];
+        [
+            $membershipCardsPromise,
+            $expectedArgumentsCreateUri,
+        ] = $this->getBodyTagsMembershipCardsByEditorial($editorial, $membershipLinkCombine, $callArgumentsCreateUri);
+
+        [
+            $insertedNewsPromise,
+            $expectedInsertedNews,
+            $promisesEditorialsInserted,
+            $withEditorialsInserted,
+            $promisesSectionsInserted,
+            $withSectionsInserted,
+            $withJournalistIdInserted,
+        ] = $this->getBodyTagsInsertedNewsByEditorial($editorial);
+
+        $promisesEditorials = array_merge($promisesEditorials, $promisesEditorialsInserted);
+        $withEditorials = array_merge($withEditorials, $withEditorialsInserted);
+        $withBodyTags[] = BodyTagInsertedNews::class;
+        $promisesSections = array_merge($promisesSections, $promisesSectionsInserted);
+        $withSections = array_merge($withSections, $withSectionsInserted);
+        $withJournalistId = array_merge($withJournalistId, $withJournalistIdInserted);
+
+        $withBodyTags[] = BodyTagPicture::class;
+        $promiseBodyTagPictures = [];
+        $withBodyTags[] = BodyTagMembershipCard::class;
+
+        $arrayMocks = [
+            [BodyTagMembershipCard::class => $membershipCardsPromise],
+            [BodyTagInsertedNews::class => $insertedNewsPromise],
+            [BodyTagPicture::class => $promiseBodyTagPictures],
+            [BodyTagMembershipCard::class => $membershipCardsPromise],
+        ];
+        $expectedArgumentsBodyTags = $withBodyTags;
+        $callArgumentsBodyElements = [];
+        $bodyMock = $this->createMock(Body::class);
+        $bodyMock->expects(static::exactly(count($expectedArgumentsBodyTags)))
+            ->method('bodyElementsOf')
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsBodyElements, $arrayMocks) {
+                $callArgumentsBodyElements[] = $strClass;
+
+                return $arrayMocks[count($callArgumentsBodyElements) - 1][$strClass];
+            });
+
+        $editorialMock->expects(self::exactly(4))
+            ->method('body')
+            ->willReturn($bodyMock);
+
+        [$promisesJournalist, $withAlias] = $this->getJournalistPromisesMock($withJournalistId);
+
+        $tags = [$this->generateTagMock($editorialMock)];
+
+        $this->journalistsDataTransformer->expects(static::once())
+            ->method('write')
+            ->with($promisesJournalist, $sectionMock)
+            ->willReturnSelf();
+        $this->journalistsDataTransformer->expects(static::once())
+            ->method('read')
+            ->willReturn($allJournalistExpected);
+
+        $journalistEditorialExpected = [];
+        foreach ($journalistsEditorial as $journalistEditorialId) {
+            $journalistEditorialExpected[] = $allJournalistExpected[$journalistEditorialId];
+        }
+
+        $expectedResult = [
+            'id' => $editorial['id'],
+            'section' => [
+                'id' => $editorial['sectionId'],
+                'name' => 'Mercados',
+                'url' => 'https://www.elconfidencial.dev/mercados',
+            ],
+            'countComments' => 0,
+            'tags' => [
+                [
+                    'id' => '15919',
+                    'name' => 'Bolsas',
+                    'url' => 'https://www.elconfidencial.dev/tags/temas/bolsas-15919',
+                ],
+            ],
+            'signatures' => $journalistEditorialExpected,
+        ];
+
+        $this->appsDataTransformer
+            ->expects(static::once())
+            ->method('write')
+            ->with($editorialMock, $sectionMock, $tags)
+            ->willReturnSelf();
+
+        $this->appsDataTransformer
+            ->expects(static::once())
+            ->method('read')
+            ->willReturn($expectedResult);
+
+        $arrayMocks = array_combine($withSections, $promisesSections);
+        $expectedArgumentsSections = $withSections;
+        $callArgumentsSections = [];
+        $this->querySectionClient->expects(static::exactly(count($expectedArgumentsSections)))
+            ->method('findSectionById')
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsSections, $arrayMocks) {
+                $callArgumentsSections[] = $strClass;
+
+                return $arrayMocks[$strClass];
+            });
+
+        $arrayMocks = array_combine($withEditorials, $promisesEditorials);
+        $expectedArgumentsEditorials = $withEditorials;
+        $callArgumentsEditorials = [];
+        $this->queryEditorialClient->expects(static::exactly(count($expectedArgumentsEditorials)))
+            ->method('findEditorialById')
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsEditorials, $arrayMocks) {
+                $callArgumentsEditorials[] = $strClass;
+
+                return $arrayMocks[$strClass];
+            });
+
+        $arrayMocks = array_combine($withJournalistId, $withAlias);
+        $expectedArgumentsAlias = $withJournalistId;
+        $callArgumentsAlias = [];
+        $this->journalistFactory->expects(static::exactly(count($expectedArgumentsAlias)))
+            ->method('buildAliasId')
+            ->willReturnCallback(function ($strClass) use (&$callArgumentsAlias, $arrayMocks) {
+                $callArgumentsAlias[] = $strClass;
+
+                return $arrayMocks[$strClass];
+            });
+
+        $this->queryJournalistClient
+            ->expects(static::exactly(count($withAlias)))
+            ->method('findJournalistByAliasId')
+            ->withConsecutive(
+                [$withAlias[0]],
+                [$withAlias[1]],
+                [$withAlias[2]],
+                [$withAlias[3]],
+                [$withAlias[4]]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $promisesJournalist[$withJournalistId[0]],
+                $promisesJournalist[$withJournalistId[1]],
+                $promisesJournalist[$withJournalistId[2]],
+                $promisesJournalist[$withJournalistId[3]],
+                $promisesJournalist[$withJournalistId[4]],
+            );
+
+        $this->queryLegacyClient
+            ->expects($this->once())
+            ->method('findCommentsByEditorialId')
+            ->with($editorial['id'])
+            ->willReturn(['options' => ['totalrecords' => 0]]);
+
+        $resolveData['photoFromBodyTags'] = ['' => null];
+        $resolveData['membershipLinkCombine'] = $membershipLinkCombine;
+        $resolveData['signatures'] = $allJournalistExpected;
+        $resolveData['insertedNews'] = $expectedInsertedNews;
+
+        $this->bodyDataTransformer->expects(static::once())
+            ->method('execute')
+            ->with($bodyMock, $resolveData)
+            ->willReturn($editorial['bodyExpected']);
+
+        $expectedResult['body'] = $editorial['bodyExpected'];
+
+        $result = $this->editorialOrchestrator->execute($requestMock);
+
+        $this->assertSame($expectedArgumentsBodyTags, $callArgumentsBodyElements);
+        self::assertSame($expectedArgumentsCreateUri, $callArgumentsCreateUri);
+        $this->assertSame($expectedArgumentsSections, $callArgumentsSections);
+        $this->assertSame($expectedArgumentsEditorials, $callArgumentsEditorials);
+        $this->assertSame($expectedArgumentsAlias, $callArgumentsAlias);
+        $this->assertSame($expectedResult, $result);
     }
 
     /**
@@ -393,255 +635,6 @@ class EditorialOrchestratorTest extends TestCase
     public function canOrchestrateShouldReturnExpectedValue(): void
     {
         static::assertSame('editorial', $this->editorialOrchestrator->canOrchestrate());
-    }
-
-    /**
-     * @test
-     *
-     * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorProvider::getBodyExpected()
-     *
-     * @param array<mixed> $bodyExpected
-     */
-    public function executeShouldReturnCorrectDataWithBodyWithBody(array $bodyExpected): void
-    {
-        $id = '12345';
-        $editorial = $this->getEditorialMock($id);
-        $section = $this->generateSectionMock($editorial);
-        $journalist = $this->generateJournalistMock($editorial);
-        $tags = [$this->generateTagMock($editorial)];
-
-        $expectedJournalists = [
-            '7298' => $journalist,
-        ];
-
-        $this->appsDataTransformer
-            ->expects(self::any())
-            ->method('write')
-            ->with($editorial, $expectedJournalists, $section, $tags)
-            ->willReturnSelf();
-        $transformedData = $this->getGenericTransformerData();
-
-        $this->appsDataTransformer
-            ->expects($this->once())
-            ->method('read')
-            ->willReturn($transformedData);
-
-        $this->queryEditorialClient
-            ->expects($this->once())
-            ->method('findEditorialById')
-            ->with($id)
-            ->willReturn($editorial);
-
-        $this->queryLegacyClient
-            ->expects($this->once())
-            ->method('findCommentsByEditorialId')
-            ->with($id)
-            ->willReturn(['options' => ['totalrecords' => 0]]);
-
-        $requestMock = $this->createMock(Request::class);
-        $requestMock
-            ->expects($this->once())
-            ->method('get')
-            ->with('id')
-            ->willReturn($id);
-
-        $body = $this->generateBody($editorial);
-
-        $resolveData['photoFromBodyTags'] = ['' => null];
-
-        $section->expects(static::once())
-            ->method('siteId')
-            ->willReturn('siteId');
-
-        $url1 = 'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios1/dp/B0BJQPQVHP';
-        $url2 = 'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios2/dp/B0BJQPQVHP';
-
-        $bodyTagMembershipCardMock = $this->createMock(BodyTagMembershipCard::class);
-        $btnsMock = $this->createMock(MembershipCardButtons::class);
-        $btnMock = $this->createMock(MembershipCardButton::class);
-        $btnMock->expects(static::once())
-            ->method('url')
-            ->willReturn($url1);
-        $btnMock->expects(static::once())
-            ->method('urlMembership')
-            ->willReturn($url2);
-        $btnsMock->expects(static::once())
-            ->method('buttons')
-            ->willReturn([$btnMock]);
-        $bodyTagMembershipCardMock->expects(static::once())
-            ->method('buttons')
-            ->willReturn($btnsMock);
-        $uriMock = $this->createMock(UriInterface::class);
-        $callArgumentsCreateUri = [];
-        $this->uriFactory->expects(static::exactly(2))
-            ->method('createUri')
-            ->willReturnCallback(function ($strUrl) use (&$callArgumentsCreateUri, $uriMock) {
-                $callArgumentsCreateUri[] = $strUrl;
-
-                return $uriMock;
-            });
-        $expectedArgumentsCreateUri = [$url1, $url2];
-
-        $bodyTagPictureMock = $this->createMock(BodyTagPicture::class);
-        $arrayMocks = [
-            BodyTagPicture::class => $bodyTagPictureMock,
-            BodyTagMembershipCard::class => $bodyTagMembershipCardMock,
-        ];
-        $callArgumentsBodyElements = [];
-        $body->expects(static::exactly(3))
-            ->method('bodyElementsOf')
-            ->willReturnCallback(function ($strClass) use (&$callArgumentsBodyElements, $arrayMocks) {
-                $callArgumentsBodyElements[] = $strClass;
-
-                return [$arrayMocks[$strClass]];
-            });
-        $expectedArgumentsBodyTags = [BodyTagPicture::class, BodyTagMembershipCard::class, BodyTagMembershipCard::class];
-
-        $promiseMock = $this->createMock(Promise::class);
-        $this->queryMembershipClient->expects(static::once())
-            ->method('getMembershipUrl')
-            ->with(
-                $id,
-                [$uriMock, $uriMock],
-                'el-confidencial',
-                true
-            )->willReturn($promiseMock);
-
-        $resolveData['membershipLinkCombine'] = [
-            'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios1/dp/B0BJQPQVHP' => 'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios1/dp/B0BJQPQVHP?tag=cacatuaMan',
-            'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios2/dp/B0BJQPQVHP' => 'https://www.amazon.es/Cecotec-Multifunci%C3%B3n-Funciones-Antiadherente-Accesorios2/dp/B0BJQPQVHP?tag=cacatuaMan',
-        ];
-
-        $promiseMock->expects(static::once())
-            ->method('wait')
-            ->willReturn($resolveData['membershipLinkCombine']);
-
-        $this->bodyDataTransformer->expects(static::once())
-            ->method('execute')
-            ->with($body, $resolveData)
-            ->willReturn($bodyExpected);
-
-
-        $transformedData['body'] = $bodyExpected;
-        $result = $this->editorialOrchestrator->execute($requestMock);
-
-        self::assertSame($expectedArgumentsCreateUri, $callArgumentsCreateUri);
-        self::assertSame($expectedArgumentsBodyTags, $callArgumentsBodyElements);
-
-        $this->assertSame($transformedData, $result);
-    }
-
-    private function getEditorialMock(string $id): MockObject
-    {
-        $editorial = $this->createMock(Editorial::class);
-        $sourceEditorial = $this->createMock(SourceEditorial::class);
-        $sourceEditorialId = $this->createMock(SourceEditorialId::class);
-        $editorialId = $this->createMock(EditorialId::class);
-
-        $editorialId
-            ->method('id')
-            ->willReturn($id);
-
-        $sourceEditorialId
-            ->method('id')
-            ->willReturn($id);
-
-        $sourceEditorial
-            ->method('id')
-            ->willReturn($sourceEditorialId);
-
-        $editorial
-            ->method('sourceEditorial')
-            ->willReturn($sourceEditorial);
-        $editorial
-            ->method('isVisible')
-            ->willReturn(true);
-        $editorial
-            ->method('id')
-            ->willReturn($editorialId);
-
-        return $editorial;
-    }
-
-    /**
-     * @return Section|MockObject
-     */
-    private function generateSectionMock(MockObject $editorialMock): Section
-    {
-        $sectionId = 'sectionId';
-        $section = $this->createMock(Section::class);
-
-        $editorialMock->expects(static::once())
-            ->method('sectionId')
-            ->willReturn($sectionId);
-
-        $this->querySectionClient
-            ->expects($this->once())
-            ->method('findSectionById')
-            ->with($sectionId)
-            ->willReturn($section);
-
-        return $section;
-    }
-
-    private function generateJournalistMock(MockObject $editorialMock): Journalist|MockObject
-    {
-        $signature = $this->createMock(Signature::class);
-        $signatureId = $this->createMock(SignatureId::class);
-        $aliasId = $this->createMock(AliasId::class);
-        $journalist = $this->createMock(Journalist::class);
-        $journalistId = $this->createMock(JournalistId::class);
-
-        $signatureId
-            ->method('id')
-            ->willReturn('signature-id');
-
-        $signature
-            ->method('id')
-            ->willReturn($signatureId);
-
-        $signatures = new Signatures();
-        $signatures->addItem($signature);
-
-        $editorialMock
-            ->expects(self::once())
-            ->method('signatures')
-            ->willReturn($signatures);
-
-        $journalistId
-            ->method('id')
-            ->willReturn('alias-id');
-
-        $journalist
-            ->method('id')
-            ->willReturn($journalistId);
-
-        $aliasId
-            ->method('id')
-            ->willReturn('7298');
-
-        $this->journalistFactory
-            ->expects($this->once())
-            ->method('buildAliasId')
-            ->with('signature-id')
-            ->willReturn($aliasId);
-
-        $journalist
-            ->expects($this->once())
-            ->method('isActive')
-            ->willReturn(true);
-        $journalist
-            ->expects($this->once())
-            ->method('isVisible')
-            ->willReturn(true);
-
-        $this->queryJournalistClient
-            ->expects($this->once())
-            ->method('findJournalistByAliasId')
-            ->with($aliasId)
-            ->willReturn($journalist);
-
-        return $journalist;
     }
 
     private function generateTagMock(MockObject $editorialMock): MockObject|TagAlias
@@ -666,55 +659,242 @@ class EditorialOrchestratorTest extends TestCase
         return $tag;
     }
 
-    /**
-     * @return BodyNormal|MockObject
-     */
-    private function generateBody(MockObject $editorialMock): BodyNormal
+    private function getRequestMock(string $editorialId): MockObject|Request
     {
-        $body = $this->createMock(BodyNormal::class);
-        $editorialMock->expects(static::exactly(3))
-            ->method('body')
-            ->willReturn($body);
+        $requestMock = $this->createMock(Request::class);
+        $requestMock
+            ->expects($this->once())
+            ->method('get')
+            ->with('id')
+            ->willReturn($editorialId);
 
-        return $body;
+        return $requestMock;
     }
 
-    /**
-     * @return array<mixed>
-     */
-    private function getGenericTransformerData(): array
+    private function getEditorialMock(array $editorial): MockObject
     {
+        $editorialMock = $this->createMock(Editorial::class);
+        $editorialIdMock = $this->createMock(EditorialId::class);
+        $editorialIdMock->expects(static::exactly(1))
+            ->method('id')
+            ->willReturn($editorial['id']);
+        $sourceEditorialMock = $this->createMock(SourceEditorial::class);
+        $editorialMock->expects(static::exactly(1))
+            ->method('id')
+            ->willReturn($editorialIdMock);
+        $editorialMock->expects(static::once())
+            ->method('sourceEditorial')
+            ->willReturn($sourceEditorialMock);
+        $editorialMock->expects(static::once())
+            ->method('isVisible')
+            ->willReturn(true);
+        $editorialMock->expects(static::once())
+            ->method('sectionId')
+            ->willReturn($editorial['sectionId']);
+
+        return $editorialMock;
+    }
+
+    private function getSectionMockByEditorial(array $editorial): MockObject
+    {
+        $sectionMock = $this->createMock(Section::class);
+        $sectionIdMock = $this->createMock(SectionId::class);
+        $sectionIdMock
+            ->method('id')
+            ->willReturn($editorial['sectionId']);
+        $sectionMock
+            ->method('id')
+            ->willReturn($sectionIdMock);
+
+        $sectionMock->expects(static::once())
+            ->method('siteId')
+            ->willReturn('siteId');
+
+        return $sectionMock;
+    }
+
+    private function getSignaturesMockByEditorial(array $editorial, MockObject $editorialMock): array
+    {
+        $signaturesEditorialMocksArray = [];
+        foreach ($editorial['signatures'] as $journalist) {
+            $signatureMock = $this->createMock(Signature::class);
+            $signatureIdMock = $this->createMock(SignatureId::class);
+            $signatureIdMock->expects(static::exactly(2))
+                ->method('id')
+                ->willReturn($journalist);
+            $signatureMock->expects(static::exactly(2))
+                ->method('id')
+                ->willReturn($signatureIdMock);
+            $signaturesEditorialMocksArray[] = $signatureMock;
+        }
+
+        $signaturesEditorialsMock = $this->createMock(Signatures::class);
+        $signaturesEditorialsMock->expects(static::exactly(2))
+            ->method('getArrayCopy')
+            ->willReturn($signaturesEditorialMocksArray);
+
+        $editorialMock->expects(static::exactly(2))
+            ->method('signatures')
+            ->willReturn($signaturesEditorialsMock);
+
+        return $signaturesEditorialMocksArray;
+    }
+
+    private function getBodyTagsInsertedNewsByEditorial(array $editorial): array
+    {
+        $expectedInsertedNews = [];
+        $insertedNews = [];
+        $promisesEditorials = [];
+        $withEditorials = [];
+        $promisesSections = [];
+        $withSections = [];
+        $withJournalistId = [];
+        foreach ($editorial['insertedNews'] as $bodyTag) {
+            $bodyElementMock = $this->createMock(BodyTagInsertedNews::class);
+
+            $bodyElementEditorialIdInsertedMock = $this->createMock(EditorialId::class);
+            $bodyElementEditorialIdInsertedMock->expects(static::once())
+                ->method('id')
+                ->willReturn($bodyTag['id']);
+            $bodyElementMock->expects(static::once())
+                ->method('editorialId')
+                ->willReturn($bodyElementEditorialIdInsertedMock);
+
+            $editorialInsertedMock = $this->createMock(Editorial::class);
+            $editorialInsertedMock->expects(static::once())
+                ->method('isVisible')
+                ->willReturn(true);
+            $promisesEditorials[] = $editorialInsertedMock;
+            $withEditorials[] = $bodyTag['id'];
+            $sectionInsertedMock = $this->createMock(Section::class);
+            $editorialInsertedMock->expects(static::once())
+                ->method('sectionId')
+                ->willReturn($bodyTag['sectionId']);
+            $promisesSections[] = $sectionInsertedMock;
+            $withSections[] = $bodyTag['sectionId'];
+
+            $signaturesInsertedEditorialMocksArray = [];
+            foreach ($bodyTag['signatures'] as $signatureInsertedId) {
+                $signatureInsertedMock = $this->createMock(Signature::class);
+                $signatureInsertedIdMock = $this->createMock(SignatureId::class);
+                $signatureInsertedIdMock->expects(static::once())
+                    ->method('id')
+                    ->willReturn($signatureInsertedId);
+                $withJournalistId[] = $signatureInsertedId;
+                $signatureInsertedMock->expects(static::once())
+                    ->method('id')
+                    ->willReturn($signatureInsertedIdMock);
+                $signaturesInsertedEditorialMocksArray[] = $signatureInsertedMock;
+            }
+            $signaturesInsertedEditorialsMock = $this->createMock(Signatures::class);
+            $editorialInsertedMock->expects(static::once())
+                ->method('signatures')
+                ->willReturn($signaturesInsertedEditorialsMock);
+            $signaturesInsertedEditorialsMock->expects(static::once())
+                ->method('getArrayCopy')
+                ->willReturn($signaturesInsertedEditorialMocksArray);
+            $expectedInsertedNews[$bodyTag['id']] = [
+                'editorial' => $editorialInsertedMock,
+                'section' => $sectionInsertedMock,
+                'signatures' => $bodyTag['signatures'],
+                // 'multimediaId' => $bodyTag['multimediaId'],
+                'multimediaId' => '',
+            ];
+            $insertedNews[] = $bodyElementMock;
+        }
+
         return [
-            'id' => '4416',
-            'signatures' => [
-                [
-                    'journalistId' => '2338',
-                    'aliasId' => '7298',
-                    'name' => 'Javier Bocanegra 1',
-                    'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
-                    'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
-                    'departments' => [
-                        [
-                            'id' => '11',
-                            'name' => 'Fin de semana',
-                        ],
-                    ],
-                ],
-            ],
-            'section' => [
-                'id' => '90',
-                'name' => 'Mercados',
-                'url' => 'https://www.elconfidencial.dev/mercados',
-            ],
-            'countComments' => 0,
-            'tags' => [
-                [
-                    'id' => '15919',
-                    'name' => 'Bolsas',
-                    'url' => 'https://www.elconfidencial.dev/tags/temas/bolsas-15919',
-                ],
-            ],
-            'body' => [],
+            $insertedNews,
+            $expectedInsertedNews,
+            $promisesEditorials,
+            $withEditorials,
+            $promisesSections,
+            $withSections,
+            $withJournalistId,
         ];
+    }
+
+    private function getBodyTagsMembershipCardsByEditorial(array $editorial, array $membershipLinkCombine, &$callArgumentsCreateUri): array
+    {
+        $membershipCardsPromise = [];
+
+        $expectedArgumentsCreateUri = [];
+        foreach ($editorial['membershipCards'] as $bodytagsMembershipCard) {
+            $bodyTagMembershipCardMock = $this->createMock(BodyTagMembershipCard::class);
+            $btnsMock = $this->createMock(MembershipCardButtons::class);
+            $btnsArray = [];
+            foreach ($bodytagsMembershipCard['btns'] as $btn) {
+                $url1 = $btn['url'];
+                $url2 = $btn['urlMembership'];
+                $btnMock = $this->createMock(MembershipCardButton::class);
+                $btnMock->expects(static::once())
+                    ->method('url')
+                    ->willReturn($url1);
+                $btnMock->expects(static::once())
+                    ->method('urlMembership')
+                    ->willReturn($url2);
+                $btnsArray[] = $btnMock;
+                $expectedArgumentsCreateUri[] = $url2;
+                $expectedArgumentsCreateUri[] = $url1;
+            }
+            $btnsMock->expects(static::once())
+                ->method('buttons')
+                ->willReturn($btnsArray);
+            $bodyTagMembershipCardMock->expects(static::once())
+                ->method('buttons')
+                ->willReturn($btnsMock);
+            $membershipCardsPromise[] = $bodyTagMembershipCardMock;
+
+            $uriMock = $this->createMock(UriInterface::class);
+            $callArgumentsCreateUri = [];
+            $this->uriFactory->expects(static::exactly(2))
+                ->method('createUri')
+                ->willReturnCallback(function ($strUrl) use (&$callArgumentsCreateUri, $uriMock) {
+                    $callArgumentsCreateUri[] = $strUrl;
+
+                    return $uriMock;
+                });
+        }
+        $promiseMock = $this->createMock(Promise::class);
+        $this->queryMembershipClient->expects(static::once())
+            ->method('getMembershipUrl')
+            ->with(
+                $editorial['id'],
+                [$uriMock, $uriMock],
+                'el-confidencial',
+                true
+            )->willReturn($promiseMock);
+
+
+        $promiseMock->expects(static::once())
+            ->method('wait')
+            ->willReturn($membershipLinkCombine);
+
+        return [$membershipCardsPromise, $expectedArgumentsCreateUri];
+    }
+
+    private function getJournalistPromisesMock(array $aliasIds)
+    {
+
+        $withAlias = [];
+        $promisesJournalist = [];
+        foreach ($aliasIds as $aliasId) {
+            $journalistMockArray = $this->createMock(Journalist::class);
+            $aliasIdMock = $this->createMock(AliasId::class);
+            $aliasIdMock->expects(static::once())
+                ->method('id')
+                ->willReturn($aliasId);
+            $withAlias[] = $aliasIdMock;
+            $journalistMockArray->expects(static::once())
+                ->method('isVisible')
+                ->willReturn(true);
+            $journalistMockArray->expects(static::once())
+                ->method('isActive')
+                ->willReturn(true);
+
+            $promisesJournalist[$aliasId] = $journalistMockArray;
+        }
+
+        return [$promisesJournalist, $withAlias];
     }
 }
