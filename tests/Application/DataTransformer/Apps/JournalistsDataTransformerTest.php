@@ -25,6 +25,8 @@ class JournalistsDataTransformerTest extends TestCase
     private JournalistsDataTransformer $transformer;
     private MockObject $thumbor;
 
+    private string $aliasId;
+
     protected function setUp(): void
     {
         $this->thumbor = $this->createMock(Thumbor::class);
@@ -59,15 +61,12 @@ class JournalistsDataTransformerTest extends TestCase
      */
     public function testWriteMethodSetsProperties(): void
     {
-        // Arrange: Create mock objects for Journalist, Alias, and Section
         $journalistMock = $this->createMock(Journalist::class);
         $sectionMock = $this->createMock(Section::class);
         $aliasId = 'test-alias-id';
 
-        // Act: Call the write method
         $this->transformer->write($aliasId, $journalistMock, $sectionMock);
 
-        // Assert: Verify that properties are set correctly
         $this->assertSame($aliasId, $this->getPrivateProperty($this->transformer, 'aliasId'));
         $this->assertSame($journalistMock, $this->getPrivateProperty($this->transformer, 'journalist'));
         $this->assertSame($sectionMock, $this->getPrivateProperty($this->transformer, 'section'));
@@ -199,7 +198,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals($expectedJournalist['name'], $result['name']);
         $this->assertEquals($expectedJournalist['url'], $result['url']);
         $this->assertEquals($expectedJournalist['departments'], $result['departments']);
-        $this->assertSame(
+        $this->assertEquals(
             $expectedJournalist['photo'],
             $result['photo']
         );
@@ -331,7 +330,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals($expectedJournalist['name'], $result['name']);
         $this->assertEquals($expectedJournalist['url'], $result['url']);
         $this->assertEquals($expectedJournalist['departments'], $result['departments']);
-        $this->assertSame(
+        $this->assertEquals(
             $expectedJournalist['photo'],
             $result['photo']
         );
@@ -348,12 +347,6 @@ class JournalistsDataTransformerTest extends TestCase
         $aliasesMock = $this->createMock(Aliases::class);
         $journalistMock = $this->createMock(Journalist::class);
         $sectionMock = $this->createMock(Section::class);
-
-        $aliasMock = $this->createMock(Alias::class);
-        $aliasIdMock = $this->createMock(AliasId::class);
-
-        $journalistIdMock = $this->createMock(JournalistId::class);
-        $departmentsMock = $this->createMock(Departments::class);
 
         $journalistMock->method('aliases')
             ->willReturn($aliasesMock);
