@@ -15,8 +15,8 @@ use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
-use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
+use Ec\Multimedia\Domain\Model\Multimedia;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -83,20 +83,12 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         $elementArray['editorial'] =  $this->editorialUrl($editorial, $sectionInserted);
 
         $multimedia = $this->resolveData()['multimedia'][$this->resolveData()['insertedNews'][$editorialId]['multimediaId']];
-        $elementArray['photo'] = $this->getMultimedia($multimedia);
+        $shots = $this->getMultimedia($multimedia);
+
+        $elementArray['shots'] = $shots;
+        $elementArray['photo'] = empty($shots) ? '' : reset($shots);
 
         return $elementArray;
-    }
-
-    private function retrieveJournalists(array $journalistsInserted, array $journalists): array
-    {
-        $result = [];
-
-        foreach ($journalistsInserted as $signature) {
-            $result[] = $journalists[$signature];
-        }
-
-        return $result;
     }
 
     private function editorialUrl(Editorial $editorial, Section $section): string
@@ -114,11 +106,10 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         );
     }
 
-    public function getMultimedia($multimedia): array
+    private function getMultimedia(Multimedia $multimedia): array
     {
         $clippings = $multimedia->clippings();
 
-        /** @var Clipping $clipping */
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_ARTICLE_4_3);
 
         $shots = [];
@@ -135,12 +126,6 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
             );
         }
 
-        return [
-            'id' => $multimedia->id(),
-            'type' => 'photo',
-            'caption' => $multimedia->caption(),
-            'shots' => (object) $shots,
-            'photo' => empty($shots) ? '' : reset($shots),
-        ];
+        return $shots;
     }
 }

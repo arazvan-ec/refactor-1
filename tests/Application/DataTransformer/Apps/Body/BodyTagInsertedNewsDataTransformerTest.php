@@ -11,7 +11,9 @@ use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialTitles;
-use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
+use Ec\Multimedia\Domain\Model\Clipping;
+use Ec\Multimedia\Domain\Model\Clippings;
+use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Section\Domain\Model\Section;
 use PHPUnit\Framework\TestCase;
 
@@ -78,10 +80,41 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
             ->method('editorialTitles')
             ->willReturn($editorialTitlesMock);
 
-        $multimedia = $this->createMock(Multimedia::class);
-        $editorialMock->expects(static::once())
-            ->method('multimedia')
-            ->willReturn($multimedia);
+        $clippingsMock = $this->createMock(Clippings::class);
+        $multimediaMock = $this->createMock(\Ec\Multimedia\Domain\Model\Multimedia::class);
+        $multimediaMock->expects(static::once())
+            ->method('clippings')
+            ->willReturn($clippingsMock);
+
+        $clippingMock = $this->createMock(Clipping::class);
+
+        $clippingsMock->expects(static::once())
+            ->method('clippingByType')
+            ->with(ClippingTypes::SIZE_ARTICLE_4_3)
+            ->willReturn($clippingMock);
+
+        $fileMock = $multimediaMock->method('file')
+            ->willReturn($data['file']);
+
+        $thumborPhoto = $data['photo'];
+
+        $this->thumbor->method('retriveCropBodyTagPicture')
+            ->willReturnCallback(function (string $fileImage, string $width, string $height, int $topY, int $bottomX, int $bottomY) use (
+                &$callArguments,
+                $thumborPhoto
+            ) {
+                $callArguments[] = [
+                    $fileImage,
+                    $width,
+                    $height,
+                    $topY,
+                    $bottomX,
+                    $bottomY,
+                ];
+
+                return $thumborPhoto;
+            });
+
 
         $resolveData['insertedNews'] = [
             $id => [
@@ -92,11 +125,11 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
             ],
         ];
 
-        $resolveData['photo'] = $data['photo'];
+        $resolveData['shots'] = $data['shots'];
         $resolveData['signatures'] = $allSignatures['signaturesWithIndexId'];
 
         $resolveData['multimedia'] = [];
-        $resolveData['multimedia'][$multimediaId] = $multimedia;
+        $resolveData['multimedia'][$multimediaId] = $multimediaMock;
 
         $result = $this->transformer->write($bodyElementMock, $resolveData)->read();
 
