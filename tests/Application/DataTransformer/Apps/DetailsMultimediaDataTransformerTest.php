@@ -97,4 +97,55 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->assertArrayHasKey('photo', $result);
         $this->assertEquals('https://example.com/image.jpg', $result['photo']);
     }
+
+    /**
+     * @test
+     */
+    public function writeAndReadShouldReturnEmptyPhoto(): void
+    {
+        $multimedia = $this->createMock(Multimedia::class);
+        $clippings = $this->getMockBuilder(Clippings::class)
+            ->onlyMethods(['clippingByType'])
+            ->getMock();
+        $clipping = $this->createMock(Clipping::class);
+
+        $multimedia->expects($this->once())
+            ->method('clippings')
+            ->willReturn($clippings);
+
+        $clippings->expects($this->once())
+            ->method('clippingByType')
+            ->with(ClippingTypes::SIZE_MULTIMEDIA_BIG)
+            ->willReturn($clipping);
+
+        $clipping->expects($this->exactly(27))
+            ->method('topLeftX');
+        $clipping->expects($this->exactly(27))
+            ->method('topLeftY');
+        $clipping->expects($this->exactly(27))
+            ->method('bottomRightX');
+        $clipping->expects($this->exactly(27))
+            ->method('bottomRightY');
+
+        $this->thumbor->expects($this->exactly(27))
+            ->method('retriveCropBodyTagPicture');
+
+        $expectedCaption = 'Test caption';
+        $expectedId = '123';
+
+        $multimedia->expects($this->once())
+            ->method('caption')
+            ->willReturn($expectedCaption);
+
+        $multimedia->expects($this->once())
+            ->method('id')
+            ->willReturn($expectedId);
+
+        $this->transformer->write($multimedia);
+        $result = $this->transformer->read();
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('photo', $result);
+        $this->assertEquals('', $result['photo']);
+    }
 }

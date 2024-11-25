@@ -202,14 +202,13 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
         }
 
         $aspectRatio16_9Shots = $allShots[self::ASPECT_RATIO_16_9] ?? [];
-        $photo = empty($allShots) || !is_array($aspectRatio16_9Shots) ? '' : reset($aspectRatio16_9Shots);
 
         return [
             'id' => $this->multimedia->id(),
             'type' => 'photo',
             'caption' => $this->multimedia->caption(),
             'shots' => $allShots,
-            'photo' => $photo,
+            'photo' => reset($aspectRatio16_9Shots),
         ];
     }
 }
