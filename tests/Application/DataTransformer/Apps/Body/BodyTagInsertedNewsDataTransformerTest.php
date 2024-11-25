@@ -15,7 +15,6 @@ use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\Clippings;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Section\Domain\Model\Section;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -24,8 +23,6 @@ use PHPUnit\Framework\TestCase;
 class BodyTagInsertedNewsDataTransformerTest extends TestCase
 {
     private BodyTagInsertedNewsDataTransformer $transformer;
-    private MockObject $thumbor;
-
     private MockObject $thumbor;
 
     protected function setUp(): void
