@@ -331,11 +331,23 @@ class EditorialOrchestratorTest extends TestCase
 
         [$promisesJournalist, $withAlias] = $this->getJournalistPromisesMock($withAliasIds);
 
-        $tags = new Tags();
+        $tagMock = $this->createMock(Tag::class);
+        $tagMock->expects(static::once())
+            ->method('id');
+        $tagsMock = $this->createMock(Tags::class);
+        $tagsMock->expects(static::once())
+            ->method('getArrayCopy')->willReturn([$tagMock]);
         $editorialMock
             ->expects(self::once())
             ->method('tags')
-            ->willReturn($tags);
+            ->willReturn($tagsMock);
+
+
+        $this->queryTagClient
+            ->expects($this->once())
+            ->method('findTagById')
+            ->willThrowException(new \Exception());
+
 
         $journalistEditorialExpected = [];
         foreach ($journalistsEditorial as $journalistEditorialId) {
