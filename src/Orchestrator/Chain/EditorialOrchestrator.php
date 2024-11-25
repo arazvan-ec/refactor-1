@@ -127,7 +127,7 @@ class EditorialOrchestrator implements Orchestrator
         $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
 
         $tags = [];
-        foreach ($editorial->tags() as $tag) {
+        foreach ($editorial->tags()->getArrayCopy() as $tag) {
             try {
                 $tags[] = $this->queryTagClient->findTagById($tag->id());
             } catch (\Throwable $exception) {
