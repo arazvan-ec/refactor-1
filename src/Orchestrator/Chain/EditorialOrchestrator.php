@@ -87,6 +87,7 @@ class EditorialOrchestrator implements Orchestrator
 
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
+        /** @var array<string, array<string, mixed>> $resolveData */
         $resolveData = [];
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
@@ -94,7 +95,6 @@ class EditorialOrchestrator implements Orchestrator
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
 
-        /** @var BodyTagInsertedNews $insertedNews */
         foreach ($insertedNews as $insertedNew) {
             $idInserted = $insertedNew->editorialId()->id();
 
@@ -111,6 +111,7 @@ class EditorialOrchestrator implements Orchestrator
                 $resolveData['insertedNews'][$idInserted]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
             }
 
+            /** @var array<string, array<string, mixed>> $resolveData */
             $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
 
             $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
@@ -164,7 +165,10 @@ class EditorialOrchestrator implements Orchestrator
         return $editorialResult;
     }
 
-    private function retriveAliasFormat(string $aliasId, Section $section)
+    /**
+     * @return array<mixed>
+     */
+    private function retriveAliasFormat(string $aliasId, Section $section): array
     {
         $signature = [];
 
@@ -308,24 +312,9 @@ class EditorialOrchestrator implements Orchestrator
         return \array_combine($links, $membershipLinkResult);
     }
 
-    private function retrieveJournalists(Editorial $editorial, array $journalists): array
-    {
-        $result = [];
-
-        /** @var Signature $signature */
-        foreach ($editorial->signatures()->getArrayCopy() as $signature) {
-            $result[] = $this->getJournalistByAliasId($signature->id()->id(), $journalists);
-        }
-
-        return $result;
-    }
-
-    private function getJournalistByAliasId(string $aliasId, array $journalists): array
-    {
-        return $journalists[$aliasId];
-    }
-
     /**
+     * @param array<string, mixed> $resolveData
+     *
      * @return array<string, array<int, Promise>>
      */
     private function getAsyncMultimedia(Multimedia $multimedia, array $resolveData): array
@@ -339,6 +328,9 @@ class EditorialOrchestrator implements Orchestrator
         return $resolveData;
     }
 
+    /**
+     * @param array<string, string> ...$parameters
+     */
     protected function createCallback(callable $callable, ...$parameters): \Closure
     {
         return static function ($element) use ($callable, $parameters) {
@@ -347,6 +339,8 @@ class EditorialOrchestrator implements Orchestrator
     }
 
     /**
+     * @param array<string, mixed> $promises
+     *
      * @return array<string, \Ec\Multimedia\Domain\Model\Multimedia>
      */
     protected function fulfilledMultimedia(array $promises): array

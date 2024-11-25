@@ -70,6 +70,9 @@ class EditorialOrchestratorTest extends TestCase
     /** @var QueryJournalistClient|MockObject */
     private QueryJournalistClient $queryJournalistClient;
 
+    /** @var JournalistFactory|MockObject */
+    private JournalistFactory $journalistFactory;
+
     /** @var JournalistsDataTransformer|MockObject */
     private JournalistsDataTransformer $journalistsDataTransformer;
 
@@ -227,8 +230,30 @@ class EditorialOrchestratorTest extends TestCase
     /**
      * @test
      *
-     * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorDataProvider::getBodyExpected()
-     **/
+     * @param array{
+     *      id: string,
+     *      sectionId: string,
+     *      signatures: array<int, string>,
+     *      insertedNews: array<int, array{
+     *          id: string,
+     *          sectionId: string,
+     *          signatures: array<int, string>,
+     *          multimediaId: string
+     *      }>,
+     *      membershipCards: array<int, array{
+     *          btns: array<int, array{
+     *              urlMembership: string,
+     *              url: string
+     *          }>
+     *      }>,
+     *      bodyExpected: array<array<string, mixed>>
+     *  } $editorial
+     * @param array<int, array<string, string>> $allJournalistExpected
+     * @param array<int, array<string, string>> $allJournalistEditorialExpected
+     * @param array<string, string>             $membershipLinkCombine
+     *
+     * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorDataProvider::getBodyExpected
+     */
     public function executeShouldContinueWhenTagClientThrowsException(
         array $editorial,
         array $allJournalistExpected,
@@ -237,6 +262,7 @@ class EditorialOrchestratorTest extends TestCase
     ): void {
         $journalistsEditorial = $editorial['signatures'];
 
+        /** @var Request $requestMock */
         $requestMock = $this->getRequestMock($editorial['id']);
 
         $editorialMock = $this->getEditorialMock($editorial);
@@ -269,7 +295,7 @@ class EditorialOrchestratorTest extends TestCase
             $withAliasIds,
         ] = $this->getBodyTagsInsertedNewsByEditorial($editorial);
 
-
+        /** @var array<string> $withAliasIds */
         $withAliasIds = array_merge($withAliasIds, $editorial['signatures']);
 
         $promisesEditorials = array_merge($promisesEditorials, $promisesEditorialsInserted);
@@ -338,6 +364,7 @@ class EditorialOrchestratorTest extends TestCase
             ->method('read')
             ->willReturn($expectedResult);
 
+        /** @var array<string> $withSections */
         $arrayMocks = array_combine($withSections, $promisesSections);
         $expectedArgumentsSections = $withSections;
         $callArgumentsSections = [];
@@ -349,6 +376,7 @@ class EditorialOrchestratorTest extends TestCase
                 return $arrayMocks[$strClass];
             });
 
+        /** @var array<string> $withEditorials */
         $arrayMocks = array_combine($withEditorials, $promisesEditorials);
         $expectedArgumentsEditorials = $withEditorials;
         $callArgumentsEditorials = [];
@@ -361,6 +389,7 @@ class EditorialOrchestratorTest extends TestCase
             });
 
 
+        /** @var array<string> $withAliasIds */
         $arrayMocks = array_combine($withAliasIds, $withAlias);
         $expectedArgumentsAlias = $withAliasIds;
         $callArgumentsAlias = [];
@@ -393,8 +422,6 @@ class EditorialOrchestratorTest extends TestCase
             ->method('write')
             // ->withOnConsecutiveCalls($promisesJournalist, $sectionMock)
             ->willReturnSelf();
-
-
 
         $this->journalistsDataTransformer->expects(static::exactly(count($promisesJournalist)))
             ->method('read')
@@ -437,8 +464,30 @@ class EditorialOrchestratorTest extends TestCase
     /**
      * @test
      *
-     * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorDataProvider::getBodyExpected()
-     **/
+     * @param array{
+     *      id: string,
+     *      sectionId: string,
+     *      signatures: array<int, string>,
+     *      insertedNews: array<int, array{
+     *          id: string,
+     *          sectionId: string,
+     *          signatures: array<int, string>,
+     *          multimediaId: string
+     *      }>,
+     *      membershipCards: array<int, array{
+     *          btns: array<int, array{
+     *              urlMembership: string,
+     *              url: string
+     *          }>
+     *      }>,
+     *      bodyExpected: array<array<string, mixed>>
+     *  } $editorial
+     * @param array<int, array<string, string>> $allJournalistExpected
+     * @param array<int, array<string, string>> $allJournalistEditorialExpected
+     * @param array<string, string>             $membershipLinkCombine
+     *
+     * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorDataProvider::getBodyExpected
+     */
     public function executeShouldReturnCorrectData(
         array $editorial,
         array $allJournalistExpected,
@@ -447,6 +496,7 @@ class EditorialOrchestratorTest extends TestCase
     ): void {
         $journalistsEditorial = $editorial['signatures'];
 
+        /** @var Request $requestMock */
         $requestMock = $this->getRequestMock($editorial['id']);
 
         $editorialMock = $this->getEditorialMock($editorial);
@@ -550,6 +600,7 @@ class EditorialOrchestratorTest extends TestCase
             ->method('read')
             ->willReturn($expectedResult);
 
+        /** @var array<string> $withSections */
         $arrayMocks = array_combine($withSections, $promisesSections);
         $expectedArgumentsSections = $withSections;
         $callArgumentsSections = [];
@@ -561,6 +612,7 @@ class EditorialOrchestratorTest extends TestCase
                 return $arrayMocks[$strClass];
             });
 
+        /** @var array<string> $withEditorials */
         $arrayMocks = array_combine($withEditorials, $promisesEditorials);
         $expectedArgumentsEditorials = $withEditorials;
         $callArgumentsEditorials = [];
@@ -572,7 +624,7 @@ class EditorialOrchestratorTest extends TestCase
                 return $arrayMocks[$strClass];
             });
 
-
+        /** @var array<string> $withAliasIds */
         $arrayMocks = array_combine($withAliasIds, $withAlias);
         $expectedArgumentsAlias = $withAliasIds;
         $callArgumentsAlias = [];
@@ -688,6 +740,26 @@ class EditorialOrchestratorTest extends TestCase
         return $requestMock;
     }
 
+    /**
+     * @param array{
+     *       id: string,
+     *       sectionId: string,
+     *       signatures: array<int, string>,
+     *       insertedNews: array<int, array{
+     *           id: string,
+     *           sectionId: string,
+     *           signatures: array<int, string>,
+     *           multimediaId: string
+     *       }>,
+     *       membershipCards: array<int, array{
+     *           btns: array<int, array{
+     *               urlMembership: string,
+     *               url: string
+     *           }>
+     *       }>,
+     *       bodyExpected: array<array<string, mixed>>
+     *   } $editorial
+     */
     private function getEditorialMock(array $editorial): MockObject
     {
         $editorialMock = $this->createMock(Editorial::class);
@@ -712,6 +784,26 @@ class EditorialOrchestratorTest extends TestCase
         return $editorialMock;
     }
 
+    /**
+     * @param array{
+     *       id: string,
+     *       sectionId: string,
+     *       signatures: array<int, string>,
+     *       insertedNews: array<int, array{
+     *           id: string,
+     *           sectionId: string,
+     *           signatures: array<int, string>,
+     *           multimediaId: string
+     *       }>,
+     *       membershipCards: array<int, array{
+     *           btns: array<int, array{
+     *               urlMembership: string,
+     *               url: string
+     *           }>
+     *       }>,
+     *       bodyExpected: array<array<string, mixed>>
+     *   } $editorial
+     */
     private function getSectionMockByEditorial(array $editorial): MockObject
     {
         $sectionMock = $this->createMock(Section::class);
@@ -730,6 +822,26 @@ class EditorialOrchestratorTest extends TestCase
         return $sectionMock;
     }
 
+    /**
+     * @param array{
+     *       id: string,
+     *       sectionId: string,
+     *       signatures: array<int, string>,
+     *       insertedNews: array<int, array{
+     *           id: string,
+     *           sectionId: string,
+     *           signatures: array<int, string>,
+     *           multimediaId: string
+     *       }>,
+     *       membershipCards: array<int, array{
+     *           btns: array<int, array{
+     *               urlMembership: string,
+     *               url: string
+     *           }>
+     *       }>,
+     *       bodyExpected: array<array<string, mixed>>
+     *   } $editorial
+     */
     private function getSignaturesMockByEditorial(array $editorial, MockObject $editorialMock): MockObject
     {
         $signaturesEditorialMocksArray = [];
@@ -757,6 +869,41 @@ class EditorialOrchestratorTest extends TestCase
         return $editorialMock;
     }
 
+    /**
+     * @param array{
+     *       id: string,
+     *       sectionId: string,
+     *       signatures: array<int, string>,
+     *       insertedNews: array<int, array{
+     *           id: string,
+     *           sectionId: string,
+     *           signatures: array<int, string>,
+     *           multimediaId: string
+     *       }>,
+     *       membershipCards: array<int, array{
+     *           btns: array<int, array{
+     *               urlMembership: string,
+     *               url: string
+     *           }>
+     *       }>,
+     *       bodyExpected: array<array<string, mixed>>
+     *   } $editorial
+     *
+     * @return array{
+     *      0: array<int, BodyTagInsertedNews|MockObject>,
+     *      1: array<string, array{
+     *          editorial: Editorial|MockObject,
+     *          section: Section|MockObject,
+     *          multimediaId: string,
+     *          signatures: array<int, array<string, mixed>>
+     *      }>,
+     *      2: array<int, Editorial|MockObject>,
+     *      3: array<int, string>,
+     *      4: array<int, Section|MockObject>,
+     *      5: array<int, string>,
+     *      6: array<int, string>
+     *  }
+     *   */
     private function getBodyTagsInsertedNewsByEditorial(array $editorial): array
     {
         $expectedInsertedNews = [];
@@ -830,9 +977,37 @@ class EditorialOrchestratorTest extends TestCase
         ];
     }
 
+    /**
+     * @param array{
+     *       id: string,
+     *       sectionId: string,
+     *       signatures: array<int, string>,
+     *       insertedNews: array<int, array{
+     *           id: string,
+     *           sectionId: string,
+     *           signatures: array<int, string>,
+     *           multimediaId: string
+     *       }>,
+     *       membershipCards: array<int, array{
+     *           btns: array<int, array{
+     *               urlMembership: string,
+     *               url: string
+     *           }>
+     *       }>,
+     *       bodyExpected: array<array<string, mixed>>
+     *   } $editorial
+     * @param array<string, string> $membershipLinkCombine
+     * @param array<string>         $callArgumentsCreateUri
+     *
+     * @return array{
+     *       0: array<int, BodyTagMembershipCard|MockObject>,
+     *       1: array<string>
+     *   }
+     */
     private function getBodyTagsMembershipCardsByEditorial(array $editorial, array $membershipLinkCombine, &$callArgumentsCreateUri): array
     {
         $membershipCardsPromise = [];
+        $uriMock = null;
 
         $expectedArgumentsCreateUri = [];
         foreach ($editorial['membershipCards'] as $bodytagsMembershipCard) {
@@ -872,6 +1047,7 @@ class EditorialOrchestratorTest extends TestCase
                 });
         }
         $promiseMock = $this->createMock(Promise::class);
+
         $this->queryMembershipClient->expects(static::once())
             ->method('getMembershipUrl')
             ->with(
@@ -879,7 +1055,8 @@ class EditorialOrchestratorTest extends TestCase
                 [$uriMock, $uriMock],
                 'el-confidencial',
                 true
-            )->willReturn($promiseMock);
+            )
+            ->willReturn($promiseMock);
 
 
         $promiseMock->expects(static::once())
@@ -889,7 +1066,15 @@ class EditorialOrchestratorTest extends TestCase
         return [$membershipCardsPromise, $expectedArgumentsCreateUri];
     }
 
-    private function getJournalistPromisesMock(array $aliasIds)
+    /**
+     * @param array<string> $aliasIds
+     *
+     * @return array{
+     *        0: array<int, Journalist|MockObject>,
+     *        1: array<string>
+     *    }
+     */
+    private function getJournalistPromisesMock(array $aliasIds): array
     {
 
         $withAlias = [];

@@ -9,6 +9,14 @@ class EditorialOrchestratorDataProvider
 {
     public function getBodyExpected(): array
     {
+        /** @var array<string, array{
+         *     journalistId: string,
+         *     aliasId: string,
+         *     name: string,
+         *     url: string,
+         *     photo: string,
+         *     departments: array<int, array{id: string, name: string}>
+         * }> $allJournalist */
         $allJournalist =  [
             '1' => [
                 'journalistId' => '1',
@@ -76,6 +84,14 @@ class EditorialOrchestratorDataProvider
                 ],
             ],
         ];
+        /** @var array<int, array{
+         *     journalistId: string,
+         *     aliasId: string,
+         *     name: string,
+         *     url: string,
+         *     photo: string,
+         *     departments: array<int, array{id: string, name: string}>
+         * }> $allJournalistEditorial */
         $allJournalistEditorial = [];
         $allJournalistEditorial[] = $allJournalist['1'];
         $allJournalistEditorial[] = $allJournalist['2'];
