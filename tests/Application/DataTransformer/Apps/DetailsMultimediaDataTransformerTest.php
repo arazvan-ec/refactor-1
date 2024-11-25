@@ -50,69 +50,51 @@ class DetailsMultimediaDataTransformerTest extends TestCase
             ->with(ClippingTypes::SIZE_MULTIMEDIA_BIG)
             ->willReturn($clipping);
 
-        $clipping->expects($this->once())
-            ->method('width')
-            ->willReturn(1920);
-
-        $clipping->expects($this->once())
-            ->method('height')
-            ->willReturn(1080);
-
-        $clipping->expects($this->exactly(8))
+        $clipping->expects($this->exactly(27))
             ->method('topLeftX')
             ->willReturn(0);
-        $clipping->expects($this->exactly(8))
+        $clipping->expects($this->exactly(27))
             ->method('topLeftY')
             ->willReturn(0);
-        $clipping->expects($this->exactly(8))
+        $clipping->expects($this->exactly(27))
             ->method('bottomRightX')
             ->willReturn(1920);
-        $clipping->expects($this->exactly(8))
+        $clipping->expects($this->exactly(27))
             ->method('bottomRightY')
             ->willReturn(1080);
 
-        $this->thumbor->expects($this->exactly(8))
+        $this->thumbor->expects($this->exactly(27))
             ->method('retriveCropBodyTagPicture')
             ->willReturn('https://example.com/image.jpg');
 
         $expectedCaption = 'Test caption';
+        $expectedId = '123';
+
         $multimedia->expects($this->once())
             ->method('caption')
             ->willReturn($expectedCaption);
+
+        $multimedia->expects($this->once())
+            ->method('id')
+            ->willReturn($expectedId);
 
         $this->transformer->write($multimedia);
         $result = $this->transformer->read();
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('id', $result);
+        $this->assertEquals($expectedId, $result['id']);
+
         $this->assertArrayHasKey('type', $result);
-        $this->assertArrayHasKey('shots', $result);
-        $this->assertArrayHasKey('photo', $result);
+        $this->assertEquals('photo', $result['type']);
+
         $this->assertArrayHasKey('caption', $result);
         $this->assertEquals($expectedCaption, $result['caption']);
-    }
 
-    /**
-     * @test
-     */
-    public function retrieveAspectRatioShouldReturnCorrectValue(): void
-    {
-        $reflection = new \ReflectionClass(DetailsMultimediaDataTransformer::class);
-        $method = $reflection->getMethod('retrieveAspectRatio');
+        $this->assertArrayHasKey('shots', $result);
+        $this->assertIsArray($result['shots']);
 
-        $result = $method->invoke($this->transformer, 1920, 1080);
-        $this->assertEquals('16:9', $result);
-
-        $result = $method->invoke($this->transformer, 1000, 1000);
-        $this->assertEquals('1:1', $result);
-
-        $result = $method->invoke($this->transformer, 800, 1200);
-        $this->assertEquals('3:4', $result);
-
-        $result = $method->invoke($this->transformer, 1200, 1000);
-        $this->assertEquals('4:3', $result);
-
-        $result = $method->invoke($this->transformer, 1920, 800);
-        $this->assertEquals('16:9', $result);
+        $this->assertArrayHasKey('photo', $result);
+        $this->assertEquals('https://example.com/image.jpg', $result['photo']);
     }
 }
