@@ -92,7 +92,7 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->assertEquals($expectedCaption, $result['caption']);
 
         $this->assertArrayHasKey('shots', $result);
-        $this->assertIsArray($result['shots']);
+        $this->assertIsObject($result['shots']);
 
         $this->assertArrayHasKey('photo', $result);
         $this->assertEquals('https://example.com/image.jpg', $result['photo']);
