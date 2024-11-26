@@ -15,7 +15,6 @@ use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
-use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia;
 use Ec\Section\Domain\Model\Section;
@@ -75,28 +74,21 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 
         /** @var Editorial $editorial */
         $editorial = $this->resolveData()['insertedNews'][$editorialId]['editorial'];
-        /** @var Section $section */
+        /** @var Section $sectionInserted */
         $sectionInserted = $this->resolveData()['insertedNews'][$editorialId]['section'];
 
         $elementArray['editorialId'] = $editorial->id()->id();
         $elementArray['title'] = $editorial->editorialTitles()->title();
-        $elementArray['signatures'] = $this->retrieveJournalists($signatures, $this->resolveData()['signatures']);
+        $elementArray['signatures'] = $signatures;
         $elementArray['editorial'] =  $this->editorialUrl($editorial, $sectionInserted);
 
         $multimedia = $this->resolveData()['multimedia'][$this->resolveData()['insertedNews'][$editorialId]['multimediaId']];
-        $elementArray['photo'] = $this->getMultimedia($multimedia);
+        $shots = $this->getMultimedia($multimedia);
+
+        $elementArray['shots'] = $shots;
+        $elementArray['photo'] = empty($shots) ? '' : reset($shots);
 
         return $elementArray;
-    }
-
-    private function retrieveJournalists(array $journalistsInserted, array $journalists): array
-    {
-        $result = [];
-        foreach ($journalistsInserted as $signature) {
-            $result[] = $journalists[$signature];
-        }
-
-        return $result;
     }
 
     private function editorialUrl(Editorial $editorial, Section $section): string
@@ -114,11 +106,13 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         );
     }
 
-    public function getMultimedia(Multimedia $multimedia): array
+    /**
+     * @return array<string, string>
+     */
+    private function getMultimedia(Multimedia $multimedia): array
     {
         $clippings = $multimedia->clippings();
 
-        /** @var Clipping $clipping */
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_ARTICLE_4_3);
 
         $shots = [];
@@ -135,12 +129,6 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
             );
         }
 
-        return [
-            'id' => $multimedia->id(),
-            'type' => 'photo',
-            'caption' => $multimedia->caption(),
-            'shots' => $shots,
-            'photo' => empty($shots) ? '' : reset($shots),
-        ];
+        return $shots;
     }
 }

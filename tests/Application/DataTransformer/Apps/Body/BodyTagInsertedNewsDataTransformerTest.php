@@ -11,8 +11,9 @@ use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialTitles;
+use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\Clippings;
-use Ec\Multimedia\Domain\Model\Multimedia;
+use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Section\Domain\Model\Section;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -23,7 +24,6 @@ use PHPUnit\Framework\TestCase;
 class BodyTagInsertedNewsDataTransformerTest extends TestCase
 {
     private BodyTagInsertedNewsDataTransformer $transformer;
-
     private MockObject $thumbor;
 
     protected function setUp(): void
@@ -39,6 +39,10 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
      * @test
      *
      * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagInsertedNewsDataProvider::getData()
+     *
+     * @param array<string, mixed>                             $data
+     * @param array{signaturesWithIndexId: array<int, string>} $allSignatures
+     * @param array<string, mixed>                             $expected
      */
     public function transformBodyTagInsertedNewsWithSignatures(array $data, array $allSignatures, array $expected): void
     {
@@ -82,11 +86,41 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
             ->method('editorialTitles')
             ->willReturn($editorialTitlesMock);
 
-        $multimedia = $this->createMock(Multimedia::class);
-        $clippings = $this->createMock(Clippings::class);
-        $multimedia->expects(static::once())
+        $clippingsMock = $this->createMock(Clippings::class);
+        $multimediaMock = $this->createMock(\Ec\Multimedia\Domain\Model\Multimedia::class);
+        $multimediaMock->expects(static::once())
             ->method('clippings')
-            ->willReturn($clippings);
+            ->willReturn($clippingsMock);
+
+        $clippingMock = $this->createMock(Clipping::class);
+
+        $clippingsMock->expects(static::once())
+            ->method('clippingByType')
+            ->with(ClippingTypes::SIZE_ARTICLE_4_3)
+            ->willReturn($clippingMock);
+
+        $fileMock = $multimediaMock->method('file')
+            ->willReturn($data['file']);
+
+        $thumborPhoto = $data['photo'];
+
+        $this->thumbor->method('retriveCropBodyTagPicture')
+            ->willReturnCallback(function (string $fileImage, string $width, string $height, int $topY, int $bottomX, int $bottomY) use (
+                &$callArguments,
+                $thumborPhoto
+            ) {
+                $callArguments[] = [
+                    $fileImage,
+                    $width,
+                    $height,
+                    $topY,
+                    $bottomX,
+                    $bottomY,
+                ];
+
+                return $thumborPhoto;
+            });
+
 
         $resolveData['insertedNews'] = [
             $id => [
@@ -97,19 +131,13 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
             ],
         ];
 
-        $resolveData['photo'] = $data['photo'];
+        $resolveData['shots'] = $data['shots'];
         $resolveData['signatures'] = $allSignatures['signaturesWithIndexId'];
 
         $resolveData['multimedia'] = [];
-        $resolveData['multimedia'][$multimediaId] = $multimedia;
-
+        $resolveData['multimedia'][$multimediaId] = $multimediaMock;
 
         $result = $this->transformer->write($bodyElementMock, $resolveData)->read();
-        $expected['photo']['shots'] = [
-            '202w' => '',
-            '144w' => '',
-            '128w' => '',
-        ];
 
         $this->assertSame($expected, $result);
     }
