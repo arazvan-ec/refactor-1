@@ -14,5 +14,8 @@ interface MultimediaDataTransformer
 {
     public function write(Multimedia $multimedia): MultimediaDataTransformer;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function read(): array;
 }
