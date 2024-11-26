@@ -102,18 +102,18 @@ class EditorialOrchestrator implements Orchestrator
             $insertedEditorials = $this->queryEditorialClient->findEditorialById($idInserted);
             if ($insertedEditorials->isVisible()) {
 
-            $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
+                $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
 
-            $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
-            $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
-            $resolveData['insertedNews'][$idInserted]['signatures'] = [];
-            /** @var Signature $signature */
-            foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
-                $resolveData['insertedNews'][$idInserted]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
-            }
+                $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
+                $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
+                $resolveData['insertedNews'][$idInserted]['signatures'] = [];
+                /** @var Signature $signature */
+                foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
+                    $resolveData['insertedNews'][$idInserted]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
+                }
 
-            /** @var array<string, array<string, mixed>> $resolveData */
-            $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
+                /** @var array<string, array<string, mixed>> $resolveData */
+                $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
 
                 $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
 
