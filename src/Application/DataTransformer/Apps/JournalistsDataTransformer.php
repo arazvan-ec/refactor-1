@@ -67,9 +67,7 @@ class JournalistsDataTransformer
 
 
                 $photo = $this->photoUrl($this->journalist);
-                if ('' !== $photo) {
-                    $signature['photo'] = $photo;
-                }
+                $signature['photo'] = $photo;
 
                 $departments = [];
                 foreach ($this->journalist->departments() as $department) {
