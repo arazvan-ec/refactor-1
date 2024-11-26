@@ -105,7 +105,7 @@ class EditorialOrchestrator implements Orchestrator
 
             $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
             $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
-
+            $resolveData['insertedNews'][$idInserted]['signatures'] = [];
             /** @var Signature $signature */
             foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
                 $resolveData['insertedNews'][$idInserted]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
@@ -143,6 +143,7 @@ class EditorialOrchestrator implements Orchestrator
 
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
         $editorialResult['countComments'] = $comments['options']['totalrecords'] ?? 0;
+        $editorialResult['signatures'] = [];
 
         foreach ($editorial->signatures()->getArrayCopy() as $signature) {
             $editorialResult['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $section);
@@ -170,15 +171,20 @@ class EditorialOrchestrator implements Orchestrator
      */
     private function retriveAliasFormat(string $aliasId, Section $section): array
     {
+
         $signature = [];
 
         $aliasIdModel = $this->journalistFactory->buildAliasId($aliasId);
 
-        /** @var Journalist $journalist */
-        $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasIdModel);
+        try {
+            /** @var Journalist $journalist */
+            $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasIdModel);
 
-        if ($journalist->isActive() &&  $journalist->isVisible()) {
-            $signature = $this->journalistsDataTransformer->write($aliasId, $journalist, $section)->read();
+            if ($journalist->isActive() &&  $journalist->isVisible()) {
+                $signature = $this->journalistsDataTransformer->write($aliasId, $journalist, $section)->read();
+            }
+        } catch (\Throwable $throwable) {
+            $this->logger->error($throwable->getMessage(), $throwable->getTrace());
         }
 
         return $signature;
