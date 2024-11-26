@@ -175,7 +175,7 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
     }
 
     /**
-     * @return array<string, string[]>
+     * @return array<string, \stdClass|string>
      */
     public function read(): array
     {
@@ -201,8 +201,11 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
             $allShots[$aspectRatio] = $shots;
         }
 
+        $photo = '';
         $firstAspectRatioShots = current($allShots);
-        $photo = empty($allShots) || !is_array($firstAspectRatioShots) ? '' : reset($firstAspectRatioShots);
+        if (is_array($firstAspectRatioShots)) {
+            $photo = reset($firstAspectRatioShots);
+        }
 
         return [
             'id' => $this->multimedia->id(),
