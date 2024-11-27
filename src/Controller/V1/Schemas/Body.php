@@ -58,7 +58,7 @@ use OpenApi\Attributes as OA;
                     ),
                     new OA\Schema(
                         ref: new Model(type: SubHead::class)
-                    )
+                    ),
                 ]
             )
         ),
