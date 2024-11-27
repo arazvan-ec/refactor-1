@@ -24,6 +24,7 @@ class SubHeadDataTransformer extends ElementContentWithLinksDataTransformer
 
         return parent::read();
     }
+
     public function canTransform(): string
     {
         return SubHead::class;

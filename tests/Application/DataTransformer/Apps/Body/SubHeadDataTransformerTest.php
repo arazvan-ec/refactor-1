@@ -56,7 +56,7 @@ class SubHeadDataTransformerTest extends TestCase
             'links' => [$linkMock],
         ];
 
-        $bodyElementMock = $this->createConfiguredMock(Subhead::class, $expectedArray);
+        $bodyElementMock = $this->createConfiguredMock(SubHead::class, $expectedArray);
 
         $result = $this->subHeadDataTransformer->write($bodyElementMock)->read();
 
