@@ -24,6 +24,8 @@ class BodyTagPictureDataTransformerTest extends TestCase
     }
 
     /**
+     * @param array<string, string> $shots
+     *
      * @test
      *
      * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagPictureDataProvider::getData()
