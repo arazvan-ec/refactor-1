@@ -95,6 +95,7 @@ class EditorialOrchestrator implements Orchestrator
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
 
+        $resolveData['multimedia'] = [];
         foreach ($insertedNews as $insertedNew) {
             $idInserted = $insertedNew->editorialId()->id();
 
@@ -324,7 +325,6 @@ class EditorialOrchestrator implements Orchestrator
      */
     private function getAsyncMultimedia(Multimedia $multimedia, array $resolveData): array
     {
-        $resolveData['multimedia'] = [];
         $multimediaId = $this->getMultimediaId($multimedia);
 
         if (null !== $multimediaId) {
