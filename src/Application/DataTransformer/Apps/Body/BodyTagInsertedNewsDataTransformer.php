@@ -111,7 +111,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
     {
         $shots = [];
 
-        $multimedia = $this->resolveData()['multimedia'][$this->resolveData()['insertedNews'][$editorialId]['multimediaId']];
+        $multimedia = $this->resolveData()['multimedia'][$this->resolveData()['insertedNews'][$editorialId]['multimediaId']] ?? null;
         if (null === $multimedia) {
             return $shots;
         }
