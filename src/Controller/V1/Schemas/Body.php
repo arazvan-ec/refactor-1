@@ -13,6 +13,7 @@ use App\Controller\V1\Schemas\BodyTags\BodyTagPictureMembership;
 use App\Controller\V1\Schemas\BodyTags\BodyTagVideoYoutube;
 use App\Controller\V1\Schemas\BodyTags\GenericList;
 use App\Controller\V1\Schemas\BodyTags\Paragraph;
+use App\Controller\V1\Schemas\BodyTags\SubHead;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 
@@ -54,6 +55,9 @@ use OpenApi\Attributes as OA;
                     ),
                     new OA\Schema(
                         ref: new Model(type: BodyTagInsertedNews::class)
+                    ),
+                    new OA\Schema(
+                        ref: new Model(type: SubHead::class)
                     ),
                 ]
             )
