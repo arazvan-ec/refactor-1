@@ -15,9 +15,13 @@ use Ec\Section\Domain\Model\Section;
 /**
  * @author Jose Guillermo Moreu Peso <jgmoreu@ext.elconfidencial.com>
  */
-class JournalistsDataTransformer implements JournalistDataTransformer
+class JournalistsDataTransformer
 {
     use UrlGeneratorTrait;
+
+    private string $aliasId;
+    private Journalist $journalist;
+    private Section $section;
 
     public function __construct(
         string $extension,
@@ -27,18 +31,20 @@ class JournalistsDataTransformer implements JournalistDataTransformer
     }
 
     /**
-     * @param Journalist[] $journalists
-     *
      * @return $this
      */
-    public function write(array $journalists, Section $section): JournalistsDataTransformer
+    public function write(string $aliasId, Journalist $journalist, Section $section): JournalistsDataTransformer
     {
-        $this->journalists = $journalists;
+        $this->aliasId = $aliasId;
+        $this->journalist = $journalist;
         $this->section = $section;
 
         return $this;
     }
 
+    /**
+     * @return Journalist[]
+     */
     public function read(): array
     {
         return $this->transformerJournalists();
@@ -49,40 +55,34 @@ class JournalistsDataTransformer implements JournalistDataTransformer
      */
     private function transformerJournalists(): array
     {
-        $signatures = [];
+        $signature = [];
 
-        foreach ($this->journalists as $aliasId => $journalist) {
-            foreach ($journalist->aliases() as $alias) {
+        foreach ($this->journalist->aliases() as $alias) {
 
-                if ($alias->id()->id() == $aliasId) {
-                    $signature = [
-                        'journalistId' => $journalist->id()->id(),
-                        'aliasId' => $alias->id()->id(),
-                        'name' => $alias->name(),
-                        'url' => $this->journalistUrl($alias, $journalist),
+            if ($alias->id()->id() == $this->aliasId) {
+                $signature['journalistId'] = $this->journalist->id()->id();
+                $signature['aliasId'] = $alias->id()->id();
+                $signature['name'] = $alias->name();
+                $signature['url'] = $this->journalistUrl($alias, $this->journalist);
+
+
+                $photo = $this->photoUrl($this->journalist);
+                $signature['photo'] = $photo;
+
+                $departments = [];
+                foreach ($this->journalist->departments() as $department) {
+                    $departments[] = [
+                        'id' => $department->id()->id(),
+                        'name' => $department->name(),
                     ];
-
-                    $photo = $this->photoUrl($journalist);
-                    if ('' !== $photo) {
-                        $signature['photo'] = $photo;
-                    }
-
-                    $departments = [];
-                    foreach ($journalist->departments() as $department) {
-                        $departments[] = [
-                            'id' => $department->id()->id(),
-                            'name' => $department->name(),
-                        ];
-                    }
-
-                    $signature['departments'] = $departments;
-
-                    $signatures[$alias->id()->id()] = $signature;
                 }
+
+                $signature['departments'] = $departments;
             }
         }
 
-        return $signatures;
+
+        return $signature;
     }
 
     private function journalistUrl(Alias $alias, Journalist $journalist): string

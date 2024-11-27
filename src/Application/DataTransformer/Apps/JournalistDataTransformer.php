@@ -20,5 +20,8 @@ interface JournalistDataTransformer
      */
     public function write(array $journalists, Section $section): JournalistDataTransformer;
 
+    /**
+     * @return Journalist[]
+     */
     public function read(): array;
 }

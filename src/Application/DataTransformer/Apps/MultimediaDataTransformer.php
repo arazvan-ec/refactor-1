@@ -5,14 +5,20 @@
 
 namespace App\Application\DataTransformer\Apps;
 
-use Ec\Multimedia\Domain\Model\Multimedia;
+use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  */
 interface MultimediaDataTransformer
 {
-    public function write(Multimedia $multimedia): MultimediaDataTransformer;
+    /**
+     * @param array<mixed> $arrayMultimedia
+     */
+    public function write(array $arrayMultimedia, MultimediaEditorial $openingMultimedia): MultimediaDataTransformer;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function read(): array;
 }

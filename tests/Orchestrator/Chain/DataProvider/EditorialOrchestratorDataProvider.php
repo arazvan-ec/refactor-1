@@ -9,6 +9,14 @@ class EditorialOrchestratorDataProvider
 {
     public function getBodyExpected(): array
     {
+        /** @var array<string, array{
+         *     journalistId: string,
+         *     aliasId: string,
+         *     name: string,
+         *     url: string,
+         *     photo: string,
+         *     departments: array<int, array{id: string, name: string}>
+         * }> $allJournalist */
         $allJournalist =  [
             '1' => [
                 'journalistId' => '1',
@@ -76,6 +84,17 @@ class EditorialOrchestratorDataProvider
                 ],
             ],
         ];
+        /** @var array<int, array{
+         *     journalistId: string,
+         *     aliasId: string,
+         *     name: string,
+         *     url: string,
+         *     photo: string,
+         *     departments: array<int, array{id: string, name: string}>
+         * }> $allJournalistEditorial */
+        $allJournalistEditorial = [];
+        $allJournalistEditorial[] = $allJournalist['1'];
+        $allJournalistEditorial[] = $allJournalist['2'];
 
         return [
             'case1' => [
@@ -111,6 +130,7 @@ class EditorialOrchestratorDataProvider
                     ],
                 ],
                 $allJournalist,
+                $allJournalistEditorial,
                 [
                     'https://www.amazon.es/url1/dp/B0BJQPQVHP1' => 'https://www.amazon.es/url1/dp/B0BJQPQVHP1?tag=cacatuaMan',
                     'https://www.amazon.es/url2/dp/B0BJQPQVHP2' => 'https://www.amazon.es/url2/dp/B0BJQPQVHP2?tag=cacatuaMan',
