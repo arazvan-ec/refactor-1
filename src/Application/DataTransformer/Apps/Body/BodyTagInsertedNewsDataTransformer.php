@@ -16,7 +16,6 @@ use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
-use Ec\Multimedia\Domain\Model\Multimedia;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -82,8 +81,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         $elementArray['signatures'] = $signatures;
         $elementArray['editorial'] =  $this->editorialUrl($editorial, $sectionInserted);
 
-        $multimedia = $this->resolveData()['multimedia'][$this->resolveData()['insertedNews'][$editorialId]['multimediaId']];
-        $shots = $this->getMultimedia($multimedia);
+        $shots = $this->getMultimedia($editorialId);
 
         $elementArray['shots'] = $shots;
         $elementArray['photo'] = empty($shots) ? '' : reset($shots);
@@ -109,13 +107,18 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
     /**
      * @return array<string, string>
      */
-    private function getMultimedia(Multimedia $multimedia): array
+    private function getMultimedia(string $editorialId): array
     {
-        $clippings = $multimedia->clippings();
+        $shots = [];
 
+        $multimedia = $this->resolveData()['multimedia'][$this->resolveData()['insertedNews'][$editorialId]['multimediaId']];
+        if (null === $multimedia) {
+            return $shots;
+        }
+
+        $clippings = $multimedia->clippings();
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_ARTICLE_4_3);
 
-        $shots = [];
         $sizes = self::ASPECT_RATIO_4_3;
         foreach ($sizes as $type => $size) {
             $shots[$type] = $this->thumbor->retriveCropBodyTagPicture(
