@@ -7,6 +7,8 @@ namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\DetailsMultimediaDataTransformer;
 use App\Infrastructure\Service\Thumbor;
+use Ec\Editorial\Domain\Model\Multimedia\MultimediaId;
+use Ec\Editorial\Domain\Model\Multimedia\PhotoExist;
 use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\Clippings;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
@@ -78,7 +80,15 @@ class DetailsMultimediaDataTransformerTest extends TestCase
             ->method('id')
             ->willReturn($expectedId);
 
-        $this->transformer->write($multimedia);
+        $openingMultimedia = $this->createMock(PhotoExist::class);
+        $openingMultimediaId = $this->createMock(MultimediaId::class);
+        $openingMultimediaId->method('id')
+            ->willReturn($expectedId);
+
+        $openingMultimedia->method('id')
+            ->willReturn($openingMultimediaId);
+
+        $this->transformer->write([$expectedId => $multimedia], $openingMultimedia);
         $result = $this->transformer->read();
 
         $this->assertIsArray($result);
@@ -141,11 +151,44 @@ class DetailsMultimediaDataTransformerTest extends TestCase
             ->method('id')
             ->willReturn($expectedId);
 
-        $this->transformer->write($multimedia);
+        $openingMultimedia = $this->createMock(PhotoExist::class);
+        $openingMultimediaId = $this->createMock(MultimediaId::class);
+        $openingMultimediaId->method('id')
+            ->willReturn($expectedId);
+
+        $openingMultimedia->method('id')
+            ->willReturn($openingMultimediaId);
+
+        $this->transformer->write([$expectedId => $multimedia], $openingMultimedia);
         $result = $this->transformer->read();
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('photo', $result);
         $this->assertEquals('', $result['photo']);
+    }
+
+    /**
+     * @test
+     */
+    public function writeAndReadShouldReturnMultimediaNull(): void
+    {
+        $expectedId = '1';
+        /** @var Multimedia $multimedia */
+        $multimedia = $this->createMock(Multimedia::class);
+        $openingMultimedia = $this->createMock(PhotoExist::class);
+        $openingMultimediaId = $this->createMock(MultimediaId::class);
+        $openingMultimediaId->method('id')
+            ->willReturn($expectedId);
+
+        $openingMultimedia->method('id')
+            ->willReturn($openingMultimediaId);
+
+        $this->transformer->write(['2' => $multimedia], $openingMultimedia);
+        $result = $this->transformer->read();
+
+        static::assertSame([
+            'id' => '',
+            'type' => 'multimediaNull',
+        ], $result);
     }
 }

@@ -116,8 +116,6 @@ class EditorialOrchestrator implements Orchestrator
                 $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
 
                 $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
-
-
             }
         }
 
@@ -160,12 +158,9 @@ class EditorialOrchestrator implements Orchestrator
             $resolveData
         );
 
-        $multimediaId = $this->getMultimediaId($editorial->multimedia());
-        if ($multimediaId && !empty($resolveData['multimedia'][$multimediaId->id()])) {
-            $editorialResult['multimedia'] = $this->multimediaDataTransformer
-                ->write($resolveData['multimedia'][$multimediaId->id()])
-                ->read();
-        }
+        $editorialResult['multimedia'] = $this->multimediaDataTransformer
+            ->write($resolveData['multimedia'], $editorial->multimedia())
+            ->read();
 
         return $editorialResult;
     }
@@ -329,6 +324,7 @@ class EditorialOrchestrator implements Orchestrator
      */
     private function getAsyncMultimedia(Multimedia $multimedia, array $resolveData): array
     {
+        $resolveData['multimedia'] = [];
         $multimediaId = $this->getMultimediaId($multimedia);
 
         if (null !== $multimediaId) {
