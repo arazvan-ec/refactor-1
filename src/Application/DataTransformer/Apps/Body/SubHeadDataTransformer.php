@@ -6,7 +6,6 @@
 namespace App\Application\DataTransformer\Apps\Body;
 
 use Assert\Assertion;
-use Ec\Editorial\Application\DataTransformer\Details\Body\ElementContentWithLinksDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\SubHead;
 
