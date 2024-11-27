@@ -363,6 +363,7 @@ class EditorialOrchestratorTest extends TestCase
             ],
             'countComments' => 0,
             'tags' => $tags,
+            'multimedia' => [],
         ];
 
         $this->appsDataTransformer
@@ -454,6 +455,7 @@ class EditorialOrchestratorTest extends TestCase
         $resolveData['photoFromBodyTags'] = ['' => null];
         $resolveData['membershipLinkCombine'] = $membershipLinkCombine;
         $resolveData['insertedNews'] = $expectedInsertedNews;
+        $resolveData['multimedia'] = [];
 
         $this->bodyDataTransformer->expects(static::once())
             ->method('execute')
@@ -605,6 +607,7 @@ class EditorialOrchestratorTest extends TestCase
             ],
             'countComments' => 0,
             'tags' => $tags,
+            'multimedia' => [],
         ];
 
         $this->appsDataTransformer
@@ -691,6 +694,7 @@ class EditorialOrchestratorTest extends TestCase
         $resolveData['photoFromBodyTags'] = ['' => null];
         $resolveData['membershipLinkCombine'] = $membershipLinkCombine;
         $resolveData['insertedNews'] = $expectedInsertedNews;
+        $resolveData['multimedia'] = [];
 
         $this->bodyDataTransformer->expects(static::once())
             ->method('execute')
