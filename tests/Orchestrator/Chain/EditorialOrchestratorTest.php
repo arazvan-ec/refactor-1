@@ -8,6 +8,7 @@ namespace App\Tests\Orchestrator\Chain;
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
+use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Exception\EditorialNotPublishedYetException;
 use App\Orchestrator\Chain\EditorialOrchestrator;
@@ -24,6 +25,7 @@ use Ec\Editorial\Domain\Model\SignatureId;
 use Ec\Editorial\Domain\Model\Signatures;
 use Ec\Editorial\Domain\Model\SourceEditorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
+use Ec\Editorial\Domain\Model\Standfirst;
 use Ec\Editorial\Domain\Model\Tag;
 use Ec\Editorial\Domain\Model\Tags;
 use Ec\Journalist\Domain\Model\AliasId;
@@ -97,6 +99,11 @@ class EditorialOrchestratorTest extends TestCase
     /** @var QueryMembershipClient|MockObject */
     private QueryMembershipClient $queryMembershipClient;
 
+    /**
+     * @var StandfirstDataTransformer|MockObject
+     */
+    private StandfirstDataTransformer $standfirstDataTransformer;
+
     protected function setUp(): void
     {
         $this->queryEditorialClient = $this->createMock(QueryEditorialClient::class);
@@ -113,6 +120,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->queryJournalistClient = $this->createMock(QueryJournalistClient::class);
         $this->journalistFactory = $this->createMock(JournalistFactory::class);
         $this->multimediaDataTransformer = $this->createMock(MultimediaDataTransformer::class);
+        $this->standfirstDataTransformer = $this->createMock(StandfirstDataTransformer::class);
 
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
@@ -129,6 +137,7 @@ class EditorialOrchestratorTest extends TestCase
             $this->queryJournalistClient,
             $this->journalistFactory,
             $this->multimediaDataTransformer,
+            $this->standfirstDataTransformer,
             'dev'
         );
     }
@@ -151,7 +160,9 @@ class EditorialOrchestratorTest extends TestCase
             $this->uriFactory,
             $this->queryMembershipClient,
             $this->logger,
-            $this->journalistsDataTransformer
+            $this->journalistsDataTransformer,
+            $this->multimediaDataTransformer,
+            $this->standfirstDataTransformer
         );
     }
 
@@ -246,7 +257,8 @@ class EditorialOrchestratorTest extends TestCase
      *              url: string
      *          }>
      *      }>,
-     *      bodyExpected: array<array<string, mixed>>
+     *      bodyExpected: array<array<string, mixed>>,
+     *      standfirstExpected: array<array<string, mixed>>
      *  } $editorial
      * @param array<int, array<string, string>> $allJournalistExpected
      * @param array<int, array<string, string>> $allJournalistEditorialExpected
@@ -465,6 +477,25 @@ class EditorialOrchestratorTest extends TestCase
         $expectedResult['signatures'] = $journalistEditorialExpected;
         $expectedResult['body'] = $editorial['bodyExpected'];
 
+        $standfirst = $this->createMock(Standfirst::class);
+
+        $editorialMock
+            ->expects(static::once())
+            ->method('standfirst')
+            ->willReturn($standfirst);
+
+        $this->standfirstDataTransformer
+           ->expects(static::once())
+           ->method('write')
+           ->willReturnSelf();
+        $this->standfirstDataTransformer
+            ->expects(static::once())
+            ->method('read')
+            ->willReturn($editorial['standfirstExpected']);
+
+
+        $expectedResult['standfirst'] = $editorial['standfirstExpected'];
+
         $result = $this->editorialOrchestrator->execute($requestMock);
 
         $this->assertSame($expectedArgumentsBodyTags, $callArgumentsBodyElements);
@@ -494,7 +525,8 @@ class EditorialOrchestratorTest extends TestCase
      *              url: string
      *          }>
      *      }>,
-     *      bodyExpected: array<array<string, mixed>>
+     *      bodyExpected: array<array<string, mixed>>,
+     *      standfirstExpected: array<array<string, mixed>>
      *  } $editorial
      * @param array<int, array<string, string>> $allJournalistExpected
      * @param array<int, array<string, string>> $allJournalistEditorialExpected
@@ -703,6 +735,25 @@ class EditorialOrchestratorTest extends TestCase
 
         $expectedResult['signatures'] = $journalistEditorialExpected;
         $expectedResult['body'] = $editorial['bodyExpected'];
+
+        $standfirst = $this->createMock(Standfirst::class);
+
+        $editorialMock
+            ->expects(static::once())
+            ->method('standfirst')
+            ->willReturn($standfirst);
+
+        $this->standfirstDataTransformer
+            ->expects(static::once())
+            ->method('write')
+            ->willReturnSelf();
+        $this->standfirstDataTransformer
+            ->expects(static::once())
+            ->method('read')
+            ->willReturn($editorial['standfirstExpected']);
+
+
+        $expectedResult['standfirst'] = $editorial['standfirstExpected'];
 
         $result = $this->editorialOrchestrator->execute($requestMock);
 
