@@ -8,6 +8,7 @@ namespace App\Orchestrator\Chain;
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
+use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Infrastructure\Enum\SitesEnum;
@@ -60,6 +61,7 @@ class EditorialOrchestrator implements Orchestrator
         private readonly QueryJournalistClient $queryJournalistClient,
         private readonly JournalistFactory $journalistFactory,
         private readonly MultimediaDataTransformer $multimediaDataTransformer,
+        private readonly StandfirstDataTransformer $standFirstDataTransformer,
         string $extension,
     ) {
         $this->setExtension($extension);
@@ -161,6 +163,10 @@ class EditorialOrchestrator implements Orchestrator
 
         $editorialResult['multimedia'] = $this->multimediaDataTransformer
             ->write($resolveData['multimedia'], $editorial->multimedia())
+            ->read();
+
+        $editorialResult['standfirst'] = $this->standFirstDataTransformer
+            ->write($editorial->standFirst())
             ->read();
 
         return $editorialResult;

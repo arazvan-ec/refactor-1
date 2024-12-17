@@ -128,6 +128,28 @@ class EditorialOrchestratorDataProvider
                     ],
                     'bodyExpected' => [
                     ],
+                    'standfirstExpected' => [
+                        'type' => 'unorderedlist',
+                        'items' => [
+                            [
+                                'type' => 'listitem',
+                                'content' => 'un bolillo',
+                                'links' => [],
+                            ],
+                            [
+                                'type' => 'listitem',
+                                'content' => '#replace0#',
+                                'links' => [
+                                    '#replace0#' => [
+                                        'type' => 'link',
+                                        'content' => 'dos bolillos',
+                                        'url' => 'http://www.google.com',
+                                        'target' => '_self',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 $allJournalist,
                 $allJournalistEditorial,
