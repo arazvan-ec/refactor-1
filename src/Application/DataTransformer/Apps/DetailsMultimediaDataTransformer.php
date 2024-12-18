@@ -221,18 +221,12 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
             $allShots[$aspectRatio] = $shots;
         }
 
-        $photo = '';
-        $firstAspectRatioShots = current($allShots);
-        if (is_array($firstAspectRatioShots)) {
-            $photo = reset($firstAspectRatioShots);
-        }
-
         return [
             'id' => $multimedia->id(),
             'type' => 'photo',
             'caption' => $multimedia->caption(),
             'shots' => (object) $allShots,
-            'photo' => $photo,
+            'photo' => current($allShots[self::ASPECT_RATIO_16_9]),
         ];
     }
 }
