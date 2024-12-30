@@ -58,13 +58,11 @@ class JournalistsDataTransformer
         $signature = [];
 
         foreach ($this->journalist->aliases() as $alias) {
-
             if ($alias->id()->id() == $this->aliasId) {
                 $signature['journalistId'] = $this->journalist->id()->id();
                 $signature['aliasId'] = $alias->id()->id();
                 $signature['name'] = $alias->name();
                 $signature['url'] = $this->journalistUrl($alias, $this->journalist);
-
 
                 $photo = $this->photoUrl($this->journalist);
                 $signature['photo'] = $photo;
@@ -81,7 +79,6 @@ class JournalistsDataTransformer
             }
         }
 
-
         return $signature;
     }
 
@@ -96,11 +93,11 @@ class JournalistsDataTransformer
             );
         }
 
-        return  $this->generateUrl(
+        return $this->generateUrl(
             'https://%s.%s.%s/autores/%s/',
             'www',
             $this->section->siteId(),
-            sprintf('%s-%s', Encode::encodeUrl($journalist->name()), $journalist->id()->id())
+            \sprintf('%s-%s', Encode::encodeUrl($journalist->name()), $journalist->id()->id())
         );
     }
 

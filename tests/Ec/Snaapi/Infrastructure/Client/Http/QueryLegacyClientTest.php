@@ -54,7 +54,7 @@ class QueryLegacyClientTest extends TestCase
         $responseData = [];
 
         /** @var string $bodyResponse */
-        $bodyResponse = \json_encode($responseData, JSON_THROW_ON_ERROR);
+        $bodyResponse = json_encode($responseData, JSON_THROW_ON_ERROR);
         $responseMock = $this->getResponseMock($statusCode, $bodyResponse);
         $this->httpClient->addResponse($responseMock);
 
@@ -118,7 +118,7 @@ class QueryLegacyClientTest extends TestCase
         $responseData = [];
 
         /** @var string $bodyResponse */
-        $bodyResponse = \json_encode($responseData, JSON_THROW_ON_ERROR);
+        $bodyResponse = json_encode($responseData, JSON_THROW_ON_ERROR);
         $responseMock = $this->getResponseMock($statusCode, $bodyResponse);
         $this->httpClient->addResponse($responseMock);
 

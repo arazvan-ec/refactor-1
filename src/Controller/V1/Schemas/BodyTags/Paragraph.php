@@ -58,7 +58,6 @@ use OpenApi\Attributes as OA;
     ],
     type: 'object',
 )]
-
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  */

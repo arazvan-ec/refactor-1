@@ -121,7 +121,6 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
                 return $thumborPhoto;
             });
 
-
         $resolveData['insertedNews'] = [
             $id => [
                 'editorial' => $editorialMock,

@@ -44,7 +44,6 @@ use OpenApi\Attributes as OA;
     type: 'object',
     example: '{"type":"bodytagvideoyoutube","id":"L5lXyh98Itg","width":1280,"height":720,"caption":"Youtube video","start":0,"video":"https://player.elconfidencial.dev/embed/video/L5lXyh98Itg/1280/720/0/"}'
 )]
-
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  */

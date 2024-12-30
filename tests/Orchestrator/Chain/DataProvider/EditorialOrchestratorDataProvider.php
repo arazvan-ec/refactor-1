@@ -17,7 +17,7 @@ class EditorialOrchestratorDataProvider
          *     photo: string,
          *     departments: array<int, array{id: string, name: string}>
          * }> $allJournalist */
-        $allJournalist =  [
+        $allJournalist = [
             '1' => [
                 'journalistId' => '1',
                 'aliasId' => '1',

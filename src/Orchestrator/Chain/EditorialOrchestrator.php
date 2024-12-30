@@ -11,23 +11,23 @@ use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
 use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Exception\EditorialNotPublishedYetException;
 use App\Infrastructure\Enum\SitesEnum;
 use App\Infrastructure\Trait\MultimediaTrait;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
+use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
+use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
+use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
+use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
+use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
+use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Editorial\Domain\Model\Signature;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
-use App\Exception\EditorialNotPublishedYetException;
-use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
-use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
-use Ec\Editorial\Domain\Model\Body\Body;
-use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
-use Ec\Editorial\Domain\Model\Editorial;
-use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
@@ -104,7 +104,6 @@ class EditorialOrchestrator implements Orchestrator
             /** @var Editorial $insertedEditorials */
             $insertedEditorials = $this->queryEditorialClient->findEditorialById($idInserted);
             if ($insertedEditorials->isVisible()) {
-
                 $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
 
                 $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
@@ -177,7 +176,6 @@ class EditorialOrchestrator implements Orchestrator
      */
     private function retriveAliasFormat(string $aliasId, Section $section): array
     {
-
         $signature = [];
 
         $aliasIdModel = $this->journalistFactory->buildAliasId($aliasId);
@@ -186,7 +184,7 @@ class EditorialOrchestrator implements Orchestrator
             /** @var Journalist $journalist */
             $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasIdModel);
 
-            if ($journalist->isActive() &&  $journalist->isVisible()) {
+            if ($journalist->isActive() && $journalist->isVisible()) {
                 $signature = $this->journalistsDataTransformer->write($aliasId, $journalist, $section)->read();
             }
         } catch (\Throwable $throwable) {
@@ -194,7 +192,6 @@ class EditorialOrchestrator implements Orchestrator
         }
 
         return $signature;
-
     }
 
     public function canOrchestrate(): string
@@ -270,7 +267,7 @@ class EditorialOrchestrator implements Orchestrator
         $linksOfBodyTagMembership = $this->getLinksOfBodyTagMembership($body);
         // $linksOfBodyTagPicture = $this->getLinksOfBodyTagPicture($body);
 
-        return \array_merge(
+        return array_merge(
             // $linksOfElementsContentWithLinks,
             $linksOfBodyTagMembership,
             // $linksOfBodyTagPicture
@@ -321,7 +318,7 @@ class EditorialOrchestrator implements Orchestrator
             return [];
         }
 
-        return \array_combine($links, $membershipLinkResult);
+        return array_combine($links, $membershipLinkResult);
     }
 
     /**

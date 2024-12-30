@@ -100,7 +100,6 @@ use OpenApi\Attributes as OA;
                 }
             }'
 )]
-
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  */

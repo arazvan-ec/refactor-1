@@ -27,7 +27,9 @@ class PurgeEditorialHandlerTest extends TestCase
     private const WARMUP_MESSENGER = 'warmup::messenger';
     private MockObject|CqrsFactory $cqrsFactoryMock;
     private MockObject|MessageBusInterface $messageBusMock;
-    private MockObject|UrlGeneratorInterface $routerMock;
+
+    /** @var MockObject|UrlGeneratorInterface */
+    private UrlGeneratorInterface|MockObject $routerMock;
     private PurgeEditorialHandler $purgeEditorialHandler;
 
     protected function setUp(): void
@@ -52,7 +54,7 @@ class PurgeEditorialHandlerTest extends TestCase
         $id = 'id';
         $snaapiUrl = "https://snaapi.url/editorials/$id";
 
-        $this->routerMock->expects(static::once())
+        $this->routerMock->expects(self::once())
             ->method('generate')
             ->with('getEditorialById', ['id' => $id, 'hostname' => 'hostname'], UrlGeneratorInterface::ABSOLUTE_URL)
             ->willReturn($snaapiUrl);
@@ -96,7 +98,6 @@ class PurgeEditorialHandlerTest extends TestCase
         $commandNotificationMock->expects(static::once())
             ->method('addNotificationOnComplete')
             ->with($commandNotificationOnCompleteMock);
-
 
         $stubEnvelope = new Envelope(new \stdClass());
         $this->messageBusMock->expects(static::once())

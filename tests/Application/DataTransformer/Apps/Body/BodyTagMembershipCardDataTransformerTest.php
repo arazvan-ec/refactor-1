@@ -116,7 +116,6 @@ class BodyTagMembershipCardDataTransformerTest extends TestCase
             ->method('execute')
             ->with($pictureMock, $combinedLinks);
 
-
         $result = $this->dataTransformer->write($bodyElementMock, $combinedLinks)->read();
 
         static::assertSame($expected, $result);

@@ -26,7 +26,7 @@ trait UrlGeneratorTrait
 
     protected function generateUrl(string $format, string $subdomain, string $siteId, string $urlPath): string
     {
-        return sprintf(
+        return \sprintf(
             $format,
             $subdomain,
             SitesEnum::getHostnameById($siteId),

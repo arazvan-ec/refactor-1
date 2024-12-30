@@ -51,7 +51,6 @@ use OpenApi\Attributes as OA;
                 "orientation": "portrait"
                }'
 )]
-
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  */

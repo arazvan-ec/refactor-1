@@ -58,7 +58,6 @@ use OpenApi\Attributes as OA;
     ],
     type: 'object',
 )]
-
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
  */

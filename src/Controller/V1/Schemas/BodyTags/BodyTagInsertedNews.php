@@ -77,7 +77,6 @@ use OpenApi\Attributes as OA;
       }
     }'
 )]
-
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
  */

@@ -13,9 +13,9 @@ use App\Controller\V1\Schemas\Titles;
 use App\Orchestrator\OrchestratorChain;
 use Ec\MicroserviceBundle\Controller\AbstractController;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use OpenApi\Attributes as OA;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>

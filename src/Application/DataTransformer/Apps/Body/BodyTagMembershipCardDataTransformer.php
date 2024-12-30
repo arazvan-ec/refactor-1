@@ -23,7 +23,6 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
     public function __construct(
         private readonly BodyElementDataTransformerHandler $bodyElementDataTransformerHandler,
     ) {
-
     }
 
     public function read(): array

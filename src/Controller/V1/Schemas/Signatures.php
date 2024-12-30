@@ -29,7 +29,6 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'photo', type: 'string', example: 'https://images.ecestaticos.test/photo.png'),
     ]
 )]
-
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  */
