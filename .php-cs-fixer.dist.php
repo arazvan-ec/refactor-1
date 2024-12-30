@@ -2,13 +2,13 @@
 
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
-    ->exclude('var')
+    ->exclude(['var','bin','vendor'])
 ;
 return (new PhpCsFixer\Config())
     ->setUsingCache(true)
     ->setRiskyAllowed(true)
     ->setRules([
-        '@PSR2' => true,
+        '@PSR12' => true,
         '@Symfony' => true,
         'no_superfluous_phpdoc_tags' => false,
         'phpdoc_to_return_type' => ['scalar_types' => false],
