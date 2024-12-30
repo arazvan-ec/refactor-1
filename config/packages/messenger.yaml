@@ -1,0 +1,45 @@
+# config/packages/messenger.yaml
+framework:
+    messenger:
+        default_bus: cms.messenger.bus
+        buses:
+            cms.messenger.bus:
+        transports:
+            snaapi:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    auto_setup: true
+                    sasl_method: 0
+                    verify: false
+                    exchange:
+                        name: exchange::events
+                        type: topic
+                    delay:
+                        exchange_name: exchange::events::delay
+                    queues:
+                        queue::event::snaapi:
+                            binding_keys:
+                                - "editorial::event"
+                        queue::event::snaapi::error:
+                            binding_keys:
+                                - "queue::event::snaapi"
+                    transport_name: snaapi
+            cache_delete:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    auto_setup: true
+                    sasl_method: 0
+                    verify: false
+                    exchange:
+                        name: exchange::commands
+                        type: direct
+                    delay:
+                        exchange_name: exchange::commands::delay
+                    queues:
+                        queue::commands::messenger::warmup:
+                            binding_keys:
+                                - "warmup::messenger"
+                    transport_name: cache_delete
+        routing:
+            Ec\Cqrs\Messages\CommandNotification: cache_delete
+            Ec\Editorial\Domain\Model\EventEditorial: snaapi
