@@ -25,7 +25,9 @@ class PurgeEditorialHandlerTest extends TestCase
 {
     /** @var string */
     private const WARMUP_MESSENGER = 'warmup::messenger';
+    /** @var MockObject|CqrsFactory */
     private MockObject|CqrsFactory $cqrsFactoryMock;
+    /** @var MockObject|MessageBusInterface */
     private MockObject|MessageBusInterface $messageBusMock;
 
     /** @var MockObject|UrlGeneratorInterface */
