@@ -49,16 +49,17 @@ class PurgeEditorialHandlerTest extends TestCase
      */
     public function invokeShouldDispatchMessageToWarmup(): void
     {
-        $snaapiUrl = 'https://snaapi.url/editorials/123';
+        $id = 'id';
+        $snaapiUrl = "https://snaapi.url/editorials/$id";
 
         $this->routerMock->expects(static::once())
             ->method('generate')
-            ->with('getEditorialById', ['id' => '123', 'hostname' => 'hostname'], UrlGeneratorInterface::ABSOLUTE_URL)
+            ->with('getEditorialById', ['id' => $id, 'hostname' => 'hostname'], UrlGeneratorInterface::ABSOLUTE_URL)
             ->willReturn($snaapiUrl);
 
         $editorialId = $this->createMock(EditorialId::class);
         $editorialId->method('id')
-            ->willReturn('123');
+            ->willReturn($id);
 
         $eventEditorial = $this->createMock(EventEditorial::class);
         $eventEditorial->method('id')
@@ -89,7 +90,7 @@ class PurgeEditorialHandlerTest extends TestCase
 
         $expectedAddParameter = [
             ['-f', 'findEditorialById'],
-            ['-p', '123'],
+            ['-p', $id],
         ];
 
         $commandNotificationMock->expects(static::once())
