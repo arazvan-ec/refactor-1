@@ -39,9 +39,8 @@ class Thumbor
         int $bottomX,
         int $bottomY,
     ): string {
-
         $pattern = '/^.*\.(?<extension>.*)$/m';
-        \preg_match($pattern, $fileImage, $matches);
+        preg_match($pattern, $fileImage, $matches);
         $extension = self::DEFAULT_EXTENSION;
 
         if (!empty($matches['extension'])) {
@@ -59,11 +58,11 @@ class Thumbor
 
     private function getOriginalUrl(string $fileName, string $directory): Builder
     {
-        $path1 = \substr($fileName, 0, 3);
-        $path2 = \substr($fileName, 3, 3);
-        $path3 = \substr($fileName, 6, 3);
+        $path1 = substr($fileName, 0, 3);
+        $path2 = substr($fileName, 3, 3);
+        $path3 = substr($fileName, 6, 3);
 
-        $path =  $this->awsBucket."/{$directory}/{$path1}/{$path2}/{$path3}/{$fileName}";
+        $path = $this->awsBucket."/{$directory}/{$path1}/{$path2}/{$path3}/{$fileName}";
 
         return $this->thumborFactory->url($path);
     }

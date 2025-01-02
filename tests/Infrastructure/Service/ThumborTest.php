@@ -79,8 +79,6 @@ class ThumborTest extends TestCase
             ->withConsecutive(...$thumborArgs)
             ->willReturnSelf();
 
-
-
         $builderMock->method('__toString')->willReturn($toString);
         $builderFactoryMock = $this->createMock(BuilderFactory::class);
         $builderFactoryMock->method('url')->with($expectedPath)->willReturn($builderMock);

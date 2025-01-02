@@ -35,7 +35,7 @@ class BodyTagVideoYoutubeDataTransformer extends ElementTypeDataTransformer
         $elementArray['caption'] = $this->bodyElement->caption();
         $elementArray['start'] = $this->bodyElement->start();
         $elementArray['video'] =
-            sprintf(
+            \sprintf(
                 '%s/embed/video/%s/%s/%s/%s/',
                 $this->playerHost,
                 $this->bodyElement->id(),

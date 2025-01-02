@@ -31,7 +31,7 @@ class BodyTagPictureDataTransformer extends ElementTypeDataTransformer
         $elementArray = parent::read();
         $shots = $this->pictureShots->retrieveShotsByPhotoId($this->resolveData(), $this->bodyElement);
 
-        if (count($shots)) {
+        if (\count($shots)) {
             $elementArray['shots'] = $shots;
             $elementArray['url'] = reset($shots);
             $elementArray['caption'] = $this->bodyElement->caption() ?: $this->bodyElement->alternate();

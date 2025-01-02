@@ -7,17 +7,17 @@ namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Infrastructure\Service\Thumbor;
+use Ec\Journalist\Domain\Model\Alias;
 use Ec\Journalist\Domain\Model\Aliases;
 use Ec\Journalist\Domain\Model\AliasId;
 use Ec\Journalist\Domain\Model\Department;
 use Ec\Journalist\Domain\Model\DepartmentId;
 use Ec\Journalist\Domain\Model\Departments;
+use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistId;
+use Ec\Section\Domain\Model\Section;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Ec\Journalist\Domain\Model\Journalist;
-use Ec\Journalist\Domain\Model\Alias;
-use Ec\Section\Domain\Model\Section;
 
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
@@ -90,7 +90,6 @@ class JournalistsDataTransformerTest extends TestCase
                 'name' => 'Técnico',
             ],
         ];
-
 
         $expectedAlias = [
             'id' => new AliasId($this->aliasId),
@@ -179,11 +178,9 @@ class JournalistsDataTransformerTest extends TestCase
                 return $bodyIterator->valid();
             });
 
-
         $result = $this->transformer
             ->write($this->aliasId, $journalistMock, $sectionMock)
             ->read();
-
 
         $expectedJournalist = [
             'journalistId' => $journalistId,
@@ -194,7 +191,6 @@ class JournalistsDataTransformerTest extends TestCase
             'departments' => [],
         ];
 
-
         $this->assertEquals($expectedJournalist['journalistId'], $result['journalistId']);
         $this->assertEquals($expectedJournalist['aliasId'], $result['aliasId']);
         $this->assertEquals($expectedJournalist['name'], $result['name']);
@@ -204,7 +200,6 @@ class JournalistsDataTransformerTest extends TestCase
             $expectedJournalist['photo'],
             $result['photo']
         );
-
 
         $this->assertEquals($expectedJournalist, $result);
     }
@@ -377,7 +372,6 @@ class JournalistsDataTransformerTest extends TestCase
             $expectedJournalist['photo'],
             $result['photo']
         );
-
 
         $this->assertEquals($expectedJournalist, $result);
     }

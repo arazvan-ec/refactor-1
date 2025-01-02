@@ -43,13 +43,11 @@ class BodyTagVideoYoutubeDataTransformerTest extends TestCase
             'height' => 360,
             'caption' => 'Sample Caption',
             'start' => 10,
-
         ];
 
         $bodyElementMock = $this->createConfiguredMock(BodyTagVideoYoutube::class, $expectedArray);
 
         $expectedArray['video'] = 'https://player.host/embed/video/video123/640/360/10/';
-
 
         $result = $this->bodyTagVideoYoutubeDataTransformer->write($bodyElementMock)->read();
 

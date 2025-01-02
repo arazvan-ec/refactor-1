@@ -62,11 +62,9 @@ class PictureShotsTest extends TestCase
 
         $resolveDataMock = [];
 
-
         $photo = $this->createMock(Photo::class);
         $photo->method('file')->willReturn($photoFile);
         $resolveDataMock['photoFromBodyTags'] = [$id => $photo];
-
 
         $withConsecutiveArgs = [];
         $willReturn = [];
@@ -84,7 +82,7 @@ class PictureShotsTest extends TestCase
         }
 
         $this->thumbor
-            ->expects(static::exactly(count($shots)))
+            ->expects(static::exactly(\count($shots)))
             ->method('retriveCropBodyTagPicture')
             ->withConsecutive(...$withConsecutiveArgs)
             ->willReturnOnConsecutiveCalls(...$willReturn);
@@ -94,7 +92,6 @@ class PictureShotsTest extends TestCase
         foreach ($shots as $ratio => $url) {
             $this->assertEquals($url, $result[$ratio]);
         }
-
     }
 
     /**

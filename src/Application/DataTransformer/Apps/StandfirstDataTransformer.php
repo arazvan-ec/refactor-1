@@ -38,6 +38,5 @@ class StandfirstDataTransformer
         return $this->bodyElementDataTransformerHandler->execute(
             $this->standFirst->content()
         );
-
     }
 }

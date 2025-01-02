@@ -16,7 +16,6 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'url', type: 'string', example: 'https://www.elconfidencial.dev/tags/otros/toto-21276'),
     ]
 )]
-
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  */

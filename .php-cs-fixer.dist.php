@@ -2,14 +2,17 @@
 
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
-    ->exclude(['var', 'bin', 'vendor'])
+    ->exclude(['var','bin','vendor'])
 ;
-
 return (new PhpCsFixer\Config())
+    ->setUsingCache(true)
+    ->setRiskyAllowed(true)
     ->setRules([
-        '@Symfony' => true,
-        '@PSR2' => true,
         '@PSR12' => true,
+        '@Symfony' => true,
+        'no_superfluous_phpdoc_tags' => false,
+        'phpdoc_to_return_type' => ['scalar_types' => false],
+        'native_function_invocation' => ['scope' => 'all'],
+        'array_syntax' => ['syntax' => 'short'],
     ])
-    ->setFinder($finder)
-;
+    ->setFinder($finder);

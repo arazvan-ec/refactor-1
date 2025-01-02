@@ -34,7 +34,7 @@ class BodyTagVideoDataTransformer extends ElementTypeDataTransformer
         $elementArray['height'] = $this->bodyElement->height();
         $elementArray['caption'] = $this->bodyElement->caption();
         $elementArray['video'] =
-            sprintf(
+            \sprintf(
                 '%s/embed/video/%s/%s/%s/',
                 $this->playerHost,
                 $this->bodyElement->id()->id(),

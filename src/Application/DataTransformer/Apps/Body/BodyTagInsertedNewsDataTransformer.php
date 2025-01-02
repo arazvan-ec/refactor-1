@@ -79,7 +79,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         $elementArray['editorialId'] = $editorial->id()->id();
         $elementArray['title'] = $editorial->editorialTitles()->title();
         $elementArray['signatures'] = $signatures;
-        $elementArray['editorial'] =  $this->editorialUrl($editorial, $sectionInserted);
+        $elementArray['editorial'] = $this->editorialUrl($editorial, $sectionInserted);
 
         $shots = $this->getMultimedia($editorialId);
 
