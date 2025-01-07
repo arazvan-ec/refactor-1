@@ -8,6 +8,7 @@ namespace App\Tests\Orchestrator\Chain;
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
+use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
 use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
@@ -104,6 +105,11 @@ class EditorialOrchestratorTest extends TestCase
      */
     private StandfirstDataTransformer $standfirstDataTransformer;
 
+    /**
+     * @var RecommendedEditorialsDataTransformer|MockObject
+     */
+    private RecommendedEditorialsDataTransformer $recommendedEditorialsDataTransformer;
+
     protected function setUp(): void
     {
         $this->queryEditorialClient = $this->createMock(QueryEditorialClient::class);
@@ -121,7 +127,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->journalistFactory = $this->createMock(JournalistFactory::class);
         $this->multimediaDataTransformer = $this->createMock(MultimediaDataTransformer::class);
         $this->standfirstDataTransformer = $this->createMock(StandfirstDataTransformer::class);
-
+        $this->recommendedEditorialsDataTransformer = $this->createMock(RecommendedEditorialsDataTransformer::class);
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
             $this->queryEditorialClient,
@@ -138,6 +144,7 @@ class EditorialOrchestratorTest extends TestCase
             $this->journalistFactory,
             $this->multimediaDataTransformer,
             $this->standfirstDataTransformer,
+            $this->recommendedEditorialsDataTransformer,
             'dev'
         );
     }
@@ -162,7 +169,8 @@ class EditorialOrchestratorTest extends TestCase
             $this->logger,
             $this->journalistsDataTransformer,
             $this->multimediaDataTransformer,
-            $this->standfirstDataTransformer
+            $this->standfirstDataTransformer,
+            $this->recommendedEditorialsDataTransformer,
         );
     }
 
