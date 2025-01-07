@@ -15,7 +15,6 @@ use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
-use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Section\Domain\Model\Section;
 
 /**

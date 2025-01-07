@@ -10,7 +10,6 @@ use App\Infrastructure\Trait\MultimediaTrait;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
-use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -41,7 +40,7 @@ class RecommendedEditorialsDataTransformer
         ],
     ];
 
-    /** @var Editorial[] $editorials */
+    /** @var Editorial[] */
     private array $editorials;
 
     /** @var array<string, mixed> */
@@ -55,8 +54,9 @@ class RecommendedEditorialsDataTransformer
     }
 
     /**
-     * @param Editorial[] $editorials
+     * @param Editorial[]          $editorials
      * @param array<string, mixed> $resolveData
+     *
      * @return $this
      */
     public function write(array $editorials, array $resolveData = []): RecommendedEditorialsDataTransformer

@@ -8,6 +8,7 @@ namespace App\Orchestrator\Chain;
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
+use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
 use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
@@ -64,6 +65,7 @@ class EditorialOrchestrator implements Orchestrator
         private readonly JournalistFactory $journalistFactory,
         private readonly MultimediaDataTransformer $multimediaDataTransformer,
         private readonly StandfirstDataTransformer $standFirstDataTransformer,
+        private readonly RecommendedEditorialsDataTransformer $recommendedEditorialsDataTransformer,
         string $extension,
     ) {
         $this->setExtension($extension);
@@ -98,6 +100,7 @@ class EditorialOrchestrator implements Orchestrator
 
         /** @var RecommendedEditorials $recommendedEditorials */
         $recommendedEditorials = $editorial->recommendedEditorials();
+        $recommendedNews = [];
 
         /** @var EditorialId $recommendedEditorialId */
         foreach ($recommendedEditorials as $recommendedEditorialId) {
@@ -116,10 +119,11 @@ class EditorialOrchestrator implements Orchestrator
                     $resolveData['recommendedEditorials'][$idRecommended]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
                 }
 
-                /** @var array<string, array<string, mixed>> $resolveData */
+                /** @var array<string, array<string, mixed>> $resolveDataRecommended */
                 $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);
 
                 $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $recommendedEditorial->multimedia()->id()->id();
+                $recommendedNews[] = $recommendedEditorial;
             }
         }
 
@@ -195,6 +199,10 @@ class EditorialOrchestrator implements Orchestrator
 
         $editorialResult['standfirst'] = $this->standFirstDataTransformer
             ->write($editorial->standFirst())
+            ->read();
+
+        $editorialResult['recommendedEditorials'] = $this->recommendedEditorialsDataTransformer
+            ->write($recommendedNews, $resolveData)
             ->read();
 
         return $editorialResult;
