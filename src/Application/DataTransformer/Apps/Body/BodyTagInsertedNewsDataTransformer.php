@@ -25,26 +25,6 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
     use UrlGeneratorTrait;
     use MultimediaTrait;
 
-    /** @var string */
-    private const WIDTH = 'width';
-
-    /** @var string */
-    private const HEIGHT = 'height';
-    private const ASPECT_RATIO_4_3 = [
-        '202w' => [
-            self::WIDTH => '202',
-            self::HEIGHT => '152',
-        ],
-        '144w' => [
-            self::WIDTH => '144',
-            self::HEIGHT => '108',
-        ],
-        '128w' => [
-            self::WIDTH => '128',
-            self::HEIGHT => '96',
-        ],
-    ];
-
     public function __construct(
         private readonly Thumbor $thumbor,
         string $extension,
