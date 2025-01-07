@@ -24,6 +24,7 @@ use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
+use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Editorial\Domain\Model\RecommendedEditorials;
 use Ec\Editorial\Domain\Model\Signature;
@@ -80,7 +81,7 @@ class EditorialOrchestrator implements Orchestrator
     {
         $id = $request->get('id');
 
-        /** @var Editorial $editorial */
+        /** @var NewsBase $editorial */
         $editorial = $this->queryEditorialClient->findEditorialById($id);
 
         if (null === $editorial->sourceEditorial()) {
@@ -98,7 +99,6 @@ class EditorialOrchestrator implements Orchestrator
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
-        /** @var RecommendedEditorials $recommendedEditorials */
         $recommendedEditorials = $editorial->recommendedEditorials();
         $recommendedNews = [];
 
