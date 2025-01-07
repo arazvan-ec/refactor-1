@@ -116,22 +116,6 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
             return $shots;
         }
 
-        $clippings = $multimedia->clippings();
-        $clipping = $clippings->clippingByType(ClippingTypes::SIZE_ARTICLE_4_3);
-
-        $sizes = self::ASPECT_RATIO_4_3;
-        foreach ($sizes as $type => $size) {
-            $shots[$type] = $this->thumbor->retriveCropBodyTagPicture(
-                $multimedia->file(),
-                $size[self::WIDTH],
-                $size[self::HEIGHT],
-                $clipping->topLeftX(),
-                $clipping->topLeftY(),
-                $clipping->bottomRightX(),
-                $clipping->bottomRightY()
-            );
-        }
-
-        return $shots;
+        return $this->getShotsLandscape($multimedia);
     }
 }
