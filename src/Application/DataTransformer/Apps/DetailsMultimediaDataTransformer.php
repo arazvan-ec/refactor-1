@@ -170,7 +170,7 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
     private array $arrayMultimedia;
     private MultimediaEditorial $openingMultimedia;
 
-    public function __construct(private readonly Thumbor $thumbor)
+    public function __construct(private readonly Thumbor $thumborClass)
     {
     }
 
@@ -207,7 +207,7 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
         $allShots = [];
         foreach (self::SIZES_RELATIONS as $aspectRatio => $sizes) {
             $shots = array_map(function ($size) use ($clipping, $multimedia) {
-                return $this->thumbor->retriveCropBodyTagPicture(
+                return $this->thumborClass->retriveCropBodyTagPicture(
                     $multimedia->file(),
                     $size[self::WIDTH],
                     $size[self::HEIGHT],

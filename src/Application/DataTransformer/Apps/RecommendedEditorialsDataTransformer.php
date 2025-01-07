@@ -28,9 +28,10 @@ class RecommendedEditorialsDataTransformer
 
     public function __construct(
         string $extension,
-        private readonly Thumbor $thumbor,
+        Thumbor $thumbor,
     ) {
         $this->setExtension($extension);
+        $this->setThumbor($thumbor);
     }
 
     /**

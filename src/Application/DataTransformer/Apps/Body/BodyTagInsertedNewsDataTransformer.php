@@ -26,10 +26,11 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
     use MultimediaTrait;
 
     public function __construct(
-        private readonly Thumbor $thumbor,
+        Thumbor $thumbor,
         string $extension,
     ) {
         $this->setExtension($extension);
+        $this->setThumbor($thumbor);
     }
 
     public function canTransform(): string

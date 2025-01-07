@@ -5,6 +5,7 @@
 
 namespace App\Infrastructure\Trait;
 
+use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
 use Ec\Editorial\Domain\Model\Multimedia\MultimediaId;
 use Ec\Editorial\Domain\Model\Multimedia\PhotoExist;
@@ -18,6 +19,18 @@ use Ec\Multimedia\Domain\Model\Multimedia as MultimediaModel;
  */
 trait MultimediaTrait
 {
+    private Thumbor $thumbor;
+
+    public function thumbor(): Thumbor
+    {
+        return $this->thumbor;
+    }
+
+    private function setThumbor(Thumbor $thumbor): void
+    {
+        $this->thumbor = $thumbor;
+    }
+
     private function getMultimediaId(Multimedia $multimedia): ?MultimediaId
     {
         $multimediaId = null;
