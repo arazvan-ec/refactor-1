@@ -21,8 +21,10 @@ use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Editorial;
+use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
+use Ec\Editorial\Domain\Model\RecommendedEditorials;
 use Ec\Editorial\Domain\Model\Signature;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
@@ -93,6 +95,33 @@ class EditorialOrchestrator implements Orchestrator
         $resolveData = [];
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
+
+        /** @var RecommendedEditorials $recommendedEditorials */
+        $recommendedEditorials = $editorial->recommendedEditorials();
+
+        /** @var EditorialId $recommendedEditorialId */
+        foreach ($recommendedEditorials as $recommendedEditorialId) {
+            $idRecommended = $recommendedEditorialId->id();
+
+            /** @var Editorial $recommendedEditorial */
+            $recommendedEditorial = $this->queryEditorialClient->findEditorialById($idRecommended);
+            if ($recommendedEditorial->isVisible()) {
+                $sectionInserted = $this->querySectionClient->findSectionById($recommendedEditorial->sectionId());
+
+                $resolveData['recommendedEditorials'][$idRecommended]['editorial'] = $recommendedEditorial;
+                $resolveData['recommendedEditorials'][$idRecommended]['section'] = $sectionInserted;
+                $resolveData['recommendedEditorials'][$idRecommended]['signatures'] = [];
+                /** @var Signature $signature */
+                foreach ($recommendedEditorial->signatures()->getArrayCopy() as $signature) {
+                    $resolveData['recommendedEditorials'][$idRecommended]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
+                }
+
+                /** @var array<string, array<string, mixed>> $resolveData */
+                $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);
+
+                $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $recommendedEditorial->multimedia()->id()->id();
+            }
+        }
 
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
