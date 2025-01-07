@@ -68,7 +68,7 @@ class RecommendedEditorialsDataTransformer
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<int, array<string, mixed>>
      */
     public function read(): array
     {

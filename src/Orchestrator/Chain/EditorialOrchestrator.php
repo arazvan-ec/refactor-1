@@ -102,6 +102,8 @@ class EditorialOrchestrator implements Orchestrator
         $recommendedEditorials = $editorial->recommendedEditorials();
         $recommendedNews = [];
 
+        $resolveData['multimedia'] = [];
+
         /** @var EditorialId $recommendedEditorialId */
         foreach ($recommendedEditorials as $recommendedEditorialId) {
             $idRecommended = $recommendedEditorialId->id();
@@ -119,9 +121,8 @@ class EditorialOrchestrator implements Orchestrator
                     $resolveData['recommendedEditorials'][$idRecommended]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
                 }
 
-                /** @var array<string, array<string, mixed>> $resolveDataRecommended */
+                /** @var array<string, array<string, mixed>> $resolveData */
                 $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);
-
                 $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $recommendedEditorial->multimedia()->id()->id();
                 $recommendedNews[] = $recommendedEditorial;
             }
@@ -130,7 +131,6 @@ class EditorialOrchestrator implements Orchestrator
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
 
-        $resolveData['multimedia'] = [];
         foreach ($insertedNews as $insertedNew) {
             $idInserted = $insertedNew->editorialId()->id();
 
