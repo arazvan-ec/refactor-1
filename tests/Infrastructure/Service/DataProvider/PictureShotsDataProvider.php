@@ -154,8 +154,6 @@ class PictureShotsDataProvider
                 'alternate' => 'Sample Alternate',
                 'orientation' => '4:3',
             ],
-
-
         ];
     }
 

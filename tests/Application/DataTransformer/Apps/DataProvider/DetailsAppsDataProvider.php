@@ -28,7 +28,6 @@ class DetailsAppsDataProvider
                         ],
                         'photo' => 'photo',
                     ],
-
                 ],
                 ['aliasId'],
                 [
@@ -62,7 +61,6 @@ class DetailsAppsDataProvider
                         ],
                         'photo' => 'photo',
                     ],
-
                 ],
                 [],
                 [],
@@ -95,7 +93,6 @@ class DetailsAppsDataProvider
                         ],
                         'photo' => 'photo',
                     ],
-
                 ],
                 ['aliasId2'],
                 [
@@ -142,7 +139,6 @@ class DetailsAppsDataProvider
                         ],
                         'photo' => 'photo',
                     ],
-
                 ],
                 ['aliasId1', 'aliasId2'],
                 [

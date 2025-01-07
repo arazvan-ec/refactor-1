@@ -109,9 +109,9 @@ class UnorderedListDataTransformerTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            sprintf(
+            \sprintf(
                 'Class "%s" was expected to be instanceof of "%s" but is not.',
-                get_class($bodyElementMock),
+                \get_class($bodyElementMock),
                 UnorderedList::class
             )
         );

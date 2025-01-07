@@ -75,7 +75,6 @@ class PictureShots
 
     private function retriveAspectRatio(int $topX, int $topY, int $bottomX, int $bottomY): string
     {
-
         $width = $bottomX - $topX;
         $height = $bottomY - $topY;
         $aspectRatio = $width / $height;
@@ -151,6 +150,5 @@ class PictureShots
         }
 
         return $photoFile;
-
     }
 }

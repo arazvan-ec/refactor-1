@@ -53,11 +53,11 @@ class WorkerCommand extends Command
         $timeLimit = (int) $input->getOption('time-limit');
         $timeSleep = (int) $input->getOption('time-sleep');
 
-        $executeStart = \time();
+        $executeStart = time();
         $executeEnd = $executeStart + $timeLimit;
 
         while (('dev' === $this->env) && ((0 === $timeLimit) || ($executeEnd >= $executeStart))) {
-            $executeStart = \time();
+            $executeStart = time();
             $output->writeln((new \DateTime())->format('Y-m-d H:i:s').': Test OK');
             sleep($timeSleep);
         }

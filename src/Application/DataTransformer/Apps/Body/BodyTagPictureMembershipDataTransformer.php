@@ -33,7 +33,7 @@ class BodyTagPictureMembershipDataTransformer extends ElementTypeDataTransformer
 
         $shots = $this->pictureShots->retrieveShotsByPhotoId($this->resolveData(), $this->bodyElement);
 
-        if (count($shots)) {
+        if (\count($shots)) {
             $elementArray['shots'] = $shots;
             $elementArray['url'] = reset($shots);
             $elementArray['orientation'] = $this->bodyElement->orientation();

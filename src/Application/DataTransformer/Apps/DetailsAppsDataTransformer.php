@@ -140,8 +140,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     {
         $result = [];
         foreach ($this->tags as $tag) {
-
-            $urlPath = sprintf(
+            $urlPath = \sprintf(
                 '/tags/%s/%s-%s',
                 Encode::encodeUrl($tag->type()->name()),
                 Encode::encodeUrl($tag->name()),

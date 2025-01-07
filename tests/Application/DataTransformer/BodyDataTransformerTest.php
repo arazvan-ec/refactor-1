@@ -75,7 +75,6 @@ class BodyDataTransformerTest extends TestCase
         $body->method('type')->willReturn($bodyType);
         $body->method('getArrayCopy')->willReturn([$bodyElement]);
 
-
         $this->bodyElementDataTransformerHandler
             ->method('execute')
             ->willThrowException(new BodyDataTransformerNotFoundException());

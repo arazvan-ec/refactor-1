@@ -73,7 +73,7 @@ class QueryLegacyClient extends ServiceClient
      */
     protected function buildEditorialFromArray(ResponseInterface $response, RequestInterface $request): array
     {
-        return \json_decode($response->getBody()->__toString(), true);
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**

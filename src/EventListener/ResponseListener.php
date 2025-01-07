@@ -17,12 +17,12 @@ class ResponseListener
         $response = $event->getResponse();
         $response->headers->set(
             'x-system',
-            \str_replace('ecsnaapi-service', '', $this->getHostname())
+            str_replace('ecsnaapi-service', '', $this->getHostname())
         );
     }
 
     protected function getHostname(): string
     {
-        return \gethostname() ?: '';
+        return gethostname() ?: '';
     }
 }

@@ -61,7 +61,6 @@ use OpenApi\Attributes as OA;
         "orientation": "portrait"
     }'
 )]
-
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  */

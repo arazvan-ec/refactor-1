@@ -17,7 +17,6 @@ use OpenApi\Attributes as OA;
         new OA\Property(property: 'mobileTitle', type: 'string', example: 'Mobile title'),
     ]
 )]
-
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  */
