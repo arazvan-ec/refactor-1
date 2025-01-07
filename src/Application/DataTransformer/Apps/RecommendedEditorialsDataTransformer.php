@@ -56,11 +56,13 @@ class RecommendedEditorialsDataTransformer
 
     /**
      * @param Editorial[] $editorials
+     * @param array<string, mixed> $resolveData
      * @return $this
      */
-    public function write(array $editorials): RecommendedEditorialsDataTransformer
+    public function write(array $editorials, array $resolveData = []): RecommendedEditorialsDataTransformer
     {
         $this->editorials = $editorials;
+        $this->resolveData = $resolveData;
 
         return $this;
     }
