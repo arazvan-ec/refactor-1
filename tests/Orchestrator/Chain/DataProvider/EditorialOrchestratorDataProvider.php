@@ -7,7 +7,7 @@ namespace App\Tests\Orchestrator\Chain\DataProvider;
  */
 class EditorialOrchestratorDataProvider
 {
-    public function getBodyExpected(): array
+    public function getData(): array
     {
         /** @var array<string, array{
          *     journalistId: string,
@@ -97,7 +97,53 @@ class EditorialOrchestratorDataProvider
         $allJournalistEditorial[] = $allJournalist['2'];
 
         return [
-            'case1' => [
+            'case-empty' => [
+                [
+                    'id' => 'editorialId',
+                    'sectionId' => 'editorialSectionId',
+                    'signatures' => ['1'],
+                    'insertedNews' => [
+                    ],
+                    'recommender' => [
+                    ],
+                    'membershipCards' => [
+                    ],
+                    'bodyExpected' => [
+                    ],
+                    'standfirstExpected' => [
+                    ],
+                    'recommenderExpected' => [
+
+                    ]
+                ],
+                $allJournalist,
+                [$allJournalist['1']],
+                [],
+            ],
+            'case-two-journalist' => [
+                [
+                    'id' => 'editorialId',
+                    'sectionId' => 'editorialSectionId',
+                    'signatures' => ['1','2'],
+                    'insertedNews' => [
+                    ],
+                    'recommender' => [
+                    ],
+                    'membershipCards' => [
+                    ],
+                    'bodyExpected' => [
+                    ],
+                    'standfirstExpected' => [
+                    ],
+                    'recommenderExpected' => [
+
+                    ]
+                ],
+                $allJournalist,
+                [$allJournalist['1'],$allJournalist['2']],
+                [],
+            ],
+           /* 'case1' => [
                 [
                     'id' => 'editorialId',
                     'sectionId' => 'editorialSectionId',
@@ -114,6 +160,20 @@ class EditorialOrchestratorDataProvider
                             'sectionId' => 'sectionId4',
                             'signatures' => ['7'],
                             'multimediaId' => '69',
+                        ],
+                    ],
+                    'recommender' => [
+                        [
+                            'id' => '5',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['1', '7'],
+                            'multimediaId' => '156',
+                        ],
+                        [
+                            'id' => '6',
+                            'sectionId' => 'sectionId4',
+                            'signatures' => ['6'],
+                            'multimediaId' => '169',
                         ],
                     ],
                     'membershipCards' => [
@@ -150,6 +210,7 @@ class EditorialOrchestratorDataProvider
                             ],
                         ],
                     ],
+                    'recommenderExpected' => []
                 ],
                 $allJournalist,
                 $allJournalistEditorial,
@@ -157,7 +218,7 @@ class EditorialOrchestratorDataProvider
                     'https://www.amazon.es/url1/dp/B0BJQPQVHP1' => 'https://www.amazon.es/url1/dp/B0BJQPQVHP1?tag=cacatuaMan',
                     'https://www.amazon.es/url2/dp/B0BJQPQVHP2' => 'https://www.amazon.es/url2/dp/B0BJQPQVHP2?tag=cacatuaMan',
                 ],
-            ],
+            ],*/
         ];
     }
 }

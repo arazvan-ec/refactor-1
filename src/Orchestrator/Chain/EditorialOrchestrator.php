@@ -26,7 +26,6 @@ use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
 use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
-use Ec\Editorial\Domain\Model\RecommendedEditorials;
 use Ec\Editorial\Domain\Model\Signature;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
@@ -94,18 +93,19 @@ class EditorialOrchestrator implements Orchestrator
 
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
+        [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
+
         /** @var array<string, array<string, mixed>> $resolveData */
         $resolveData = [];
+        $resolveData['multimedia'] = [];
+        $resolveData['recommendedEditorials'] = [];
 
-        [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
         $recommendedEditorials = $editorial->recommendedEditorials();
         $recommendedNews = [];
 
-        $resolveData['multimedia'] = [];
-
         /** @var EditorialId $recommendedEditorialId */
-        foreach ($recommendedEditorials as $recommendedEditorialId) {
+        foreach ($recommendedEditorials->editorialIds() as $recommendedEditorialId) {
             $idRecommended = $recommendedEditorialId->id();
 
             /** @var Editorial $recommendedEditorial */
@@ -128,6 +128,7 @@ class EditorialOrchestrator implements Orchestrator
             }
         }
 
+        $resolveData['insertedNews'] = [];
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
 
@@ -153,6 +154,7 @@ class EditorialOrchestrator implements Orchestrator
                 $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
             }
         }
+
 
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData);
         if (!empty($resolveData['multimedia'])) {
