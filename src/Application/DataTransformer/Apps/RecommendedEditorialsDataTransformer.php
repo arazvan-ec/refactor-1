@@ -58,13 +58,13 @@ class RecommendedEditorialsDataTransformer
         foreach ($this->editorials as $editorial) {
             $editorialId = $editorial->id()->id();
 
-            $signatures = $this->resolveData()['recommendedEditorials'][$editorialId]['signatures'];
+            $signatures = $this->resolveData['recommendedEditorials'][$editorialId]['signatures'];
 
             /** @var Section $section */
-            $section = $this->resolveData()['recommendedEditorials'][$editorialId]['section'];
+            $section = $this->resolveData['recommendedEditorials'][$editorialId]['section'];
 
             $elementArray = [];
-            $elementArray['editorialId'] = $editorial->id()->id();
+            $elementArray['editorialId'] = $editorialId;
             $elementArray['signatures'] = $signatures;
             $elementArray['editorial'] = $this->editorialUrl($editorial, $section);
             $elementArray['title'] = $editorial->editorialTitles()->title();
@@ -77,14 +77,6 @@ class RecommendedEditorialsDataTransformer
         }
 
         return $recommended;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function resolveData(): array
-    {
-        return $this->resolveData;
     }
 
     private function editorialUrl(Editorial $editorial, Section $section): string
@@ -109,7 +101,7 @@ class RecommendedEditorialsDataTransformer
     {
         $shots = [];
 
-        $multimedia = $this->resolveData()['multimedia'][$this->resolveData()['recommendedEditorials'][$editorialId]['multimediaId']] ?? null;
+        $multimedia = $this->resolveData['multimedia'][$this->resolveData['recommendedEditorials'][$editorialId]['multimediaId']] ?? null;
         if (null === $multimedia) {
             return $shots;
         }
