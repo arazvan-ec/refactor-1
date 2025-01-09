@@ -399,7 +399,7 @@ class EditorialOrchestratorTest extends TestCase
 
         $editorialMock = $this->getSignaturesMockByEditorial($editorial, $editorialMock);
 
-        $withAliasIds = array_merge($withAliasIdsInserted, $withAliasIdsRecommended, $editorial['signatures']);
+        $withAliasIds = array_merge($withAliasIdsRecommended,$withAliasIdsInserted, $editorial['signatures']);
 
         [
             $promisesJournalist,

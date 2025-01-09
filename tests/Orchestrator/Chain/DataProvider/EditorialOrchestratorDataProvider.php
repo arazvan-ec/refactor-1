@@ -97,92 +97,6 @@ class EditorialOrchestratorDataProvider
         $allJournalistEditorial[] = $allJournalist['2'];
 
         return [
-            'case-two-journalist-with-recommended' => [
-                [
-                    'id' => 'editorialId',
-                    'sectionId' => 'editorialSectionId',
-                    'signatures' => ['1'],
-                    'insertedNews' => [
-                    ],
-                    'recommender' => [
-                        [
-                            'id' => '3',
-                            'sectionId' => 'sectionId3',
-                            'signatures' => ['7'],
-                            'multimediaId' => '56',
-                        ],
-                    ],
-                    'membershipCards' => [
-                    ],
-                    'bodyExpected' => [
-                    ],
-                    'standfirstExpected' => [
-                    ],
-                    'recommenderExpected' => [
-                        [
-                            'type' => 'recommendededitorial',
-                            'editorialId' => '3',
-                            'title' => 'Noticia para recomendar',
-                            'signatures' => [
-                                $allJournalist['7'],
-                            ],
-                            'editorial' => 'XXX',
-                            'shots' => [
-                                '202w' => 'XXX',
-                                '144w' => 'XXX',
-                                '128w' => 'XXX',
-                            ],
-                            'photo' => 'XXX',
-                        ],
-                    ],
-                ],
-                $allJournalist,
-                [$allJournalist['1']],
-                [],
-            ],
-            'case-one-body-tag-inserted-news' => [
-                [
-                    'id' => 'editorialId',
-                    'sectionId' => 'editorialSectionId',
-                    'signatures' => ['1'],
-                    'insertedNews' => [
-                        [
-                            'id' => '3',
-                            'sectionId' => 'sectionId3',
-                            'signatures' => ['1'],
-                            'multimediaId' => '56',
-                        ],
-                    ],
-                    'recommender' => [
-                    ],
-                    'membershipCards' => [
-                    ],
-                    'bodyExpected' => [
-                        [
-                            'type' => 'bodytaginsertednews',
-                            'editorialId' => '3',
-                            'title' => 'Noticia para insertar',
-                            'signatures' => [
-                                $allJournalist['1'],
-                            ],
-                            'editorial' => 'XXX',
-                            'shots' => [
-                                '202w' => 'XXX',
-                                '144w' => 'XXX',
-                                '128w' => 'XXX',
-                            ],
-                            'photo' => 'XXX',
-                        ],
-                    ],
-                    'standfirstExpected' => [
-                    ],
-                    'recommenderExpected' => [
-                    ],
-                ],
-                $allJournalist,
-                [$allJournalist['1']],
-                [],
-            ],
             'case-empty' => [
                 [
                     'id' => 'editorialId',
@@ -227,6 +141,92 @@ class EditorialOrchestratorDataProvider
                 [$allJournalist['1'], $allJournalist['2']],
                 [],
             ],
+            'case-two-journalist-with-recommended' => [
+                [
+                    'id' => 'editorialId',
+                    'sectionId' => 'editorialSectionId',
+                    'signatures' => ['1'],
+                    'insertedNews' => [
+                    ],
+                    'recommender' => [
+                        [
+                            'id' => '3',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['7'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'membershipCards' => [
+                    ],
+                    'bodyExpected' => [
+                    ],
+                    'standfirstExpected' => [
+                    ],
+                    'recommenderExpected' => [
+                        [
+                            'type' => 'recommendededitorial',
+                            'editorialId' => '3',
+                            'title' => 'Noticia para recomendar',
+                            'signatures' => [
+                                $allJournalist['7'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                ],
+                $allJournalist,
+                [$allJournalist['1']],
+                [],
+            ],
+            'case-two-journalist-with-body-tag-inserted-news' => [
+                [
+                    'id' => 'editorialId',
+                    'sectionId' => 'editorialSectionId',
+                    'signatures' => ['1'],
+                    'insertedNews' => [
+                        [
+                            'id' => '3',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['1'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'recommender' => [
+                    ],
+                    'membershipCards' => [
+                    ],
+                    'bodyExpected' => [
+                        [
+                            'type' => 'bodytaginsertednews',
+                            'editorialId' => '3',
+                            'title' => 'Noticia para insertar',
+                            'signatures' => [
+                                $allJournalist['1'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                    'standfirstExpected' => [
+                    ],
+                    'recommenderExpected' => [
+                    ],
+                ],
+                $allJournalist,
+                [$allJournalist['1']],
+                [],
+            ],
             'case-three-journalist' => [
                 [
                     'id' => 'editorialId',
@@ -247,6 +247,70 @@ class EditorialOrchestratorDataProvider
                 ],
                 $allJournalist,
                 [$allJournalist['1'], $allJournalist['2'], $allJournalist['7']],
+                [],
+            ],
+            'case-three-journalist-with-inserted-and-recommended' => [
+                [
+                    'id' => 'editorialId',
+                    'sectionId' => 'editorialSectionId',
+                    'signatures' => ['1'],
+                    'insertedNews' => [
+                        [
+                            'id' => '3',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['7'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'recommender' => [
+                        [
+                            'id' => '4',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['2'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'membershipCards' => [
+                    ],
+                    'bodyExpected' => [
+                        [
+                            'type' => 'bodytaginsertednews',
+                            'editorialId' => '3',
+                            'title' => 'Noticia para insertar',
+                            'signatures' => [
+                                $allJournalist['7'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                    'standfirstExpected' => [
+                    ],
+                    'recommenderExpected' => [
+                        [
+                            'type' => 'recommendededitorial',
+                            'editorialId' => '4',
+                            'title' => 'Noticia para recomendar',
+                            'signatures' => [
+                                $allJournalist['2'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                ],
+                $allJournalist,
+                [$allJournalist['1']],
                 [],
             ],
             'case-three-journalist-with-inserted' => [
@@ -290,6 +354,50 @@ class EditorialOrchestratorDataProvider
                 ],
                 $allJournalist,
                 [$allJournalist['1'], $allJournalist['2']],
+                [],
+            ],
+            'case-three-journalist-with-inserted-two' => [
+                [
+                    'id' => 'editorialId',
+                    'sectionId' => 'editorialSectionId',
+                    'signatures' => ['1'],
+                    'insertedNews' => [
+                        [
+                            'id' => '3',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['2','7'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'recommender' => [
+                    ],
+                    'membershipCards' => [
+                    ],
+                    'bodyExpected' => [
+                        [
+                            'type' => 'bodytaginsertednews',
+                            'editorialId' => '3',
+                            'title' => 'Noticia para insertar',
+                            'signatures' => [
+                                $allJournalist['2'],
+                                $allJournalist['7'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                    'standfirstExpected' => [
+                    ],
+                    'recommenderExpected' => [
+                    ],
+                ],
+                $allJournalist,
+                [$allJournalist['1']],
                 [],
             ],
 
