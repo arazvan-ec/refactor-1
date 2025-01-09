@@ -415,12 +415,10 @@ class EditorialOrchestratorTest extends TestCase
             $callArgumentsAlias
         );
 
-
-        //$promisesEditorials = array_merge($promisesEditorials, $promisesEditorialsInserted);
-        //$withEditorials = array_merge($withEditorials, $withEditorialsInserted);
-        //$promisesSections = array_merge($promisesSections, $promisesSectionsInserted);
-        //$withSections = array_merge($withSections, $withSectionsInserted);
-
+        // $promisesEditorials = array_merge($promisesEditorials, $promisesEditorialsInserted);
+        // $withEditorials = array_merge($withEditorials, $withEditorialsInserted);
+        // $promisesSections = array_merge($promisesSections, $promisesSectionsInserted);
+        // $withSections = array_merge($withSections, $withSectionsInserted);
 
         $journalistEditorialExpected = [];
         foreach ($journalistsEditorial as $journalistEditorialId) {
@@ -480,6 +478,15 @@ class EditorialOrchestratorTest extends TestCase
             ->expects(static::once())
             ->method('read')
             ->willReturn($editorial['standfirstExpected']);
+
+        $this->recommendedEditorialsDataTransformer
+            ->expects(static::once())
+            ->method('write')
+            ->willReturnSelf();
+        $this->recommendedEditorialsDataTransformer
+            ->expects(static::once())
+            ->method('read')
+            ->willReturn($editorial['recommenderExpected']);
 
         $expectedResult['standfirst'] = $editorial['standfirstExpected'];
         $expectedResult['recommendedEditorials'] = $editorial['recommenderExpected'];
@@ -925,7 +932,6 @@ class EditorialOrchestratorTest extends TestCase
                 $signatureRecommendedMock->expects(static::once())
                     ->method('id')
                     ->willReturn($signatureRecommendedIdMock);
-
 
                 $signaturesRecommendedEditorialMocksArray[] = $signatureRecommendedMock;
                 $signaturesRecommendedEditorialArray[] = $allJournalistsExpected[$signatureRecommended];
