@@ -17,6 +17,9 @@ use Ec\Section\Domain\Model\Section;
  */
 class RecommendedEditorialsDataTransformer
 {
+    /** @var string */
+    private const TYPE = 'recommendededitorial';
+
     use UrlGeneratorTrait;
     use MultimediaTrait;
 
@@ -64,6 +67,7 @@ class RecommendedEditorialsDataTransformer
             $section = $this->resolveData['recommendedEditorials'][$editorialId]['section'];
 
             $elementArray = [];
+            $elementArray['type'] = self::TYPE;
             $elementArray['editorialId'] = $editorialId;
             $elementArray['signatures'] = $signatures;
             $elementArray['editorial'] = $this->editorialUrl($editorial, $section);

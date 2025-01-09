@@ -206,6 +206,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
 
         $expected = [
             0 => [
+                'type' => 'recommendededitorial',
                 'editorialId' => $recommendedEditorialId[0],
                 'signatures' => [
                     '20116' => 'signature',
@@ -220,6 +221,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                 'photo' => 'https://images.ecestaticos.dev/jGiDDrUXxOoBrAXspxCAxfgkPog=/0x0:458x344/202x152/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/8b2/94d/314/8b294d3142a5c28c1c7467da78c13481.jpg',
             ],
             1 => [
+                'type' => 'recommendededitorial',
                 'editorialId' => $recommendedEditorialId[1],
                 'signatures' => [
                     '20116' => 'signature',
@@ -385,6 +387,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
 
         $expected = [
             0 => [
+                'type' => 'recommendededitorial',
                 'editorialId' => $recommendedEditorialId[0],
                 'signatures' => [
                     '20116' => 'signature',
@@ -395,6 +398,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                 'photo' => '',
             ],
             1 => [
+                'type' => 'recommendededitorial',
                 'editorialId' => $recommendedEditorialId[1],
                 'signatures' => [
                     '20116' => 'signature',
