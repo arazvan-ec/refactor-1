@@ -398,7 +398,7 @@ class EditorialOrchestratorTest extends TestCase
 
         [
             $promisesJournalist,
-            $promisesAliasIds
+            $promisesAliasIds,
         ] = $this->getJournalistPromisesMock($withAliasIds);
 
         $callArgumentsAlias = [];
@@ -410,12 +410,10 @@ class EditorialOrchestratorTest extends TestCase
             $callArgumentsAlias
         );
 
-
-        //$promisesEditorials = array_merge($promisesEditorials, $promisesEditorialsInserted);
-        //$withEditorials = array_merge($withEditorials, $withEditorialsInserted);
-        //$promisesSections = array_merge($promisesSections, $promisesSectionsInserted);
-        //$withSections = array_merge($withSections, $withSectionsInserted);
-
+        // $promisesEditorials = array_merge($promisesEditorials, $promisesEditorialsInserted);
+        // $withEditorials = array_merge($withEditorials, $withEditorialsInserted);
+        // $promisesSections = array_merge($promisesSections, $promisesSectionsInserted);
+        // $withSections = array_merge($withSections, $withSectionsInserted);
 
         $journalistEditorialExpected = [];
         foreach ($journalistsEditorial as $journalistEditorialId) {
@@ -445,7 +443,6 @@ class EditorialOrchestratorTest extends TestCase
 
                 return $arrayMocks[$strClass];
             });
-
 
         $resolveData['photoFromBodyTags'] = [];
         $resolveData['membershipLinkCombine'] = $membershipLinkCombine;
@@ -523,12 +520,13 @@ class EditorialOrchestratorTest extends TestCase
     private function setupJournalistFactoryMock(
         array $expectedArgumentsAlias,
         array &$callArgumentsAlias,
-        array $arrayMocks
+        array $arrayMocks,
     ): void {
-        $this->journalistFactory->expects(static::exactly(count($expectedArgumentsAlias)))
+        $this->journalistFactory->expects(static::exactly(\count($expectedArgumentsAlias)))
             ->method('buildAliasId')
             ->willReturnCallback(function ($strClass) use (&$callArgumentsAlias, $arrayMocks) {
                 $callArgumentsAlias[] = $strClass;
+
                 return $arrayMocks[$strClass];
             });
     }
@@ -537,15 +535,15 @@ class EditorialOrchestratorTest extends TestCase
         array $promisesAliasIds,
         array $promisesJournalist,
     ): void {
-        $withConsecutiveArgs = array_map(function($aliasId) {
+        $withConsecutiveArgs = array_map(function ($aliasId) {
             return [$aliasId];
         }, $promisesAliasIds);
 
-        $mockBuilder = $this->queryJournalistClient->expects(static::exactly(count($promisesJournalist)))
+        $mockBuilder = $this->queryJournalistClient->expects(static::exactly(\count($promisesJournalist)))
             ->method('findJournalistByAliasId');
 
-        call_user_func_array([$mockBuilder, 'withConsecutive'], $withConsecutiveArgs);
-        call_user_func_array([$mockBuilder, 'willReturnOnConsecutiveCalls'], $promisesJournalist);
+        \call_user_func_array([$mockBuilder, 'withConsecutive'], $withConsecutiveArgs);
+        \call_user_func_array([$mockBuilder, 'willReturnOnConsecutiveCalls'], $promisesJournalist);
     }
 
     private function setupJournalistsDataTransformerMock(
@@ -553,8 +551,7 @@ class EditorialOrchestratorTest extends TestCase
         array $promisesJournalist,
         array $allJournalistExpected,
     ): void {
-
-        $index = count($promisesJournalist);
+        $index = \count($promisesJournalist);
         $this->journalistsDataTransformer->expects(static::exactly($index))
             ->method('write')
             // ->withOnConsecutiveCalls($promisesJournalist, $sectionMock)
@@ -586,7 +583,6 @@ class EditorialOrchestratorTest extends TestCase
                     );
                 break;
         }
-
     }
 
     private function generateTagMock(MockObject $editorialMock): MockObject|TagAlias
@@ -732,7 +728,6 @@ class EditorialOrchestratorTest extends TestCase
         return $editorialMock;
     }
 
-
     /**
      * @param array{
      *       id: string,
@@ -842,7 +837,6 @@ class EditorialOrchestratorTest extends TestCase
         ];
     }
 
-
     /**
      * @param array{
      *       id: string,
@@ -887,7 +881,7 @@ class EditorialOrchestratorTest extends TestCase
     private function getRecommenderNewsByEditorial(array $editorial, MockObject $editorialMock): array
     {
         $expectedRecommenderNews = [];
-        //$insertedNews = [];
+        // $insertedNews = [];
         $promisesEditorials = [];
         $withEditorials = [];
         $promisesSections = [];
@@ -895,7 +889,6 @@ class EditorialOrchestratorTest extends TestCase
         $withJournalistId = [];
         $recomenderIds = [];
         foreach ($editorial['recommender'] as $editorialRecommender) {
-
             $editorialIdRecommenderMock = $this->createMock(EditorialId::class);
             $editorialIdRecommenderMock->expects(static::once())
                 ->method('id')
@@ -960,7 +953,7 @@ class EditorialOrchestratorTest extends TestCase
             $promisesSections,
             $withSections,
             $withJournalistId,
-            $editorialMock
+            $editorialMock,
         ];
     }
 
@@ -1039,7 +1032,7 @@ class EditorialOrchestratorTest extends TestCase
             ->method('getMembershipUrl')
             ->with(
                 $editorial['id'],
-                //[$uriMock, $uriMock],
+                // [$uriMock, $uriMock],
                 [],
                 'el-confidencial',
                 true

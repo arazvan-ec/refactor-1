@@ -19,6 +19,7 @@ use Ec\Multimedia\Domain\Model\Photo\Photo;
 use Ec\Section\Domain\Model\Section;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+
 use function PHPUnit\Framework\exactly;
 
 /**
@@ -86,7 +87,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
         $resolveData = [
             'multimedia' => [
                 '2532' => $multimediaMock,
-                '2506' => $multimediaMock
+                '2506' => $multimediaMock,
             ],
             'recommendedEditorials' => [
                 $recommendedEditorialId[0] => [
@@ -104,7 +105,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                         '20116' => 'signature',
                     ],
                     'multimediaId' => $multimediaId,
-                ]
+                ],
             ],
             'insertedNews' => [
                 '7422' => [
@@ -118,10 +119,10 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                 ],
             ],
             'photoFromBodyTags' => [
-                '707' => $photoMock
+                '707' => $photoMock,
             ],
             'membershipLinkCombine' => [
-                $membershipLink => $membershipLink
+                $membershipLink => $membershipLink,
             ],
             'shots' => [
                 '202w' => 'https://images.ecestaticos.dev/jGiDDrUXxOoBrAXspxCAxfgkPog=/0x0:458x344/202x152/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/8b2/94d/314/8b294d3142a5c28c1c7467da78c13481.jpg',
@@ -231,8 +232,8 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                     '128w' => 'https://images.ecestaticos.dev/jGiDDrUXxOoBrAXspxCAxfgkPog=/0x0:458x344/202x152/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/8b2/94d/314/8b294d3142a5c28c1c7467da78c13481.jpg',
                 ],
                 'photo' => 'https://images.ecestaticos.dev/jGiDDrUXxOoBrAXspxCAxfgkPog=/0x0:458x344/202x152/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/8b2/94d/314/8b294d3142a5c28c1c7467da78c13481.jpg',
-            ]
-        ] ;
+            ],
+        ];
 
         self::assertIsArray($result);
         self::assertEquals($expected, $result);
@@ -287,7 +288,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                         '20116' => 'signature',
                     ],
                     'multimediaId' => $multimediaId,
-                ]
+                ],
             ],
             'insertedNews' => [
                 '7422' => [
@@ -301,10 +302,10 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                 ],
             ],
             'photoFromBodyTags' => [
-                '707' => $photoMock
+                '707' => $photoMock,
             ],
             'membershipLinkCombine' => [
-                $membershipLink => $membershipLink
+                $membershipLink => $membershipLink,
             ],
             'shots' => '',
             'photo' => '',
@@ -402,8 +403,8 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                 'title' => 'title recommended editorial 2',
                 'shots' => [],
                 'photo' => '',
-            ]
-        ] ;
+            ],
+        ];
 
         self::assertIsArray($result);
         self::assertEquals($expected, $result);

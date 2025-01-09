@@ -100,7 +100,6 @@ class EditorialOrchestrator implements Orchestrator
         $resolveData['multimedia'] = [];
         $resolveData['recommendedEditorials'] = [];
 
-
         $recommendedEditorials = $editorial->recommendedEditorials();
         $recommendedNews = [];
 
@@ -154,7 +153,6 @@ class EditorialOrchestrator implements Orchestrator
                 $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
             }
         }
-
 
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData);
         if (!empty($resolveData['multimedia'])) {
