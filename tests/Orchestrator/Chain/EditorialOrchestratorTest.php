@@ -525,7 +525,8 @@ class EditorialOrchestratorTest extends TestCase
      * @param array<string>                     $promisesAliasIds
      * @param array<int, array<string, string>> $allJournalistsExpected
      * @param array<int, string>                $callArgumentsAlias
-     * @param array<int, array<int, string>>   $expectedJournalistAliasIds
+     * @param array<int, array<int, string>>    $expectedJournalistAliasIds
+     *
      * @return array<int, string>
      */
     private function resolveSignatures(
@@ -553,9 +554,10 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     /**
-     * @param array<string> $expectedArgumentsAlias
-     * @param array<int, string> $callArgumentsAlias
+     * @param array<string>         $expectedArgumentsAlias
+     * @param array<int, string>    $callArgumentsAlias
      * @param array<string, string> $arrayMocks
+     *
      * @return void
      */
     private function setupJournalistFactoryMock(
@@ -573,8 +575,9 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     /**
-     * @param array<string> $promisesAliasIds
+     * @param array<string>                     $promisesAliasIds
      * @param array<int, Journalist|MockObject> $promisesJournalist
+     *
      * @return void
      */
     private function setupQueryJournalistClientMock(
@@ -593,10 +596,11 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     /**
-     * @param array<int, string> $withAliasIds
+     * @param array<int, string>                $withAliasIds
      * @param array<int, Journalist|MockObject> $promisesJournalist
      * @param array<int, array<string, string>> $allJournalistExpected
-     * @param array<int, array<int, string>>  $expectedJournalistAliasIds
+     * @param array<int, array<int, string>>    $expectedJournalistAliasIds
+     *
      * @return void
      */
     private function setupJournalistsDataTransformerMock(
@@ -619,6 +623,7 @@ class EditorialOrchestratorTest extends TestCase
 
     /**
      * @param MockObject $editorialMock
+     *
      * @return MockObject|TagAlias
      */
     private function generateTagMock(MockObject $editorialMock): MockObject|TagAlias
@@ -737,6 +742,7 @@ class EditorialOrchestratorTest extends TestCase
      *       bodyExpected: array<array<string, mixed>>
      *   } $editorial
      * @param MockObject $editorialMock
+     *
      * @return MockObject
      */
     private function getSignaturesMockByEditorial(array $editorial, MockObject $editorialMock): MockObject
