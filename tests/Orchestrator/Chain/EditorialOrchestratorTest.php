@@ -268,11 +268,14 @@ class EditorialOrchestratorTest extends TestCase
      *          }>
      *      }>,
      *      bodyExpected: array<array<string, mixed>>,
-     *      standfirstExpected: array<array<string, mixed>>
+     *      standfirstExpected: array<array<string, mixed>>,
+     *      recommenderExpected: array<array<string, string>>
      *  } $editorial
      * @param array<int, array<string, string>> $allJournalistExpected
      * @param array<int, array<string, string>> $allJournalistEditorialExpected
      * @param array<string, string>             $membershipLinkCombine
+     * @param array<int, array<int, string>>    $expectedJournalistAliasIds
+     * @param array<mixed>                      $expectedPhotoFromBodyTags
      *
      * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorDataProvider::getData
      */
@@ -282,7 +285,7 @@ class EditorialOrchestratorTest extends TestCase
         array $allJournalistEditorialExpected,
         array $membershipLinkCombine,
         array $expectedJournalistAliasIds,
-        $expectedPhotoFromBodyTags,
+        array $expectedPhotoFromBodyTags,
     ): void {
         $journalistsEditorial = $editorial['signatures'];
 
@@ -509,6 +512,15 @@ class EditorialOrchestratorTest extends TestCase
         static::assertSame('editorial', $this->editorialOrchestrator->canOrchestrate());
     }
 
+    /**
+     * @param array<int, string>                $withAliasIds
+     * @param array<int, Journalist|MockObject> $promisesJournalist
+     * @param array<string>                     $promisesAliasIds
+     * @param array<int, array<string, string>> $allJournalistsExpected
+     * @param array<int, string>                $callArgumentsAlias
+     * @param array<int, array<int, string>>   $expectedJournalistAliasIds
+     * @return array<int, string>
+     */
     private function resolveSignatures(
         array $withAliasIds,
         array $promisesJournalist,
@@ -516,7 +528,7 @@ class EditorialOrchestratorTest extends TestCase
         array $allJournalistsExpected,
         array &$callArgumentsAlias,
         array $expectedJournalistAliasIds,
-    ) {
+    ): array {
         $expectedArgumentsAlias = $withAliasIds;
         $arrayMocks = array_combine($withAliasIds, $promisesAliasIds);
         $arrayJournalistsMocks = array_combine($withAliasIds, $promisesJournalist);
@@ -533,6 +545,12 @@ class EditorialOrchestratorTest extends TestCase
         return $expectedArgumentsAlias;
     }
 
+    /**
+     * @param array<string> $expectedArgumentsAlias
+     * @param array<int, string> $callArgumentsAlias
+     * @param array<string, string> $arrayMocks
+     * @return void
+     */
     private function setupJournalistFactoryMock(
         array $expectedArgumentsAlias,
         array &$callArgumentsAlias,
@@ -547,6 +565,11 @@ class EditorialOrchestratorTest extends TestCase
             });
     }
 
+    /**
+     * @param array<string> $promisesAliasIds
+     * @param array<int, Journalist|MockObject> $promisesJournalist
+     * @return void
+     */
     private function setupQueryJournalistClientMock(
         array $promisesAliasIds,
         array $promisesJournalist,
@@ -562,6 +585,13 @@ class EditorialOrchestratorTest extends TestCase
         \call_user_func_array([$mockBuilder, 'willReturnOnConsecutiveCalls'], $promisesJournalist);
     }
 
+    /**
+     * @param array<int, string> $withAliasIds
+     * @param array<int, Journalist|MockObject> $promisesJournalist
+     * @param array<int, array<string, string>> $allJournalistExpected
+     * @param array<int, array<int, string>>  $expectedJournalistAliasIds
+     * @return void
+     */
     private function setupJournalistsDataTransformerMock(
         array $withAliasIds,
         array $promisesJournalist,
@@ -580,7 +610,11 @@ class EditorialOrchestratorTest extends TestCase
             );
     }
 
-    private function generateTagMock(MockObject $editorialMock): MockObject|TagAlias
+    /**
+     * @param MockObject|array<int, string> $editorialMock
+     * @return MockObject|TagAlias
+     */
+    private function generateTagMock(MockObject|array $editorialMock): MockObject|TagAlias
     {
         $editorialTag = $this->createMock(Tag::class);
         $tag = $this->createMock(TagAlias::class);
@@ -695,6 +729,7 @@ class EditorialOrchestratorTest extends TestCase
      *       }>,
      *       bodyExpected: array<array<string, mixed>>
      *   } $editorial
+     * @param MockObject $editorialMock
      */
     private function getSignaturesMockByEditorial(array $editorial, MockObject $editorialMock): MockObject
     {
@@ -742,6 +777,7 @@ class EditorialOrchestratorTest extends TestCase
      *       }>,
      *       bodyExpected: array<array<string, mixed>>
      *   } $editorial
+     * @param array<int, array<string, string>> $allJournalistsExpected
      *
      * @return array{
      *      0: array<int, BodyTagInsertedNews|MockObject>,
@@ -843,7 +879,7 @@ class EditorialOrchestratorTest extends TestCase
      *            signatures: array<int, string>,
      *            multimediaId: string
      *        }>,
-     *        recommender: array<int, array{
+     *        recommender?: array<int, array{
      *            id: string,
      *            sectionId: string,
      *            signatures: array<int, string>,
@@ -855,8 +891,10 @@ class EditorialOrchestratorTest extends TestCase
      *               url: string
      *           }>
      *       }>,
-     *       bodyExpected: array<array<string, mixed>>
+     *       bodyExpected: array<array<string, mixed>>,
+     *     standfirstExpected: array<array<string, mixed>>
      *   } $editorial
+     * @param array<int, array<string, string>> $allJournalistsExpected
      *
      * @return array{
      *      0: array<int, BodyTagInsertedNews|MockObject>,

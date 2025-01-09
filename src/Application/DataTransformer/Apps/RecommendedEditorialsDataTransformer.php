@@ -17,11 +17,10 @@ use Ec\Section\Domain\Model\Section;
  */
 class RecommendedEditorialsDataTransformer
 {
-    /** @var string */
-    private const TYPE = 'recommendededitorial';
-
     use UrlGeneratorTrait;
     use MultimediaTrait;
+    /** @var string */
+    private const TYPE = 'recommendededitorial';
 
     /** @var Editorial[] */
     private array $editorials;
