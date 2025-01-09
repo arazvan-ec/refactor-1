@@ -159,25 +159,25 @@ class EditorialOrchestratorDataProvider
                     ],
                     'bodyExpected' => [
                         [
-                            'type' => 'bodytaginsertednews',
-                            'editorialId' => '3',
-                            'title' => 'Noticia para insertar',
-                            'signatures' => [
-                                $allJournalist['1'],
+                            "type" => "bodytaginsertednews",
+                            "editorialId" => "3",
+                            "title" => "Noticia para insertar",
+                            "signatures" =>  [
+                                $allJournalist['1']
                             ],
-                            'editorial' => 'XXX',
-                            'shots' => [
-                                '202w' => 'XXX',
-                                '144w' => 'XXX',
-                                '128w' => 'XXX',
+                            "editorial" => 'XXX',
+                            "shots" => [
+                                "202w" => 'XXX',
+                                "144w" => 'XXX',
+                                "128w" => 'XXX',
                             ],
-                            'photo' => 'XXX',
+                            "photo" => "XXX"
                         ],
                     ],
                     'standfirstExpected' => [
                     ],
                     'recommenderExpected' => [
-                    ],
+                    ]
                 ],
                 $allJournalist,
                 [$allJournalist['1']],
@@ -199,7 +199,8 @@ class EditorialOrchestratorDataProvider
                     'standfirstExpected' => [
                     ],
                     'recommenderExpected' => [
-                    ],
+
+                    ]
                 ],
                 $allJournalist,
                 [$allJournalist['1']],
@@ -209,7 +210,7 @@ class EditorialOrchestratorDataProvider
                 [
                     'id' => 'editorialId',
                     'sectionId' => 'editorialSectionId',
-                    'signatures' => ['1', '2'],
+                    'signatures' => ['1','2'],
                     'insertedNews' => [
                     ],
                     'recommender' => [
@@ -221,17 +222,18 @@ class EditorialOrchestratorDataProvider
                     'standfirstExpected' => [
                     ],
                     'recommenderExpected' => [
-                    ],
+
+                    ]
                 ],
                 $allJournalist,
-                [$allJournalist['1'], $allJournalist['2']],
+                [$allJournalist['1'],$allJournalist['2']],
                 [],
             ],
             'case-three-journalist' => [
                 [
                     'id' => 'editorialId',
                     'sectionId' => 'editorialSectionId',
-                    'signatures' => ['1', '2', '7'],
+                    'signatures' => ['1','2','7'],
                     'insertedNews' => [
                     ],
                     'recommender' => [
@@ -243,24 +245,24 @@ class EditorialOrchestratorDataProvider
                     'standfirstExpected' => [
                     ],
                     'recommenderExpected' => [
-                    ],
+                    ]
                 ],
                 $allJournalist,
-                [$allJournalist['1'], $allJournalist['2'], $allJournalist['7']],
+                [$allJournalist['1'],$allJournalist['2'],$allJournalist['7']],
                 [],
             ],
             'case-three-journalist-with-inserted' => [
                 [
                     'id' => 'editorialId',
                     'sectionId' => 'editorialSectionId',
-                    'signatures' => ['1', '2'],
+                    'signatures' => ['1','2'],
                     'insertedNews' => [
                         [
                             'id' => '3',
                             'sectionId' => 'sectionId3',
                             'signatures' => ['7'],
                             'multimediaId' => '56',
-                        ],
+                        ]
                     ],
                     'recommender' => [
                     ],
@@ -268,30 +270,109 @@ class EditorialOrchestratorDataProvider
                     ],
                     'bodyExpected' => [
                         [
-                            'type' => 'bodytaginsertednews',
-                            'editorialId' => '3',
-                            'title' => 'Noticia para insertar',
-                            'signatures' => [
-                                $allJournalist['7'],
+                            "type" => "bodytaginsertednews",
+                            "editorialId" => "3",
+                            "title" => "Noticia para insertar",
+                            "signatures" =>  [
+                                $allJournalist['7']
                             ],
-                            'editorial' => 'XXX',
-                            'shots' => [
-                                '202w' => 'XXX',
-                                '144w' => 'XXX',
-                                '128w' => 'XXX',
+                            "editorial" => 'XXX',
+                            "shots" => [
+                                "202w" => 'XXX',
+                                "144w" => 'XXX',
+                                "128w" => 'XXX',
                             ],
-                            'photo' => 'XXX',
+                            "photo" => "XXX"
                         ],
                     ],
                     'standfirstExpected' => [
                     ],
                     'recommenderExpected' => [
-                    ],
+                    ]
                 ],
                 $allJournalist,
-                [$allJournalist['1'], $allJournalist['2']],
+                [$allJournalist['1'],$allJournalist['2']],
                 [],
             ],
+
+
+
+            /* 'case1' => [
+                 [
+                     'id' => 'editorialId',
+                     'sectionId' => 'editorialSectionId',
+                     'signatures' => ['1', '2'],
+                     'insertedNews' => [
+                         [
+                             'id' => '3',
+                             'sectionId' => 'sectionId3',
+                             'signatures' => ['5', '6'],
+                             'multimediaId' => '56',
+                         ],
+                         [
+                             'id' => '4',
+                             'sectionId' => 'sectionId4',
+                             'signatures' => ['7'],
+                             'multimediaId' => '69',
+                         ],
+                     ],
+                     'recommender' => [
+                         [
+                             'id' => '5',
+                             'sectionId' => 'sectionId3',
+                             'signatures' => ['1', '7'],
+                             'multimediaId' => '156',
+                         ],
+                         [
+                             'id' => '6',
+                             'sectionId' => 'sectionId4',
+                             'signatures' => ['6'],
+                             'multimediaId' => '169',
+                         ],
+                     ],
+                     'membershipCards' => [
+                         [
+                             'btns' => [
+                                 [
+                                     'urlMembership' => 'https://www.amazon.es/url1/dp/B0BJQPQVHP1',
+                                     'url' => 'https://www.amazon.es/url2/dp/B0BJQPQVHP2',
+                                 ],
+                             ],
+                         ],
+                     ],
+                     'bodyExpected' => [
+                     ],
+                     'standfirstExpected' => [
+                         'type' => 'unorderedlist',
+                         'items' => [
+                             [
+                                 'type' => 'listitem',
+                                 'content' => 'un bolillo',
+                                 'links' => [],
+                             ],
+                             [
+                                 'type' => 'listitem',
+                                 'content' => '#replace0#',
+                                 'links' => [
+                                     '#replace0#' => [
+                                         'type' => 'link',
+                                         'content' => 'dos bolillos',
+                                         'url' => 'http://www.google.com',
+                                         'target' => '_self',
+                                     ],
+                                 ],
+                             ],
+                         ],
+                     ],
+                     'recommenderExpected' => []
+                 ],
+                 $allJournalist,
+                 $allJournalistEditorial,
+                 [
+                     'https://www.amazon.es/url1/dp/B0BJQPQVHP1' => 'https://www.amazon.es/url1/dp/B0BJQPQVHP1?tag=cacatuaMan',
+                     'https://www.amazon.es/url2/dp/B0BJQPQVHP2' => 'https://www.amazon.es/url2/dp/B0BJQPQVHP2?tag=cacatuaMan',
+                 ],
+             ],*/
         ];
     }
 }

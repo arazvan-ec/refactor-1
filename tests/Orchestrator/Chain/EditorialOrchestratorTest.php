@@ -571,7 +571,6 @@ class EditorialOrchestratorTest extends TestCase
                         $allJournalistExpected[(int) $withAliasIds[0]],
                     );
                 break;
-
             case 2:
                 $this->journalistsDataTransformer->expects(static::exactly($index))
                     ->method('read')
