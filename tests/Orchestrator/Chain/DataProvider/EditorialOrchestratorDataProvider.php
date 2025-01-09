@@ -365,7 +365,7 @@ class EditorialOrchestratorDataProvider
                         [
                             'id' => '3',
                             'sectionId' => 'sectionId3',
-                            'signatures' => ['2','7'],
+                            'signatures' => ['2', '7'],
                             'multimediaId' => '56',
                         ],
                     ],
