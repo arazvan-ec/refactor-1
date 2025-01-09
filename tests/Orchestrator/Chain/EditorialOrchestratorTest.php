@@ -261,6 +261,12 @@ class EditorialOrchestratorTest extends TestCase
      *          signatures: array<int, string>,
      *          multimediaId: string
      *      }>,
+     *      recommender: array<int, array{
+     *          id: string,
+     *          sectionId: string,
+     *          signatures: array<int, string>,
+     *          multimediaId: string
+     *      }>,
      *      membershipCards: array<int, array{
      *          btns: array<int, array{
      *              urlMembership: string,
@@ -292,6 +298,7 @@ class EditorialOrchestratorTest extends TestCase
         /** @var Request $requestMock */
         $requestMock = $this->getRequestMock($editorial['id']);
 
+        /** @var MockObject $editorialMock */
         $editorialMock = $this->getEditorialMock($editorial);
         $promisesEditorials[] = $editorialMock;
         $withEditorials[] = $editorial['id'];
@@ -611,10 +618,10 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     /**
-     * @param MockObject|array<int, string> $editorialMock
+     * @param MockObject $editorialMock
      * @return MockObject|TagAlias
      */
-    private function generateTagMock(MockObject|array $editorialMock): MockObject|TagAlias
+    private function generateTagMock(MockObject $editorialMock): MockObject|TagAlias
     {
         $editorialTag = $this->createMock(Tag::class);
         $tag = $this->createMock(TagAlias::class);
@@ -730,6 +737,7 @@ class EditorialOrchestratorTest extends TestCase
      *       bodyExpected: array<array<string, mixed>>
      *   } $editorial
      * @param MockObject $editorialMock
+     * @return MockObject
      */
     private function getSignaturesMockByEditorial(array $editorial, MockObject $editorialMock): MockObject
     {
@@ -870,30 +878,31 @@ class EditorialOrchestratorTest extends TestCase
 
     /**
      * @param array{
-     *       id: string,
-     *       sectionId: string,
-     *       signatures: array<int, string>,
+     *        id: string,
+     *        sectionId: string,
+     *        signatures: array<int, string>,
      *        insertedNews: array<int, array{
      *            id: string,
      *            sectionId: string,
      *            signatures: array<int, string>,
      *            multimediaId: string
      *        }>,
-     *        recommender?: array<int, array{
+     *        recommender: array<int, array{
      *            id: string,
      *            sectionId: string,
      *            signatures: array<int, string>,
      *            multimediaId: string
      *        }>,
-     *       membershipCards: array<int, array{
+     *        membershipCards: array<int, array{
      *           btns: array<int, array{
      *               urlMembership: string,
      *               url: string
      *           }>
-     *       }>,
-     *       bodyExpected: array<array<string, mixed>>,
-     *     standfirstExpected: array<array<string, mixed>>
-     *   } $editorial
+     *        }>,
+     *        bodyExpected: array<array<string, mixed>>,
+     *        standfirstExpected: array<array<string, mixed>>,
+     *        recommenderExpected: array<array<string, string>>
+     *     } $editorial
      * @param array<int, array<string, string>> $allJournalistsExpected
      *
      * @return array{
