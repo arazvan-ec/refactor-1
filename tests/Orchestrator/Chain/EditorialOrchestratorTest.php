@@ -905,20 +905,7 @@ class EditorialOrchestratorTest extends TestCase
      *     } $editorial
      * @param array<int, array<string, string>> $allJournalistsExpected
      *
-     * @return array{
-     *      0: array<int, BodyTagInsertedNews|MockObject>,
-     *      1: array<string, array{
-     *          editorial: Editorial|MockObject,
-     *          section: Section|MockObject,
-     *          multimediaId: string,
-     *          signatures: array<int, array<string, mixed>>
-     *      }>,
-     *      2: array<int, Editorial|MockObject>,
-     *      3: array<int, string>,
-     *      4: array<int, Section|MockObject>,
-     *      5: array<int, string>,
-     *      6: array<int, string>
-     *  }
+     * @return array<int|string, mixed>
      *   */
     private function getRecommendedNewsByEditorial(array $editorial, MockObject $editorialMock, array $allJournalistsExpected): array
     {
