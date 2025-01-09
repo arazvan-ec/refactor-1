@@ -98,11 +98,36 @@ class EditorialOrchestrator implements Orchestrator
         /** @var array<string, array<string, mixed>> $resolveData */
         $resolveData = [];
         $resolveData['multimedia'] = [];
-        $resolveData['recommendedEditorials'] = [];
 
+        $resolveData['insertedNews'] = [];
+        /** @var BodyTagInsertedNews[] $insertedNews */
+        $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
+        foreach ($insertedNews as $insertedNew) {
+            $idInserted = $insertedNew->editorialId()->id();
+
+            /** @var Editorial $insertedEditorials */
+            $insertedEditorials = $this->queryEditorialClient->findEditorialById($idInserted);
+            if ($insertedEditorials->isVisible()) {
+                $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
+
+                $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
+                $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
+                $resolveData['insertedNews'][$idInserted]['signatures'] = [];
+                /** @var Signature $signature */
+                foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
+                    $resolveData['insertedNews'][$idInserted]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
+                }
+
+                /** @var array<string, array<string, mixed>> $resolveData */
+                $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
+
+                $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
+            }
+        }
+
+        $resolveData['recommendedEditorials'] = [];
         $recommendedEditorials = $editorial->recommendedEditorials();
         $recommendedNews = [];
-
         /** @var EditorialId $recommendedEditorialId */
         foreach ($recommendedEditorials->editorialIds() as $recommendedEditorialId) {
             $idRecommended = $recommendedEditorialId->id();
@@ -124,33 +149,6 @@ class EditorialOrchestrator implements Orchestrator
                 $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);
                 $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $recommendedEditorial->multimedia()->id()->id();
                 $recommendedNews[] = $recommendedEditorial;
-            }
-        }
-
-        $resolveData['insertedNews'] = [];
-        /** @var BodyTagInsertedNews[] $insertedNews */
-        $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
-
-        foreach ($insertedNews as $insertedNew) {
-            $idInserted = $insertedNew->editorialId()->id();
-
-            /** @var Editorial $insertedEditorials */
-            $insertedEditorials = $this->queryEditorialClient->findEditorialById($idInserted);
-            if ($insertedEditorials->isVisible()) {
-                $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
-
-                $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
-                $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
-                $resolveData['insertedNews'][$idInserted]['signatures'] = [];
-                /** @var Signature $signature */
-                foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
-                    $resolveData['insertedNews'][$idInserted]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
-                }
-
-                /** @var array<string, array<string, mixed>> $resolveData */
-                $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
-
-                $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
             }
         }
 
