@@ -8,6 +8,7 @@ namespace App\Orchestrator\Chain;
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
+use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
 use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
@@ -21,7 +22,9 @@ use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Editorial;
+use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
+use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Editorial\Domain\Model\Signature;
 use Ec\Journalist\Domain\Model\Journalist;
@@ -62,6 +65,7 @@ class EditorialOrchestrator implements Orchestrator
         private readonly JournalistFactory $journalistFactory,
         private readonly MultimediaDataTransformer $multimediaDataTransformer,
         private readonly StandfirstDataTransformer $standFirstDataTransformer,
+        private readonly RecommendedEditorialsDataTransformer $recommendedEditorialsDataTransformer,
         string $extension,
     ) {
         $this->setExtension($extension);
@@ -76,7 +80,7 @@ class EditorialOrchestrator implements Orchestrator
     {
         $id = $request->get('id');
 
-        /** @var Editorial $editorial */
+        /** @var NewsBase $editorial */
         $editorial = $this->queryEditorialClient->findEditorialById($id);
 
         if (null === $editorial->sourceEditorial()) {
@@ -89,15 +93,15 @@ class EditorialOrchestrator implements Orchestrator
 
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
-        /** @var array<string, array<string, mixed>> $resolveData */
-        $resolveData = [];
-
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
+        /** @var array<string, array<string, mixed>> $resolveData */
+        $resolveData = [];
+        $resolveData['multimedia'] = [];
+
+        $resolveData['insertedNews'] = [];
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
-
-        $resolveData['multimedia'] = [];
         foreach ($insertedNews as $insertedNew) {
             $idInserted = $insertedNew->editorialId()->id();
 
@@ -118,6 +122,33 @@ class EditorialOrchestrator implements Orchestrator
                 $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
 
                 $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
+            }
+        }
+
+        $resolveData['recommendedEditorials'] = [];
+        $recommendedEditorials = $editorial->recommendedEditorials();
+        $recommendedNews = [];
+        /** @var EditorialId $recommendedEditorialId */
+        foreach ($recommendedEditorials->editorialIds() as $recommendedEditorialId) {
+            $idRecommended = $recommendedEditorialId->id();
+
+            /** @var Editorial $recommendedEditorial */
+            $recommendedEditorial = $this->queryEditorialClient->findEditorialById($idRecommended);
+            if ($recommendedEditorial->isVisible()) {
+                $sectionInserted = $this->querySectionClient->findSectionById($recommendedEditorial->sectionId());
+
+                $resolveData['recommendedEditorials'][$idRecommended]['editorial'] = $recommendedEditorial;
+                $resolveData['recommendedEditorials'][$idRecommended]['section'] = $sectionInserted;
+                $resolveData['recommendedEditorials'][$idRecommended]['signatures'] = [];
+                /** @var Signature $signature */
+                foreach ($recommendedEditorial->signatures()->getArrayCopy() as $signature) {
+                    $resolveData['recommendedEditorials'][$idRecommended]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
+                }
+
+                /** @var array<string, array<string, mixed>> $resolveData */
+                $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);
+                $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $recommendedEditorial->multimedia()->id()->id();
+                $recommendedNews[] = $recommendedEditorial;
             }
         }
 
@@ -166,6 +197,10 @@ class EditorialOrchestrator implements Orchestrator
 
         $editorialResult['standfirst'] = $this->standFirstDataTransformer
             ->write($editorial->standFirst())
+            ->read();
+
+        $editorialResult['recommendedEditorials'] = $this->recommendedEditorialsDataTransformer
+            ->write($recommendedNews, $resolveData)
             ->read();
 
         return $editorialResult;
