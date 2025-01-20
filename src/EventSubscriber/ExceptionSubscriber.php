@@ -17,6 +17,13 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class ExceptionSubscriber implements EventSubscriberInterface
 {
+    use CacheControl;
+
+    private const SMAXAGE = 64000;
+    private const MAXAGE = 60;
+    private const STALE_WHILE_REVALIDATE = 60;
+    private const STALE_IF_ERROR = 259200;
+
     private const KERNEL_DEV = 'dev';
     private string $appEnv;
 
@@ -43,6 +50,13 @@ class ExceptionSubscriber implements EventSubscriberInterface
             ];
 
             $response = new JsonResponse($message, $this->getStatusCode($throwable));
+            $this->setHttpCache(
+                $response,
+                self::SMAXAGE,
+                self::MAXAGE,
+                self::STALE_WHILE_REVALIDATE,
+                self::STALE_IF_ERROR
+            );
 
             $event->setResponse($response);
         }
