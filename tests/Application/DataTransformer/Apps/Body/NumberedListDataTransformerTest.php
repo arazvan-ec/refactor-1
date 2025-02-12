@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\NumberedListDataTransformer;
+use App\Tests\ArrayIteratorTrait;
 use Assert\InvalidArgumentException;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
@@ -20,9 +21,12 @@ use PHPUnit\Framework\TestCase;
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
  * @covers \App\Application\DataTransformer\Apps\Body\NumberedListDataTransformer
+ * @covers \App\Application\DataTransformer\Apps\Body\GenericListDataTransformer
  */
 class NumberedListDataTransformerTest extends TestCase
 {
+    use ArrayIteratorTrait;
+
     private NumberedListDataTransformer $numberedListTransformer;
 
     protected function setUp(): void
@@ -50,59 +54,58 @@ class NumberedListDataTransformerTest extends TestCase
     {
         $expectedLink = [
             'type' => 'link',
-            'content' => 'content',
-            'url' => 'url',
-            'target' => 'target',
+            'content' => 'link',
+            'url' => 'https://www.elconfidencial.com/',
+            'target' => '_self',
         ];
-        $linkMock = $this->createConfiguredMock(Link::class, $expectedLink);
 
+        $linkMock = $this->createConfiguredMock(Link::class, $expectedLink);
         $expectedListItem = [
             'type' => 'listitem',
-            'content' => 'content',
+            'content' => 'List item con links',
             'links' => [$linkMock],
         ];
+
         $listItemMock = $this->createConfiguredMock(ListItem::class, $expectedListItem);
 
-        $bodyIterator = new \ArrayIterator([$listItemMock]);
-
         $expectedArray = [
-            'type' => 'unorderedlist',
+            'type' => 'numberedlist',
         ];
+
         $bodyElementMock = $this->createConfiguredMock(NumberedList::class, $expectedArray);
-
-        $bodyElementMock
-            ->method('rewind')
-            ->willReturnCallback(static function () use ($bodyIterator) {
-                $bodyIterator->rewind();
-            });
-
-        $bodyElementMock
-            ->method('current')
-            ->willReturnCallback(static function () use ($bodyIterator) {
-                return $bodyIterator->current();
-            });
-
-        $bodyElementMock
-            ->method('key')
-            ->willReturnCallback(static function () use ($bodyIterator) {
-                return $bodyIterator->key();
-            });
-
-        $bodyElementMock
-            ->method('next')
-            ->willReturnCallback(static function () use ($bodyIterator) {
-                $bodyIterator->next();
-            });
-
-        $bodyElementMock
-            ->method('valid')
-            ->willReturnCallback(static function () use ($bodyIterator) {
-                return $bodyIterator->valid();
-            });
+        $this->configureArrayIteratorMock($listItemMock, $bodyElementMock);
 
         $result = $this->numberedListTransformer->write($bodyElementMock)->read();
 
         $expectedListItem['links'] = [$expectedLink];
+        $expectedArray['items'] = [$expectedListItem];
+
+        static::assertSame($expectedArray, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function readShouldReturnExpectedArrayWithEmptyLinks(): void
+    {
+        $expectedListItem = [
+            'type' => 'listitem',
+            'content' => 'List item con #replace0#',
+            'links' => [],
+        ];
+
+        $listItemMock = $this->createConfiguredMock(ListItem::class, $expectedListItem);
+
+        $expectedArray = [
+            'type' => 'numberedlist',
+        ];
+
+        $bodyElementMock = $this->createConfiguredMock(NumberedList::class, $expectedArray);
+        $this->configureArrayIteratorMock($listItemMock, $bodyElementMock);
+
+        $result = $this->numberedListTransformer->write($bodyElementMock)->read();
+
+        $expectedListItem['links'] = null;
         $expectedArray['items'] = [$expectedListItem];
 
         static::assertSame($expectedArray, $result);

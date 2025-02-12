@@ -52,7 +52,7 @@ class ParagraphDataTransformerTest extends TestCase
 
         $expectedArray = [
             'type' => 'paragraph',
-            'content' => 'Contenido #1, con #replace0#',
+            'content' => 'Contenido #1, con links',
             'links' => [$linkMock],
         ];
 
@@ -61,6 +61,26 @@ class ParagraphDataTransformerTest extends TestCase
         $result = $this->paragraphDataTransformer->write($bodyElementMock)->read();
 
         $expectedArray['links'] = [$expectedLink];
+
+        static::assertSame($expectedArray, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function readShouldReturnExpectedArrayWithEmptyLinks(): void
+    {
+        $expectedArray = [
+            'type' => 'paragraph',
+            'content' => 'Contenido #1, sin links',
+            'links' => [],
+        ];
+
+        $bodyElementMock = $this->createConfiguredMock(Paragraph::class, $expectedArray);
+
+        $result = $this->paragraphDataTransformer->write($bodyElementMock)->read();
+
+        $expectedArray['links'] = null;
 
         static::assertSame($expectedArray, $result);
     }

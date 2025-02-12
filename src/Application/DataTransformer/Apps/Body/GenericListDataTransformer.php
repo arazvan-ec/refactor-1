@@ -27,10 +27,12 @@ abstract class GenericListDataTransformer extends ElementTypeDataTransformer
 
         /** @var ListItem $item */
         foreach ($this->bodyElement as $item) {
+            $links = $this->readLinks($item);
+
             $listItemArray = [];
             $listItemArray['type'] = $item->type();
             $listItemArray['content'] = $item->content();
-            $listItemArray['links'] = $this->readLinks($item);
+            $listItemArray['links'] = $links ?: null;
             $elementArray['items'][] = $listItemArray;
         }
 

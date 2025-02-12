@@ -6,6 +6,7 @@
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\UnorderedListDataTransformer;
+use App\Tests\ArrayIteratorTrait;
 use Assert\InvalidArgumentException;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
@@ -17,9 +18,12 @@ use PHPUnit\Framework\TestCase;
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
  * @covers \App\Application\DataTransformer\Apps\Body\UnorderedListDataTransformer
+ * @covers \App\Application\DataTransformer\Apps\Body\GenericListDataTransformer
  */
 class UnorderedListDataTransformerTest extends TestCase
 {
+    use ArrayIteratorTrait;
+
     private UnorderedListDataTransformer $unorderedListDataTransformer;
 
     protected function setUp(): void
@@ -42,59 +46,58 @@ class UnorderedListDataTransformerTest extends TestCase
     {
         $expectedLink = [
             'type' => 'link',
-            'content' => 'content',
-            'url' => 'url',
-            'target' => 'target',
+            'content' => 'link',
+            'url' => 'https://www.elconfidencial.com/',
+            'target' => '_self',
         ];
-        $linkMock = $this->createConfiguredMock(Link::class, $expectedLink);
 
+        $linkMock = $this->createConfiguredMock(Link::class, $expectedLink);
         $expectedListItem = [
             'type' => 'listitem',
-            'content' => 'content',
+            'content' => 'List item con #replace0#',
             'links' => [$linkMock],
         ];
-        $listItemMock = $this->createConfiguredMock(ListItem::class, $expectedListItem);
 
-        $bodyIterator = new \ArrayIterator([$listItemMock]);
+        $listItemMock = $this->createConfiguredMock(ListItem::class, $expectedListItem);
 
         $expectedArray = [
             'type' => 'unorderedlist',
         ];
+
         $bodyElementMock = $this->createConfiguredMock(UnorderedList::class, $expectedArray);
-
-        $bodyElementMock
-            ->method('rewind')
-            ->willReturnCallback(static function () use ($bodyIterator) {
-                $bodyIterator->rewind();
-            });
-
-        $bodyElementMock
-            ->method('current')
-            ->willReturnCallback(static function () use ($bodyIterator) {
-                return $bodyIterator->current();
-            });
-
-        $bodyElementMock
-            ->method('key')
-            ->willReturnCallback(static function () use ($bodyIterator) {
-                return $bodyIterator->key();
-            });
-
-        $bodyElementMock
-            ->method('next')
-            ->willReturnCallback(static function () use ($bodyIterator) {
-                $bodyIterator->next();
-            });
-
-        $bodyElementMock
-            ->method('valid')
-            ->willReturnCallback(static function () use ($bodyIterator) {
-                return $bodyIterator->valid();
-            });
+        $this->configureArrayIteratorMock($listItemMock, $bodyElementMock);
 
         $result = $this->unorderedListDataTransformer->write($bodyElementMock)->read();
 
         $expectedListItem['links'] = [$expectedLink];
+        $expectedArray['items'] = [$expectedListItem];
+
+        static::assertSame($expectedArray, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function readShouldReturnExpectedArrayWithEmptyLinks(): void
+    {
+        $expectedListItem = [
+            'type' => 'listitem',
+            'content' => 'List item con links',
+            'links' => [],
+        ];
+
+        $listItemMock = $this->createConfiguredMock(ListItem::class, $expectedListItem);
+
+        $expectedArray = [
+            'type' => 'unorderedlist',
+        ];
+
+        $bodyElementMock = $this->createConfiguredMock(UnorderedList::class, $expectedArray);
+        $this->configureArrayIteratorMock($listItemMock, $bodyElementMock);
+
+        $result = $this->unorderedListDataTransformer->write($bodyElementMock)->read();
+
+        $expectedListItem['links'] = null;
         $expectedArray['items'] = [$expectedListItem];
 
         static::assertSame($expectedArray, $result);

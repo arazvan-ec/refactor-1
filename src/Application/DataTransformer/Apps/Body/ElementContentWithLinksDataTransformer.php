@@ -22,7 +22,8 @@ abstract class ElementContentWithLinksDataTransformer extends ElementContentData
     public function read(): array
     {
         $elementArray = parent::read();
-        $elementArray['links'] = $this->readLinks($this->bodyElement);
+        $links = $this->readLinks($this->bodyElement);
+        $elementArray['links'] = $links ?: null;
 
         return $elementArray;
     }
