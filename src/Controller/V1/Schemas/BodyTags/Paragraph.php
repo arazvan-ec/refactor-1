@@ -5,6 +5,8 @@
 
 namespace App\Controller\V1\Schemas\BodyTags;
 
+use App\Controller\V1\Schemas\LinkCollection;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
@@ -26,34 +28,7 @@ use OpenApi\Attributes as OA;
         new OA\Property(
             property: 'links',
             description: 'Links',
-            type: 'array',
-            items: new OA\Items(
-                properties: [
-                    new OA\Property(
-                        property: 'replace{num#}',
-                        properties: [
-                            new OA\Property(
-                                property: 'type',
-                                type: 'string',
-                                enum: ['link']
-                            ),
-                            new OA\Property(
-                                property: 'content',
-                                type: 'string'
-                            ),
-                            new OA\Property(
-                                property: 'url',
-                                type: 'string'
-                            ),
-                            new OA\Property(
-                                property: 'target',
-                                type: 'string'
-                            ),
-                        ],
-                        type: 'object',
-                    ),
-                ]
-            )
+            ref: new Model(type: LinkCollection::class)
         ),
     ],
     type: 'object',

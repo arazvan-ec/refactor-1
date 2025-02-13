@@ -52,7 +52,7 @@ class SubHeadDataTransformerTest extends TestCase
 
         $expectedArray = [
             'type' => 'subhead',
-            'content' => 'Contenido #1, con #replace0#',
+            'content' => 'Contenido #1, con links',
             'links' => [$linkMock],
         ];
 
@@ -61,6 +61,26 @@ class SubHeadDataTransformerTest extends TestCase
         $result = $this->subHeadDataTransformer->write($bodyElementMock)->read();
 
         $expectedArray['links'] = [$expectedLink];
+
+        static::assertSame($expectedArray, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function readShouldReturnExpectedArrayWithEmptyLinks(): void
+    {
+        $expectedArray = [
+            'type' => 'subhead',
+            'content' => 'Contenido #1, sin links',
+            'links' => [],
+        ];
+
+        $bodyElementMock = $this->createConfiguredMock(SubHead::class, $expectedArray);
+
+        $expectedArray['links'] = null;
+
+        $result = $this->subHeadDataTransformer->write($bodyElementMock)->read();
 
         static::assertSame($expectedArray, $result);
     }
