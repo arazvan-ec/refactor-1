@@ -4,6 +4,9 @@ framework:
         default_bus: cms.messenger.bus
         buses:
             cms.messenger.bus:
+
+        failure_transport: failed_messages
+
         transports:
             snaapi:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
@@ -16,15 +19,22 @@ framework:
                         type: topic
                     delay:
                         exchange_name: exchange::events::delay
+                        queue_name_pattern: "queue::event::snaapi::delay"
                     queues:
                         queue::event::snaapi:
                             binding_keys:
                                 - "editorial::event"
-                        queue::event::snaapi::error:
-                            binding_keys:
-                                - "queue::event::snaapi"
+
                     transport_name: snaapi
-            cache_delete:
+
+                retry_strategy:
+                    max_retries: 1
+                    multiplier: 1
+                    delay: 2000
+
+                failure_transport: failed_messages
+
+            warmup:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 options:
                     auto_setup: true
@@ -33,13 +43,29 @@ framework:
                     exchange:
                         name: exchange::commands
                         type: direct
-                    delay:
-                        exchange_name: exchange::commands::delay
                     queues:
                         queue::commands::messenger::warmup:
                             binding_keys:
                                 - "warmup::messenger"
-                    transport_name: cache_delete
+
+                    transport_name: warmup
+
+            failed_messages:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    auto_setup: true
+                    sasl_method: 0
+                    verify: false
+                    exchange:
+                        name: exchange::events::errors
+                        type: topic
+                    queues:
+                        queue::event::snaapi::error:
+                            binding_keys:
+                                - "queue::event::snaapi"
+
+                    transport_name: failed_messages
+
         routing:
-            Ec\Cqrs\Messages\CommandNotification: cache_delete
+            Ec\Cqrs\Messages\CommandNotification: warmup
             Ec\Editorial\Domain\Model\EventEditorial: snaapi
