@@ -11,7 +11,7 @@ use Ec\Editorial\Domain\Model\Body\BodyTagSummary;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
+ * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
  *
  * @covers \App\Application\DataTransformer\Apps\Body\BodyTagSummaryDataTransformer
  */
