@@ -113,9 +113,13 @@ class EditorialOrchestrator implements Orchestrator
                 $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
                 $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
                 $resolveData['insertedNews'][$idInserted]['signatures'] = [];
+
                 /** @var Signature $signature */
                 foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
-                    $resolveData['insertedNews'][$idInserted]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
+                    $result = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
+                    if (!empty($result)) {
+                        $resolveData['insertedNews'][$idInserted]['signatures'][] = $result;
+                    }
                 }
 
                 /** @var array<string, array<string, mixed>> $resolveData */
@@ -142,7 +146,10 @@ class EditorialOrchestrator implements Orchestrator
                 $resolveData['recommendedEditorials'][$idRecommended]['signatures'] = [];
                 /** @var Signature $signature */
                 foreach ($recommendedEditorial->signatures()->getArrayCopy() as $signature) {
-                    $resolveData['recommendedEditorials'][$idRecommended]['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
+                    $result = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
+                    if (!empty($result)) {
+                        $resolveData['recommendedEditorials'][$idRecommended]['signatures'][] = $result;
+                    }
                 }
 
                 /** @var array<string, array<string, mixed>> $resolveData */
@@ -181,7 +188,10 @@ class EditorialOrchestrator implements Orchestrator
         $editorialResult['signatures'] = [];
 
         foreach ($editorial->signatures()->getArrayCopy() as $signature) {
-            $editorialResult['signatures'][] = $this->retriveAliasFormat($signature->id()->id(), $section);
+            $result = $this->retriveAliasFormat($signature->id()->id(), $section);
+            if (!empty($result)) {
+                $editorialResult['signatures'][] = $result;
+            }
         }
 
         $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
@@ -298,15 +308,7 @@ class EditorialOrchestrator implements Orchestrator
      */
     private function getLinksFromBody(Body $body): array
     {
-        // $linksOfElementsContentWithLinks = $this->getLinksOfElementContentWithLinks($body);
-        $linksOfBodyTagMembership = $this->getLinksOfBodyTagMembership($body);
-        // $linksOfBodyTagPicture = $this->getLinksOfBodyTagPicture($body);
-
-        return array_merge(
-            // $linksOfElementsContentWithLinks,
-            $linksOfBodyTagMembership,
-            // $linksOfBodyTagPicture
-        );
+        return $this->getLinksOfBodyTagMembership($body);
     }
 
     /**
