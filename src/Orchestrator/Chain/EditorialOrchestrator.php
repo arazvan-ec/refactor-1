@@ -308,11 +308,7 @@ class EditorialOrchestrator implements Orchestrator
      */
     private function getLinksFromBody(Body $body): array
     {
-        $linksOfBodyTagMembership = $this->getLinksOfBodyTagMembership($body);
-
-        return array_merge(
-            $linksOfBodyTagMembership
-        );
+        return $this->getLinksOfBodyTagMembership($body);
     }
 
     /**
