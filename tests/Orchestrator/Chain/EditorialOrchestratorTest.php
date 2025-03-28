@@ -432,7 +432,7 @@ class EditorialOrchestratorTest extends TestCase
 
         $journalistEditorialExpected = [];
         foreach ($journalistsEditorial as $journalistEditorialId) {
-            if($journalistEditorialId !== '9'){
+            if($journalistEditorialId !== '9' && $journalistEditorialId !== '10'){
                 $journalistEditorialExpected[] = $allJournalistExpected[$journalistEditorialId];
             }
         }

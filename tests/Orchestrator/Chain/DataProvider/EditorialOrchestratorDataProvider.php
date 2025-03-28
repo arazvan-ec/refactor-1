@@ -787,6 +787,78 @@ class EditorialOrchestratorDataProvider
                 ],
                 [],
             ],
+            'case-with-not-found-journalist' =>  [
+                [
+                    'id' => 'editorialId',
+                    'sectionId' => 'editorialSectionId',
+                    'signatures' => ['1', '6', '10'],
+                    'insertedNews' => [
+                        [
+                            'id' => '3',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['7'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'recommender' => [
+                        [
+                            'id' => '4',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['2'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'membershipCards' => [
+                    ],
+                    'bodyExpected' => [
+                        [
+                            'type' => 'bodytaginsertednews',
+                            'editorialId' => '3',
+                            'title' => 'Noticia para insertar',
+                            'signatures' => [
+                                $allJournalist['7'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                    'standfirstExpected' => [
+                    ],
+                    'recommenderExpected' => [
+                        [
+                            'type' => 'recommendededitorial',
+                            'editorialId' => '4',
+                            'title' => 'Noticia para recomendar',
+                            'signatures' => [
+                                $allJournalist['2'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                ],
+                $allJournalist,
+                [$allJournalist['1'], $allJournalist['6']],
+                [],
+                [
+                    $allJournalist['7'],
+                    $allJournalist['2'],
+                    $allJournalist['1'],
+                    $allJournalist['6'],
+                    new \Exception('Journalist not found'),
+                ],
+                [],
+            ],
 
             /* 'case1' => [
                  [
