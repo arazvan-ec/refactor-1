@@ -432,7 +432,7 @@ class EditorialOrchestratorTest extends TestCase
 
         $journalistEditorialExpected = [];
         foreach ($journalistsEditorial as $journalistEditorialId) {
-            if($journalistEditorialId !== '9' && $journalistEditorialId !== '10'){
+            if ('9' !== $journalistEditorialId && '10' !== $journalistEditorialId) {
                 $journalistEditorialExpected[] = $allJournalistExpected[$journalistEditorialId];
             }
         }
@@ -541,7 +541,6 @@ class EditorialOrchestratorTest extends TestCase
     ): array {
         $expectedArgumentsAlias = $withAliasIds;
         $arrayMocks = array_combine($withAliasIds, $promisesAliasIds);
-        $arrayJournalistsMocks = array_combine($withAliasIds, $promisesJournalist);
 
         $this->setupJournalistFactoryMock($expectedArgumentsAlias, $callArgumentsAlias, $arrayMocks);
         $this->setupQueryJournalistClientMock($promisesAliasIds, $promisesJournalist);
@@ -612,7 +611,7 @@ class EditorialOrchestratorTest extends TestCase
         array $expectedJournalistAliasIds,
     ): void {
         $index = \count($promisesJournalist);
-        if(in_array('9',$withAliasIds)){
+        if (\in_array('9', $withAliasIds)) {
             --$index;
         }
         $this->journalistsDataTransformer->expects(static::exactly($index))
@@ -857,7 +856,6 @@ class EditorialOrchestratorTest extends TestCase
                 $signatureInsertedMock->expects(static::once())
                     ->method('id')
                     ->willReturn($signatureInsertedIdMock);
-
 
                 $signaturesInsertedEditorialMocksArray[] = $signatureInsertedMock;
                 $signaturesInsertedEditorialArray[] = $allJournalistsExpected[$signatureInsertedId];
@@ -1113,9 +1111,8 @@ class EditorialOrchestratorTest extends TestCase
 
             $journalistMockArray->expects(static::once())
                 ->method('isActive')
-                ->willReturn(!($aliasId === '9'));
-            if($aliasId !== '9'){
-
+                ->willReturn(!('9' === $aliasId));
+            if ('9' !== $aliasId) {
                 $journalistMockArray->expects(static::once())
                     ->method('isVisible')
                     ->willReturn(true);

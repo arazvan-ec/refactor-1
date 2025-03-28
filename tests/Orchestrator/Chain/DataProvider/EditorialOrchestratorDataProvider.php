@@ -630,7 +630,7 @@ class EditorialOrchestratorDataProvider
                     ],
                 ],
                 $allJournalist,
-                [$allJournalist['1'], $allJournalist['6'] ],
+                [$allJournalist['1'], $allJournalist['6']],
                 [],
                 [
                     $allJournalist['7'],
@@ -703,7 +703,7 @@ class EditorialOrchestratorDataProvider
                     ],
                 ],
                 $allJournalist,
-                [$allJournalist['1'], $allJournalist['6'] ],
+                [$allJournalist['1'], $allJournalist['6']],
                 [],
                 [
                     $allJournalist['7'],
@@ -776,7 +776,7 @@ class EditorialOrchestratorDataProvider
                     ],
                 ],
                 $allJournalist,
-                [$allJournalist['1'], $allJournalist['6'] ],
+                [$allJournalist['1'], $allJournalist['6']],
                 [],
                 [
                     $allJournalist['7'],
@@ -787,7 +787,7 @@ class EditorialOrchestratorDataProvider
                 ],
                 [],
             ],
-            'case-with-not-found-journalist' =>  [
+            'case-with-not-found-journalist' => [
                 [
                     'id' => 'editorialId',
                     'sectionId' => 'editorialSectionId',
@@ -859,83 +859,6 @@ class EditorialOrchestratorDataProvider
                 ],
                 [],
             ],
-
-            /* 'case1' => [
-                 [
-                     'id' => 'editorialId',
-                     'sectionId' => 'editorialSectionId',
-                     'signatures' => ['1', '2'],
-                     'insertedNews' => [
-                         [
-                             'id' => '3',
-                             'sectionId' => 'sectionId3',
-                             'signatures' => ['5', '6'],
-                             'multimediaId' => '56',
-                         ],
-                         [
-                             'id' => '4',
-                             'sectionId' => 'sectionId4',
-                             'signatures' => ['7'],
-                             'multimediaId' => '69',
-                         ],
-                     ],
-                     'recommender' => [
-                         [
-                             'id' => '5',
-                             'sectionId' => 'sectionId3',
-                             'signatures' => ['1', '7'],
-                             'multimediaId' => '156',
-                         ],
-                         [
-                             'id' => '6',
-                             'sectionId' => 'sectionId4',
-                             'signatures' => ['6'],
-                             'multimediaId' => '169',
-                         ],
-                     ],
-                     'membershipCards' => [
-                         [
-                             'btns' => [
-                                 [
-                                     'urlMembership' => 'https://www.amazon.es/url1/dp/B0BJQPQVHP1',
-                                     'url' => 'https://www.amazon.es/url2/dp/B0BJQPQVHP2',
-                                 ],
-                             ],
-                         ],
-                     ],
-                     'bodyExpected' => [
-                     ],
-                     'standfirstExpected' => [
-                         'type' => 'unorderedlist',
-                         'items' => [
-                             [
-                                 'type' => 'listitem',
-                                 'content' => 'un bolillo',
-                                 'links' => [],
-                             ],
-                             [
-                                 'type' => 'listitem',
-                                 'content' => '#replace0#',
-                                 'links' => [
-                                     '#replace0#' => [
-                                         'type' => 'link',
-                                         'content' => 'dos bolillos',
-                                         'url' => 'http://www.google.com',
-                                         'target' => '_self',
-                                     ],
-                                 ],
-                             ],
-                         ],
-                     ],
-                     'recommenderExpected' => []
-                 ],
-                 $allJournalist,
-                 $allJournalistEditorial,
-                 [
-                     'https://www.amazon.es/url1/dp/B0BJQPQVHP1' => 'https://www.amazon.es/url1/dp/B0BJQPQVHP1?tag=cacatuaMan',
-                     'https://www.amazon.es/url2/dp/B0BJQPQVHP2' => 'https://www.amazon.es/url2/dp/B0BJQPQVHP2?tag=cacatuaMan',
-                 ],
-             ],*/
         ];
     }
 }
