@@ -83,6 +83,19 @@ class EditorialOrchestratorDataProvider
                     ],
                 ],
             ],
+            '9' => [
+                'journalistId' => '9',
+                'aliasId' => '9',
+                'name' => 'Javier Bocanegra 1',
+                'url' => 'https://www.elconfidencial.dev/autores/Javier+Bocanegra-2338/',
+                'photo' => 'https://images.ecestaticos.dev/K0FFtVTsHaYc4Yd0feIi_Oiu6O4=/dev.f.elconfidencial.com/journalist/1b2/c5e/4ff/1b2c5e4fff467ca4e86b6aa3d3ded248.jpg',
+                'departments' => [
+                    [
+                        'id' => '11',
+                        'name' => 'Fin de semana',
+                    ],
+                ],
+            ],
         ];
 
         return [
@@ -553,6 +566,150 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['2'],
                     $allJournalist['1'],
                     $allJournalist['6'],
+                ],
+                [],
+            ],
+            'case-with-deactive-journalist-onto-editorial' => [
+                [
+                    'id' => 'editorialId',
+                    'sectionId' => 'editorialSectionId',
+                    'signatures' => ['1', '6', '9'],
+                    'insertedNews' => [
+                        [
+                            'id' => '3',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['7'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'recommender' => [
+                        [
+                            'id' => '4',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['2'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'membershipCards' => [
+                    ],
+                    'bodyExpected' => [
+                        [
+                            'type' => 'bodytaginsertednews',
+                            'editorialId' => '3',
+                            'title' => 'Noticia para insertar',
+                            'signatures' => [
+                                $allJournalist['7'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                    'standfirstExpected' => [
+                    ],
+                    'recommenderExpected' => [
+                        [
+                            'type' => 'recommendededitorial',
+                            'editorialId' => '4',
+                            'title' => 'Noticia para recomendar',
+                            'signatures' => [
+                                $allJournalist['2'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                ],
+                $allJournalist,
+                [$allJournalist['1'], $allJournalist['6'] ],
+                [],
+                [
+                    $allJournalist['7'],
+                    $allJournalist['2'],
+                    $allJournalist['1'],
+                    $allJournalist['6'],
+                    $allJournalist['9'],
+                ],
+                [],
+            ],
+            'case-with-deactive-journalist-onto-inserted' => [
+                [
+                    'id' => 'editorialId',
+                    'sectionId' => 'editorialSectionId',
+                    'signatures' => ['1', '6'],
+                    'insertedNews' => [
+                        [
+                            'id' => '3',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['7', '9'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'recommender' => [
+                        [
+                            'id' => '4',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['2'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'membershipCards' => [
+                    ],
+                    'bodyExpected' => [
+                        [
+                            'type' => 'bodytaginsertednews',
+                            'editorialId' => '3',
+                            'title' => 'Noticia para insertar',
+                            'signatures' => [
+                                $allJournalist['7'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                    'standfirstExpected' => [
+                    ],
+                    'recommenderExpected' => [
+                        [
+                            'type' => 'recommendededitorial',
+                            'editorialId' => '4',
+                            'title' => 'Noticia para recomendar',
+                            'signatures' => [
+                                $allJournalist['2'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                ],
+                $allJournalist,
+                [$allJournalist['1'], $allJournalist['6'] ],
+                [],
+                [
+                    $allJournalist['7'],
+                    $allJournalist['2'],
+                    $allJournalist['1'],
+                    $allJournalist['6'],
+                    $allJournalist['9'],
                 ],
                 [],
             ],

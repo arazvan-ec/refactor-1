@@ -432,7 +432,9 @@ class EditorialOrchestratorTest extends TestCase
 
         $journalistEditorialExpected = [];
         foreach ($journalistsEditorial as $journalistEditorialId) {
-            $journalistEditorialExpected[] = $allJournalistExpected[$journalistEditorialId];
+            if($journalistEditorialId !== '9'){
+                $journalistEditorialExpected[] = $allJournalistExpected[$journalistEditorialId];
+            }
         }
 
         /** @var array<string> $withSections */
@@ -610,6 +612,9 @@ class EditorialOrchestratorTest extends TestCase
         array $expectedJournalistAliasIds,
     ): void {
         $index = \count($promisesJournalist);
+        if(in_array('9',$withAliasIds)){
+            --$index;
+        }
         $this->journalistsDataTransformer->expects(static::exactly($index))
             ->method('write')
             ->willReturnSelf();
@@ -852,6 +857,8 @@ class EditorialOrchestratorTest extends TestCase
                 $signatureInsertedMock->expects(static::once())
                     ->method('id')
                     ->willReturn($signatureInsertedIdMock);
+
+
                 $signaturesInsertedEditorialMocksArray[] = $signatureInsertedMock;
                 $signaturesInsertedEditorialArray[] = $allJournalistsExpected[$signatureInsertedId];
             }
@@ -1103,12 +1110,16 @@ class EditorialOrchestratorTest extends TestCase
                 ->method('id')
                 ->willReturn($aliasId);
             $withAlias[] = $aliasIdMock;
-            $journalistMockArray->expects(static::once())
-                ->method('isVisible')
-                ->willReturn(true);
+
             $journalistMockArray->expects(static::once())
                 ->method('isActive')
-                ->willReturn(true);
+                ->willReturn(!($aliasId === '9'));
+            if($aliasId !== '9'){
+
+                $journalistMockArray->expects(static::once())
+                    ->method('isVisible')
+                    ->willReturn(true);
+            }
 
             $promisesJournalist[] = $journalistMockArray;
         }
