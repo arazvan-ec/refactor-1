@@ -650,7 +650,80 @@ class EditorialOrchestratorDataProvider
                         [
                             'id' => '3',
                             'sectionId' => 'sectionId3',
-                            'signatures' => ['7', '9'],
+                            'signatures' => ['7'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'recommender' => [
+                        [
+                            'id' => '4',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['2'],
+                            'multimediaId' => '56',
+                        ],
+                    ],
+                    'membershipCards' => [
+                    ],
+                    'bodyExpected' => [
+                        [
+                            'type' => 'bodytaginsertednews',
+                            'editorialId' => '3',
+                            'title' => 'Noticia para insertar',
+                            'signatures' => [
+                                $allJournalist['7'],
+                                $allJournalist['9'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                    'standfirstExpected' => [
+                    ],
+                    'recommenderExpected' => [
+                        [
+                            'type' => 'recommendededitorial',
+                            'editorialId' => '4',
+                            'title' => 'Noticia para recomendar',
+                            'signatures' => [
+                                $allJournalist['2'],
+                            ],
+                            'editorial' => 'XXX',
+                            'shots' => [
+                                '202w' => 'XXX',
+                                '144w' => 'XXX',
+                                '128w' => 'XXX',
+                            ],
+                            'photo' => 'XXX',
+                        ],
+                    ],
+                ],
+                $allJournalist,
+                [$allJournalist['1'], $allJournalist['6'] ],
+                [],
+                [
+                    $allJournalist['7'],
+                    $allJournalist['2'],
+                    $allJournalist['1'],
+                    $allJournalist['6'],
+                    $allJournalist['9'],
+                ],
+                [],
+            ],
+            'case-with-deactive-journalist-onto-recommender' => [
+                [
+                    'id' => 'editorialId',
+                    'sectionId' => 'editorialSectionId',
+                    'signatures' => ['1', '6'],
+                    'insertedNews' => [
+                        [
+                            'id' => '3',
+                            'sectionId' => 'sectionId3',
+                            'signatures' => ['7'],
                             'multimediaId' => '56',
                         ],
                     ],
@@ -690,6 +763,7 @@ class EditorialOrchestratorDataProvider
                             'title' => 'Noticia para recomendar',
                             'signatures' => [
                                 $allJournalist['2'],
+                                $allJournalist['9'],
                             ],
                             'editorial' => 'XXX',
                             'shots' => [
