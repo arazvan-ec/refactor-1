@@ -29,8 +29,8 @@ framework:
                     transport_name: snaapi
 
                 retry_strategy:
-                    max_retries: 1
-                    multiplier: 1
+                    max_retries: 0
+                    multiplier: 0
                     delay: 2000
 
                 failure_transport: failed_messages
