@@ -84,4 +84,4 @@ services:
         arguments:
             $hostname: '%env(APP_HOST)%'
         tags:
-            - {name: 'messenger.message_handler', handles: 'Ec\Editorial\Domain\Model\EventEditorial', from_transport: events}
+            - {name: 'messenger.message_handler', handles: 'Ec\Editorial\Domain\Model\EventEditorial', from_transport: snaapi}
