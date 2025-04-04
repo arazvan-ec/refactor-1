@@ -4,6 +4,7 @@ framework:
         default_bus: cms.messenger.bus
         buses:
             cms.messenger.bus:
+            editorial.event.bus:
 
         failure_transport: failed_messages
 
