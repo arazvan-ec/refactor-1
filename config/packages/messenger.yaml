@@ -4,6 +4,7 @@ framework:
         default_bus: cms.messenger.bus
         buses:
             cms.messenger.bus:
+            editorial.event.bus:
 
         failure_transport: failed_messages
 
@@ -19,7 +20,6 @@ framework:
                         type: topic
                     delay:
                         exchange_name: exchange::events::delay
-                        queue_name_pattern: "queue::event::snaapi::delay"
                     queues:
                         queue::event::snaapi:
                             binding_keys:
@@ -28,9 +28,7 @@ framework:
                     transport_name: snaapi
 
                 retry_strategy:
-                    max_retries: 1
-                    multiplier: 1
-                    delay: 2000
+                    max_retries: 0
 
                 failure_transport: failed_messages
 
