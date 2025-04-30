@@ -60,12 +60,12 @@ class PictureShots
         self::ASPECT_RATIO_4_3 => [
             '1440w' => [self::WIDTH => '1440', self::HEIGHT => '1080'],
             '1200w' => [self::WIDTH => '1200', self::HEIGHT => '900'],
-            '996w'  => [self::WIDTH => '996',  self::HEIGHT => '747'],
-            '560w'  => [self::WIDTH => '560',  self::HEIGHT => '420'],
-            '390w'  => [self::WIDTH => '390',  self::HEIGHT => '292'],
-            '568w'  => [self::WIDTH => '568',  self::HEIGHT => '426'],
-            '382w'  => [self::WIDTH => '382',  self::HEIGHT => '286'],
-            '328w'  => [self::WIDTH => '328',  self::HEIGHT => '246'],
+            '996w' => [self::WIDTH => '996',  self::HEIGHT => '747'],
+            '560w' => [self::WIDTH => '560',  self::HEIGHT => '420'],
+            '390w' => [self::WIDTH => '390',  self::HEIGHT => '292'],
+            '568w' => [self::WIDTH => '568',  self::HEIGHT => '426'],
+            '382w' => [self::WIDTH => '382',  self::HEIGHT => '286'],
+            '328w' => [self::WIDTH => '328',  self::HEIGHT => '246'],
         ],
     ];
 

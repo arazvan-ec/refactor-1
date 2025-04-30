@@ -77,18 +77,18 @@ class PictureShotsTest extends TestCase
                     $bottomX,
                     $bottomY,
                 ],
-                'return' => $url
+                'return' => $url,
             ];
         }
         $callIndex = 0;
         $this->thumbor
-            ->expects(static::exactly(count($shots)))
+            ->expects(static::exactly(\count($shots)))
             ->method('retriveCropBodyTagPicture')
             ->willReturnCallback(function (
-                $file, $width, $height, $tX, $tY, $bX, $bY
+                $file, $width, $height, $tX, $tY, $bX, $bY,
             ) use ($expectedCalls, &$callIndex) {
                 static::assertLessThan(
-                    count($expectedCalls),
+                    \count($expectedCalls),
                     $callIndex,
                     'More calls received than expected'
                 );
@@ -111,7 +111,6 @@ class PictureShotsTest extends TestCase
             $this->assertEquals($url, $result[$ratio]);
         }
     }
-
 
     /**
      * @param array<string, mixed> $resolveData
