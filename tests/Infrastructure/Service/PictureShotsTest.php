@@ -61,31 +61,49 @@ class PictureShotsTest extends TestCase
         $bodyElement->method('orientation')->willReturn($orientation);
 
         $resolveDataMock = [];
-
         $photo = $this->createMock(Photo::class);
         $photo->method('file')->willReturn($photoFile);
         $resolveDataMock['photoFromBodyTags'] = [$id => $photo];
 
-        $withConsecutiveArgs = [];
-        $willReturn = [];
+        $expectedCalls = [];
         foreach ($shots as $ratio => $url) {
-            $withConsecutiveArgs[] = [
-                $photoFile,
-                $sizes[$ratio]['width'],
-                $sizes[$ratio]['height'],
-                $topX,
-                $topY,
-                $bottomX,
-                $bottomY,
+            $expectedCalls[] = [
+                'params' => [
+                    $photoFile,
+                    $sizes[$ratio]['width'],
+                    $sizes[$ratio]['height'],
+                    $topX,
+                    $topY,
+                    $bottomX,
+                    $bottomY,
+                ],
+                'return' => $url,
             ];
-            $willReturn[] = $url;
         }
-
+        $callIndex = 0;
         $this->thumbor
             ->expects(static::exactly(\count($shots)))
             ->method('retriveCropBodyTagPicture')
-            ->withConsecutive(...$withConsecutiveArgs)
-            ->willReturnOnConsecutiveCalls(...$willReturn);
+            ->willReturnCallback(function (
+                $file, $width, $height, $tX, $tY, $bX, $bY,
+            ) use ($expectedCalls, &$callIndex) {
+                static::assertLessThan(
+                    \count($expectedCalls),
+                    $callIndex,
+                    'More calls received than expected'
+                );
+
+                $expectedParams = $expectedCalls[$callIndex]['params'];
+                static::assertEquals($expectedParams[0], $file);
+                static::assertEquals($expectedParams[1], $width);
+                static::assertEquals($expectedParams[2], $height);
+                static::assertEquals($expectedParams[3], $tX);
+                static::assertEquals($expectedParams[4], $tY);
+                static::assertEquals($expectedParams[5], $bX);
+                static::assertEquals($expectedParams[6], $bY);
+
+                return $expectedCalls[$callIndex++]['return'];
+            });
 
         $result = $this->pictureShot->retrieveShotsByPhotoId($resolveDataMock, $bodyElement);
 
