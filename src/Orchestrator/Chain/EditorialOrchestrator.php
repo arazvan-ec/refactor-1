@@ -50,7 +50,7 @@ class EditorialOrchestrator implements Orchestrator
     use UrlGeneratorTrait;
     use MultimediaTrait;
 
-    public const TWITTER_TYPES = ['blog', 'news'];
+    public const TWITTER_TYPES = ['blog'];
 
     public function __construct(
         private readonly QueryLegacyClient $queryLegacyClient,
