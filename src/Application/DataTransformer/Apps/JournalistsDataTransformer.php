@@ -76,6 +76,10 @@ class JournalistsDataTransformer
                 }
 
                 $signature['departments'] = $departments;
+
+                if (!empty($this->journalist->twitter())) {
+                    $signature['twitter'] = $this->withAt($this->journalist->twitter());
+                }
             }
         }
 
@@ -112,5 +116,15 @@ class JournalistsDataTransformer
         }
 
         return '';
+    }
+
+    private function withAt(string $twitter): string
+    {
+        if (preg_match('/^@([A-Za-z0-9_]{1,15})$/', $twitter)) {
+            return $twitter;
+        }
+        if (preg_match('/^([A-Za-z0-9_]{1,15})$/', $twitter)) {
+            return '@' . $twitter;
+        }
     }
 }
