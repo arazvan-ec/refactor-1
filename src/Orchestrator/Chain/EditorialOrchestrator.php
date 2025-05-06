@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -48,6 +49,8 @@ class EditorialOrchestrator implements Orchestrator
 {
     use UrlGeneratorTrait;
     use MultimediaTrait;
+
+    public const TWITTER_TYPES = ['blog', 'news'];
 
     public function __construct(
         private readonly QueryLegacyClient $queryLegacyClient,
@@ -188,7 +191,12 @@ class EditorialOrchestrator implements Orchestrator
         $editorialResult['signatures'] = [];
 
         foreach ($editorial->signatures()->getArrayCopy() as $signature) {
-            $result = $this->retriveAliasFormat($signature->id()->id(), $section);
+            $hasTwitter = \in_array($editorial->editorialType(), self::TWITTER_TYPES);
+            $result = $this->retriveAliasFormat(
+                $signature->id()->id(),
+                $section,
+                $hasTwitter
+            );
             if (!empty($result)) {
                 $editorialResult['signatures'][] = $result;
             }
@@ -219,10 +227,9 @@ class EditorialOrchestrator implements Orchestrator
     /**
      * @return array<mixed>
      */
-    private function retriveAliasFormat(string $aliasId, Section $section): array
+    private function retriveAliasFormat(string $aliasId, Section $section, bool $hasTwitter = false): array
     {
         $signature = [];
-
         $aliasIdModel = $this->journalistFactory->buildAliasId($aliasId);
 
         try {
@@ -230,7 +237,7 @@ class EditorialOrchestrator implements Orchestrator
             $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasIdModel);
 
             if ($journalist->isActive() && $journalist->isVisible()) {
-                $signature = $this->journalistsDataTransformer->write($aliasId, $journalist, $section)->read();
+                $signature = $this->journalistsDataTransformer->write($aliasId, $journalist, $section, $hasTwitter)->read();
             }
         } catch (\Throwable $throwable) {
             $this->logger->error($throwable->getMessage(), $throwable->getTrace());

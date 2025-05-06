@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -52,7 +53,7 @@ class JournalistsDataTransformerTest extends TestCase
         $journalistMock = $this->createMock(Journalist::class);
         $sectionMock = $this->createMock(Section::class);
 
-        $this->transformer->write($this->aliasId, $journalistMock, $sectionMock);
+        $this->transformer->write($this->aliasId, $journalistMock, $sectionMock, false);
 
         $result = $this->transformer->read();
         $this->assertIsArray($result);
@@ -66,12 +67,14 @@ class JournalistsDataTransformerTest extends TestCase
         $journalistMock = $this->createMock(Journalist::class);
         $sectionMock = $this->createMock(Section::class);
         $aliasId = 'test-alias-id';
+        $hasTwitter = true;
 
-        $this->transformer->write($aliasId, $journalistMock, $sectionMock);
+        $this->transformer->write($aliasId, $journalistMock, $sectionMock, $hasTwitter);
 
         $this->assertSame($aliasId, $this->getPrivateProperty($this->transformer, 'aliasId'));
         $this->assertSame($journalistMock, $this->getPrivateProperty($this->transformer, 'journalist'));
         $this->assertSame($sectionMock, $this->getPrivateProperty($this->transformer, 'section'));
+        $this->assertSame($hasTwitter, $this->getPrivateProperty($this->transformer, 'hasTwitter'));
     }
 
     /**
@@ -83,6 +86,8 @@ class JournalistsDataTransformerTest extends TestCase
         $journalistName = 'Juan Carlos';
         $journalistUrl = 'https://www.elconfidencial.dev/autores/juan-carlos-5164/';
         $photoUrl = 'https://images.ecestaticos.dev/FGsmLp_UG1BtJpvlkXA8tzDqltY=/dev.f.elconfidencial.com/journalist/953/855/f9d/953855f9d072b9cd509c3f6c5f9dc77f.png';
+        $twitter = 'elconfidencial';
+
         $expectedThumbor = $photoUrl.'thumbor';
         $departments = [
             [
@@ -142,6 +147,9 @@ class JournalistsDataTransformerTest extends TestCase
         $journalistMock->method('photo')
             ->willReturn($photoUrl);
 
+        $journalistMock->method('twitter')
+            ->willReturn($twitter);
+
         $this->thumbor->expects(static::once())
             ->method('createJournalistImage')
             ->with($photoUrl)
@@ -179,7 +187,7 @@ class JournalistsDataTransformerTest extends TestCase
             });
 
         $result = $this->transformer
-            ->write($this->aliasId, $journalistMock, $sectionMock)
+            ->write($this->aliasId, $journalistMock, $sectionMock, true)
             ->read();
 
         $expectedJournalist = [
@@ -189,6 +197,7 @@ class JournalistsDataTransformerTest extends TestCase
             'url' => $journalistUrl,
             'photo' => $expectedThumbor,
             'departments' => [],
+            'twitter' => '@'.$twitter,
         ];
 
         $this->assertEquals($expectedJournalist['journalistId'], $result['journalistId']);
@@ -199,6 +208,10 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals(
             $expectedJournalist['photo'],
             $result['photo']
+        );
+        $this->assertEquals(
+            $expectedJournalist['twitter'],
+            $result['twitter']
         );
 
         $this->assertEquals($expectedJournalist, $result);
@@ -349,7 +362,7 @@ class JournalistsDataTransformerTest extends TestCase
             });
 
         $result = $this->transformer
-            ->write($this->aliasId, $journalistMock, $sectionMock)
+            ->write($this->aliasId, $journalistMock, $sectionMock, true)
             ->read();
 
         $expectedJournalist = [
@@ -395,7 +408,7 @@ class JournalistsDataTransformerTest extends TestCase
             ->method('aliases')
             ->willReturn($aliasesMock);
 
-        $this->transformer->write('test-alias-id', $journalistMock, $sectionMock);
+        $this->transformer->write('test-alias-id', $journalistMock, $sectionMock, true);
 
         $result = $this->transformer->read();
 
@@ -422,7 +435,7 @@ class JournalistsDataTransformerTest extends TestCase
         $sectionMock->method('isBlog')
             ->willReturn(false);
 
-        $this->transformer->write($this->aliasId, $journalistMock, $sectionMock);
+        $this->transformer->write($this->aliasId, $journalistMock, $sectionMock, false);
 
         $reflection = new \ReflectionClass($this->transformer);
         $method = $reflection->getMethod('journalistUrl');
@@ -450,7 +463,7 @@ class JournalistsDataTransformerTest extends TestCase
         $sectionMock->method('getPath')
             ->willReturn('path');
 
-        $this->transformer->write($this->aliasId, $journalistMock, $sectionMock);
+        $this->transformer->write($this->aliasId, $journalistMock, $sectionMock, false);
 
         $reflection = new \ReflectionClass($this->transformer);
         $method = $reflection->getMethod('journalistUrl');
