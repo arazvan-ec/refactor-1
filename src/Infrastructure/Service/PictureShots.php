@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Service;
 
+use Ec\Editorial\Domain\Model\Body\AbstractPicture;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureDefault;
 
 /**
@@ -57,14 +58,14 @@ class PictureShots
             '328w' => [self::WIDTH => '328', self::HEIGHT => '328'],
         ],
         self::ASPECT_RATIO_4_3 => [
-            '1440w' => [self::WIDTH => '1440', self::HEIGHT => '1920'],
-            '1200w' => [self::WIDTH => '1200', self::HEIGHT => '1600'],
-            '996w' => [self::WIDTH => '996', self::HEIGHT => '1328'],
-            '560w' => [self::WIDTH => '560', self::HEIGHT => '747'],
-            '390w' => [self::WIDTH => '390', self::HEIGHT => '520'],
-            '568w' => [self::WIDTH => '568', self::HEIGHT => '757'],
-            '382w' => [self::WIDTH => '382', self::HEIGHT => '509'],
-            '328w' => [self::WIDTH => '328', self::HEIGHT => '437'],
+            '1440w' => [self::WIDTH => '1440', self::HEIGHT => '1080'],
+            '1200w' => [self::WIDTH => '1200', self::HEIGHT => '900'],
+            '996w' => [self::WIDTH => '996',  self::HEIGHT => '747'],
+            '560w' => [self::WIDTH => '560',  self::HEIGHT => '420'],
+            '390w' => [self::WIDTH => '390',  self::HEIGHT => '292'],
+            '568w' => [self::WIDTH => '568',  self::HEIGHT => '426'],
+            '382w' => [self::WIDTH => '382',  self::HEIGHT => '286'],
+            '328w' => [self::WIDTH => '328',  self::HEIGHT => '246'],
         ],
     ];
 
@@ -73,18 +74,15 @@ class PictureShots
     ) {
     }
 
-    private function retriveAspectRatio(int $topX, int $topY, int $bottomX, int $bottomY): string
+    private function retrieveAspectRatio(string $orientation): string
     {
-        $width = $bottomX - $topX;
-        $height = $bottomY - $topY;
-        $aspectRatio = $width / $height;
         $result = self::ASPECT_RATIO_16_9;
 
-        if (1 === $aspectRatio) {
+        if (AbstractPicture::ORIENTATION_SQUARE === $orientation) {
             $result = self::ASPECT_RATIO_1_1;
-        } elseif ($aspectRatio < 1) {
+        } elseif (AbstractPicture::ORIENTATION_PORTRAIT === $orientation) {
             $result = self::ASPECT_RATIO_3_4;
-        } elseif ($aspectRatio > 1 && $aspectRatio < 1.3) {
+        } elseif (AbstractPicture::ORIENTATION_LANDSCAPE === $orientation) {
             $result = self::ASPECT_RATIO_4_3;
         }
 
@@ -94,15 +92,10 @@ class PictureShots
     /**
      * @return array<string, string>
      */
-    private function retriveAllShotsByAspectRatio(string $fileName, BodyTagPictureDefault $bodytag): array
+    private function retrieveAllShotsByAspectRatio(string $fileName, BodyTagPictureDefault $bodytag): array
     {
         $shots = [];
-        $aspectRatio = $this->retriveAspectRatio(
-            $bodytag->topX(),
-            $bodytag->topY(),
-            $bodytag->bottomX(),
-            $bodytag->bottomY()
-        );
+        $aspectRatio = $this->retrieveAspectRatio($bodytag->orientation());
         foreach (self::SIZES_RELATIONS[$aspectRatio] as $viewport => $sizeValues) {
             $shots[$viewport] = $this->thumbor->retriveCropBodyTagPicture(
                 $fileName,
@@ -127,7 +120,7 @@ class PictureShots
     {
         $photoFile = $this->retrievePhotoFile($resolveData, $bodyTagPicture);
         if ($photoFile) {
-            return $this->retriveAllShotsByAspectRatio($photoFile, $bodyTagPicture);
+            return $this->retrieveAllShotsByAspectRatio($photoFile, $bodyTagPicture);
         }
 
         return [];
