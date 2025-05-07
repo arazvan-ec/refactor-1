@@ -26,7 +26,7 @@ class JournalistsDataTransformer
 
     private const TWITTER_REGEX = '/^([A-Za-z0-9_]{1,15})$/';
 
-        public function __construct(
+    public function __construct(
         string $extension,
         private readonly Thumbor $thumbor,
     ) {
@@ -125,7 +125,7 @@ class JournalistsDataTransformer
     private function withAt(string $twitter): string
     {
         if (preg_match(self::TWITTER_REGEX, $twitter)) {
-            return sprintf('@%s', $twitter);
+            return \sprintf('@%s', $twitter);
         }
 
         return $twitter;
