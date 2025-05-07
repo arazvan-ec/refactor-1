@@ -23,6 +23,7 @@ use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Editorial;
+use Ec\Editorial\Domain\Model\EditorialBlog;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
 use Ec\Editorial\Domain\Model\NewsBase;
@@ -50,7 +51,7 @@ class EditorialOrchestrator implements Orchestrator
     use UrlGeneratorTrait;
     use MultimediaTrait;
 
-    public const TWITTER_TYPES = ['blog'];
+    public const TWITTER_TYPES = [EditorialBlog::EDITORIAL_TYPE];
 
     public function __construct(
         private readonly QueryLegacyClient $queryLegacyClient,
