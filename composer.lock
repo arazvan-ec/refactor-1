@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0fea68f5ce14810ecd468b5e101f470e",
+    "content-hash": "c074138e7c503ebe7110d2bea8aba902",
     "packages": [
         {
             "name": "99designs/phumbor",
@@ -2022,16 +2022,16 @@
         },
         {
             "name": "ec/journalist-client",
-            "version": "dev-feature/PROD-43174-twitter-para-los-journalist-e",
+            "version": "v5.1.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/clients/journalist-client.git",
-                "reference": "ce9b161e4fc6787c3bcd8a0ad6e6c92db01702a8"
+                "reference": "e4dac0a3082770b6f3d17bb75510a20eb1e3c806"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fclients%2Fjournalist-client/repository/archive.zip?sha=ce9b161e4fc6787c3bcd8a0ad6e6c92db01702a8",
-                "reference": "ce9b161e4fc6787c3bcd8a0ad6e6c92db01702a8",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fclients%2Fjournalist-client/repository/archive.zip?sha=e4dac0a3082770b6f3d17bb75510a20eb1e3c806",
+                "reference": "e4dac0a3082770b6f3d17bb75510a20eb1e3c806",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2043,7 +2043,7 @@
             "require": {
                 "beberlei/assert": "^3.0",
                 "ec/collection-library": "^1.0",
-                "ec/journalist-domain": "dev-feature/PROD-43174-twitter-para-los-journalist-e",
+                "ec/journalist-domain": "^1.0",
                 "ec/mock-client": "^1.4",
                 "ec/service-client": "^2.0",
                 "ext-json": "*",
@@ -2096,23 +2096,23 @@
             ],
             "description": "Journalist Client",
             "support": {
-                "source": "https://gitlab.com/ec-awesomemakers1/microservices/clients/journalist-client/-/tree/feature/PROD-43174-twitter-para-los-journalist-e",
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/clients/journalist-client/-/tree/v5.1.0",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/clients/journalist-client/-/issues"
             },
-            "time": "2025-05-05T16:12:44+02:00"
+            "time": "2025-04-29T10:56:53+02:00"
         },
         {
             "name": "ec/journalist-domain",
-            "version": "dev-feature/PROD-43174-twitter-para-los-journalist-e",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/domain/journalist-domain.git",
-                "reference": "ef2f15c9dd721974aa6ddf41e59688a91f692e11"
+                "reference": "754f5dd061542611af5c895f12a48ed9b9167bae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fjournalist-domain/repository/archive.zip?sha=ef2f15c9dd721974aa6ddf41e59688a91f692e11",
-                "reference": "ef2f15c9dd721974aa6ddf41e59688a91f692e11",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fjournalist-domain/repository/archive.zip?sha=754f5dd061542611af5c895f12a48ed9b9167bae",
+                "reference": "754f5dd061542611af5c895f12a48ed9b9167bae",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2170,10 +2170,10 @@
             ],
             "description": "Journalist Domain",
             "support": {
-                "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/journalist-domain/-/tree/feature/PROD-43174-twitter-para-los-journalist-e",
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/journalist-domain/-/tree/v1.10.0",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/domain/journalist-domain/-/issues"
             },
-            "time": "2025-05-06T18:08:14+02:00"
+            "time": "2025-05-07T09:17:36+00:00"
         },
         {
             "name": "ec/membership-client",
@@ -14754,7 +14754,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "ec/journalist-client": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,

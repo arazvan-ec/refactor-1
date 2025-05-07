@@ -11,7 +11,7 @@
         "ec/cqrs-library": "^1.0",
         "ec/editorial-client": "^1.0",
         "ec/encode-library": "^1.0",
-        "ec/journalist-client": "dev-feature/PROD-43174-twitter-para-los-journalist-e",
+        "ec/journalist-client": "^5.0",
         "ec/membership-client": "^1.0",
         "ec/microservice-bundle": "^1.0",
         "ec/multimedia-client": "^2.0",
