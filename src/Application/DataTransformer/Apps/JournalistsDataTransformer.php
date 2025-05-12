@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -18,10 +19,12 @@ use Ec\Section\Domain\Model\Section;
 class JournalistsDataTransformer
 {
     use UrlGeneratorTrait;
-
     private string $aliasId;
+    private bool $hasTwitter = false;
     private Journalist $journalist;
     private Section $section;
+
+    private const TWITTER_REGEX = '/^([A-Za-z0-9_]{1,15})$/';
 
     public function __construct(
         string $extension,
@@ -33,11 +36,12 @@ class JournalistsDataTransformer
     /**
      * @return $this
      */
-    public function write(string $aliasId, Journalist $journalist, Section $section): JournalistsDataTransformer
+    public function write(string $aliasId, Journalist $journalist, Section $section, bool $hasTwitter): JournalistsDataTransformer
     {
         $this->aliasId = $aliasId;
         $this->journalist = $journalist;
         $this->section = $section;
+        $this->hasTwitter = $hasTwitter;
 
         return $this;
     }
@@ -76,6 +80,10 @@ class JournalistsDataTransformer
                 }
 
                 $signature['departments'] = $departments;
+
+                if ($this->hasTwitter && !empty($this->journalist->twitter())) {
+                    $signature['twitter'] = $this->withAt($this->journalist->twitter());
+                }
             }
         }
 
@@ -112,5 +120,14 @@ class JournalistsDataTransformer
         }
 
         return '';
+    }
+
+    private function withAt(string $twitter): string
+    {
+        if (preg_match(self::TWITTER_REGEX, $twitter)) {
+            return \sprintf('@%s', $twitter);
+        }
+
+        return $twitter;
     }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c1d9b6b90e06096a2c698938a6b51d98",
+    "content-hash": "d37866452c50fd9ab160ba138ad2f393",
     "packages": [
         {
             "name": "99designs/phumbor",
@@ -2017,16 +2017,16 @@
         },
         {
             "name": "ec/journalist-client",
-            "version": "v4.27.0",
+            "version": "v5.1.0",
             "source": {
                 "type": "git",
-                "url": "git@bitbucket.org:ecawesomemakers/journalist-client.git",
-                "reference": "1a4b16de031b529a6fdba7002900df7878af171d"
+                "url": "git@gitlab.com:ec-awesomemakers1/microservices/clients/journalist-client.git",
+                "reference": "e4dac0a3082770b6f3d17bb75510a20eb1e3c806"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/journalist-client/get/1a4b16de031b529a6fdba7002900df7878af171d.zip",
-                "reference": "1a4b16de031b529a6fdba7002900df7878af171d",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fclients%2Fjournalist-client/repository/archive.zip?sha=e4dac0a3082770b6f3d17bb75510a20eb1e3c806",
+                "reference": "e4dac0a3082770b6f3d17bb75510a20eb1e3c806",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2049,11 +2049,11 @@
             "require-dev": {
                 "doctrine/orm": "^2.6",
                 "ec/persistence-library": "^4.0",
-                "friendsofphp/php-cs-fixer": "^2.15",
-                "infection/infection": "^0.15",
-                "phpstan/phpstan": "^1.10",
-                "phpstan/phpstan-phpunit": "^1.3",
-                "phpunit/phpunit": "^9.5"
+                "friendsofphp/php-cs-fixer": "^3.69",
+                "infection/infection": "^0.26.6",
+                "phpstan/phpstan": "^1.12",
+                "phpstan/phpstan-phpunit": "^1.4",
+                "phpunit/phpunit": "^9.6"
             },
             "suggest": {
                 "doctrine/orm": "Doctrine, PHP ORM and Persistence Tools Project",
@@ -2090,24 +2090,24 @@
                 }
             ],
             "description": "Journalist Client",
-            "homepage": "https://bitbucket.org/ecawesomemakers/journalist-client",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/journalist-client/src/1a4b16de031b529a6fdba7002900df7878af171d/?at=v4.27.0"
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/clients/journalist-client/-/tree/v5.1.0",
+                "issues": "https://gitlab.com/ec-awesomemakers1/microservices/clients/journalist-client/-/issues"
             },
-            "time": "2024-10-09T16:42:19+00:00"
+            "time": "2025-04-29T10:56:53+02:00"
         },
         {
             "name": "ec/journalist-domain",
-            "version": "v1.5.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
-                "url": "git@bitbucket.org:ecawesomemakers/journalist-domain.git",
-                "reference": "aed9e7c52edc4e10b11bf84dd357e3be6d79a11e"
+                "url": "git@gitlab.com:ec-awesomemakers1/microservices/domain/journalist-domain.git",
+                "reference": "754f5dd061542611af5c895f12a48ed9b9167bae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://bitbucket.org/ecawesomemakers/journalist-domain/get/aed9e7c52edc4e10b11bf84dd357e3be6d79a11e.zip",
-                "reference": "aed9e7c52edc4e10b11bf84dd357e3be6d79a11e",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fjournalist-domain/repository/archive.zip?sha=754f5dd061542611af5c895f12a48ed9b9167bae",
+                "reference": "754f5dd061542611af5c895f12a48ed9b9167bae",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2124,12 +2124,12 @@
             },
             "require-dev": {
                 "doctrine/orm": "^2.19",
-                "ec/persistence-library": "^4.8",
+                "ec/persistence-library": "^4.11",
                 "ext-json": "*",
-                "friendsofphp/php-cs-fixer": "^2.19",
-                "infection/infection": "^0.21.5",
-                "phpstan/phpstan": "^1.10",
-                "phpstan/phpstan-phpunit": "^1.3",
+                "friendsofphp/php-cs-fixer": "^3.69",
+                "infection/infection": "^0.26.6",
+                "phpstan/phpstan": "^1.12",
+                "phpstan/phpstan-phpunit": "^1.4",
                 "phpunit/phpunit": "^9.6",
                 "psr/simple-cache": "^1.0"
             },
@@ -2164,11 +2164,11 @@
                 }
             ],
             "description": "Journalist Domain",
-            "homepage": "https://bitbucket.org/ecawesomemakers/journalist-domain",
             "support": {
-                "source": "https://bitbucket.org/ecawesomemakers/journalist-domain/src/aed9e7c52edc4e10b11bf84dd357e3be6d79a11e/?at=v1.5.0"
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/journalist-domain/-/tree/v1.10.0",
+                "issues": "https://gitlab.com/ec-awesomemakers1/microservices/domain/journalist-domain/-/issues"
             },
-            "time": "2024-10-09T15:45:41+00:00"
+            "time": "2025-05-07T09:17:36+00:00"
         },
         {
             "name": "ec/membership-client",
