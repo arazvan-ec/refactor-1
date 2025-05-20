@@ -237,9 +237,7 @@ class EditorialOrchestrator implements Orchestrator
             /** @var Journalist $journalist */
             $journalist = $this->queryJournalistClient->findJournalistByAliasId($aliasIdModel);
 
-            if ($journalist->isActive() && $journalist->isVisible()) {
-                $signature = $this->journalistsDataTransformer->write($aliasId, $journalist, $section, $hasTwitter)->read();
-            }
+            $signature = $this->journalistsDataTransformer->write($aliasId, $journalist, $section, $hasTwitter)->read();
         } catch (\Throwable $throwable) {
             $this->logger->error($throwable->getMessage(), $throwable->getTrace());
         }
