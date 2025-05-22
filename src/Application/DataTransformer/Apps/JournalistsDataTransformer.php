@@ -62,11 +62,14 @@ class JournalistsDataTransformer
         $signature = [];
 
         foreach ($this->journalist->aliases() as $alias) {
-            if ($alias->id()->id() == $this->aliasId) {
+            if ($alias->id()->id() === $this->aliasId) {
                 $signature['journalistId'] = $this->journalist->id()->id();
                 $signature['aliasId'] = $alias->id()->id();
                 $signature['name'] = $alias->name();
-                $signature['url'] = $this->journalistUrl($alias, $this->journalist);
+                $signature['url'] = '';
+                if ($this->journalist->isVisible()) {
+                    $signature['url'] = $this->journalistUrl($alias, $this->journalist);
+                }
 
                 $photo = $this->photoUrl($this->journalist);
                 $signature['photo'] = $photo;

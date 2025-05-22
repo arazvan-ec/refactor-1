@@ -62,7 +62,140 @@ class JournalistsDataTransformerTest extends TestCase
     /**
      * @test
      */
-    public function testWriteMethodSetsProperties(): void
+    public function shouldTransformAJournalistWhenJournalistIsNotVisible(): void
+    {
+        $journalistId = '5164';
+        $journalistName = 'Juan Carlos';
+        $journalistUrl = '';
+        $photoUrl = 'https://images.ecestaticos.dev/FGsmLp_UG1BtJpvlkXA8tzDqltY=/dev.f.elconfidencial.com/journalist/953/855/f9d/953855f9d072b9cd509c3f6c5f9dc77f.png';
+        $twitter = 'elconfidencial';
+
+        $expectedThumbor = $photoUrl.'thumbor';
+
+        $expectedAlias = [
+            'id' => new AliasId($this->aliasId),
+            'name' => $journalistName,
+            'private' => false,
+        ];
+
+        $journalistMock = $this->createMock(Journalist::class);
+        $sectionMock = $this->createMock(Section::class);
+        $aliasesMock = $this->createMock(Aliases::class);
+        $aliasIdMock = $this->createMock(AliasId::class);
+
+        $journalistIdMock = $this->createMock(JournalistId::class);
+        $departmentsMock = $this->createMock(Departments::class);
+
+        $journalistMock->method('id')
+            ->willReturn($journalistIdMock);
+
+        $journalistMock->method('isVisible')
+            ->willReturn(false);
+
+        $journalistIdMock
+            ->method('id')
+            ->willReturn($journalistId);
+
+        $journalistMock->method('aliases')
+            ->willReturn($aliasesMock);
+
+        $aliasItemMock = $this->createConfiguredMock(Alias::class, $expectedAlias);
+
+        $aliasItemMock->expects(static::once())
+            ->method('name')
+            ->willReturn($journalistName);
+
+        $aliasItemMock->method('id')
+            ->willReturn($aliasIdMock);
+
+        $aliasIdMock->method('id')
+            ->willReturn($this->aliasId);
+
+        $journalistMock->expects(static::once())
+            ->method('departments')
+            ->willReturn($departmentsMock);
+
+        $journalistMock->expects(static::once())
+            ->method('blogPhoto')
+            ->willReturn('');
+
+        $journalistMock->method('photo')
+            ->willReturn($photoUrl);
+
+        $journalistMock->method('twitter')
+            ->willReturn($twitter);
+
+        $this->thumbor->expects(static::once())
+            ->method('createJournalistImage')
+            ->with($photoUrl)
+            ->willReturn($expectedThumbor);
+
+        $bodyIterator = new \ArrayIterator([$aliasItemMock]);
+        $aliasesMock
+            ->method('rewind')
+            ->willReturnCallback(static function () use ($bodyIterator) {
+                $bodyIterator->rewind();
+            });
+
+        $aliasesMock
+            ->method('current')
+            ->willReturnCallback(static function () use ($bodyIterator) {
+                return $bodyIterator->current();
+            });
+
+        $aliasesMock
+            ->method('key')
+            ->willReturnCallback(static function () use ($bodyIterator) {
+                return $bodyIterator->key();
+            });
+
+        $aliasesMock
+            ->method('next')
+            ->willReturnCallback(static function () use ($bodyIterator) {
+                $bodyIterator->next();
+            });
+
+        $aliasesMock
+            ->method('valid')
+            ->willReturnCallback(static function () use ($bodyIterator) {
+                return $bodyIterator->valid();
+            });
+
+        $result = $this->transformer
+            ->write($this->aliasId, $journalistMock, $sectionMock, true)
+            ->read();
+
+        $expectedJournalist = [
+            'journalistId' => $journalistId,
+            'aliasId' => $this->aliasId,
+            'name' => $journalistName,
+            'url' => $journalistUrl,
+            'photo' => $expectedThumbor,
+            'departments' => [],
+            'twitter' => '@'.$twitter,
+        ];
+
+        $this->assertEquals($expectedJournalist['journalistId'], $result['journalistId']);
+        $this->assertEquals($expectedJournalist['aliasId'], $result['aliasId']);
+        $this->assertEquals($expectedJournalist['name'], $result['name']);
+        $this->assertEquals($expectedJournalist['url'], $result['url']);
+        $this->assertEquals($expectedJournalist['departments'], $result['departments']);
+        $this->assertEquals(
+            $expectedJournalist['photo'],
+            $result['photo']
+        );
+        $this->assertEquals(
+            $expectedJournalist['twitter'],
+            $result['twitter']
+        );
+
+        $this->assertEquals($expectedJournalist, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function writeMethodSetsProperties(): void
     {
         $journalistMock = $this->createMock(Journalist::class);
         $sectionMock = $this->createMock(Section::class);
@@ -89,12 +222,6 @@ class JournalistsDataTransformerTest extends TestCase
         $twitter = 'elconfidencial';
 
         $expectedThumbor = $photoUrl.'thumbor';
-        $departments = [
-            [
-                'id' => '1',
-                'name' => 'Técnico',
-            ],
-        ];
 
         $expectedAlias = [
             'id' => new AliasId($this->aliasId),
@@ -112,6 +239,9 @@ class JournalistsDataTransformerTest extends TestCase
 
         $journalistMock->method('id')
             ->willReturn($journalistIdMock);
+
+        $journalistMock->method('isVisible')
+            ->willReturn(true);
 
         $journalistIdMock
             ->method('id')
@@ -249,11 +379,13 @@ class JournalistsDataTransformerTest extends TestCase
         $aliasIdMock = $this->createMock(AliasId::class);
 
         $departmentsMock = $this->createMock(Departments::class);
-        $departmentMock = $this->createMock(Department::class);
         $departmentIdMock = $this->createMock(DepartmentId::class);
 
         $journalistMock->method('id')
             ->willReturn($journalistIdMock);
+
+        $journalistMock->method('isVisible')
+            ->willReturn(true);
 
         $journalistIdMock
             ->method('id')
