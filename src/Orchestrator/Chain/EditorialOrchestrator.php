@@ -26,6 +26,7 @@ use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialBlog;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia;
+use Ec\Editorial\Domain\Model\Multimedia\Widget;
 use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Editorial\Domain\Model\Signature;
@@ -164,7 +165,10 @@ class EditorialOrchestrator implements Orchestrator
         }
 
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData);
-        if (!empty($resolveData['multimedia'])) {
+        if (!empty($resolveData['multimedia'])
+            && isset($resolveData['multimedia']['type'])
+            && $resolveData['multimedia']['type'] !== Widget::class
+        ) {
             $resolveData['multimedia'] = Utils::settle($resolveData['multimedia'])
                 ->then($this->createCallback([$this, 'fulfilledMultimedia']))
                 ->wait(true);
