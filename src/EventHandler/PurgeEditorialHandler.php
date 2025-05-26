@@ -74,6 +74,8 @@ class PurgeEditorialHandler
     ): string {
         $result = $this->router->generate($routeName, $parameters, $referenceType);
 
-        return preg_replace('/^http:/', 'https:', $result);
+        /** @var string $url */
+        $url = preg_replace('/^http:/', 'https:', $result);
+        return $url;
     }
 }

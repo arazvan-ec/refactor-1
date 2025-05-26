@@ -49,12 +49,16 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 
         $editorialId = $bodyElement->editorialId()->id();
 
-        $signatures = $this->resolveData()['insertedNews'][$editorialId]['signatures'];
+        /** @var array<string, array<string, mixed>> $resolveData */
+        $resolveData = $this->resolveData();
+        /** @var array<string, mixed> $currentInsertedNuews */
+        $currentInsertedNuews = $resolveData['insertedNews'][$editorialId];
+        $signatures = $currentInsertedNuews['signatures'];
 
         /** @var Editorial $editorial */
-        $editorial = $this->resolveData()['insertedNews'][$editorialId]['editorial'];
+        $editorial = $currentInsertedNuews['editorial'];
         /** @var Section $sectionInserted */
-        $sectionInserted = $this->resolveData()['insertedNews'][$editorialId]['section'];
+        $sectionInserted = $currentInsertedNuews['section'];
 
         $elementArray['editorialId'] = $editorial->id()->id();
         $elementArray['title'] = $editorial->editorialTitles()->title();

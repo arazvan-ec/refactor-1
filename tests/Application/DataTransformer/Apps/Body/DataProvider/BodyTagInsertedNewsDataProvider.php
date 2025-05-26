@@ -11,6 +11,9 @@ namespace App\Tests\Application\DataTransformer\Apps\Body\DataProvider;
  */
 class BodyTagInsertedNewsDataProvider
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         return [

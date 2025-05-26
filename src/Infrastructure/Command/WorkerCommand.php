@@ -50,8 +50,12 @@ class WorkerCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $timeLimit = (int) $input->getOption('time-limit');
-        $timeSleep = (int) $input->getOption('time-sleep');
+        /** @var string $timeLimit */
+        $timeLimit = $input->getOption('time-limit');
+        $timeLimit = intval($timeLimit);
+        /** @var string $timeSleep */
+        $timeSleep = $input->getOption('time-sleep');
+        $timeSleep = intval($timeSleep);
 
         $executeStart = time();
         $executeEnd = $executeStart + $timeLimit;

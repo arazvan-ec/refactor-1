@@ -26,6 +26,9 @@
             ".php-cs-fixer.dist.php"
         ]
     },
+    "jbouzekri/phumbor-bundle": {
+        "version": "3.3.0"
+    },
     "nelmio/api-doc-bundle": {
         "version": "4.11",
         "recipe": {

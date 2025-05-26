@@ -173,6 +173,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $tag = $this->createMock(Tag::class);
 
         $this->transformer->write($editorial, $section, [$tag]);
+        /** @var array{section: array{id: string, name: string, url: string}} $result */
         $result = $this->transformer->read();
 
         $this->assertEquals($sectionId, $result['section']['id']);
@@ -199,6 +200,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $tag->method('type')->willReturn($type);
 
         $this->transformer->write($editorial, $section, [$tag]);
+        /** @var array{tags: array<int, array{id: string, name: string, url: string}>} $result */
         $result = $this->transformer->read();
 
         $this->assertEquals($tagId->id(), $result['tags'][0]['id']);

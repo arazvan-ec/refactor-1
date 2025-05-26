@@ -67,11 +67,13 @@ class PictureShotsTest extends TestCase
 
         $expectedCalls = [];
         foreach ($shots as $ratio => $url) {
+            /** @var array<string, int> $ratioData */
+            $ratioData = $sizes[$ratio];
             $expectedCalls[] = [
                 'params' => [
                     $photoFile,
-                    $sizes[$ratio]['width'],
-                    $sizes[$ratio]['height'],
+                    $ratioData['width'],
+                    $ratioData['height'],
                     $topX,
                     $topY,
                     $bottomX,
@@ -129,7 +131,9 @@ class PictureShotsTest extends TestCase
         $bodyElement = $this->createMock(BodyTagPicture::class);
         if (isset($resolveData['photoFromBodyTags'])) {
             $bodytagPictureId = $this->createMock(BodyTagPictureId::class);
-            $bodytagPictureId->method('id')->willReturn($resolveData['photoFromBodyTags']['id']['id']);
+            /** @var array{id: array{id:string}} $photoFromBodyTags */
+            $photoFromBodyTags = $resolveData['photoFromBodyTags'];
+            $bodytagPictureId->method('id')->willReturn($photoFromBodyTags['id']['id']);
             $bodyElement->method('id')->willReturn($bodytagPictureId);
             $photo = $this->createMock(Photo::class);
             $resolveDataMock['photoFromBodyTags'] = [$id => $photo];

@@ -14,5 +14,6 @@ return (new PhpCsFixer\Config())
         'phpdoc_to_return_type' => ['scalar_types' => false],
         'native_function_invocation' => ['scope' => 'all'],
         'array_syntax' => ['syntax' => 'short'],
+        'phpdoc_to_comment' =>false
     ])
     ->setFinder($finder);

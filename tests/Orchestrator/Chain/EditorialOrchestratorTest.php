@@ -413,6 +413,7 @@ class EditorialOrchestratorTest extends TestCase
 
         $withAliasIds = array_merge($withAliasIdsInserted, $withAliasIdsRecommended);
 
+        /** @var array<int, string> $withAliasIds */
         $withAliasIds = array_merge($withAliasIds, $editorial['signatures']);
 
         [
@@ -913,7 +914,15 @@ class EditorialOrchestratorTest extends TestCase
      *     } $editorial
      * @param array<int, array<string, string>> $allJournalistsExpected
      *
-     * @return array<int|string, mixed>
+     * @return array{
+     *     0: array<int, mixed>,
+     *     1: array<int, mixed>,
+     *     2: array<int, mixed>,
+     *     3: array<int, mixed>,
+     *     4: array<int, mixed>,
+     *     5: array<int, mixed>,
+     *     6: MockObject,
+     * }
      *   */
     private function getRecommendedNewsByEditorial(array $editorial, MockObject $editorialMock, array $allJournalistsExpected): array
     {
@@ -984,7 +993,7 @@ class EditorialOrchestratorTest extends TestCase
             ->method('recommendedEditorials')
             ->willReturn($recommenderMock);
 
-        return [
+        return [// @phpstan-ignore return.type
             $expectedRecommendedNews,
             $promisesEditorials,
             $withEditorials,
@@ -1086,7 +1095,7 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     /**
-     * @param array<string> $aliasIds
+     * @param array<int, string> $aliasIds
      *
      * @return array{
      *        0: array<int, Journalist|MockObject>,

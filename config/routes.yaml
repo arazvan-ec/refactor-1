@@ -9,7 +9,7 @@ currentVersion:
     resource: ./routes/v1.yaml
     host: "{hostname}"
     requirements:
-        hostname: "snaapi.elconfidencial.(dev|pre|com|ims)|ecsnaapi-service"
+        hostname: "snaapi.elconfidencial.(dev|pre|com|ims|efim|local)|ecsnaapi-service"
 
 microservice:
     resource: "@MicroserviceBundle/Resources/config/routing/base.yaml"

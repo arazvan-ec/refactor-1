@@ -52,7 +52,7 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
     }
 
     /**
-     * @param array<array<string, string>> $membershipLinkCombine
+     * @param array<string, array<string, string>> $membershipLinkCombine
      *
      * @return array<array<string, string>>
      */

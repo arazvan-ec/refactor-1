@@ -573,6 +573,7 @@ class JournalistsDataTransformerTest extends TestCase
         $method = $reflection->getMethod('journalistUrl');
         $method->setAccessible(true);
 
+        /** @var string $result */
         $result = $method->invokeArgs($this->transformer, [$aliasMock, $journalistMock]);
         $this->assertStringContainsString('https://www.elconfidencial.dev/path', $result);
     }
@@ -601,6 +602,7 @@ class JournalistsDataTransformerTest extends TestCase
         $method = $reflection->getMethod('journalistUrl');
         $method->setAccessible(true);
 
+        /** @var string $result */
         $result = $method->invokeArgs($this->transformer, [$aliasMock, $journalistMock]);
         $this->assertStringContainsString('https://www.elconfidencial.dev/autores/-/', $result);
     }

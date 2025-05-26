@@ -136,6 +136,7 @@ class PictureShots
         if (!isset($resolveData['photoFromBodyTags'])) {
             return $photoFile;
         }
+        /** @var array<string, string> $photoFromBodyTags */
         $photoFromBodyTags = $resolveData['photoFromBodyTags'];
 
         if (isset($photoFromBodyTags[$bodyTagPicture->id()->id()])) {

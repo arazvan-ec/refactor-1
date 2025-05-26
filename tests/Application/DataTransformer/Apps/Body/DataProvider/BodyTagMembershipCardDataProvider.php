@@ -10,6 +10,9 @@ namespace App\Tests\Application\DataTransformer\Apps\Body\DataProvider;
  */
 class BodyTagMembershipCardDataProvider
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         return [

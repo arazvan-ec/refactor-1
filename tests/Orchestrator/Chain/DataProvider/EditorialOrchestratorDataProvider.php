@@ -7,6 +7,9 @@ namespace App\Tests\Orchestrator\Chain\DataProvider;
  */
 class EditorialOrchestratorDataProvider
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function getData(): array
     {
         /** @var array<string, array{

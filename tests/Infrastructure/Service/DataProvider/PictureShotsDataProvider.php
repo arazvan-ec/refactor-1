@@ -7,6 +7,9 @@ namespace App\Tests\Infrastructure\Service\DataProvider;
  */
 class PictureShotsDataProvider
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function getDataShots(): array
     {
         return [
@@ -157,6 +160,9 @@ class PictureShotsDataProvider
         ];
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getDataEmpty(): array
     {
         return [
