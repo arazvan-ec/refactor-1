@@ -8,7 +8,6 @@ namespace App\Application\DataTransformer\Apps;
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\MultimediaTrait;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
-use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia;
 

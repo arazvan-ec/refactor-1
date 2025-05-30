@@ -12,7 +12,7 @@ class EditorialOrchestratorDataProvider
      */
     public function getData(): array
     {
-        /** @var array<string, array{
+        /** @var array<1|2|3|7|6|9, array{
          *     journalistId: string,
          *     aliasId: string,
          *     name: string,

@@ -75,6 +75,7 @@ class QueryLegacyClient extends ServiceClient
     {
         /** @var array<string, mixed> $editorialData */
         $editorialData = json_decode($response->getBody()->__toString(), true);
+
         return $editorialData;
     }
 

@@ -76,6 +76,7 @@ class PurgeEditorialHandler
 
         /** @var string $url */
         $url = preg_replace('/^http:/', 'https:', $result);
+
         return $url;
     }
 }

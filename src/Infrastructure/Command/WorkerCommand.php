@@ -52,10 +52,10 @@ class WorkerCommand extends Command
     {
         /** @var string $timeLimit */
         $timeLimit = $input->getOption('time-limit');
-        $timeLimit = intval($timeLimit);
+        $timeLimit = \intval($timeLimit);
         /** @var string $timeSleep */
         $timeSleep = $input->getOption('time-sleep');
-        $timeSleep = intval($timeSleep);
+        $timeSleep = \intval($timeSleep);
 
         $executeStart = time();
         $executeEnd = $executeStart + $timeLimit;

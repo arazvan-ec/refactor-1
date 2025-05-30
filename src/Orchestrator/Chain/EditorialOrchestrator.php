@@ -101,10 +101,11 @@ class EditorialOrchestrator implements Orchestrator
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
-        /** @var array<string, array<string, mixed>> $resolveData */
+        /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $resolveData = [];
         $resolveData['multimedia'] = [];
 
+        /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $resolveData['insertedNews'] = [];
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
@@ -116,24 +117,22 @@ class EditorialOrchestrator implements Orchestrator
             if ($insertedEditorials->isVisible()) {
                 $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
 
-                /** @var array<string, mixed> $currentInsertedNews */
-                $currentInsertedNews = $resolveData['insertedNews'][$idInserted];
-                $currentInsertedNews['editorial'] = $insertedEditorials;
-                $currentInsertedNews['section'] = $sectionInserted;
-                $currentInsertedNews['signatures'] = [];
+                $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
+                $resolveData['insertedNews'][$idInserted]['section'] = $sectionInserted;
+                $resolveData['insertedNews'][$idInserted]['signatures'] = [];
 
                 /** @var Signature $signature */
                 foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
                     $result = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
                     if (!empty($result)) {
-                        $currentInsertedNews['signatures'][] = $result;
+                        $resolveData['insertedNews'][$idInserted]['signatures'][] = $result;
                     }
                 }
 
-                /** @var array<string, array<string, mixed>> $resolveData */
+                /** @var array<string, array<string, array<int, Promise>>> $resolveData */
                 $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
 
-                $currentInsertedNews['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
+                $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
             }
         }
 
@@ -149,32 +148,30 @@ class EditorialOrchestrator implements Orchestrator
             if ($recommendedEditorial->isVisible()) {
                 $sectionInserted = $this->querySectionClient->findSectionById($recommendedEditorial->sectionId());
 
-                $currentRecomendedNews = $resolveData['recommendedEditorials'][$idRecommended];
-                $$currentRecomendedNews['editorial'] = $recommendedEditorial;
-                $$currentRecomendedNews['section'] = $sectionInserted;
-                $$currentRecomendedNews['signatures'] = [];
+                $resolveData['recommendedEditorials'][$idRecommended]['editorial'] = $recommendedEditorial;
+                $resolveData['recommendedEditorials'][$idRecommended]['section'] = $sectionInserted;
+                $resolveData['recommendedEditorials'][$idRecommended]['signatures'] = [];
                 /** @var Signature $signature */
                 foreach ($recommendedEditorial->signatures()->getArrayCopy() as $signature) {
                     $result = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
                     if (!empty($result)) {
-                        $$currentRecomendedNews['signatures'][] = $result;
+                        $resolveData['recommendedEditorials'][$idRecommended]['signatures'][] = $result;
                     }
                 }
 
-                /** @var array<string, array<string, mixed>> $resolveData */
-                $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);
-                $$currentRecomendedNews['multimediaId'] = $recommendedEditorial->multimedia()->id()->id();
+                /** @var array<string, array<string, array<int, Promise>>> $resolveData */
+                $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);  // @phpstan-ignore argument.type
+                $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $recommendedEditorial->multimedia()->id()->id();
                 $recommendedNews[] = $recommendedEditorial;
             }
         }
 
-        /** @var array{multimedia?:array<string, array<string, mixed>>} $resolveData */
-        $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData);
+        /** @var array{multimedia?: array<string, array<int, Promise>>} $resolveData */
+        $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData); // @phpstan-ignore argument.type
         if (!empty($resolveData['multimedia'])
             && isset($resolveData['multimedia']['type'])
             && Widget::class !== $resolveData['multimedia']['type']
         ) {
-            /** @var array{multimedia:array<string, array<string, mixed>>} $resolveData */
             $resolveData['multimedia'] = Utils::settle($resolveData['multimedia'])
                 ->then($this->createCallback([$this, 'fulfilledMultimedia']))
                 ->wait(true);
@@ -197,7 +194,7 @@ class EditorialOrchestrator implements Orchestrator
             $tags
         )->read();
 
-        /** @var array{options: array{totalrecords?: int}} $comments */
+        /** @var array{options: array{totalrecords?:int}} $comments */
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
         $editorialResult['countComments'] = $comments['options']['totalrecords'] ?? 0;
         $editorialResult['signatures'] = [];
@@ -214,6 +211,7 @@ class EditorialOrchestrator implements Orchestrator
             }
         }
 
+        /** @var array{multimedia: array<string, mixed>} $resolveData */
         $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
 
         $editorialResult['body'] = $this->bodyDataTransformer->execute(
@@ -329,7 +327,7 @@ class EditorialOrchestrator implements Orchestrator
     }
 
     /**
-     * @return array{0: Promise, 1: array<int, string>}
+     * @return array{0: Promise|null, 1: array<int, string>}
      */
     private function getPromiseMembershipLinks(Editorial $editorial, string $siteId): array
     {
@@ -340,9 +338,11 @@ class EditorialOrchestrator implements Orchestrator
         /** @var string $membershipLink */
         foreach ($linksData as $membershipLink) {
             $uris[] = $this->uriFactory->createUri($membershipLink);
+            /** array<int, string> $links */
             $links[] = $membershipLink;
         }
 
+        /** @var Promise $promise */
         $promise = $this->queryMembershipClient->getMembershipUrl(
             $editorial->id()->id(),
             $uris,
@@ -354,7 +354,7 @@ class EditorialOrchestrator implements Orchestrator
     }
 
     /**
-     * @param array<string, string> $links
+     * @param array<int, string> $links
      *
      * @return array<mixed>
      */
@@ -380,7 +380,7 @@ class EditorialOrchestrator implements Orchestrator
     /**
      * @param array<string, array<string, array<int, Promise>>> $resolveData
      *
-     * @return array<string, array<int, Promise>>
+     * @return array<string, array<int, Promise|\Ec\Multimedia\Domain\Model\Multimedia>>
      */
     private function getAsyncMultimedia(Multimedia $multimedia, array $resolveData): array
     {
@@ -390,7 +390,7 @@ class EditorialOrchestrator implements Orchestrator
             $resolveData['multimedia'][] = $this->queryMultimediaClient->findMultimediaById($multimediaId, true);
         }
 
-        return $resolveData;
+        return $resolveData; // @phpstan-ignore return.type
     }
 
     /**
@@ -411,7 +411,7 @@ class EditorialOrchestrator implements Orchestrator
     protected function fulfilledMultimedia(array $promises): array
     {
         $result = [];
-        /** @var array<string, mixed> $promise */
+        /** @var array<string, string> $promise */
         foreach ($promises as $promise) {
             if (Promise::FULFILLED === $promise['state']) {
                 /** @var \Ec\Multimedia\Domain\Model\Multimedia $multimedia */
