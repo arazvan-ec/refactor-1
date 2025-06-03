@@ -169,8 +169,7 @@ class EditorialOrchestrator implements Orchestrator
         /** @var array{multimedia?: array<string, array<int, Promise>>} $resolveData */
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData); // @phpstan-ignore argument.type
         if (!empty($resolveData['multimedia'])
-            && isset($resolveData['multimedia']['type'])
-            && Widget::class !== $resolveData['multimedia']['type']
+            && !($editorial->multimedia() instanceof Widget)
         ) {
             $resolveData['multimedia'] = Utils::settle($resolveData['multimedia'])
                 ->then($this->createCallback([$this, 'fulfilledMultimedia']))

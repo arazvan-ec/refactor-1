@@ -59,14 +59,14 @@ include:
     - project: 'ec-awesomemakers1/templates/pipelines-shared'
       ref: develop
       file:
-          - 'flows/services/ephemeral-flow.yml'
+          - 'flows/services/php/ephemeral-flow.yml'
       rules:
           - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^feature\/.*$/
 
     - project: 'ec-awesomemakers1/templates/pipelines-shared'
       ref: develop
       file:
-          - 'flows/services/qa-services-flow.yml'
+          - 'flows/services/php/qa-services-flow.yml'
       rules:
           - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^bugfix\/.*$/
           - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^hotfix\/.*$/
@@ -74,7 +74,7 @@ include:
     - project: 'ec-awesomemakers1/templates/pipelines-shared'
       ref: develop
       file:
-          - 'flows/services/integration-flow.yml'
+          - 'flows/services/php/integration-flow.yml'
       rules:
           - if: $CI_COMMIT_BRANCH == "develop"
 
@@ -88,7 +88,7 @@ include:
     - project: 'ec-awesomemakers1/templates/pipelines-shared'
       ref: develop
       file:
-          - 'flows/services/staging-flow.yml'
+          - 'flows/services/php/staging-flow.yml'
       rules:
           - if: $CI_COMMIT_BRANCH =~ /^release\/v.*$/
 
@@ -109,7 +109,7 @@ include:
     - project: 'ec-awesomemakers1/templates/pipelines-shared'
       ref: develop
       file:
-          - 'flows/services/merged-master-flow.yml'
+          - 'flows/services/php/merged-master-flow.yml'
       rules:
           - if: $CI_COMMIT_BRANCH == "master"
 
@@ -123,7 +123,7 @@ include:
     - project: 'ec-awesomemakers1/templates/pipelines-shared'
       ref: develop
       file:
-          - 'flows/services/deploy-flow.yml'
+          - 'flows/services/php/deploy-flow.yml'
       rules:
           - if: $CI_COMMIT_TAG =~ "/^v\d+\.\d+\.\d+$/"
 
