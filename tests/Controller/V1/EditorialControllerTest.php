@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -60,8 +61,6 @@ class EditorialControllerTest extends TestCase
         $request->attributes->method('set')->with('id', $id);
 
         $response = $this->controller->getEditorialById($request, $id);
-
-        $this->assertInstanceOf(JsonResponse::class, $response);
         $content = $response->getContent();
         $this->assertIsString($content, 'Expected content to be a string.');
 

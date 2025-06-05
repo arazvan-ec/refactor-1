@@ -26,8 +26,7 @@ class StandfirstDataTransformerTest extends TestCase
     {
         $standfirst = $this->createMock(Standfirst::class);
         $result = $this->standfirstDataTransformer->write($standfirst);
-
-        $this->assertInstanceOf(StandfirstDataTransformer::class, $result);
+        $this->assertEmpty( $result->read());
     }
 
     /**

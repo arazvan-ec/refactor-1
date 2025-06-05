@@ -28,7 +28,7 @@ class BodyTagPictureDataTransformerTest extends TestCase
      *
      * @test
      *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagPictureDataProvider::getData()
+     * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagPictureDataProvider::getData
      */
     public function readShouldReturnExpectedArray(
         array $shots,

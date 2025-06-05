@@ -31,7 +31,7 @@ class PictureShotsTest extends TestCase
      *
      * @test
      *
-     * @dataProvider \App\Tests\Infrastructure\Service\DataProvider\PictureShotsDataProvider::getDataShots()
+     * @dataProvider \App\Tests\Infrastructure\Service\DataProvider\PictureShotsDataProvider::getDataShots
      */
     public function retrieveShotsByPhotoIdShouldReturnValidArray(
         string $id,
@@ -120,7 +120,7 @@ class PictureShotsTest extends TestCase
      *
      * @test
      *
-     * @dataProvider \App\Tests\Infrastructure\Service\DataProvider\PictureShotsDataProvider::getDataEmpty()
+     * @dataProvider \App\Tests\Infrastructure\Service\DataProvider\PictureShotsDataProvider::getDataEmpty
      */
     public function retrieveShotsByPhotoIdShouldReturnEmptyArray(
         string $id,

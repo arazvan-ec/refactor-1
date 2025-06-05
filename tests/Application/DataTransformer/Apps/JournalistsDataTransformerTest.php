@@ -42,7 +42,7 @@ class JournalistsDataTransformerTest extends TestCase
      */
     public function shouldInitialize(): void
     {
-        $this->assertInstanceOf(JournalistsDataTransformer::class, $this->transformer);
+        $this->assertSame('dev', $this->transformer->extension());
     }
 
     /**
@@ -56,7 +56,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->transformer->write($this->aliasId, $journalistMock, $sectionMock, false);
 
         $result = $this->transformer->read();
-        $this->assertIsArray($result);
+        $this->assertEmpty($result);
     }
 
     /**
@@ -542,9 +542,7 @@ class JournalistsDataTransformerTest extends TestCase
 
         $this->transformer->write('test-alias-id', $journalistMock, $sectionMock, true);
 
-        $result = $this->transformer->read();
-
-        $this->assertIsArray($result);
+        $this->transformer->read();
     }
 
     /**

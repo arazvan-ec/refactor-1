@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -55,7 +56,6 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->transformer->write($editorial, $section, [$tag]);
         $result = $this->transformer->read();
 
-        $this->assertIsArray($result);
         $this->assertArrayHasKey('id', $result);
         $this->assertArrayHasKey('section', $result);
         $this->assertArrayHasKey('tags', $result);
