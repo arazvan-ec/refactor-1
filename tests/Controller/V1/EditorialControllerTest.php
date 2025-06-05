@@ -10,7 +10,6 @@ use App\Controller\V1\EditorialController;
 use App\Orchestrator\OrchestratorChain;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 
