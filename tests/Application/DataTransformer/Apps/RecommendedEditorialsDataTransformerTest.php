@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -50,7 +51,6 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
         $result = $this->transformer->write($editorials, ['test1' => 'resolveData']);
 
         self::assertEquals($this->transformer, $result);
-        self::assertInstanceOf(RecommendedEditorialsDataTransformer::class, $result);
     }
 
     /**
@@ -237,7 +237,6 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
             ],
         ];
 
-        self::assertIsArray($result);
         self::assertEquals($expected, $result);
     }
 
@@ -410,7 +409,6 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
             ],
         ];
 
-        self::assertIsArray($result);
         self::assertEquals($expected, $result);
     }
 }

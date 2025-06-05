@@ -2,11 +2,7 @@ includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon
     - vendor/phpstan/phpstan-phpunit/rules.neon
 parameters:
-    inferPrivatePropertyTypeFromConstructor: true
-    excludePaths:
-        - %currentWorkingDirectory%/tests/*/DataProvider/*
-    level: 7
+    level: 9
     paths:
         - src
         - tests
-    ignoreErrors:

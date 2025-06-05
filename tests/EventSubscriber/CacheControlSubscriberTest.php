@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -74,8 +75,12 @@ class CacheControlSubscriberTest extends TestCase
         );
 
         static::assertEquals(self::STALE_IF_ERROR, $this->response->headers->getCacheControlDirective('stale-if-error'));
-        static::assertEquals($dateTime->getTimestamp(), $this->response->getLastModified()->getTimestamp());
-        static::assertEquals($expiresDate->getTimestamp(), $this->response->getExpires()->getTimestamp());
+        /** @var \DateTimeImmutable $lastModified */
+        $lastModified = $this->response->getLastModified();
+        static::assertEquals($dateTime->getTimestamp(), $lastModified->getTimestamp());
+        /** @var \DateTimeImmutable $expires */
+        $expires = $this->response->getExpires();
+        static::assertEquals($expiresDate->getTimestamp(), $expires->getTimestamp());
     }
 
     /**

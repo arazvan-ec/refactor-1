@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -53,7 +54,7 @@ class QueryLegacyClientTest extends TestCase
         $requestUrlExpected = self::HTTP_HOSTNAME_TEST.'/service/content/'.$id.'/';
         $responseData = [];
 
-        /** @var string $bodyResponse */
+        /** @var non-empty-string $bodyResponse */
         $bodyResponse = json_encode($responseData, JSON_THROW_ON_ERROR);
         $responseMock = $this->getResponseMock($statusCode, $bodyResponse);
         $this->httpClient->addResponse($responseMock);
@@ -117,7 +118,7 @@ class QueryLegacyClientTest extends TestCase
         $requestUrlExpected = self::HTTP_HOSTNAME_TEST.'/service/community/comments/editorial/'.$id.'/0/0/';
         $responseData = [];
 
-        /** @var string $bodyResponse */
+        /** @var non-empty-string $bodyResponse */
         $bodyResponse = json_encode($responseData, JSON_THROW_ON_ERROR);
         $responseMock = $this->getResponseMock($statusCode, $bodyResponse);
         $this->httpClient->addResponse($responseMock);

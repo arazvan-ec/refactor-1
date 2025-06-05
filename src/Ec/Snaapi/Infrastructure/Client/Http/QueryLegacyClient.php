@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -65,7 +66,7 @@ class QueryLegacyClient extends ServiceClient
 
         $promise = $promise->then($this->createCallback([$this, 'buildEditorialFromArray'], $request));
 
-        return $async ? $promise : $promise->wait(true);
+        return $async ? $promise : $promise->wait(true); // @phpstan-ignore return.type
     }
 
     /**
@@ -73,7 +74,10 @@ class QueryLegacyClient extends ServiceClient
      */
     protected function buildEditorialFromArray(ResponseInterface $response, RequestInterface $request): array
     {
-        return json_decode($response->getBody()->__toString(), true);
+        /** @var array<string, mixed> $editorialData */
+        $editorialData = json_decode($response->getBody()->__toString(), true);
+
+        return $editorialData;
     }
 
     /**
@@ -98,6 +102,6 @@ class QueryLegacyClient extends ServiceClient
 
         $promise = $promise->then($this->createCallback([$this, 'buildEditorialFromArray'], $request));
 
-        return $async ? $promise : $promise->wait(true);
+        return $async ? $promise : $promise->wait(true); // @phpstan-ignore return.type
     }
 }

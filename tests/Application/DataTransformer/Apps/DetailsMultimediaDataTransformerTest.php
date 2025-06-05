@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -91,7 +92,6 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->transformer->write([$expectedId => $multimedia], $openingMultimedia);
         $result = $this->transformer->read();
 
-        $this->assertIsArray($result);
         $this->assertArrayHasKey('id', $result);
         $this->assertEquals($expectedId, $result['id']);
 
@@ -162,7 +162,6 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->transformer->write([$expectedId => $multimedia], $openingMultimedia);
         $result = $this->transformer->read();
 
-        $this->assertIsArray($result);
         $this->assertArrayHasKey('photo', $result);
         $this->assertEquals('', $result['photo']);
     }
@@ -173,7 +172,7 @@ class DetailsMultimediaDataTransformerTest extends TestCase
     public function writeAndReadShouldReturnMultimediaNull(): void
     {
         $expectedId = '1';
-        /** @var Multimedia $multimedia */
+        /** @var Multimedia|MockObject $multimedia */
         $multimedia = $this->createMock(Multimedia::class);
         $openingMultimedia = $this->createMock(PhotoExist::class);
         $openingMultimediaId = $this->createMock(MultimediaId::class);

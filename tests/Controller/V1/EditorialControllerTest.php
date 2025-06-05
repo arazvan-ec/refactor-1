@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -9,7 +10,6 @@ use App\Controller\V1\EditorialController;
 use App\Orchestrator\OrchestratorChain;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -60,8 +60,6 @@ class EditorialControllerTest extends TestCase
         $request->attributes->method('set')->with('id', $id);
 
         $response = $this->controller->getEditorialById($request, $id);
-
-        $this->assertInstanceOf(JsonResponse::class, $response);
         $content = $response->getContent();
         $this->assertIsString($content, 'Expected content to be a string.');
 

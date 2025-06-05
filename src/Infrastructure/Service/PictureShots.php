@@ -136,10 +136,11 @@ class PictureShots
         if (!isset($resolveData['photoFromBodyTags'])) {
             return $photoFile;
         }
+        /** @var array<string, string> $photoFromBodyTags */
         $photoFromBodyTags = $resolveData['photoFromBodyTags'];
 
         if (isset($photoFromBodyTags[$bodyTagPicture->id()->id()])) {
-            return $photoFromBodyTags[$bodyTagPicture->id()->id()]->file();
+            return $photoFromBodyTags[$bodyTagPicture->id()->id()]->file(); // @phpstan-ignore method.nonObject
         }
 
         return $photoFile;

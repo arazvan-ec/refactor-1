@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -38,7 +39,7 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
     /**
      * @test
      *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagInsertedNewsDataProvider::getData()
+     * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagInsertedNewsDataProvider::getData
      *
      * @param array<string, mixed>                             $data
      * @param array{signaturesWithIndexId: array<int, string>} $allSignatures

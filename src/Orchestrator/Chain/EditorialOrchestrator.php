@@ -83,6 +83,7 @@ class EditorialOrchestrator implements Orchestrator
      */
     public function execute(Request $request): array
     {
+        /** @var string $id */
         $id = $request->get('id');
 
         /** @var NewsBase $editorial */
@@ -100,10 +101,11 @@ class EditorialOrchestrator implements Orchestrator
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
-        /** @var array<string, array<string, mixed>> $resolveData */
+        /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $resolveData = [];
         $resolveData['multimedia'] = [];
 
+        /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $resolveData['insertedNews'] = [];
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
@@ -127,7 +129,7 @@ class EditorialOrchestrator implements Orchestrator
                     }
                 }
 
-                /** @var array<string, array<string, mixed>> $resolveData */
+                /** @var array<string, array<string, array<int, Promise>>> $resolveData */
                 $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
 
                 $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
@@ -157,17 +159,17 @@ class EditorialOrchestrator implements Orchestrator
                     }
                 }
 
-                /** @var array<string, array<string, mixed>> $resolveData */
-                $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);
+                /** @var array<string, array<string, array<int, Promise>>> $resolveData */
+                $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);  // @phpstan-ignore argument.type
                 $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $recommendedEditorial->multimedia()->id()->id();
                 $recommendedNews[] = $recommendedEditorial;
             }
         }
 
-        $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData);
+        /** @var array{multimedia?: array<string, array<int, Promise>>} $resolveData */
+        $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData); // @phpstan-ignore argument.type
         if (!empty($resolveData['multimedia'])
-            && isset($resolveData['multimedia']['type'])
-            && Widget::class !== $resolveData['multimedia']['type']
+            && !($editorial->multimedia() instanceof Widget)
         ) {
             $resolveData['multimedia'] = Utils::settle($resolveData['multimedia'])
                 ->then($this->createCallback([$this, 'fulfilledMultimedia']))
@@ -191,6 +193,7 @@ class EditorialOrchestrator implements Orchestrator
             $tags
         )->read();
 
+        /** @var array{options: array{totalrecords?:int}} $comments */
         $comments = $this->queryLegacyClient->findCommentsByEditorialId($id);
         $editorialResult['countComments'] = $comments['options']['totalrecords'] ?? 0;
         $editorialResult['signatures'] = [];
@@ -207,6 +210,7 @@ class EditorialOrchestrator implements Orchestrator
             }
         }
 
+        /** @var array{multimedia: array<string, mixed>} $resolveData */
         $resolveData['membershipLinkCombine'] = $this->resolvePromiseMembershipLinks($promise, $links);
 
         $editorialResult['body'] = $this->bodyDataTransformer->execute(
@@ -322,7 +326,7 @@ class EditorialOrchestrator implements Orchestrator
     }
 
     /**
-     * @return array<mixed>
+     * @return array{0: Promise|null, 1: array<int, string>}
      */
     private function getPromiseMembershipLinks(Editorial $editorial, string $siteId): array
     {
@@ -330,11 +334,14 @@ class EditorialOrchestrator implements Orchestrator
 
         $links = [];
         $uris = [];
+        /** @var string $membershipLink */
         foreach ($linksData as $membershipLink) {
             $uris[] = $this->uriFactory->createUri($membershipLink);
+            /** array<int, string> $links */
             $links[] = $membershipLink;
         }
 
+        /** @var Promise $promise */
         $promise = $this->queryMembershipClient->getMembershipUrl(
             $editorial->id()->id(),
             $uris,
@@ -346,7 +353,7 @@ class EditorialOrchestrator implements Orchestrator
     }
 
     /**
-     * @param array<string, string> $links
+     * @param array<int, string> $links
      *
      * @return array<mixed>
      */
@@ -355,6 +362,7 @@ class EditorialOrchestrator implements Orchestrator
         $membershipLinkResult = [];
         if ($promise) {
             try {
+                /** @var array<string, mixed> $membershipLinkResult */
                 $membershipLinkResult = $promise->wait();
             } catch (\Throwable $throwable) {
                 return [];
@@ -369,9 +377,9 @@ class EditorialOrchestrator implements Orchestrator
     }
 
     /**
-     * @param array<string, mixed> $resolveData
+     * @param array<string, array<string, array<int, Promise>>> $resolveData
      *
-     * @return array<string, array<int, Promise>>
+     * @return array<string, array<int, Promise|\Ec\Multimedia\Domain\Model\Multimedia>>
      */
     private function getAsyncMultimedia(Multimedia $multimedia, array $resolveData): array
     {
@@ -381,7 +389,7 @@ class EditorialOrchestrator implements Orchestrator
             $resolveData['multimedia'][] = $this->queryMultimediaClient->findMultimediaById($multimediaId, true);
         }
 
-        return $resolveData;
+        return $resolveData; // @phpstan-ignore return.type
     }
 
     /**
@@ -402,6 +410,7 @@ class EditorialOrchestrator implements Orchestrator
     protected function fulfilledMultimedia(array $promises): array
     {
         $result = [];
+        /** @var array<string, string> $promise */
         foreach ($promises as $promise) {
             if (Promise::FULFILLED === $promise['state']) {
                 /** @var \Ec\Multimedia\Domain\Model\Multimedia $multimedia */

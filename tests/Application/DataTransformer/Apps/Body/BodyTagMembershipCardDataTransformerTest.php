@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -67,7 +68,7 @@ class BodyTagMembershipCardDataTransformerTest extends TestCase
      * @param array<array<string, string>> $combinedLinks
      * @param array<array<string, string>> $expected
      *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagMembershipCardDataProvider::getData()
+     * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagMembershipCardDataProvider::getData
      */
     public function readShouldReturnExpectedArray(array $bodyTag, array $combinedLinks, array $expected): void
     {

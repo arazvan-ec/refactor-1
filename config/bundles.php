@@ -9,4 +9,5 @@ return [
     Symfony\Bundle\MonologBundle\MonologBundle::class => ['all' => true],
     Ec\MicroserviceBundle\MicroserviceBundle::class => ['all' => true],
     Http\HttplugBundle\HttplugBundle::class => ['all' => true],
+    Jb\Bundle\PhumborBundle\JbPhumborBundle::class => ['all' => true],
 ];

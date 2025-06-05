@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -52,13 +53,14 @@ class BodyTagMembershipCardDataTransformer extends ElementTypeDataTransformer
     }
 
     /**
-     * @param array<array<string, string>> $membershipLinkCombine
+     * @param array<string, mixed> $membershipLinkCombine
      *
-     * @return array<array<string, string>>
+     * @return array<int, array<string, mixed>>
      */
     private function retrieveButtons(MembershipCardButtons $buttons, array $membershipLinkCombine): array
     {
         $arrayButtons = [];
+        /** @var array<string, mixed> $membershipLinkCombine */
         $membershipLinkCombine = $membershipLinkCombine['membershipLinkCombine'] ?? [];
         /** @var MembershipCardButton $button */
         foreach ($buttons->buttons() as $button) {

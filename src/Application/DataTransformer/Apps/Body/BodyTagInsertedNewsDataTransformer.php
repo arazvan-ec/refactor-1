@@ -15,6 +15,7 @@ use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
+use Ec\Multimedia\Domain\Model\Multimedia;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -49,12 +50,16 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 
         $editorialId = $bodyElement->editorialId()->id();
 
-        $signatures = $this->resolveData()['insertedNews'][$editorialId]['signatures'];
+        /** @var array<string, array<string, mixed>> $resolveData */
+        $resolveData = $this->resolveData();
+        /** @var array<string, mixed> $currentInsertedNuews */
+        $currentInsertedNuews = $resolveData['insertedNews'][$editorialId];
+        $signatures = $currentInsertedNuews['signatures'];
 
         /** @var Editorial $editorial */
-        $editorial = $this->resolveData()['insertedNews'][$editorialId]['editorial'];
+        $editorial = $currentInsertedNuews['editorial'];
         /** @var Section $sectionInserted */
-        $sectionInserted = $this->resolveData()['insertedNews'][$editorialId]['section'];
+        $sectionInserted = $currentInsertedNuews['section'];
 
         $elementArray['editorialId'] = $editorial->id()->id();
         $elementArray['title'] = $editorial->editorialTitles()->title();
@@ -91,7 +96,10 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
     {
         $shots = [];
 
-        $multimedia = $this->resolveData()['multimedia'][$this->resolveData()['insertedNews'][$editorialId]['multimediaId']] ?? null;
+        /** @var array<string, array<string, array<string, string>>> $resolveData */
+        $resolveData = $this->resolveData();
+        /** @var ?Multimedia $multimedia */
+        $multimedia = $resolveData['multimedia'][$resolveData['insertedNews'][$editorialId]['multimediaId']] ?? null;
         if (null === $multimedia) {
             return $shots;
         }

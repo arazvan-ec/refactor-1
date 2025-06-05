@@ -42,7 +42,7 @@ class JournalistsDataTransformerTest extends TestCase
      */
     public function shouldInitialize(): void
     {
-        $this->assertInstanceOf(JournalistsDataTransformer::class, $this->transformer);
+        $this->assertSame('dev', $this->transformer->extension());
     }
 
     /**
@@ -56,7 +56,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->transformer->write($this->aliasId, $journalistMock, $sectionMock, false);
 
         $result = $this->transformer->read();
-        $this->assertIsArray($result);
+        $this->assertEmpty($result);
     }
 
     /**
@@ -542,9 +542,7 @@ class JournalistsDataTransformerTest extends TestCase
 
         $this->transformer->write('test-alias-id', $journalistMock, $sectionMock, true);
 
-        $result = $this->transformer->read();
-
-        $this->assertIsArray($result);
+        $this->transformer->read();
     }
 
     /**
@@ -573,6 +571,7 @@ class JournalistsDataTransformerTest extends TestCase
         $method = $reflection->getMethod('journalistUrl');
         $method->setAccessible(true);
 
+        /** @var string $result */
         $result = $method->invokeArgs($this->transformer, [$aliasMock, $journalistMock]);
         $this->assertStringContainsString('https://www.elconfidencial.dev/path', $result);
     }
@@ -601,6 +600,7 @@ class JournalistsDataTransformerTest extends TestCase
         $method = $reflection->getMethod('journalistUrl');
         $method->setAccessible(true);
 
+        /** @var string $result */
         $result = $method->invokeArgs($this->transformer, [$aliasMock, $journalistMock]);
         $this->assertStringContainsString('https://www.elconfidencial.dev/autores/-/', $result);
     }
