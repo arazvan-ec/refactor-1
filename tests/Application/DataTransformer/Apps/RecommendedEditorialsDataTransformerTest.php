@@ -18,6 +18,7 @@ use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia;
 use Ec\Multimedia\Domain\Model\Photo\Photo;
 use Ec\Section\Domain\Model\Section;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -38,9 +39,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
         $this->transformer = new RecommendedEditorialsDataTransformer('dev', $this->thumbor);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testWriteShouldAssignedValueAndReturnSelf(): void
     {
         $editorialMock1 = $this->createMock(Editorial::class);
@@ -53,9 +52,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
         self::assertEquals($this->transformer, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testReadShouldReturnCorrectArrayData(): void
     {
         $recommendedEditorialId = ['7422', '7423'];
@@ -240,9 +237,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
         self::assertEquals($expected, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testReadShouldReturnCorrectArrayDataWithEmptyShots(): void
     {
         $recommendedEditorialId = ['7422', '7423'];

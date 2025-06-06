@@ -6,6 +6,7 @@ use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use Ec\Editorial\Domain\Model\Body\GenericList;
 use Ec\Editorial\Domain\Model\Standfirst;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -29,9 +30,7 @@ class StandfirstDataTransformerTest extends TestCase
         $this->assertEmpty($result->read());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function standfirstShouldReturnValidData(): void
     {
         $expect = [

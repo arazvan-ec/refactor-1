@@ -7,6 +7,7 @@
 namespace App\Tests\EventSubscriber;
 
 use App\EventSubscriber\CacheControlSubscriber;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,9 +53,7 @@ class CacheControlSubscriberTest extends TestCase
         unset($this->subscriber, $this->event, $this->response);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function onKernelResponseSetsCacheHeaders(): void
     {
         $dateTime = new \DateTimeImmutable('now');
@@ -83,9 +82,7 @@ class CacheControlSubscriberTest extends TestCase
         static::assertEquals($expiresDate->getTimestamp(), $expires->getTimestamp());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function onKernelResponseDoesNotOverrideExistingCacheHeaders(): void
     {
         $cache = 5;

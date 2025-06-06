@@ -7,6 +7,7 @@
 namespace App\Tests\Infrastructure\Enum;
 
 use App\Infrastructure\Enum\ClossingModeEnum;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,9 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ClossingModeEnumTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function testGetClosingModeById(): void
     {
         $this->assertEquals('registry', ClossingModeEnum::getClosingModeById('1'));

@@ -10,6 +10,7 @@ use App\Application\DataTransformer\Apps\Body\SubHeadDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
 use Ec\Editorial\Domain\Model\Body\SubHead;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -29,17 +30,13 @@ class SubHeadDataTransformerTest extends TestCase
         $this->subHeadDataTransformer = new SubHeadDataTransformer();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnSubHeadString(): void
     {
         static::assertSame(SubHead::class, $this->subHeadDataTransformer->canTransform());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArray(): void
     {
         $expectedLink = [
@@ -66,9 +63,7 @@ class SubHeadDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArrayWithEmptyLinks(): void
     {
         $expectedArray = [
@@ -86,9 +81,7 @@ class SubHeadDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeShouldReturnExceptionWhenBodyElementIsNotSubHead(): void
     {
         $bodyElementMock = $this->createMock(BodyElement::class);

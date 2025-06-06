@@ -13,6 +13,7 @@ use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
 use Ec\Editorial\Domain\Model\Body\ListItem;
 use Ec\Editorial\Domain\Model\Body\UnorderedList;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -32,17 +33,13 @@ class UnorderedListDataTransformerTest extends TestCase
         $this->unorderedListDataTransformer = new UnorderedListDataTransformer();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnGenericListString(): void
     {
         static::assertSame(UnorderedList::class, $this->unorderedListDataTransformer->canTransform());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArray(): void
     {
         $expectedLink = [
@@ -76,9 +73,7 @@ class UnorderedListDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArrayWithEmptyLinks(): void
     {
         $expectedListItem = [
@@ -104,9 +99,7 @@ class UnorderedListDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeShouldReturnExceptionWhenBodyElementIsNotUnorderedList(): void
     {
         $bodyElementMock = $this->createMock(BodyElement::class);

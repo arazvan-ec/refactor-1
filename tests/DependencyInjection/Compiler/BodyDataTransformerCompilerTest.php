@@ -9,6 +9,7 @@ namespace App\Tests\DependencyInjection\Compiler;
 use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\DependencyInjection\Compiler\BodyDataTransformerCompiler;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
@@ -19,9 +20,7 @@ use Symfony\Component\DependencyInjection\Definition;
  */
 class BodyDataTransformerCompilerTest extends AbstractCompilerPassTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function process(): void
     {
         $bodyElementDataTransformerHandlerDefinition = new Definition();

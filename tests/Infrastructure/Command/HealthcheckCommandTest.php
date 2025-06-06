@@ -7,6 +7,7 @@
 namespace App\Tests\Infrastructure\Command;
 
 use App\Infrastructure\Command\HealthcheckCommand;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,9 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class HealthcheckCommandTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function executeShouldReturnTrue(): void
     {
         $inputMock = $this->createMock(InputInterface::class);

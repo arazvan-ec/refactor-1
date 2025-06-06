@@ -10,6 +10,7 @@ use App\Application\DataTransformer\Apps\Body\ParagraphDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
 use Ec\Editorial\Domain\Model\Body\Paragraph;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -29,17 +30,13 @@ class ParagraphDataTransformerTest extends TestCase
         $this->paragraphDataTransformer = new ParagraphDataTransformer();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnParagraphString(): void
     {
         static::assertSame(Paragraph::class, $this->paragraphDataTransformer->canTransform());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArray(): void
     {
         $expectedLink = [
@@ -66,9 +63,7 @@ class ParagraphDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArrayWithEmptyLinks(): void
     {
         $expectedArray = [
@@ -86,9 +81,7 @@ class ParagraphDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeShouldReturnExceptionWhenBodyElementIsNotParagraph(): void
     {
         $bodyElementMock = $this->createMock(BodyElement::class);

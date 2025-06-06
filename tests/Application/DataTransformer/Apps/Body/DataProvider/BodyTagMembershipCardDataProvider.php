@@ -14,7 +14,7 @@ class BodyTagMembershipCardDataProvider
     /**
      * @return array<string, mixed>
      */
-    public function getData(): array
+    public static function getData(): array
     {
         return [
             'two-btn-one-link-for-all' => [

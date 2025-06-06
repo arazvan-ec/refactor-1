@@ -14,7 +14,7 @@ class BodyTagPictureDataProvider
     /**
      * @return array<string, mixed>
      */
-    public function getData(): array
+    public static function getData(): array
     {
         return [
             'with-caption' => [

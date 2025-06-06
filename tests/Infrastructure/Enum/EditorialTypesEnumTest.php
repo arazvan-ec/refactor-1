@@ -7,6 +7,7 @@
 namespace App\Tests\Infrastructure\Enum;
 
 use App\Infrastructure\Enum\EditorialTypesEnum;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,9 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class EditorialTypesEnumTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function getNameById(): void
     {
         $this->assertEquals(['id' => '1', 'name' => 'news'], EditorialTypesEnum::getNameById('news'));

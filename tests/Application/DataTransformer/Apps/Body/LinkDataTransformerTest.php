@@ -10,6 +10,7 @@ use App\Application\DataTransformer\Apps\Body\LinkDataTransformer;
 use Assert\InvalidArgumentException;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -26,17 +27,13 @@ class LinkDataTransformerTest extends TestCase
         $this->linkDataTransformer = new LinkDataTransformer();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnLinkString(): void
     {
         static::assertSame(Link::class, $this->linkDataTransformer->canTransform());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArray(): void
     {
         $expectedArray = [
@@ -51,9 +48,7 @@ class LinkDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeShouldReturnExceptionWhenBodyElementIsNotLink(): void
     {
         $bodyElementMock = $this->createMock(BodyElement::class);

@@ -15,6 +15,7 @@ use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
 use Ec\Editorial\Domain\Model\Body\ListItem;
 use Ec\Editorial\Domain\Model\Body\NumberedList;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -39,17 +40,13 @@ class NumberedListDataTransformerTest extends TestCase
         unset($this->numberedListTransformer);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnNumberedListString(): void
     {
         static::assertSame(NumberedList::class, $this->numberedListTransformer->canTransform());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArray(): void
     {
         $expectedLink = [
@@ -83,9 +80,7 @@ class NumberedListDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArrayWithEmptyLinks(): void
     {
         $expectedListItem = [
@@ -111,9 +106,7 @@ class NumberedListDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeShouldReturnExceptionWhenBodyElementIsNotUnorderedList(): void
     {
         $bodyElementMock = $this->createMock(BodyElement::class);

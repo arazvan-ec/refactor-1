@@ -9,6 +9,7 @@ namespace App\Tests\Ec\Snaapi\Infrastructure\Client\Http;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use Http\Mock\Client;
 use Http\Promise\Promise;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -44,9 +45,7 @@ class QueryLegacyClientTest extends TestCase
         unset($this->httpClient, $this->queryLegacyClient);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findEditorialByIdShouldReturnEditorialArray(): void
     {
         $statusCode = 200;
@@ -66,9 +65,7 @@ class QueryLegacyClientTest extends TestCase
         static::assertSame($requestUrlExpected, (string) $request->getUri());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function retrieveEditorialShouldCallExecuteWithDefaultValuesAndReturnEditorialModel(): void
     {
         $id = '12345';
@@ -108,9 +105,7 @@ class QueryLegacyClientTest extends TestCase
         return $responseMock;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findCommentsEditorialByIdShouldReturnCommentsArray(): void
     {
         $statusCode = 200;

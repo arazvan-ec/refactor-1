@@ -9,6 +9,7 @@ namespace App\Tests\DependencyInjection\Compiler;
 use App\DependencyInjection\Compiler\EditorialOrchestratorCompiler;
 use App\Orchestrator\OrchestratorChainHandler;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
@@ -19,9 +20,7 @@ use Symfony\Component\DependencyInjection\Definition;
  */
 class EditorialOrchestratorCompilerTest extends AbstractCompilerPassTestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function process(): void
     {
         $orchestratorDefinition = new Definition();

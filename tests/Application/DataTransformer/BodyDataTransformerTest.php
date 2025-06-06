@@ -11,6 +11,7 @@ use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Exceptions\BodyDataTransformerNotFoundException;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -37,9 +38,7 @@ class BodyDataTransformerTest extends TestCase
         unset($this->bodyElementDataTransformerHandler, $this->bodyDataTransformer);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function executeTransformsBodyElementsAndReturnArrayWithElements(): void
     {
         $bodyType = 'elementType';
@@ -62,9 +61,7 @@ class BodyDataTransformerTest extends TestCase
         static::assertSame(['type' => $bodyType, 'elements' => [$transformedElement]], $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function executeSkipsElementsWithoutTransformer(): void
     {
         $bodyType = 'elementType';

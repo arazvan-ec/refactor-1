@@ -9,6 +9,7 @@ namespace App\Tests\Application\DataTransformer\Apps\Body;
 use App\Application\DataTransformer\Apps\Body\BodyTagSummaryDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\BodyTagSummary;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -25,17 +26,13 @@ class BodyTagSummaryDataTransformerTest extends TestCase
         $this->bodyTagSummaryDataTransformer = new BodyTagSummaryDataTransformer();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnBodyTagSummaryString(): void
     {
         static::assertSame(BodyTagSummary::class, $this->bodyTagSummaryDataTransformer->canTransform());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArray(): void
     {
         $expectedArray = [
@@ -50,9 +47,7 @@ class BodyTagSummaryDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeShouldReturnExceptionWhenBodyElementIsNotBodyTagSummary(): void
     {
         $bodyElementMock = $this->createMock(BodyElement::class);
