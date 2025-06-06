@@ -8,6 +8,7 @@ namespace App\Tests\Controller\V1;
 
 use App\Controller\V1\EditorialController;
 use App\Orchestrator\OrchestratorChain;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -17,8 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\Controller\V1\EditorialController
  */
+#[CoversClass(EditorialController::class)]
 class EditorialControllerTest extends TestCase
 {
     /** @var OrchestratorChain|MockObject */

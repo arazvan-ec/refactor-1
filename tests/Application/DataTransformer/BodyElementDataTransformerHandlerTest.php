@@ -10,6 +10,7 @@ use App\Application\DataTransformer\BodyElementDataTransformer;
 use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Exceptions\BodyDataTransformerNotFoundException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -17,8 +18,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  *
- * @covers \App\Application\DataTransformer\BodyElementDataTransformerHandler
  */
+#[CoversClass(BodyElementDataTransformerHandler::class)]
 class BodyElementDataTransformerHandlerTest extends TestCase
 {
     private BodyElementDataTransformerHandler $elementDataTransformer;

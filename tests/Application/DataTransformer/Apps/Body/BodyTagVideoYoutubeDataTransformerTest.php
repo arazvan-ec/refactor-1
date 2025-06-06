@@ -8,14 +8,15 @@ namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\BodyTagVideoYoutubeDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyTagVideoYoutube;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  *
- * @covers \App\Application\DataTransformer\Apps\Body\BodyTagVideoYoutubeDataTransformer
  */
+#[CoversClass(BodyTagVideoYoutubeDataTransformer::class)]
 class BodyTagVideoYoutubeDataTransformerTest extends TestCase
 {
     private BodyTagVideoYoutubeDataTransformer $bodyTagVideoYoutubeDataTransformer;

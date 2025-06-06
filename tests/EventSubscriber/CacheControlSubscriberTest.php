@@ -7,6 +7,7 @@
 namespace App\Tests\EventSubscriber;
 
 use App\EventSubscriber\CacheControlSubscriber;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -18,8 +19,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  *
- * @covers \App\EventSubscriber\CacheControlSubscriber
  */
+#[CoversClass(CacheControlSubscriber::class)]
 class CacheControlSubscriberTest extends TestCase
 {
     private const SMAXAGE = 7200;

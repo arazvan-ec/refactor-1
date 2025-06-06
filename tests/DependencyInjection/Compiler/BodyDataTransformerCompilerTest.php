@@ -8,7 +8,9 @@ namespace App\Tests\DependencyInjection\Compiler;
 
 use App\Application\DataTransformer\BodyElementDataTransformerHandler;
 use App\DependencyInjection\Compiler\BodyDataTransformerCompiler;
+use App\EventSubscriber\ExceptionSubscriber;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -16,8 +18,8 @@ use Symfony\Component\DependencyInjection\Definition;
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\DependencyInjection\Compiler\BodyDataTransformerCompiler
  */
+#[CoversClass(BodyDataTransformerCompiler::class)]
 class BodyDataTransformerCompilerTest extends AbstractCompilerPassTestCase
 {
     #[Test]

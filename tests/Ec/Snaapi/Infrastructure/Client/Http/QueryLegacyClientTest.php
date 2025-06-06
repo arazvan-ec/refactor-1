@@ -9,6 +9,7 @@ namespace App\Tests\Ec\Snaapi\Infrastructure\Client\Http;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use Http\Mock\Client;
 use Http\Promise\Promise;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
@@ -18,8 +19,8 @@ use Psr\Http\Message\StreamInterface;
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient
  */
+#[CoversClass(QueryLegacyClient::class)]
 class QueryLegacyClientTest extends TestCase
 {
     private const HTTP_HOSTNAME_TEST = 'https://api.elconfidencial.com';

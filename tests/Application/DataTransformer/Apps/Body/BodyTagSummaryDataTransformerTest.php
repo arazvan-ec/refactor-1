@@ -9,14 +9,15 @@ namespace App\Tests\Application\DataTransformer\Apps\Body;
 use App\Application\DataTransformer\Apps\Body\BodyTagSummaryDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\BodyTagSummary;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
  *
- * @covers \App\Application\DataTransformer\Apps\Body\BodyTagSummaryDataTransformer
  */
+#[CoversClass(BodyTagSummaryDataTransformer::class)]
 class BodyTagSummaryDataTransformerTest extends TestCase
 {
     private BodyTagSummaryDataTransformer $bodyTagSummaryDataTransformer;

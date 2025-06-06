@@ -7,6 +7,7 @@
 namespace App\Tests\EventSubscriber;
 
 use App\EventSubscriber\ExceptionSubscriber;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,8 +19,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  *
- * @covers \App\EventSubscriber\ExceptionSubscriber
  */
+#[CoversClass(ExceptionSubscriber::class)]
 class ExceptionSubscriberTest extends TestCase
 {
     #[Test]

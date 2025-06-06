@@ -7,6 +7,7 @@
 namespace App\Tests\Infrastructure\Service;
 
 use App\Infrastructure\Service\Thumbor;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Thumbor\Url\Builder;
@@ -15,8 +16,8 @@ use Thumbor\Url\BuilderFactory;
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  *
- * @covers \App\Infrastructure\Service\Thumbor
  */
+#[CoversClass(Thumbor::class)]
 class ThumborTest extends TestCase
 {
     private Thumbor $thumbor;

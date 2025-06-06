@@ -10,6 +10,7 @@ use App\Orchestrator\Chain\Orchestrator;
 use App\Orchestrator\Exceptions\DuplicateChainInOrchestratorHandlerException;
 use App\Orchestrator\Exceptions\OrchestratorTypeNotExistException;
 use App\Orchestrator\OrchestratorChainHandler;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -18,8 +19,8 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\Orchestrator\OrchestratorChainHandler
  */
+#[CoversClass(OrchestratorChainHandler::class)]
 class OrchestratorChainHandlerTest extends TestCase
 {
     /** @var Orchestrator|MockObject */

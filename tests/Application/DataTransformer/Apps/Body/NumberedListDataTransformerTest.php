@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
+use App\Application\DataTransformer\Apps\Body\GenericListDataTransformer;
 use App\Application\DataTransformer\Apps\Body\NumberedListDataTransformer;
 use App\Tests\ArrayIteratorTrait;
 use Assert\InvalidArgumentException;
@@ -15,15 +16,16 @@ use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
 use Ec\Editorial\Domain\Model\Body\ListItem;
 use Ec\Editorial\Domain\Model\Body\NumberedList;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\Application\DataTransformer\Apps\Body\NumberedListDataTransformer
- * @covers \App\Application\DataTransformer\Apps\Body\GenericListDataTransformer
  */
+#[CoversClass(NumberedListDataTransformer::class)]
+#[CoversClass(GenericListDataTransformer::class)]
 class NumberedListDataTransformerTest extends TestCase
 {
     use ArrayIteratorTrait;

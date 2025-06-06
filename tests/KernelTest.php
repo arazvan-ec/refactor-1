@@ -9,6 +9,7 @@ namespace App\Tests;
 use App\DependencyInjection\Compiler\BodyDataTransformerCompiler;
 use App\DependencyInjection\Compiler\EditorialOrchestratorCompiler;
 use App\Kernel;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -16,8 +17,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\Kernel
  */
+#[CoversClass(Kernel::class)]
 class KernelTest extends TestCase
 {
     #[Test]

@@ -10,14 +10,15 @@ use App\Application\DataTransformer\Apps\Body\LinkDataTransformer;
 use Assert\InvalidArgumentException;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\Application\DataTransformer\Apps\Body\LinkDataTransformer
  */
+#[CoversClass(LinkDataTransformer::class)]
 class LinkDataTransformerTest extends TestCase
 {
     private LinkDataTransformer $linkDataTransformer;

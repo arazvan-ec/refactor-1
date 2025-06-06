@@ -6,6 +6,7 @@
 
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
+use App\Application\DataTransformer\Apps\Body\GenericListDataTransformer;
 use App\Application\DataTransformer\Apps\Body\UnorderedListDataTransformer;
 use App\Tests\ArrayIteratorTrait;
 use Assert\InvalidArgumentException;
@@ -13,15 +14,16 @@ use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
 use Ec\Editorial\Domain\Model\Body\ListItem;
 use Ec\Editorial\Domain\Model\Body\UnorderedList;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\Application\DataTransformer\Apps\Body\UnorderedListDataTransformer
- * @covers \App\Application\DataTransformer\Apps\Body\GenericListDataTransformer
  */
+#[CoversClass(UnorderedListDataTransformer::class)]
+#[CoversClass(GenericListDataTransformer::class)]
 class UnorderedListDataTransformerTest extends TestCase
 {
     use ArrayIteratorTrait;

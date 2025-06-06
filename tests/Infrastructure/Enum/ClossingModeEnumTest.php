@@ -7,14 +7,15 @@
 namespace App\Tests\Infrastructure\Enum;
 
 use App\Infrastructure\Enum\ClossingModeEnum;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\Infrastructure\Enum\ClossingModeEnum
  */
+#[CoversClass(ClossingModeEnum::class)]
 class ClossingModeEnumTest extends TestCase
 {
     #[Test]

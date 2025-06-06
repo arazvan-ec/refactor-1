@@ -6,21 +6,25 @@
 
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
+use App\Application\DataTransformer\Apps\Body\ElementContentDataTransformer;
+use App\Application\DataTransformer\Apps\Body\ElementContentWithLinksDataTransformer;
+use App\Application\DataTransformer\Apps\Body\ElementTypeDataTransformer;
 use App\Application\DataTransformer\Apps\Body\SubHeadDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
 use Ec\Editorial\Domain\Model\Body\SubHead;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\Application\DataTransformer\Apps\Body\SubHeadDataTransformer
- * @covers \App\Application\DataTransformer\Apps\Body\ElementContentWithLinksDataTransformer
- * @covers \App\Application\DataTransformer\Apps\Body\ElementContentDataTransformer
- * @covers \App\Application\DataTransformer\Apps\Body\ElementTypeDataTransformer
  */
+#[CoversClass(SubHeadDataTransformer::class)]
+#[CoversClass(ElementContentWithLinksDataTransformer::class)]
+#[CoversClass(ElementContentDataTransformer::class)]
+#[CoversClass(ElementTypeDataTransformer::class)]
 class SubHeadDataTransformerTest extends TestCase
 {
     private SubHeadDataTransformer $subHeadDataTransformer;

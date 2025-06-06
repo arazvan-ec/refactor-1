@@ -8,6 +8,7 @@ namespace App\Tests\Infrastructure\Trait;
 
 use App\Infrastructure\Enum\SitesEnum;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -15,8 +16,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\Infrastructure\Trait\UrlGeneratorTrait
  */
+#[CoversClass(UrlGeneratorTrait::class)]
 class UrlGeneratorTraitTest extends TestCase
 {
     private MockObject $trait;

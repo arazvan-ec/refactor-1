@@ -46,6 +46,7 @@ use Ec\Section\Domain\Model\SectionId;
 use Ec\Tag\Domain\Model\QueryTagClient;
 use Ec\Tag\Domain\Model\Tag as TagAlias;
 use Http\Promise\Promise;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -58,8 +59,8 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  *
- * @covers \App\Orchestrator\Chain\EditorialOrchestrator
  */
+#[CoversClass(EditorialOrchestrator::class)]
 class EditorialOrchestratorTest extends TestCase
 {
     /** @var QueryEditorialClient|MockObject */
@@ -590,9 +591,10 @@ class EditorialOrchestratorTest extends TestCase
         $mockBuilder = $this->queryJournalistClient->expects($invokedCount)
             ->method('findJournalistByAliasId')
              ->willReturnCallback(function ($aliasId) use ($promisesJournalist, $invokedCount, $withConsecutiveArgs) {
-                var_dump($promisesJournalist);
-                 self::assertSame($withConsecutiveArgs[$invokedCount->numberOfInvocations()-1][0], $aliasId);
-                 return $promisesJournalist[$invokedCount->numberOfInvocations()-1];
+              //   self::assertSame($withConsecutiveArgs[$invokedCount->numberOfInvocations()-1][0], $aliasId);
+              //   return $promisesJournalist[$invokedCount->numberOfInvocations()-1];
+                 self::assertSame($withConsecutiveArgs, $aliasId);
+                 return $promisesJournalist[0];
              });
 
      //   \call_user_func_array([$mockBuilder, 'withConsecutive'], $withConsecutiveArgs);

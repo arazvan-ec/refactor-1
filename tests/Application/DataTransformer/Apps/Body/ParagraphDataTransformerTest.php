@@ -6,21 +6,25 @@
 
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
+use App\Application\DataTransformer\Apps\Body\ElementContentDataTransformer;
+use App\Application\DataTransformer\Apps\Body\ElementContentWithLinksDataTransformer;
+use App\Application\DataTransformer\Apps\Body\ElementTypeDataTransformer;
 use App\Application\DataTransformer\Apps\Body\ParagraphDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
 use Ec\Editorial\Domain\Model\Body\Paragraph;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  *
- * @covers \App\Application\DataTransformer\Apps\Body\ParagraphDataTransformer
- * @covers \App\Application\DataTransformer\Apps\Body\ElementContentWithLinksDataTransformer
- * @covers \App\Application\DataTransformer\Apps\Body\ElementContentDataTransformer
- * @covers \App\Application\DataTransformer\Apps\Body\ElementTypeDataTransformer
  */
+#[CoversClass(ParagraphDataTransformer::class)]
+#[CoversClass(ElementContentWithLinksDataTransformer::class)]
+#[CoversClass(ElementContentDataTransformer::class)]
+#[CoversClass(ElementTypeDataTransformer::class)]
 class ParagraphDataTransformerTest extends TestCase
 {
     private ParagraphDataTransformer $paragraphDataTransformer;
