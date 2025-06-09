@@ -587,17 +587,13 @@ class EditorialOrchestratorTest extends TestCase
         }, $promisesAliasIds);
 
         $invokedCount = static::exactly(\count($promisesJournalist));
-        $mockBuilder = $this->queryJournalistClient->expects($invokedCount)
+        $this->queryJournalistClient->expects($invokedCount)
             ->method('findJournalistByAliasId')
-             ->willReturnCallback(function ($aliasId) use ($promisesJournalist, $invokedCount) {
-                 // self::assertSame($withConsecutiveArgs[$invokedCount->numberOfInvocations()-1][0], $aliasId);
-                 //  var_dump($withConsecutiveArgs[$invokedCount->numberOfInvocations()-1][0]);
-                 //  var_dump($aliasId);
+             ->willReturnCallback(function ($aliasId) use ($promisesJournalist, $withConsecutiveArgs, $invokedCount) {
+                 self::assertEquals($withConsecutiveArgs[$invokedCount->numberOfInvocations() - 1][0], $aliasId);
+
                  return $promisesJournalist[$invokedCount->numberOfInvocations() - 1];
              });
-
-        //   \call_user_func_array([$mockBuilder, 'withConsecutive'], $withConsecutiveArgs);
-        //   \call_user_func_array([$mockBuilder, 'willReturnOnConsecutiveCalls'], $promisesJournalist);
     }
 
     /**
