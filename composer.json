@@ -91,9 +91,9 @@
         "friendsofphp/php-cs-fixer": "^3.14",
         "infection/infection": "^0.29.14",
         "matthiasnoback/symfony-dependency-injection-test": "^5.1",
-        "phpstan/phpstan": "*",
-        "phpstan/phpstan-phpunit": "*",
-        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpunit/phpunit": "^10.5",
         "roave/security-advisories": "dev-latest",
         "symfony/phpunit-bridge": "^6.2",
         "symfony/var-dumper": "6.4.*"

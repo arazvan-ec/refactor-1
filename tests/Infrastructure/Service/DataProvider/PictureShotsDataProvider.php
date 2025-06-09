@@ -10,7 +10,7 @@ class PictureShotsDataProvider
     /**
      * @return array<string, mixed>
      */
-    public function getDataShots(): array
+    public static function getDataShots(): array
     {
         return [
             '19-9' => [
@@ -163,7 +163,7 @@ class PictureShotsDataProvider
     /**
      * @return array<int, mixed>
      */
-    public function getDataEmpty(): array
+    public static function getDataEmpty(): array
     {
         return [
             [
@@ -173,12 +173,12 @@ class PictureShotsDataProvider
                         'id' => ['id' => '1'],
                     ],
                 ],
-                'result' => [],
+                'expected' => [],
             ],
             [
                 'idPhoto' => '695',
                 'resolveData' => [],
-                'result' => [],
+                'expected' => [],
             ],
         ];
     }

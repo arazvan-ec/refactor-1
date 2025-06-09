@@ -4,9 +4,12 @@ namespace App\Tests\Infrastructure\Service;
 
 use App\Infrastructure\Service\PictureShots;
 use App\Infrastructure\Service\Thumbor;
+use App\Tests\Infrastructure\Service\DataProvider\PictureShotsDataProvider;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureId;
 use Ec\Multimedia\Domain\Model\Photo\Photo;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -28,13 +31,11 @@ class PictureShotsTest extends TestCase
      * @param array<string, mixed> $resolveData
      * @param array<string, mixed> $shots
      * @param array<string, mixed> $sizes
-     *
-     * @test
-     *
-     * @dataProvider \App\Tests\Infrastructure\Service\DataProvider\PictureShotsDataProvider::getDataShots
      */
+    #[DataProviderExternal(PictureShotsDataProvider::class, 'getDataShots')]
+    #[Test]
     public function retrieveShotsByPhotoIdShouldReturnValidArray(
-        string $id,
+        string $idPhoto,
         array $resolveData,
         array $shots,
         array $sizes,
@@ -48,7 +49,7 @@ class PictureShotsTest extends TestCase
         string $orientation,
     ): void {
         $bodytagPictureId = $this->createMock(BodyTagPictureId::class);
-        $bodytagPictureId->method('id')->willReturn($id);
+        $bodytagPictureId->method('id')->willReturn($idPhoto);
 
         $bodyElement = $this->createMock(BodyTagPicture::class);
         $bodyElement->method('id')->willReturn($bodytagPictureId);
@@ -63,7 +64,7 @@ class PictureShotsTest extends TestCase
         $resolveDataMock = [];
         $photo = $this->createMock(Photo::class);
         $photo->method('file')->willReturn($photoFile);
-        $resolveDataMock['photoFromBodyTags'] = [$id => $photo];
+        $resolveDataMock['photoFromBodyTags'] = [$idPhoto => $photo];
 
         $expectedCalls = [];
         foreach ($shots as $ratio => $url) {
@@ -117,13 +118,11 @@ class PictureShotsTest extends TestCase
     /**
      * @param array<string, mixed> $resolveData
      * @param array<string, mixed> $expected
-     *
-     * @test
-     *
-     * @dataProvider \App\Tests\Infrastructure\Service\DataProvider\PictureShotsDataProvider::getDataEmpty
      */
+    #[DataProviderExternal(PictureShotsDataProvider::class, 'getDataEmpty')]
+    #[Test]
     public function retrieveShotsByPhotoIdShouldReturnEmptyArray(
-        string $id,
+        string $idPhoto,
         array $resolveData,
         array $expected,
     ): void {
@@ -136,7 +135,7 @@ class PictureShotsTest extends TestCase
             $bodytagPictureId->method('id')->willReturn($photoFromBodyTags['id']['id']);
             $bodyElement->method('id')->willReturn($bodytagPictureId);
             $photo = $this->createMock(Photo::class);
-            $resolveDataMock['photoFromBodyTags'] = [$id => $photo];
+            $resolveDataMock['photoFromBodyTags'] = [$idPhoto => $photo];
         }
 
         $result = $this->pictureShot->retrieveShotsByPhotoId($resolveDataMock, $bodyElement);

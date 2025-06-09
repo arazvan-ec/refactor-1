@@ -14,6 +14,7 @@ use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\Clippings;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -33,9 +34,7 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->transformer = new DetailsMultimediaDataTransformer($this->thumbor);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeAndReadShouldReturnCorrectArray(): void
     {
         $multimedia = $this->createMock(Multimedia::class);
@@ -108,9 +107,7 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->assertEquals('https://example.com/image.jpg', $result['photo']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeAndReadShouldReturnEmptyPhoto(): void
     {
         $multimedia = $this->createMock(Multimedia::class);
@@ -166,9 +163,7 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->assertEquals('', $result['photo']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeAndReadShouldReturnMultimediaNull(): void
     {
         $expectedId = '1';

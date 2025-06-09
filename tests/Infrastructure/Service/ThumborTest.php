@@ -7,15 +7,16 @@
 namespace App\Tests\Infrastructure\Service;
 
 use App\Infrastructure\Service\Thumbor;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Thumbor\Url\Builder;
 use Thumbor\Url\BuilderFactory;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
- *
- * @covers \App\Infrastructure\Service\Thumbor
  */
+#[CoversClass(Thumbor::class)]
 class ThumborTest extends TestCase
 {
     private Thumbor $thumbor;
@@ -28,9 +29,7 @@ class ThumborTest extends TestCase
         $this->thumbor = new Thumbor($this->thumborServerUrl, $this->thumborSecret, $this->awsBucket);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function createJournalistImageShouldReturnValidUrl(): void
     {
         $fileImage = '123456789.jpg';
@@ -43,7 +42,6 @@ class ThumborTest extends TestCase
 
         $reflection = new \ReflectionClass($this->thumbor);
         $property = $reflection->getProperty('thumborFactory');
-        $property->setAccessible(true);
         $property->setValue($this->thumbor, $builderFactoryMock);
 
         $result = $this->thumbor->createJournalistImage($fileImage);
@@ -51,9 +49,7 @@ class ThumborTest extends TestCase
         $this->assertEquals('http://thumbor-url', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function retriveCropBodyTagPictureShouldReturnValidCrop(): void
     {
         $toString = 'https://images.ecestaticos.dev/B26-5pH9vylfOiapiBjXanvO7Ho=/615x99:827x381/1440x1920/filters:fill(white):format(jpg)/dev.f.elconfidencial.com/original/0a9/783/99c/0a978399c4be84f3ce367624ca9589ad.jpg';
@@ -74,11 +70,15 @@ class ThumborTest extends TestCase
             ['addFilter', ['fill', 'white']],
             ['addFilter', ['format', 'jpg']],
         ];
+        $invokedCount = $this->exactly(4);
         $builderMock
-            ->expects($this->exactly(4))
+            ->expects($invokedCount)
             ->method('__call')
-            ->withConsecutive(...$thumborArgs)
-            ->willReturnSelf();
+            ->willReturnCallback(function (string $method) use ($builderMock, $thumborArgs, $invokedCount) {
+                self::assertSame($method, $thumborArgs[$invokedCount->numberOfInvocations() - 1][0]);
+
+                return $builderMock;
+            });
 
         $builderMock->method('__toString')->willReturn($toString);
         $builderFactoryMock = $this->createMock(BuilderFactory::class);
@@ -86,7 +86,6 @@ class ThumborTest extends TestCase
 
         $reflection = new \ReflectionClass($this->thumbor);
         $property = $reflection->getProperty('thumborFactory');
-        $property->setAccessible(true);
         $property->setValue($this->thumbor, $builderFactoryMock);
 
         $result = $this->thumbor->retriveCropBodyTagPicture($fileImage, $width, $height, $topX, $topY, $bottomX, $bottomY);

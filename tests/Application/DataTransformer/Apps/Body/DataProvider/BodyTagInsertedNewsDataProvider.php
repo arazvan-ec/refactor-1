@@ -14,7 +14,7 @@ class BodyTagInsertedNewsDataProvider
     /**
      * @return array<string, mixed>
      */
-    public function getData(): array
+    public static function getData(): array
     {
         return [
             'inserted-news-with-one-signature' => [

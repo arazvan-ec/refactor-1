@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Application\DataTransformer\Apps\Body;
 
+use App\Application\DataTransformer\Apps\Body\GenericListDataTransformer;
 use App\Application\DataTransformer\Apps\Body\NumberedListDataTransformer;
 use App\Tests\ArrayIteratorTrait;
 use Assert\InvalidArgumentException;
@@ -15,14 +16,15 @@ use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\Link;
 use Ec\Editorial\Domain\Model\Body\ListItem;
 use Ec\Editorial\Domain\Model\Body\NumberedList;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
- * @covers \App\Application\DataTransformer\Apps\Body\NumberedListDataTransformer
- * @covers \App\Application\DataTransformer\Apps\Body\GenericListDataTransformer
  */
+#[CoversClass(NumberedListDataTransformer::class)]
+#[CoversClass(GenericListDataTransformer::class)]
 class NumberedListDataTransformerTest extends TestCase
 {
     use ArrayIteratorTrait;
@@ -39,17 +41,13 @@ class NumberedListDataTransformerTest extends TestCase
         unset($this->numberedListTransformer);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnNumberedListString(): void
     {
         static::assertSame(NumberedList::class, $this->numberedListTransformer->canTransform());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArray(): void
     {
         $expectedLink = [
@@ -83,9 +81,7 @@ class NumberedListDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArrayWithEmptyLinks(): void
     {
         $expectedListItem = [
@@ -111,9 +107,7 @@ class NumberedListDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeShouldReturnExceptionWhenBodyElementIsNotUnorderedList(): void
     {
         $bodyElementMock = $this->createMock(BodyElement::class);

@@ -7,13 +7,14 @@
 namespace App\Tests\Infrastructure\Enum;
 
 use App\Infrastructure\Enum\SitesEnum;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
- * @covers \App\Infrastructure\Enum\SitesEnum
  */
+#[CoversClass(SitesEnum::class)]
 class SitesEnumTest extends TestCase
 {
     private SitesEnum $elConfidencial;
@@ -32,9 +33,7 @@ class SitesEnumTest extends TestCase
         unset($this->elConfidencial, $this->vanitatis, $this->alimente);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getHostnameByIdMustReturnCorrectValue(): void
     {
         $this->assertSame('elconfidencial', SitesEnum::getHostnameById($this->elConfidencial->value));
@@ -43,9 +42,7 @@ class SitesEnumTest extends TestCase
         $this->assertSame('elconfidencial', SitesEnum::getHostnameById('999'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getEncodenameByIdMustReturnCorrectValue(): void
     {
         $this->assertSame('el-confidencial', SitesEnum::getEncodenameById('69'));

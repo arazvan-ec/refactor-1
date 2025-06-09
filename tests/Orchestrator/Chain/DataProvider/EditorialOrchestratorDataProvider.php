@@ -10,7 +10,7 @@ class EditorialOrchestratorDataProvider
     /**
      * @return array<string, mixed>
      */
-    public function getData(): array
+    public static function getData(): array
     {
         /** @var array<1|2|3|7|6|9, array{
          *     journalistId: string,
