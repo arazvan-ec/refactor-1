@@ -16,7 +16,6 @@ use Symfony\Component\DependencyInjection\Definition;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
  */
 #[CoversClass(EditorialOrchestratorCompiler::class)]
 class EditorialOrchestratorCompilerTest extends AbstractCompilerPassTestCase

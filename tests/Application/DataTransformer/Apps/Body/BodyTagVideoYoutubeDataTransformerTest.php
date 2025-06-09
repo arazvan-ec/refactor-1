@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
- *
  */
 #[CoversClass(BodyTagVideoYoutubeDataTransformer::class)]
 class BodyTagVideoYoutubeDataTransformerTest extends TestCase

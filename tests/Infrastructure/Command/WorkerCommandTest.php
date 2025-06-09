@@ -16,7 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
- *
  */
 #[CoversClass(WorkerCommand::class)]
 class WorkerCommandTest extends TestCase

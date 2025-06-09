@@ -66,8 +66,6 @@ class WorkerCommand extends Command
             sleep($timeSleep);
         }
 
-        echo 'Test OK';
-
         return Command::SUCCESS;
     }
 }

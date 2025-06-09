@@ -8,7 +8,6 @@ namespace App\Tests\Application\DataTransformer\Apps;
 
 use App\Application\DataTransformer\Apps\DetailsAppsDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
-use App\Infrastructure\Command\HealthcheckCommand;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialTitles;
@@ -28,7 +27,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
- *
  */
 #[CoversClass(DetailsAppsDataTransformer::class)]
 class DetailsAppsDataTransformerTest extends TestCase

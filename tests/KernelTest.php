@@ -16,7 +16,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
  */
 #[CoversClass(Kernel::class)]
 class KernelTest extends TestCase
@@ -31,13 +30,13 @@ class KernelTest extends TestCase
         $invokedCount = self::exactly(2);
         $containerBuilder->expects($invokedCount)
             ->method('addCompilerPass')
-            ->willReturnCallback(function ( $method) use ( $containerBuilder, $invokedCount) {
-                if($invokedCount->numberOfInvocations() == 1){
+            ->willReturnCallback(function ($method) use ($containerBuilder, $invokedCount) {
+                if (1 == $invokedCount->numberOfInvocations()) {
                     self::assertInstanceOf(EditorialOrchestratorCompiler::class, $method);
-                }
-                elseif($invokedCount->numberOfInvocations() == 2){
+                } elseif (2 == $invokedCount->numberOfInvocations()) {
                     self::assertInstanceOf(BodyDataTransformerCompiler::class, $method);
                 }
+
                 return $containerBuilder;
             });
 

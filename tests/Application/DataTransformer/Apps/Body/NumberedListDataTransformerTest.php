@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
  */
 #[CoversClass(NumberedListDataTransformer::class)]
 #[CoversClass(GenericListDataTransformer::class)]

@@ -35,7 +35,7 @@ class PictureShotsTest extends TestCase
     #[DataProviderExternal(PictureShotsDataProvider::class, 'getDataShots')]
     #[Test]
     public function retrieveShotsByPhotoIdShouldReturnValidArray(
-        string $id,
+        string $idPhoto,
         array $resolveData,
         array $shots,
         array $sizes,
@@ -49,7 +49,7 @@ class PictureShotsTest extends TestCase
         string $orientation,
     ): void {
         $bodytagPictureId = $this->createMock(BodyTagPictureId::class);
-        $bodytagPictureId->method('id')->willReturn($id);
+        $bodytagPictureId->method('id')->willReturn($idPhoto);
 
         $bodyElement = $this->createMock(BodyTagPicture::class);
         $bodyElement->method('id')->willReturn($bodytagPictureId);
@@ -64,7 +64,7 @@ class PictureShotsTest extends TestCase
         $resolveDataMock = [];
         $photo = $this->createMock(Photo::class);
         $photo->method('file')->willReturn($photoFile);
-        $resolveDataMock['photoFromBodyTags'] = [$id => $photo];
+        $resolveDataMock['photoFromBodyTags'] = [$idPhoto => $photo];
 
         $expectedCalls = [];
         foreach ($shots as $ratio => $url) {
@@ -122,7 +122,7 @@ class PictureShotsTest extends TestCase
     #[DataProviderExternal(PictureShotsDataProvider::class, 'getDataEmpty')]
     #[Test]
     public function retrieveShotsByPhotoIdShouldReturnEmptyArray(
-        string $id,
+        string $idPhoto,
         array $resolveData,
         array $expected,
     ): void {
@@ -135,7 +135,7 @@ class PictureShotsTest extends TestCase
             $bodytagPictureId->method('id')->willReturn($photoFromBodyTags['id']['id']);
             $bodyElement->method('id')->willReturn($bodytagPictureId);
             $photo = $this->createMock(Photo::class);
-            $resolveDataMock['photoFromBodyTags'] = [$id => $photo];
+            $resolveDataMock['photoFromBodyTags'] = [$idPhoto => $photo];
         }
 
         $result = $this->pictureShot->retrieveShotsByPhotoId($resolveDataMock, $bodyElement);

@@ -18,7 +18,6 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
- *
  */
 #[CoversClass(ExceptionSubscriber::class)]
 class ExceptionSubscriberTest extends TestCase

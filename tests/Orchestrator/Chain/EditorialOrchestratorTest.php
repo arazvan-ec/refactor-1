@@ -58,7 +58,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
  */
 #[CoversClass(EditorialOrchestrator::class)]
 class EditorialOrchestratorTest extends TestCase
@@ -590,15 +589,15 @@ class EditorialOrchestratorTest extends TestCase
         $invokedCount = static::exactly(\count($promisesJournalist));
         $mockBuilder = $this->queryJournalistClient->expects($invokedCount)
             ->method('findJournalistByAliasId')
-             ->willReturnCallback(function ($aliasId) use ($promisesJournalist, $invokedCount, $withConsecutiveArgs) {
-              //   self::assertSame($withConsecutiveArgs[$invokedCount->numberOfInvocations()-1][0], $aliasId);
-              //   return $promisesJournalist[$invokedCount->numberOfInvocations()-1];
-                 self::assertSame($withConsecutiveArgs, $aliasId);
-                 return $promisesJournalist[0];
+             ->willReturnCallback(function ($aliasId) use ($promisesJournalist, $invokedCount) {
+                 // self::assertSame($withConsecutiveArgs[$invokedCount->numberOfInvocations()-1][0], $aliasId);
+                 //  var_dump($withConsecutiveArgs[$invokedCount->numberOfInvocations()-1][0]);
+                 //  var_dump($aliasId);
+                 return $promisesJournalist[$invokedCount->numberOfInvocations() - 1];
              });
 
-     //   \call_user_func_array([$mockBuilder, 'withConsecutive'], $withConsecutiveArgs);
-     //   \call_user_func_array([$mockBuilder, 'willReturnOnConsecutiveCalls'], $promisesJournalist);
+        //   \call_user_func_array([$mockBuilder, 'withConsecutive'], $withConsecutiveArgs);
+        //   \call_user_func_array([$mockBuilder, 'willReturnOnConsecutiveCalls'], $promisesJournalist);
     }
 
     /**

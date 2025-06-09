@@ -18,7 +18,6 @@ use Psr\Http\Message\StreamInterface;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
  */
 #[CoversClass(QueryLegacyClient::class)]
 class QueryLegacyClientTest extends TestCase

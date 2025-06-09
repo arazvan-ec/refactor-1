@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
- *
  */
 #[CoversClass(BodyTagSummaryDataTransformer::class)]
 class BodyTagSummaryDataTransformerTest extends TestCase

@@ -19,7 +19,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
- *
  */
 #[CoversClass(ParagraphDataTransformer::class)]
 #[CoversClass(ElementContentWithLinksDataTransformer::class)]

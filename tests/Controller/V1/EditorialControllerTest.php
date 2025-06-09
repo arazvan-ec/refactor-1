@@ -17,7 +17,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
  */
 #[CoversClass(EditorialController::class)]
 class EditorialControllerTest extends TestCase

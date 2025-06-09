@@ -15,7 +15,6 @@ use Thumbor\Url\BuilderFactory;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
- *
  */
 #[CoversClass(Thumbor::class)]
 class ThumborTest extends TestCase

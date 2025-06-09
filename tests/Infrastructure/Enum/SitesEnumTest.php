@@ -13,7 +13,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
  */
 #[CoversClass(SitesEnum::class)]
 class SitesEnumTest extends TestCase

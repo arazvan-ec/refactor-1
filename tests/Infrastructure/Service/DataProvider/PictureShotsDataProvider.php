@@ -173,12 +173,12 @@ class PictureShotsDataProvider
                         'id' => ['id' => '1'],
                     ],
                 ],
-                'result' => [],
+                'expected' => [],
             ],
             [
                 'idPhoto' => '695',
                 'resolveData' => [],
-                'result' => [],
+                'expected' => [],
             ],
         ];
     }

@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
- *
  */
 #[CoversClass(BodyElementDataTransformerHandler::class)]
 class BodyElementDataTransformerHandlerTest extends TestCase
