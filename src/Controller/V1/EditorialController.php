@@ -30,6 +30,7 @@ class EditorialController extends AbstractController
         parent::__construct($this->sMaxAge, 'v1.0.0');
     }
 
+    // @codeCoverageIgnoreStart
     #[OA\Get(
         path: '/editorials/{id}',
         operationId: 'getEditorialById',
@@ -96,6 +97,7 @@ class EditorialController extends AbstractController
             ),
         ]
     )]
+    // @codeCoverageIgnoreEnd
     public function getEditorialById(Request $request, string $id): JsonResponse
     {
         $request->attributes->set('id', $id);

@@ -68,6 +68,7 @@ use OpenApi\Attributes as OA;
 )]
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
+ * @codeCoverageIgnore
  */
 class Body
 {
