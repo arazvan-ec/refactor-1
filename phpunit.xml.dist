@@ -32,7 +32,7 @@
       <directory>tests</directory>
     </testsuite>
   </testsuites>
-  <coverage includeUncoveredFiles="true" >
+  <coverage includeUncoveredFiles="false">
   </coverage>
   <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
     <include>
