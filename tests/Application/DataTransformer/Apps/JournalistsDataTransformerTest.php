@@ -17,6 +17,7 @@ use Ec\Journalist\Domain\Model\Departments;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistId;
 use Ec\Section\Domain\Model\Section;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -37,17 +38,13 @@ class JournalistsDataTransformerTest extends TestCase
         $this->aliasId = '20116';
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldInitialize(): void
     {
-        $this->assertInstanceOf(JournalistsDataTransformer::class, $this->transformer);
+        $this->assertSame('dev', $this->transformer->extension());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldWriteAndRead(): void
     {
         $journalistMock = $this->createMock(Journalist::class);
@@ -56,12 +53,10 @@ class JournalistsDataTransformerTest extends TestCase
         $this->transformer->write($this->aliasId, $journalistMock, $sectionMock, false);
 
         $result = $this->transformer->read();
-        $this->assertIsArray($result);
+        $this->assertEmpty($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldTransformAJournalistWhenJournalistIsNotVisible(): void
     {
         $journalistId = '5164';
@@ -192,9 +187,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals($expectedJournalist, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeMethodSetsProperties(): void
     {
         $journalistMock = $this->createMock(Journalist::class);
@@ -210,9 +203,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertSame($hasTwitter, $this->getPrivateProperty($this->transformer, 'hasTwitter'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldTransformAJournalist(): void
     {
         $journalistId = '5164';
@@ -347,9 +338,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals($expectedJournalist, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldTransformAJournalistWhenHasBlogPhoto(): void
     {
         $journalistId = '5164';
@@ -521,9 +510,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals($expectedJournalist, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReadTransformsJournalistData(): void
     {
         $aliasesMock = $this->createMock(Aliases::class);
@@ -542,14 +529,10 @@ class JournalistsDataTransformerTest extends TestCase
 
         $this->transformer->write('test-alias-id', $journalistMock, $sectionMock, true);
 
-        $result = $this->transformer->read();
-
-        $this->assertIsArray($result);
+        $this->transformer->read();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnJournalistUrlForPrivateAlias(): void
     {
         $siteId = 'elconfidencial';
@@ -571,15 +554,13 @@ class JournalistsDataTransformerTest extends TestCase
 
         $reflection = new \ReflectionClass($this->transformer);
         $method = $reflection->getMethod('journalistUrl');
-        $method->setAccessible(true);
 
+        /** @var string $result */
         $result = $method->invokeArgs($this->transformer, [$aliasMock, $journalistMock]);
         $this->assertStringContainsString('https://www.elconfidencial.dev/path', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnJournalistUrlForNonPrivateAlias(): void
     {
         $siteId = 'elconfidencial';
@@ -599,15 +580,13 @@ class JournalistsDataTransformerTest extends TestCase
 
         $reflection = new \ReflectionClass($this->transformer);
         $method = $reflection->getMethod('journalistUrl');
-        $method->setAccessible(true);
 
+        /** @var string $result */
         $result = $method->invokeArgs($this->transformer, [$aliasMock, $journalistMock]);
         $this->assertStringContainsString('https://www.elconfidencial.dev/autores/-/', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnPhotoUrlWithPhoto(): void
     {
         $journalistMock = $this->createMock(Journalist::class);
@@ -626,9 +605,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals('https://thumbor.example.com/blog-photo.jpg', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnPhotoUrlWithBlogPhoto(): void
     {
         $blogPhoto = 'blog-photo.jpg';
@@ -649,9 +626,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals('https://thumbor.example.com/blog-photo.jpg', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnEmptyPhotoUrl(): void
     {
         $journalistMock = $this->createMock(Journalist::class);
@@ -665,7 +640,6 @@ class JournalistsDataTransformerTest extends TestCase
 
         $reflection = new \ReflectionClass($this->transformer);
         $method = $reflection->getMethod('photoUrl');
-        $method->setAccessible(true);
 
         $result = $method->invokeArgs($this->transformer, [$journalistMock]);
         $this->assertEquals('', $result);
@@ -675,7 +649,6 @@ class JournalistsDataTransformerTest extends TestCase
     {
         $reflection = new \ReflectionClass($object);
         $property = $reflection->getProperty($propertyName);
-        $property->setAccessible(true);
 
         return $property->getValue($object);
     }

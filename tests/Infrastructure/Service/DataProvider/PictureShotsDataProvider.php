@@ -7,7 +7,10 @@ namespace App\Tests\Infrastructure\Service\DataProvider;
  */
 class PictureShotsDataProvider
 {
-    public function getDataShots(): array
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getDataShots(): array
     {
         return [
             '19-9' => [
@@ -157,7 +160,10 @@ class PictureShotsDataProvider
         ];
     }
 
-    public function getDataEmpty(): array
+    /**
+     * @return array<int, mixed>
+     */
+    public static function getDataEmpty(): array
     {
         return [
             [
@@ -167,12 +173,12 @@ class PictureShotsDataProvider
                         'id' => ['id' => '1'],
                     ],
                 ],
-                'result' => [],
+                'expected' => [],
             ],
             [
                 'idPhoto' => '695',
                 'resolveData' => [],
-                'result' => [],
+                'expected' => [],
             ],
         ];
     }

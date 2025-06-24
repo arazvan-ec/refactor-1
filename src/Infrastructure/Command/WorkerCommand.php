@@ -50,8 +50,12 @@ class WorkerCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $timeLimit = (int) $input->getOption('time-limit');
-        $timeSleep = (int) $input->getOption('time-sleep');
+        /** @var string $timeLimit */
+        $timeLimit = $input->getOption('time-limit');
+        $timeLimit = \intval($timeLimit);
+        /** @var string $timeSleep */
+        $timeSleep = $input->getOption('time-sleep');
+        $timeSleep = \intval($timeSleep);
 
         $executeStart = time();
         $executeEnd = $executeStart + $timeLimit;
@@ -61,8 +65,6 @@ class WorkerCommand extends Command
             $output->writeln((new \DateTime())->format('Y-m-d H:i:s').': Test OK');
             sleep($timeSleep);
         }
-
-        echo 'Test OK';
 
         return Command::SUCCESS;
     }

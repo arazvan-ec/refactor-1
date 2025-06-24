@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -7,17 +8,17 @@ namespace App\Tests\Controller\V1;
 
 use App\Controller\V1\EditorialController;
 use App\Orchestrator\OrchestratorChain;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
- * @covers \App\Controller\V1\EditorialController
  */
+#[CoversClass(EditorialController::class)]
 class EditorialControllerTest extends TestCase
 {
     /** @var OrchestratorChain|MockObject */
@@ -40,9 +41,7 @@ class EditorialControllerTest extends TestCase
         unset($this->orchestratorChain, $this->controller);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getEditorialByIdMustReturnEditorial(): void
     {
         $orchestratorResponse = ['editorial' => ['id' => '1234']];
@@ -60,8 +59,6 @@ class EditorialControllerTest extends TestCase
         $request->attributes->method('set')->with('id', $id);
 
         $response = $this->controller->getEditorialById($request, $id);
-
-        $this->assertInstanceOf(JsonResponse::class, $response);
         $content = $response->getContent();
         $this->assertIsString($content, 'Expected content to be a string.');
 

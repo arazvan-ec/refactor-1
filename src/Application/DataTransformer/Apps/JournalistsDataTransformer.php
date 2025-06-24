@@ -10,6 +10,7 @@ use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Encode\Encode;
 use Ec\Journalist\Domain\Model\Alias;
+use Ec\Journalist\Domain\Model\Department;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Section\Domain\Model\Section;
 
@@ -47,7 +48,7 @@ class JournalistsDataTransformer
     }
 
     /**
-     * @return Journalist[]
+     * @return array<string, mixed>
      */
     public function read(): array
     {
@@ -55,12 +56,13 @@ class JournalistsDataTransformer
     }
 
     /**
-     * @return Journalist[] $journalists
+     * @return array<string, mixed> $journalists
      */
     private function transformerJournalists(): array
     {
         $signature = [];
 
+        /** @var Alias $alias */
         foreach ($this->journalist->aliases() as $alias) {
             if ($alias->id()->id() === $this->aliasId) {
                 $signature['journalistId'] = $this->journalist->id()->id();
@@ -75,6 +77,7 @@ class JournalistsDataTransformer
                 $signature['photo'] = $photo;
 
                 $departments = [];
+                /** @var Department $department */
                 foreach ($this->journalist->departments() as $department) {
                     $departments[] = [
                         'id' => $department->id()->id(),

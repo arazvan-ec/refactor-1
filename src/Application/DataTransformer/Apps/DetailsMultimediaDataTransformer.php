@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -8,8 +9,8 @@ namespace App\Application\DataTransformer\Apps;
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\MultimediaTrait;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
-use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
+use Ec\Multimedia\Domain\Model\Multimedia;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
@@ -198,10 +199,10 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
             ];
         }
 
+        /** @var Multimedia $multimedia */
         $multimedia = $this->arrayMultimedia[$multimediaId->id()];
         $clippings = $multimedia->clippings();
 
-        /** @var Clipping $clipping */
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_MULTIMEDIA_BIG);
 
         $allShots = [];

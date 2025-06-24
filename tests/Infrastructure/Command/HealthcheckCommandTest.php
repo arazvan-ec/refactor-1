@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -6,6 +7,8 @@
 namespace App\Tests\Infrastructure\Command;
 
 use App\Infrastructure\Command\HealthcheckCommand;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,14 +16,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
- *
- * @covers \App\Infrastructure\Command\HealthcheckCommand
  */
+#[CoversClass(HealthcheckCommand::class)]
 class HealthcheckCommandTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function executeShouldReturnTrue(): void
     {
         $inputMock = $this->createMock(InputInterface::class);

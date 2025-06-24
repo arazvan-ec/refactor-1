@@ -6,6 +6,7 @@ use App\Application\DataTransformer\Apps\Body\BodyTagPictureMembershipDataTransf
 use App\Infrastructure\Service\PictureShots;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureId;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureMembership;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -23,9 +24,7 @@ class BodyTagPictureMembershipDataTransformerTest extends TestCase
         $this->dataTransformer = new BodyTagPictureMembershipDataTransformer($this->pictureShots);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArray(): void
     {
         $shots = [
@@ -57,9 +56,7 @@ class BodyTagPictureMembershipDataTransformerTest extends TestCase
         $this->assertEquals($url, $result['url']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnBodyTagPictureString(): void
     {
         $this->assertEquals(BodyTagPictureMembership::class, $this->dataTransformer->canTransform());

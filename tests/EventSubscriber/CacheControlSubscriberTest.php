@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -6,6 +7,8 @@
 namespace App\Tests\EventSubscriber;
 
 use App\EventSubscriber\CacheControlSubscriber;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,9 +18,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
- *
- * @covers \App\EventSubscriber\CacheControlSubscriber
  */
+#[CoversClass(CacheControlSubscriber::class)]
 class CacheControlSubscriberTest extends TestCase
 {
     private const SMAXAGE = 7200;
@@ -51,9 +53,7 @@ class CacheControlSubscriberTest extends TestCase
         unset($this->subscriber, $this->event, $this->response);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function onKernelResponseSetsCacheHeaders(): void
     {
         $dateTime = new \DateTimeImmutable('now');
@@ -74,13 +74,15 @@ class CacheControlSubscriberTest extends TestCase
         );
 
         static::assertEquals(self::STALE_IF_ERROR, $this->response->headers->getCacheControlDirective('stale-if-error'));
-        static::assertEquals($dateTime->getTimestamp(), $this->response->getLastModified()->getTimestamp());
-        static::assertEquals($expiresDate->getTimestamp(), $this->response->getExpires()->getTimestamp());
+        /** @var \DateTimeImmutable $lastModified */
+        $lastModified = $this->response->getLastModified();
+        static::assertEquals($dateTime->getTimestamp(), $lastModified->getTimestamp());
+        /** @var \DateTimeImmutable $expires */
+        $expires = $this->response->getExpires();
+        static::assertEquals($expiresDate->getTimestamp(), $expires->getTimestamp());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function onKernelResponseDoesNotOverrideExistingCacheHeaders(): void
     {
         $cache = 5;

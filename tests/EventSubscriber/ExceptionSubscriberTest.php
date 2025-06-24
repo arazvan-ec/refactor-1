@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -6,6 +7,8 @@
 namespace App\Tests\EventSubscriber;
 
 use App\EventSubscriber\ExceptionSubscriber;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,14 +18,11 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
- *
- * @covers \App\EventSubscriber\ExceptionSubscriber
  */
+#[CoversClass(ExceptionSubscriber::class)]
 class ExceptionSubscriberTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function getSubscribedEventsShouldReturnExpectedArray(): void
     {
         $expected = ['kernel.exception' => [['onKernelException', -128]]];
@@ -31,9 +31,7 @@ class ExceptionSubscriberTest extends TestCase
         static::assertSame($expected, $exceptionSubscribed::getSubscribedEvents());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function onKernelExceptionShouldChangeResponseWhenNotInDevMode(): void
     {
         $message = 'This is an error message';
@@ -56,9 +54,7 @@ class ExceptionSubscriberTest extends TestCase
         static::assertSame('application/json', $changedResponse->headers->get('Content-Type'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function onKernelExceptionShouldChangeResponseWhenNotInDevModeAndIsSymfonyException(): void
     {
         $message = 'This is an error message';

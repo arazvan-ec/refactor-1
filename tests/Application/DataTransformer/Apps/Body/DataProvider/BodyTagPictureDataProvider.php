@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -10,7 +11,10 @@ namespace App\Tests\Application\DataTransformer\Apps\Body\DataProvider;
  */
 class BodyTagPictureDataProvider
 {
-    public function getData(): array
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getData(): array
     {
         return [
             'with-caption' => [

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -8,13 +9,14 @@ namespace App\Tests\Application\DataTransformer\Apps\Body;
 use App\Application\DataTransformer\Apps\Body\BodyTagHtmlDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\BodyTagHtml;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
- *
- * @covers \App\Application\DataTransformer\Apps\Body\BodyTagHtmlDataTransformer
  */
+#[CoversClass(BodyTagHtmlDataTransformer::class)]
 class BodyTagHtmlDataTransformerTest extends TestCase
 {
     private BodyTagHtmlDataTransformer $bodyTagHtmlDataTransformer;
@@ -24,17 +26,13 @@ class BodyTagHtmlDataTransformerTest extends TestCase
         $this->bodyTagHtmlDataTransformer = new BodyTagHtmlDataTransformer();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnBodyTagHtmlString(): void
     {
         static::assertSame(BodyTagHtml::class, $this->bodyTagHtmlDataTransformer->canTransform());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArray(): void
     {
         $expectedArray = [
@@ -49,9 +47,7 @@ class BodyTagHtmlDataTransformerTest extends TestCase
         static::assertSame($expectedArray, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeShouldReturnExceptionWhenBodyElementIsNotBodyTagHtml(): void
     {
         $bodyElementMock = $this->createMock(BodyElement::class);

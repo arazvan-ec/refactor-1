@@ -7,9 +7,12 @@ namespace App\Tests\Orchestrator\Chain\DataProvider;
  */
 class EditorialOrchestratorDataProvider
 {
-    public function getData(): array
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getData(): array
     {
-        /** @var array<string, array{
+        /** @var array<1|2|3|7|6|9, array{
          *     journalistId: string,
          *     aliasId: string,
          *     name: string,

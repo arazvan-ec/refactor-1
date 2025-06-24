@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -7,6 +8,7 @@ namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\BodyTagInsertedNewsDataTransformer;
 use App\Infrastructure\Service\Thumbor;
+use App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagInsertedNewsDataProvider;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
@@ -15,6 +17,8 @@ use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\Clippings;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Section\Domain\Model\Section;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -36,14 +40,12 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
     }
 
     /**
-     * @test
-     *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagInsertedNewsDataProvider::getData()
-     *
      * @param array<string, mixed>                             $data
      * @param array{signaturesWithIndexId: array<int, string>} $allSignatures
      * @param array<string, mixed>                             $expected
      */
+    #[DataProviderExternal(BodyTagInsertedNewsDataProvider::class, 'getData')]
+    #[Test]
     public function transformBodyTagInsertedNewsWithSignatures(array $data, array $allSignatures, array $expected): void
     {
         $resolveData = [];
@@ -141,9 +143,7 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnBodyTagInsertedNewsString(): void
     {
         static::assertSame(BodyTagInsertedNews::class, $this->transformer->canTransform());

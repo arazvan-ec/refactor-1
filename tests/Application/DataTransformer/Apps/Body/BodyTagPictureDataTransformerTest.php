@@ -4,8 +4,11 @@ namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\BodyTagPictureDataTransformer;
 use App\Infrastructure\Service\PictureShots;
+use App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagPictureDataProvider;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureId;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -25,11 +28,9 @@ class BodyTagPictureDataTransformerTest extends TestCase
 
     /**
      * @param array<string, string> $shots
-     *
-     * @test
-     *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagPictureDataProvider::getData()
      */
+    #[DataProviderExternal(BodyTagPictureDataProvider::class, 'getData')]
+    #[Test]
     public function readShouldReturnExpectedArray(
         array $shots,
         string $caption,
@@ -58,9 +59,7 @@ class BodyTagPictureDataTransformerTest extends TestCase
         $this->assertEquals($url, $result['url']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnBodyTagPictureString(): void
     {
         $this->assertEquals(BodyTagPicture::class, $this->dataTransformer->canTransform());

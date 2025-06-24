@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -13,6 +14,7 @@ use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\Clippings;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -32,9 +34,7 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->transformer = new DetailsMultimediaDataTransformer($this->thumbor);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeAndReadShouldReturnCorrectArray(): void
     {
         $multimedia = $this->createMock(Multimedia::class);
@@ -91,7 +91,6 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->transformer->write([$expectedId => $multimedia], $openingMultimedia);
         $result = $this->transformer->read();
 
-        $this->assertIsArray($result);
         $this->assertArrayHasKey('id', $result);
         $this->assertEquals($expectedId, $result['id']);
 
@@ -108,9 +107,7 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->assertEquals('https://example.com/image.jpg', $result['photo']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeAndReadShouldReturnEmptyPhoto(): void
     {
         $multimedia = $this->createMock(Multimedia::class);
@@ -162,18 +159,15 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->transformer->write([$expectedId => $multimedia], $openingMultimedia);
         $result = $this->transformer->read();
 
-        $this->assertIsArray($result);
         $this->assertArrayHasKey('photo', $result);
         $this->assertEquals('', $result['photo']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeAndReadShouldReturnMultimediaNull(): void
     {
         $expectedId = '1';
-        /** @var Multimedia $multimedia */
+        /** @var Multimedia|MockObject $multimedia */
         $multimedia = $this->createMock(Multimedia::class);
         $openingMultimedia = $this->createMock(PhotoExist::class);
         $openingMultimediaId = $this->createMock(MultimediaId::class);

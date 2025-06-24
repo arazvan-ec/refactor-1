@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -7,13 +8,14 @@ namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\BodyTagVideoYoutubeDataTransformer;
 use Ec\Editorial\Domain\Model\Body\BodyTagVideoYoutube;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
- *
- * @covers \App\Application\DataTransformer\Apps\Body\BodyTagVideoYoutubeDataTransformer
  */
+#[CoversClass(BodyTagVideoYoutubeDataTransformer::class)]
 class BodyTagVideoYoutubeDataTransformerTest extends TestCase
 {
     private BodyTagVideoYoutubeDataTransformer $bodyTagVideoYoutubeDataTransformer;
@@ -23,17 +25,13 @@ class BodyTagVideoYoutubeDataTransformerTest extends TestCase
         $this->bodyTagVideoYoutubeDataTransformer = new BodyTagVideoYoutubeDataTransformer('https://player.host');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnBodyTagVideoYoutubeString(): void
     {
         static::assertSame(BodyTagVideoYoutube::class, $this->bodyTagVideoYoutubeDataTransformer->canTransform());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function readShouldReturnExpectedArray(): void
     {
         $expectedArray = [

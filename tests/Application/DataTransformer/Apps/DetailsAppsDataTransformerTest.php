@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -19,14 +20,15 @@ use Ec\Section\Domain\Model\SectionId;
 use Ec\Tag\Domain\Model\Tag;
 use Ec\Tag\Domain\Model\TagId;
 use Ec\Tag\Domain\Model\TagType;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
- *
- * @covers \App\Application\DataTransformer\Apps\DetailsAppsDataTransformer
  */
+#[CoversClass(DetailsAppsDataTransformer::class)]
 class DetailsAppsDataTransformerTest extends TestCase
 {
     private DetailsAppsDataTransformer $transformer;
@@ -40,9 +42,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->transformer = new DetailsAppsDataTransformer('dev');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeAndReadShouldReturnCorrectArray(): void
     {
         $editorial = $this->createMock(Editorial::class);
@@ -55,15 +55,12 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->transformer->write($editorial, $section, [$tag]);
         $result = $this->transformer->read();
 
-        $this->assertIsArray($result);
         $this->assertArrayHasKey('id', $result);
         $this->assertArrayHasKey('section', $result);
         $this->assertArrayHasKey('tags', $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformerEditorialShouldReturnCorrectEditorialArray(): void
     {
         $editorial = $this->createMock(Editorial::class);
@@ -155,9 +152,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertSame($expected, $result['signatures']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformerSectionShouldReturnCorrectSection(): void
     {
         $section = $this->createMock(Section::class);
@@ -173,6 +168,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $tag = $this->createMock(Tag::class);
 
         $this->transformer->write($editorial, $section, [$tag]);
+        /** @var array{section: array{id: string, name: string, url: string}} $result */
         $result = $this->transformer->read();
 
         $this->assertEquals($sectionId, $result['section']['id']);
@@ -180,9 +176,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals('https://www.elconfidencial.dev/section-path', $result['section']['url']);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformerTagsShouldReturnCorrectTags(): void
     {
         $editorial = $this->createMock(Editorial::class);
@@ -199,6 +193,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $tag->method('type')->willReturn($type);
 
         $this->transformer->write($editorial, $section, [$tag]);
+        /** @var array{tags: array<int, array{id: string, name: string, url: string}>} $result */
         $result = $this->transformer->read();
 
         $this->assertEquals($tagId->id(), $result['tags'][0]['id']);
@@ -209,9 +204,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformerShouldReturnEmptyTagsArrayWhenNoTagsAreProvided(): void
     {
         $editorial = $this->createMock(Editorial::class);

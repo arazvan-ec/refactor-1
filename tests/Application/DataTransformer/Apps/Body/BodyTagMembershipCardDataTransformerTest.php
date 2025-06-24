@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -7,11 +8,14 @@ namespace App\Tests\Application\DataTransformer\Apps\Body;
 
 use App\Application\DataTransformer\Apps\Body\BodyTagMembershipCardDataTransformer;
 use App\Application\DataTransformer\BodyElementDataTransformerHandler;
+use App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagMembershipCardDataProvider;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
 use Ec\Editorial\Domain\Model\Body\BodyTagPictureMembership;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButtons;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -30,17 +34,13 @@ class BodyTagMembershipCardDataTransformerTest extends TestCase
         $this->dataTransformer = new BodyTagMembershipCardDataTransformer($this->handler);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canTransformShouldReturnBodyTagHtmlString(): void
     {
         static::assertSame(BodyTagMembershipCard::class, $this->dataTransformer->canTransform());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function writeShouldReturnExceptionWhenBodyElementIsNotBodyTagMembershipCard(): void
     {
         $bodyElementMock = $this->createMock(BodyElement::class);
@@ -52,8 +52,6 @@ class BodyTagMembershipCardDataTransformerTest extends TestCase
     }
 
     /**
-     * @test
-     *
      * @param array{
      *      btns: array<array{
      *          url: string,
@@ -66,9 +64,9 @@ class BodyTagMembershipCardDataTransformerTest extends TestCase
      *  } $bodyTag
      * @param array<array<string, string>> $combinedLinks
      * @param array<array<string, string>> $expected
-     *
-     * @dataProvider \App\Tests\Application\DataTransformer\Apps\Body\DataProvider\BodyTagMembershipCardDataProvider::getData()
      */
+    #[DataProviderExternal(BodyTagMembershipCardDataProvider::class, 'getData')]
+    #[Test]
     public function readShouldReturnExpectedArray(array $bodyTag, array $combinedLinks, array $expected): void
     {
         $arrayBtnMock = [];

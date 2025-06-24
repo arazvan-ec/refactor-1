@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -14,6 +15,7 @@ use App\Application\DataTransformer\BodyDataTransformer;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Exception\EditorialNotPublishedYetException;
 use App\Orchestrator\Chain\EditorialOrchestrator;
+use App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorDataProvider;
 use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
@@ -44,6 +46,9 @@ use Ec\Section\Domain\Model\SectionId;
 use Ec\Tag\Domain\Model\QueryTagClient;
 use Ec\Tag\Domain\Model\Tag as TagAlias;
 use Http\Promise\Promise;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProviderExternal;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriFactoryInterface;
@@ -53,9 +58,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
- * @covers \App\Orchestrator\Chain\EditorialOrchestrator
  */
+#[CoversClass(EditorialOrchestrator::class)]
 class EditorialOrchestratorTest extends TestCase
 {
     /** @var QueryEditorialClient|MockObject */
@@ -176,9 +180,7 @@ class EditorialOrchestratorTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function executeShouldThrowEditorialNotPublishedWhenIsNotVisible(): void
     {
         $id = '12345';
@@ -209,9 +211,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->editorialOrchestrator->execute($requestMock);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function executeShouldReturnEditorialFromLegacyClientWhenSourceIsNull(): void
     {
         $id = '12345';
@@ -249,8 +249,6 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     /**
-     * @test
-     *
      * @param array{
      *      id: string,
      *      sectionId: string,
@@ -282,9 +280,9 @@ class EditorialOrchestratorTest extends TestCase
      * @param array<string, string>             $membershipLinkCombine
      * @param array<int, array<int, string>>    $expectedJournalistAliasIds
      * @param array<mixed>                      $expectedPhotoFromBodyTags
-     *
-     * @dataProvider \App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorDataProvider::getData
      */
+    #[DataProviderExternal(EditorialOrchestratorDataProvider::class, 'getData')]
+    #[Test]
     public function executeShouldReturnCorrectData(
         array $editorial,
         array $allJournalistExpected,
@@ -413,6 +411,7 @@ class EditorialOrchestratorTest extends TestCase
 
         $withAliasIds = array_merge($withAliasIdsInserted, $withAliasIdsRecommended);
 
+        /** @var array<int, string> $withAliasIds */
         $withAliasIds = array_merge($withAliasIds, $editorial['signatures']);
 
         [
@@ -513,9 +512,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->assertSame($expectedResult, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function canOrchestrateShouldReturnExpectedValue(): void
     {
         static::assertSame('editorial', $this->editorialOrchestrator->canOrchestrate());
@@ -589,11 +586,14 @@ class EditorialOrchestratorTest extends TestCase
             return [$aliasId];
         }, $promisesAliasIds);
 
-        $mockBuilder = $this->queryJournalistClient->expects(static::exactly(\count($promisesJournalist)))
-            ->method('findJournalistByAliasId');
+        $invokedCount = static::exactly(\count($promisesJournalist));
+        $this->queryJournalistClient->expects($invokedCount)
+            ->method('findJournalistByAliasId')
+             ->willReturnCallback(function ($aliasId) use ($promisesJournalist, $withConsecutiveArgs, $invokedCount) {
+                 self::assertEquals($withConsecutiveArgs[$invokedCount->numberOfInvocations() - 1][0], $aliasId);
 
-        \call_user_func_array([$mockBuilder, 'withConsecutive'], $withConsecutiveArgs);
-        \call_user_func_array([$mockBuilder, 'willReturnOnConsecutiveCalls'], $promisesJournalist);
+                 return $promisesJournalist[$invokedCount->numberOfInvocations() - 1];
+             });
     }
 
     /**
@@ -913,7 +913,15 @@ class EditorialOrchestratorTest extends TestCase
      *     } $editorial
      * @param array<int, array<string, string>> $allJournalistsExpected
      *
-     * @return array<int|string, mixed>
+     * @return array{
+     *     0: array<int, mixed>,
+     *     1: array<int, mixed>,
+     *     2: array<int, mixed>,
+     *     3: array<int, mixed>,
+     *     4: array<int, mixed>,
+     *     5: array<int, mixed>,
+     *     6: MockObject,
+     * }
      *   */
     private function getRecommendedNewsByEditorial(array $editorial, MockObject $editorialMock, array $allJournalistsExpected): array
     {
@@ -984,7 +992,7 @@ class EditorialOrchestratorTest extends TestCase
             ->method('recommendedEditorials')
             ->willReturn($recommenderMock);
 
-        return [
+        return [// @phpstan-ignore return.type
             $expectedRecommendedNews,
             $promisesEditorials,
             $withEditorials,
@@ -1086,7 +1094,7 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     /**
-     * @param array<string> $aliasIds
+     * @param array<int, string> $aliasIds
      *
      * @return array{
      *        0: array<int, Journalist|MockObject>,

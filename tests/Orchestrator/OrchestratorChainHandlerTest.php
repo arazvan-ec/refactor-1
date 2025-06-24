@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -9,15 +10,16 @@ use App\Orchestrator\Chain\Orchestrator;
 use App\Orchestrator\Exceptions\DuplicateChainInOrchestratorHandlerException;
 use App\Orchestrator\Exceptions\OrchestratorTypeNotExistException;
 use App\Orchestrator\OrchestratorChainHandler;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
- * @covers \App\Orchestrator\OrchestratorChainHandler
  */
+#[CoversClass(OrchestratorChainHandler::class)]
 class OrchestratorChainHandlerTest extends TestCase
 {
     /** @var Orchestrator|MockObject */
@@ -34,9 +36,7 @@ class OrchestratorChainHandlerTest extends TestCase
         $this->orchestratorChainHandler = new OrchestratorChainHandler();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function handlerShouldReturnString(): void
     {
         $alias = 'fake';
@@ -59,9 +59,7 @@ class OrchestratorChainHandlerTest extends TestCase
         static::assertSame($handlerReturn, $return);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function handlerShouldReturnOrchestratorTypeNotExistException(): void
     {
         $type = 'fake77';
@@ -76,9 +74,7 @@ class OrchestratorChainHandlerTest extends TestCase
         $this->orchestratorChainHandler->handler($type, $requestMock);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addOrchestratorShouldReturnThis(): void
     {
         $return = $this->orchestratorChainHandler->addOrchestrator($this->orchestratorChainMock);
@@ -86,9 +82,7 @@ class OrchestratorChainHandlerTest extends TestCase
         static::assertSame($this->orchestratorChainHandler, $return);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function addOrchestratorShouldReturnException(): void
     {
         $orchestratorDuplicate = $this->createMock(Orchestrator::class);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -11,6 +12,7 @@ use Ec\Cqrs\Messages\CommandNotification;
 use Ec\Cqrs\Messages\CommandNotificationOnComplete;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EventEditorial;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Bridge\Amqp\Transport\AmqpStamp;
@@ -48,9 +50,7 @@ class PurgeEditorialHandlerTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function invokeShouldDispatchMessageToWarmup(): void
     {
         $id = 'id';

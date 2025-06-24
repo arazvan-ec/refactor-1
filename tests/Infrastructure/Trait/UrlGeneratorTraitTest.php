@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -7,14 +8,15 @@ namespace App\Tests\Infrastructure\Trait;
 
 use App\Infrastructure\Enum\SitesEnum;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
- * @covers \App\Infrastructure\Trait\UrlGeneratorTrait
  */
+#[CoversClass(UrlGeneratorTrait::class)]
 class UrlGeneratorTraitTest extends TestCase
 {
     private MockObject $trait;
@@ -24,9 +26,7 @@ class UrlGeneratorTraitTest extends TestCase
         $this->trait = $this->getMockForTrait(UrlGeneratorTrait::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function setAndGetExtension(): void
     {
         $reflection = new \ReflectionClass($this->trait);
@@ -37,9 +37,7 @@ class UrlGeneratorTraitTest extends TestCase
         $this->assertSame('dev', $extensionMethod->invoke($this->trait));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function generateUrlMustGenerateCorrectUrlWhenIsNotBlog(): void
     {
         $reflection = new \ReflectionClass($this->trait);
@@ -59,9 +57,7 @@ class UrlGeneratorTraitTest extends TestCase
         $this->assertSame($expectedUrl, $result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function generateUrlMustGenerateCorrectUrlWhenIsBlog(): void
     {
         $reflection = new \ReflectionClass($this->trait);

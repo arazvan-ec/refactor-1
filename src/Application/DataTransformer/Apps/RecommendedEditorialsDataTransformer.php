@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -10,6 +11,7 @@ use App\Infrastructure\Trait\MultimediaTrait;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
+use Ec\Multimedia\Domain\Model\Multimedia;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -60,10 +62,14 @@ class RecommendedEditorialsDataTransformer
         foreach ($this->editorials as $editorial) {
             $editorialId = $editorial->id()->id();
 
-            $signatures = $this->resolveData['recommendedEditorials'][$editorialId]['signatures'];
+            /** @var array<string, mixed> $recommendedEditorials */
+            $recommendedEditorials = $this->resolveData['recommendedEditorials'];
+            /** @var array<string, mixed> $currentRecommendedEditorial */
+            $currentRecommendedEditorial = $recommendedEditorials[$editorialId];
+            $signatures = $currentRecommendedEditorial['signatures'];
 
             /** @var Section $section */
-            $section = $this->resolveData['recommendedEditorials'][$editorialId]['section'];
+            $section = $currentRecommendedEditorial['section'];
 
             $elementArray = [];
             $elementArray['type'] = self::TYPE;
@@ -104,7 +110,14 @@ class RecommendedEditorialsDataTransformer
     {
         $shots = [];
 
-        $multimedia = $this->resolveData['multimedia'][$this->resolveData['recommendedEditorials'][$editorialId]['multimediaId']] ?? null;
+        /** @var array<string, mixed> $recommendedEditorials */
+        $recommendedEditorials = $this->resolveData['recommendedEditorials'];
+        /** @var array<string, string> $currentRecommendedEditorial */
+        $currentRecommendedEditorial = $recommendedEditorials[$editorialId];
+        /** @var array<string, mixed> $multimediaData */
+        $multimediaData = $this->resolveData['multimedia'];
+        /** @var ?Multimedia $multimedia */
+        $multimedia = $multimediaData[$currentRecommendedEditorial['multimediaId']] ?? null;
         if (null === $multimedia) {
             return $shots;
         }

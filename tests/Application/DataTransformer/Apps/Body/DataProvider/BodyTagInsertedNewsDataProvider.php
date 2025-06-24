@@ -11,7 +11,10 @@ namespace App\Tests\Application\DataTransformer\Apps\Body\DataProvider;
  */
 class BodyTagInsertedNewsDataProvider
 {
-    public function getData(): array
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getData(): array
     {
         return [
             'inserted-news-with-one-signature' => [

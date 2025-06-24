@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -44,6 +45,8 @@ use OpenApi\Attributes as OA;
 )]
 /**
  * @author Ken Serikawa <kserikawa@eext.elconfidencial.com>
+ *
+ * @codeCoverageIgnore
  */
 class Photo
 {

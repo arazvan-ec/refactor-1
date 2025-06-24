@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -10,6 +11,9 @@ namespace App\Tests\Application\DataTransformer\Apps\DataProvider;
  */
 class DetailsAppsDataProvider
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function getJournalists(): array
     {
         return [

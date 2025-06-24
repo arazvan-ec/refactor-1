@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -8,6 +9,8 @@ namespace App\Tests\Ec\Snaapi\Infrastructure\Client\Http;
 use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use Http\Mock\Client;
 use Http\Promise\Promise;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -15,9 +18,8 @@ use Psr\Http\Message\StreamInterface;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
- *
- * @covers \App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient
  */
+#[CoversClass(QueryLegacyClient::class)]
 class QueryLegacyClientTest extends TestCase
 {
     private const HTTP_HOSTNAME_TEST = 'https://api.elconfidencial.com';
@@ -43,9 +45,7 @@ class QueryLegacyClientTest extends TestCase
         unset($this->httpClient, $this->queryLegacyClient);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findEditorialByIdShouldReturnEditorialArray(): void
     {
         $statusCode = 200;
@@ -53,7 +53,7 @@ class QueryLegacyClientTest extends TestCase
         $requestUrlExpected = self::HTTP_HOSTNAME_TEST.'/service/content/'.$id.'/';
         $responseData = [];
 
-        /** @var string $bodyResponse */
+        /** @var non-empty-string $bodyResponse */
         $bodyResponse = json_encode($responseData, JSON_THROW_ON_ERROR);
         $responseMock = $this->getResponseMock($statusCode, $bodyResponse);
         $this->httpClient->addResponse($responseMock);
@@ -65,9 +65,7 @@ class QueryLegacyClientTest extends TestCase
         static::assertSame($requestUrlExpected, (string) $request->getUri());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function retrieveEditorialShouldCallExecuteWithDefaultValuesAndReturnEditorialModel(): void
     {
         $id = '12345';
@@ -107,9 +105,7 @@ class QueryLegacyClientTest extends TestCase
         return $responseMock;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function findCommentsEditorialByIdShouldReturnCommentsArray(): void
     {
         $statusCode = 200;
@@ -117,7 +113,7 @@ class QueryLegacyClientTest extends TestCase
         $requestUrlExpected = self::HTTP_HOSTNAME_TEST.'/service/community/comments/editorial/'.$id.'/0/0/';
         $responseData = [];
 
-        /** @var string $bodyResponse */
+        /** @var non-empty-string $bodyResponse */
         $bodyResponse = json_encode($responseData, JSON_THROW_ON_ERROR);
         $responseMock = $this->getResponseMock($statusCode, $bodyResponse);
         $this->httpClient->addResponse($responseMock);
