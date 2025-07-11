@@ -24,9 +24,14 @@ stages:
     - bugfix
     - hotfix
     - create_mrs
+    - merge_release
+    - deploy_release
 
 workflow:
     rules:
+        - if: $CI_PIPELINE_SOURCE == "pipeline" && $CI_EC_ACTION == "create_release"
+        - if: $CI_PIPELINE_SOURCE == "pipeline" && $CI_EC_ACTION == "merge_release"
+        - if: $CI_PIPELINE_SOURCE == "pipeline" && $CI_EC_ACTION == "deploy_release"
         - if: $CI_PIPELINE_SOURCE == "pipeline"
           when: never
         - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE =~ /^Draft.*$/
@@ -76,7 +81,7 @@ include:
       file:
           - 'flows/services/php/integration-flow.yml'
       rules:
-          - if: $CI_COMMIT_BRANCH == "develop"
+          - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
 
     - project: 'ec-awesomemakers1/templates/pipelines-shared'
       ref: develop
@@ -84,6 +89,7 @@ include:
           - 'flows/services/release-flow.yml'
       rules:
           - if: $CI_COMMIT_TAG =~ /^.*-beta.*$/
+          - if: $CI_PIPELINE_SOURCE == "pipeline" && $CI_EC_ACTION == "create_release"
 
     - project: 'ec-awesomemakers1/templates/pipelines-shared'
       ref: develop
@@ -111,7 +117,7 @@ include:
       file:
           - 'flows/services/php/merged-master-flow.yml'
       rules:
-          - if: $CI_COMMIT_BRANCH == "master"
+          - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "master"
 
     - project: 'ec-awesomemakers1/templates/pipelines-shared'
       ref: develop
@@ -126,11 +132,20 @@ include:
           - 'flows/services/php/deploy-flow.yml'
       rules:
           - if: $CI_COMMIT_TAG =~ "/^v\d+\.\d+\.\d+$/"
+          - if: $CI_PIPELINE_SOURCE == "pipeline" && $CI_EC_ACTION == "deploy_release"
+
+    - project: 'ec-awesomemakers1/templates/pipelines-shared'
+      ref: develop
+      file:
+          - 'flows/merge-to-master-flow.yml'
+      rules:
+          - if: $CI_PIPELINE_SOURCE == "pipeline" && $CI_EC_ACTION == "merge_release"
 
 mandatory_job_start:
     image: alpine:latest
     stage: .pre
     script:
-        - echo "running with data $CI_COMMIT_REF_NAME"
+        - echo "running with data $CI_COMMIT_REF_NAME and CI_PIPELINE_SOURCE $CI_PIPELINE_SOURCE and CI_EC_ACTION $CI_EC_ACTION"
     rules:
         - if: $RUN_DUMMY == "true"
+

@@ -49,7 +49,7 @@ RUN mkdir -p /var/www/envs/app \
 COPY docker/config/newrelic.ini /usr/local/etc/php/conf.d/21-newrelic.ini
 
 
-FROM ${REGISTRY_HOST}/webservice-backend:${WEBSERVICE_VERSION}-dev AS k8s-dev
+FROM ${REGISTRY_HOST}/webservice-backend:${WEBSERVICE_VERSION} AS k8s-dev
 RUN mkdir -p /var/www/envs/app \
     && mkdir -p /var/www/envs/sm \
     && ln -sf /var/www/envs/app/.env /var/www/service/.env.local \
