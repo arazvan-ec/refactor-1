@@ -131,6 +131,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             'id' => $this->section->id()->id(),
             'name' => $this->section->name(),
             'url' => $url,
+            'encodeName' => $this->section->encodeName(),
         ];
     }
 
