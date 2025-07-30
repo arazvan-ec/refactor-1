@@ -68,9 +68,10 @@ class JournalistsDataTransformer
                 $signature['journalistId'] = $this->journalist->id()->id();
                 $signature['aliasId'] = $alias->id()->id();
                 $signature['name'] = $alias->name();
+                $signature['private'] = $alias->private();
                 $signature['url'] = '';
                 if ($this->journalist->isVisible()) {
-                    $signature['url'] = $this->journalistUrl($alias, $this->journalist);
+                    $signature['url'] = $this->journalistUrl($this->journalist);
                 }
 
                 $photo = $this->photoUrl($this->journalist);
@@ -96,17 +97,8 @@ class JournalistsDataTransformer
         return $signature;
     }
 
-    private function journalistUrl(Alias $alias, Journalist $journalist): string
+    private function journalistUrl(Journalist $journalist): string
     {
-        if ($alias->private()) {
-            return $this->generateUrl(
-                'https://%s.%s.%s/%s',
-                $this->section->isBlog() ? 'blog' : 'www',
-                $this->section->siteId(),
-                $this->section->getPath()
-            );
-        }
-
         return $this->generateUrl(
             'https://%s.%s.%s/autores/%s/',
             'www',

@@ -64,6 +64,7 @@ class JournalistsDataTransformerTest extends TestCase
         $journalistUrl = '';
         $photoUrl = 'https://images.ecestaticos.dev/FGsmLp_UG1BtJpvlkXA8tzDqltY=/dev.f.elconfidencial.com/journalist/953/855/f9d/953855f9d072b9cd509c3f6c5f9dc77f.png';
         $twitter = 'elconfidencial';
+        $privateAlias = false;
 
         $expectedThumbor = $photoUrl.'thumbor';
 
@@ -106,6 +107,9 @@ class JournalistsDataTransformerTest extends TestCase
         $aliasIdMock->method('id')
             ->willReturn($this->aliasId);
 
+        $aliasItemMock->method('private')
+            ->willReturn($privateAlias);
+
         $journalistMock->expects(static::once())
             ->method('departments')
             ->willReturn($departmentsMock);
@@ -168,6 +172,7 @@ class JournalistsDataTransformerTest extends TestCase
             'photo' => $expectedThumbor,
             'departments' => [],
             'twitter' => '@'.$twitter,
+            'private' => $privateAlias,
         ];
 
         $this->assertEquals($expectedJournalist['journalistId'], $result['journalistId']);
@@ -175,6 +180,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals($expectedJournalist['name'], $result['name']);
         $this->assertEquals($expectedJournalist['url'], $result['url']);
         $this->assertEquals($expectedJournalist['departments'], $result['departments']);
+        $this->assertEquals($expectedJournalist['private'], $result['private']);
         $this->assertEquals(
             $expectedJournalist['photo'],
             $result['photo']
@@ -211,6 +217,7 @@ class JournalistsDataTransformerTest extends TestCase
         $journalistUrl = 'https://www.elconfidencial.dev/autores/juan-carlos-5164/';
         $photoUrl = 'https://images.ecestaticos.dev/FGsmLp_UG1BtJpvlkXA8tzDqltY=/dev.f.elconfidencial.com/journalist/953/855/f9d/953855f9d072b9cd509c3f6c5f9dc77f.png';
         $twitter = 'elconfidencial';
+        $privateAlias = false;
 
         $expectedThumbor = $photoUrl.'thumbor';
 
@@ -253,6 +260,9 @@ class JournalistsDataTransformerTest extends TestCase
         $aliasIdMock->method('id')
             ->willReturn($this->aliasId);
 
+        $aliasItemMock->method('private')
+            ->willReturn($privateAlias);
+
         $journalistMock->expects(static::once())
             ->method('departments')
             ->willReturn($departmentsMock);
@@ -319,6 +329,7 @@ class JournalistsDataTransformerTest extends TestCase
             'photo' => $expectedThumbor,
             'departments' => [],
             'twitter' => '@'.$twitter,
+            'private' => $privateAlias,
         ];
 
         $this->assertEquals($expectedJournalist['journalistId'], $result['journalistId']);
@@ -326,6 +337,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals($expectedJournalist['name'], $result['name']);
         $this->assertEquals($expectedJournalist['url'], $result['url']);
         $this->assertEquals($expectedJournalist['departments'], $result['departments']);
+        $this->assertEquals($expectedJournalist['private'], $result['private']);
         $this->assertEquals(
             $expectedJournalist['photo'],
             $result['photo']
@@ -348,6 +360,7 @@ class JournalistsDataTransformerTest extends TestCase
         $expectedThumbor = $photoUrl.'thumbor';
         $departmentId = new DepartmentId('1');
         $departmentName = 'Técnico';
+        $privateAlias = false;
         $expectedDepartment = [
             'id' => $departmentId,
             'name' => $departmentName,
@@ -394,6 +407,9 @@ class JournalistsDataTransformerTest extends TestCase
 
         $aliasIdMock->method('id')
             ->willReturn($this->aliasId);
+
+        $aliasItemMock->method('private')
+            ->willReturn($privateAlias);
 
         $journalistMock->expects(static::once())
             ->method('departments')
@@ -495,6 +511,7 @@ class JournalistsDataTransformerTest extends TestCase
             'departments' => [
                 $expectedDepartment,
             ],
+            'private' => $privateAlias,
         ];
 
         $this->assertEquals($expectedJournalist['journalistId'], $result['journalistId']);
@@ -502,6 +519,7 @@ class JournalistsDataTransformerTest extends TestCase
         $this->assertEquals($expectedJournalist['name'], $result['name']);
         $this->assertEquals($expectedJournalist['url'], $result['url']);
         $this->assertEquals($expectedJournalist['departments'], $result['departments']);
+        $this->assertEquals($expectedJournalist['private'], $result['private']);
         $this->assertEquals(
             $expectedJournalist['photo'],
             $result['photo']
@@ -537,12 +555,9 @@ class JournalistsDataTransformerTest extends TestCase
     {
         $siteId = 'elconfidencial';
 
-        $aliasMock = $this->createMock(Alias::class);
         $journalistMock = $this->createMock(Journalist::class);
         $sectionMock = $this->createMock(Section::class);
 
-        $aliasMock->method('private')
-            ->willReturn(true);
         $sectionMock->method('siteId')
             ->willReturn($siteId);
         $sectionMock->method('getPath')
@@ -556,34 +571,8 @@ class JournalistsDataTransformerTest extends TestCase
         $method = $reflection->getMethod('journalistUrl');
 
         /** @var string $result */
-        $result = $method->invokeArgs($this->transformer, [$aliasMock, $journalistMock]);
-        $this->assertStringContainsString('https://www.elconfidencial.dev/path', $result);
-    }
-
-    #[Test]
-    public function shouldReturnJournalistUrlForNonPrivateAlias(): void
-    {
-        $siteId = 'elconfidencial';
-
-        $aliasMock = $this->createMock(Alias::class);
-        $journalistMock = $this->createMock(Journalist::class);
-        $sectionMock = $this->createMock(Section::class);
-
-        $aliasMock->method('private')
-            ->willReturn(false);
-        $sectionMock->method('siteId')
-            ->willReturn($siteId);
-        $sectionMock->method('getPath')
-            ->willReturn('path');
-
-        $this->transformer->write($this->aliasId, $journalistMock, $sectionMock, false);
-
-        $reflection = new \ReflectionClass($this->transformer);
-        $method = $reflection->getMethod('journalistUrl');
-
-        /** @var string $result */
-        $result = $method->invokeArgs($this->transformer, [$aliasMock, $journalistMock]);
-        $this->assertStringContainsString('https://www.elconfidencial.dev/autores/-/', $result);
+        $result = $method->invokeArgs($this->transformer, [$journalistMock]);
+        $this->assertStringContainsString('https://www.elconfidencial.dev/autores/', $result);
     }
 
     #[Test]
