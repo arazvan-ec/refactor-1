@@ -162,9 +162,10 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section->method('getPath')->willReturn('section-path');
         $section->method('siteId')->willReturn('siteId');
         $section->method('isBlog')->willReturn(false);
+        $section->method('encodeName')->willReturn('espana');
+
         $editorial = $this->createMock(Editorial::class);
-        $journalist = $this->createMock(Journalist::class);
-        $journalists = ['aliasId' => $journalist];
+
         $tag = $this->createMock(Tag::class);
 
         $this->transformer->write($editorial, $section, [$tag]);
@@ -174,6 +175,36 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals($sectionId, $result['section']['id']);
         $this->assertEquals($section->name(), $result['section']['name']);
         $this->assertEquals('https://www.elconfidencial.dev/section-path', $result['section']['url']);
+    }
+
+    #[Test]
+    public function retrieveEncodeNamePathRecursiveWithParent(): void
+    {
+        $parentSection = $this->createMock(Section::class);
+        $parentSection->method('parent')->willReturn(null);
+        $parentSection->method('encodeName')->willReturn('espana');
+
+        $childSection = $this->createMock(Section::class);
+        $childSection->method('parent')->willReturn($parentSection);
+        $childSection->method('encodeName')->willReturn('andalucia');
+
+        $transformer = new DetailsAppsDataTransformer('html');
+        $result = $transformer->retrieveEncodeNamePathRecursive($childSection);
+
+        $this->assertEquals('espanaandalucia', $result);
+    }
+
+    #[Test]
+    public function retrieveEncodeNamePathRecursiveWithoutParent(): void
+    {
+        $section = $this->createMock(Section::class);
+        $section->method('parent')->willReturn(null);
+        $section->method('encodeName')->willReturn('espana');
+
+        $transformer = new DetailsAppsDataTransformer('html');
+        $result = $transformer->retrieveEncodeNamePathRecursive($section);
+
+        $this->assertEquals('espana', $result);
     }
 
     #[Test]

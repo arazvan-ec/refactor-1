@@ -131,8 +131,22 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
             'id' => $this->section->id()->id(),
             'name' => $this->section->name(),
             'url' => $url,
-            'encodeName' => $this->section->encodeName(),
+            'encodeName' => $this->retrieveEncodeNamePathRecursive($this->section),
         ];
+    }
+
+    /**
+     * @param Section $section
+     *
+     * @return string
+     */
+    public function retrieveEncodeNamePathRecursive(Section $section): string
+    {
+        if (null === $section->parent()) {
+            return $section->encodeName();
+        }
+
+        return $this->retrieveEncodeNamePathRecursive($section->parent()).$section->encodeName();
     }
 
     /**
