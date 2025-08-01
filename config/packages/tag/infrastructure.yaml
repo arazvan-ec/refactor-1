@@ -12,5 +12,5 @@ services:
 
     Ec\Tag\Domain\Model\QueryTagClient: '@Ec\Tag\Infrastructure\Client\Http\QueryTagClient'
 
-    Ec\Tag\Application\Service\TagFactory: ~
-    Ec\Tag\Domain\Model\TagFactory: '@Ec\Tag\Application\Service\TagFactory'
+    Ec\Tag\Application\Factories\TagFactory: ~
+    Ec\Tag\Domain\Model\TagFactory: '@Ec\Tag\Application\Factories\TagFactory'

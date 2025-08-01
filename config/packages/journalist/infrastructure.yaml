@@ -12,5 +12,5 @@ services:
 
     Ec\Journalist\Domain\Model\QueryJournalistClient: '@Ec\Journalist\Infrastructure\Client\Http\QueryJournalistClient'
 
-    Ec\Journalist\Application\Service\JournalistFactory: ~
-    Ec\Journalist\Domain\Model\JournalistFactory: '@Ec\Journalist\Application\Service\JournalistFactory'
+    Ec\Journalist\Application\Factories\JournalistFactory: ~
+    Ec\Journalist\Domain\Model\JournalistFactory: '@Ec\Journalist\Application\Factories\JournalistFactory'
