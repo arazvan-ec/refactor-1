@@ -12,5 +12,5 @@ services:
 
     Ec\Section\Domain\Model\QuerySectionClient: '@Ec\Section\Infrastructure\Client\Http\QuerySectionClient'
 
-    Ec\Section\Application\Service\SectionFactory: ~
-    Ec\Section\Domain\Model\SectionFactory: '@Ec\Section\Application\Service\SectionFactory'
+    Ec\Section\Application\Factories\SectionFactory: ~
+    Ec\Section\Domain\Model\SectionFactory: '@Ec\Section\Application\Factories\SectionFactory'

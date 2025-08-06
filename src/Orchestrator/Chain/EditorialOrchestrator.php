@@ -38,6 +38,7 @@ use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
 use Ec\Tag\Domain\Model\QueryTagClient;
+use Ec\Tag\Domain\Model\Tag;
 use GuzzleHttp\Promise\Utils;
 use Http\Promise\Promise;
 use Psr\Http\Message\UriFactoryInterface;
@@ -97,6 +98,7 @@ class EditorialOrchestrator implements Orchestrator
             throw new EditorialNotPublishedYetException();
         }
 
+        /** @var Section $section */
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
@@ -115,6 +117,7 @@ class EditorialOrchestrator implements Orchestrator
             /** @var Editorial $insertedEditorials */
             $insertedEditorials = $this->queryEditorialClient->findEditorialById($idInserted);
             if ($insertedEditorials->isVisible()) {
+                /** @var Section $sectionInserted */
                 $sectionInserted = $this->querySectionClient->findSectionById($insertedEditorials->sectionId());
 
                 $resolveData['insertedNews'][$idInserted]['editorial'] = $insertedEditorials;
@@ -146,6 +149,7 @@ class EditorialOrchestrator implements Orchestrator
             /** @var Editorial $recommendedEditorial */
             $recommendedEditorial = $this->queryEditorialClient->findEditorialById($idRecommended);
             if ($recommendedEditorial->isVisible()) {
+                /** @var Section $sectionInserted */
                 $sectionInserted = $this->querySectionClient->findSectionById($recommendedEditorial->sectionId());
 
                 $resolveData['recommendedEditorials'][$idRecommended]['editorial'] = $recommendedEditorial;
@@ -181,6 +185,7 @@ class EditorialOrchestrator implements Orchestrator
         $tags = [];
         foreach ($editorial->tags()->getArrayCopy() as $tag) {
             try {
+                /** @var Tag[] $tags */
                 $tags[] = $this->queryTagClient->findTagById($tag->id());
             } catch (\Throwable $exception) {
                 continue;
