@@ -126,7 +126,7 @@ class EditorialOrchestrator implements Orchestrator
 
                 /** @var Signature $signature */
                 foreach ($insertedEditorials->signatures()->getArrayCopy() as $signature) {
-                    $result = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
+                    $result = $this->retrieveAliasFormat($signature->id()->id(), $sectionInserted);
                     if (!empty($result)) {
                         $resolveData['insertedNews'][$idInserted]['signatures'][] = $result;
                     }
@@ -157,7 +157,7 @@ class EditorialOrchestrator implements Orchestrator
                 $resolveData['recommendedEditorials'][$idRecommended]['signatures'] = [];
                 /** @var Signature $signature */
                 foreach ($recommendedEditorial->signatures()->getArrayCopy() as $signature) {
-                    $result = $this->retriveAliasFormat($signature->id()->id(), $sectionInserted);
+                    $result = $this->retrieveAliasFormat($signature->id()->id(), $sectionInserted);
                     if (!empty($result)) {
                         $resolveData['recommendedEditorials'][$idRecommended]['signatures'][] = $result;
                     }
@@ -205,7 +205,7 @@ class EditorialOrchestrator implements Orchestrator
 
         foreach ($editorial->signatures()->getArrayCopy() as $signature) {
             $hasTwitter = \in_array($editorial->editorialType(), self::TWITTER_TYPES);
-            $result = $this->retriveAliasFormat(
+            $result = $this->retrieveAliasFormat(
                 $signature->id()->id(),
                 $section,
                 $hasTwitter
@@ -241,7 +241,7 @@ class EditorialOrchestrator implements Orchestrator
     /**
      * @return array<mixed>
      */
-    private function retriveAliasFormat(string $aliasId, Section $section, bool $hasTwitter = false): array
+    private function retrieveAliasFormat(string $aliasId, Section $section, bool $hasTwitter = false): array
     {
         $signature = [];
         $aliasIdModel = $this->journalistFactory->buildAliasId($aliasId);
@@ -252,7 +252,7 @@ class EditorialOrchestrator implements Orchestrator
 
             $signature = $this->journalistsDataTransformer->write($aliasId, $journalist, $section, $hasTwitter)->read();
         } catch (\Throwable $throwable) {
-            $this->logger->error($throwable->getMessage(), $throwable->getTrace());
+            $this->logger->error($throwable->getMessage());
         }
 
         return $signature;
@@ -296,7 +296,7 @@ class EditorialOrchestrator implements Orchestrator
             $photo = $this->queryMultimediaClient->findPhotoById($id);
             $result[$id] = $photo;
         } catch (\Throwable $throwable) {
-            $this->logger->error($throwable->getMessage(), $throwable->getTrace());
+            $this->logger->error($throwable->getMessage());
         }
 
         return $result;
