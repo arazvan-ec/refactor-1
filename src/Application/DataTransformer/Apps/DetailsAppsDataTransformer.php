@@ -57,6 +57,8 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         $editorial = $this->transformerEditorial();
         $editorial['section'] = $this->transformerSection();
         $editorial['tags'] = $this->transformerTags();
+        $editorial['adsOptions'] = $this->transformerOptions();
+        $editorial['analiticsOptions'] = $this->transformerOptions();
 
         return $editorial;
     }
@@ -116,37 +118,33 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
     }
 
     /**
-     * @return array<string, string>
+     * @param Section|null $section
+     *
+     * @return array{
+     *  id: string,
+     *  name: string,
+     *  url: string,
+     *  encodeName: string
+     * }
      */
-    private function transformerSection(): array
+    private function transformerSection(?Section $section = null): array
     {
+        if (null === $section) {
+            $section = $this->section;
+        }
         $url = $this->generateUrl(
             'https://%s.%s.%s/%s',
-            $this->section->isBlog() ? 'blog' : 'www',
-            $this->section->siteId(),
-            $this->section->getPath()
+            $section->isBlog() ? 'blog' : 'www',
+            $section->siteId(),
+            $section->getPath()
         );
 
         return [
-            'id' => $this->section->id()->id(),
-            'name' => $this->section->name(),
+            'id' => $section->id()->id(),
+            'name' => $section->name(),
             'url' => $url,
-            'encodeName' => $this->retrieveEncodeNamePathRecursive($this->section),
+            'encodeName' => $section->encodeName(),
         ];
-    }
-
-    /**
-     * @param Section $section
-     *
-     * @return string
-     */
-    public function retrieveEncodeNamePathRecursive(Section $section): string
-    {
-        if (null === $section->parent()) {
-            return $section->encodeName();
-        }
-
-        return $this->retrieveEncodeNamePathRecursive($section->parent()).$section->encodeName();
     }
 
     /**
@@ -176,5 +174,35 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         }
 
         return $result;
+    }
+
+    /**
+     * @param Section|null $section
+     * @param array<int, array{
+     *   id: string,
+     *   name: string,
+     *   url: string,
+     *   encodeName: string
+     *  }> $result
+     *
+     * @return array<int, array{
+     *  id: string,
+     *  name: string,
+     *  url: string,
+     *  encodeName: string
+     * }>
+     */
+    private function transformerOptions(?Section $section = null, array $result = []): array
+    {
+        if (null === $section) {
+            $section = $this->section;
+        }
+        $result[] = $this->transformerSection($section);
+
+        if (null === $section->parent()) {
+            return array_reverse($result);
+        }
+
+        return $this->transformerOptions($section->parent(), $result);
     }
 }
