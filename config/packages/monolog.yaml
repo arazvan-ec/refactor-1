@@ -33,15 +33,16 @@ when@test:
             main:
                 type: fingers_crossed
                 action_level: error
-                handler: console
-            console:
-                type: console
-                process_psr_3_messages: false
+                handler: elastic_search
+            elastic_search:
+                type: elastic_search
+                level: error
+                elasticsearch:
+                    id: 'Elastic\Elasticsearch\Client'
+                index: 'appstream'
+                document_type: '_doc'
+                formatter: 'Ec\MicroserviceBundle\Logger\EcMonologFormatter'
                 channels: [ '!event', '!doctrine', '!console' ]
-
-                # optionally configure the mapping between verbosity levels and log levels
-                verbosity_levels:
-                    VERBOSITY_NORMAL: NOTICE
 
 when@prod:
     monolog:

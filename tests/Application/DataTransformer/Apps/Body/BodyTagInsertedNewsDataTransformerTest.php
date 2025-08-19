@@ -13,6 +13,7 @@ use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialTitles;
+use Ec\Editorial\Exceptions\BodyDataTransformerNotFoundException;
 use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\Clippings;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
@@ -147,5 +148,43 @@ class BodyTagInsertedNewsDataTransformerTest extends TestCase
     public function canTransformShouldReturnBodyTagInsertedNewsString(): void
     {
         static::assertSame(BodyTagInsertedNews::class, $this->transformer->canTransform());
+    }
+
+    #[Test]
+    public function readShouldThrowExceptionWhenEditorialIdNotFoundInInsertedNews(): void
+    {
+        $editorialId = 'non_existent_editorial_id';
+
+        $bodyElementMock = $this->createMock(BodyTagInsertedNews::class);
+        $bodyElementMock->expects(static::once())
+            ->method('type')
+            ->willReturn('bodytaginsertednews');
+
+        $editorialIdMock = $this->createMock(EditorialId::class);
+        $editorialIdMock->expects(static::once())
+            ->method('id')
+            ->willReturn($editorialId);
+
+        $bodyElementMock->expects(static::once())
+            ->method('editorialId')
+            ->willReturn($editorialIdMock);
+
+        $resolveData = [
+            'insertedNews' => [
+                'different_editorial_id' => [
+                    'editorial' => $this->createMock(Editorial::class),
+                    'signatures' => [],
+                    'section' => $this->createMock(Section::class),
+                    'multimediaId' => '1',
+                ],
+            ],
+            'multimedia' => [],
+            'signatures' => [],
+        ];
+
+        $this->expectException(BodyDataTransformerNotFoundException::class);
+        $this->expectExceptionMessage('Inserted news: editorial not found for id: '.$editorialId);
+
+        $this->transformer->write($bodyElementMock, $resolveData)->read();
     }
 }

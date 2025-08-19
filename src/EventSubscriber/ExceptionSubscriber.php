@@ -43,13 +43,10 @@ class ExceptionSubscriber implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event): void
     {
-        if (self::KERNEL_DEV !== $this->appEnv) {
+        if ($this->isProductionEnvironment()) {
             $throwable = $event->getThrowable();
-            $message = [
-                'errors' => [$throwable->getMessage()],
-            ];
+            $response = $this->createErrorResponse($throwable);
 
-            $response = new JsonResponse($message, $this->getStatusCode($throwable));
             $this->setHttpCache(
                 $response,
                 self::SMAXAGE,
@@ -62,6 +59,20 @@ class ExceptionSubscriber implements EventSubscriberInterface
         }
     }
 
+    private function isProductionEnvironment(): bool
+    {
+        return self::KERNEL_DEV !== $this->appEnv;
+    }
+
+    private function createErrorResponse(\Throwable $throwable): JsonResponse
+    {
+        $message = [
+            'errors' => [$throwable->getMessage()],
+        ];
+
+        return new JsonResponse($message, $this->getStatusCode($throwable));
+    }
+
     private function getStatusCode(\Throwable $throwable): int
     {
         $statusCode = $throwable->getCode();
@@ -69,6 +80,15 @@ class ExceptionSubscriber implements EventSubscriberInterface
             $statusCode = $throwable->getStatusCode();
         }
 
-        return $statusCode ?: Response::HTTP_INTERNAL_SERVER_ERROR;
+        if ($this->isValidHttpStatusCode($statusCode)) {
+            return $statusCode;
+        }
+
+        return Response::HTTP_INTERNAL_SERVER_ERROR;
+    }
+
+    private function isValidHttpStatusCode(int $statusCode): bool
+    {
+        return $statusCode >= 100 && $statusCode <= 599;
     }
 }
