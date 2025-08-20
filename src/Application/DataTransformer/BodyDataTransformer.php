@@ -5,6 +5,7 @@ namespace App\Application\DataTransformer;
 use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\BodyElement;
 use Ec\Editorial\Exceptions\BodyDataTransformerNotFoundException;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
@@ -13,6 +14,7 @@ class BodyDataTransformer
 {
     public function __construct(
         private readonly BodyElementDataTransformerHandler $bodyElementDataTransformerHandler,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -36,6 +38,7 @@ class BodyDataTransformer
                     $resolveData
                 );
             } catch (BodyDataTransformerNotFoundException $exception) {
+                $this->logger->critical($exception->getMessage());
                 continue;
             }
         }

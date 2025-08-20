@@ -14,6 +14,7 @@ use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Assert\Assertion;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Editorial;
+use Ec\Editorial\Exceptions\BodyDataTransformerNotFoundException;
 use Ec\Encode\Encode;
 use Ec\Multimedia\Domain\Model\Multimedia;
 use Ec\Section\Domain\Model\Section;
@@ -48,18 +49,21 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 
         $elementArray = parent::read();
 
-        $editorialId = $bodyElement->editorialId()->id();
-
         /** @var array<string, array<string, mixed>> $resolveData */
         $resolveData = $this->resolveData();
-        /** @var array<string, mixed> $currentInsertedNuews */
-        $currentInsertedNuews = $resolveData['insertedNews'][$editorialId];
-        $signatures = $currentInsertedNuews['signatures'];
 
+        $editorialId = $bodyElement->editorialId()->id();
+        if (!isset($resolveData['insertedNews'][$editorialId])) {
+            throw new BodyDataTransformerNotFoundException('Inserted news: editorial not found for id: '.$editorialId);
+        }
+
+        /** @var array<string, mixed> $currentInsertedNews */
+        $currentInsertedNews = $resolveData['insertedNews'][$editorialId];
+        $signatures = $currentInsertedNews['signatures'];
         /** @var Editorial $editorial */
-        $editorial = $currentInsertedNuews['editorial'];
+        $editorial = $currentInsertedNews['editorial'];
         /** @var Section $sectionInserted */
-        $sectionInserted = $currentInsertedNuews['section'];
+        $sectionInserted = $currentInsertedNews['section'];
 
         $elementArray['editorialId'] = $editorial->id()->id();
         $elementArray['title'] = $editorial->editorialTitles()->title();
