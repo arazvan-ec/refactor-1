@@ -2816,16 +2816,16 @@
         },
         {
             "name": "ec/section-domain",
-            "version": "v2.0.1",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/domain/section-domain.git",
-                "reference": "354b67f8b3a23b8f8000ed163d6e5a3329c071f7"
+                "reference": "3fc85d642d54fed9f3e182a6e9ebe26291532c75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fsection-domain/repository/archive.zip?sha=354b67f8b3a23b8f8000ed163d6e5a3329c071f7",
-                "reference": "354b67f8b3a23b8f8000ed163d6e5a3329c071f7",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fsection-domain/repository/archive.zip?sha=3fc85d642d54fed9f3e182a6e9ebe26291532c75",
+                "reference": "3fc85d642d54fed9f3e182a6e9ebe26291532c75",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2874,10 +2874,10 @@
             ],
             "description": "Section Domain Base",
             "support": {
-                "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/section-domain/-/tree/v2.0.1",
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/section-domain/-/tree/v2.1.0",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/domain/section-domain/-/issues"
             },
-            "time": "2025-07-30T10:05:00+00:00"
+            "time": "2025-08-20T09:38:11+02:00"
         },
         {
             "name": "ec/service-client",
