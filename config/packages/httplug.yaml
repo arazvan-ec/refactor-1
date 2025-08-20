@@ -50,7 +50,7 @@ httplug:
                 - 'httplug.plugin.content_length'
                 - 'httplug.plugin.redirect'
                 - 'httplug.plugin.logger'
-                -  'httplug.plugin.authentication.elasticsearch_auth'
+                - 'httplug.plugin.authentication.elasticsearch_auth'
                 - header_defaults:
                     headers:
                         'User-Agent': '%env(string:EC_USER_AGENT)%'

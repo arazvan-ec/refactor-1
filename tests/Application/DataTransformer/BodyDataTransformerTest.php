@@ -15,6 +15,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
@@ -22,20 +23,25 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(BodyDataTransformer::class)]
 class BodyDataTransformerTest extends TestCase
 {
-    /** @var BodyElementDataTransformerHandler|MockObject */
-    private BodyElementDataTransformerHandler $bodyElementDataTransformerHandler;
+    private BodyElementDataTransformerHandler&MockObject $bodyElementDataTransformerHandler;
+    private LoggerInterface&MockObject $loggerMock;
 
     private BodyDataTransformer $bodyDataTransformer;
 
     protected function setUp(): void
     {
         $this->bodyElementDataTransformerHandler = $this->createMock(BodyElementDataTransformerHandler::class);
-        $this->bodyDataTransformer = new BodyDataTransformer($this->bodyElementDataTransformerHandler);
+        $this->loggerMock = $this->createMock(LoggerInterface::class);
+
+        $this->bodyDataTransformer = new BodyDataTransformer(
+            $this->bodyElementDataTransformerHandler,
+            $this->loggerMock
+        );
     }
 
     protected function tearDown(): void
     {
-        unset($this->bodyElementDataTransformerHandler, $this->bodyDataTransformer);
+        unset($this->bodyElementDataTransformerHandler, $this->loggerMock, $this->bodyDataTransformer);
     }
 
     #[Test]
@@ -75,7 +81,13 @@ class BodyDataTransformerTest extends TestCase
 
         $this->bodyElementDataTransformerHandler
             ->method('execute')
-            ->willThrowException(new BodyDataTransformerNotFoundException());
+            ->willThrowException(new BodyDataTransformerNotFoundException('Exception message'));
+
+        $this->loggerMock
+            ->expects(static::once())
+            ->method('critical')
+            ->with('Exception message')
+            ->willReturnSelf();
 
         $result = $this->bodyDataTransformer->execute($body, $resolveData);
 
