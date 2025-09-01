@@ -9,6 +9,7 @@ namespace App\Orchestrator\Chain;
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
+use App\Application\DataTransformer\Apps\MultimediaMediaDataTransformer;
 use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
 use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
@@ -34,6 +35,7 @@ use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
+use Ec\Multimedia\Infrastructure\Client\Http\Media\QueryMultimediaClient as QueryMultimediaOpeningClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
@@ -62,17 +64,19 @@ class EditorialOrchestrator implements Orchestrator
         private readonly QueryMultimediaClient $queryMultimediaClient,
         private readonly AppsDataTransformer $detailsAppsDataTransformer,
         private readonly QueryTagClient $queryTagClient,
-        private readonly BodyDataTransformer $bodyDataTransformer,
-        private readonly UriFactoryInterface $uriFactory,
-        private readonly QueryMembershipClient $queryMembershipClient,
-        private readonly LoggerInterface $logger,
-        private readonly JournalistsDataTransformer $journalistsDataTransformer,
-        private readonly QueryJournalistClient $queryJournalistClient,
-        private readonly JournalistFactory $journalistFactory,
-        private readonly MultimediaDataTransformer $multimediaDataTransformer,
-        private readonly StandfirstDataTransformer $standFirstDataTransformer,
+        private readonly BodyDataTransformer                  $bodyDataTransformer,
+        private readonly UriFactoryInterface                  $uriFactory,
+        private readonly QueryMembershipClient                $queryMembershipClient,
+        private readonly LoggerInterface                      $logger,
+        private readonly JournalistsDataTransformer           $journalistsDataTransformer,
+        private readonly QueryJournalistClient                $queryJournalistClient,
+        private readonly JournalistFactory                    $journalistFactory,
+        private readonly MultimediaDataTransformer            $multimediaDataTransformer,
+        private readonly StandfirstDataTransformer            $standFirstDataTransformer,
         private readonly RecommendedEditorialsDataTransformer $recommendedEditorialsDataTransformer,
-        string $extension,
+        private readonly QueryMultimediaOpeningClient         $queryMultimediaOpeningClient,
+        private readonly MultimediaMediaDataTransformer       $multimediaMediaDataTransformer,
+        string                                                $extension,
     ) {
         $this->setExtension($extension);
     }
@@ -84,6 +88,7 @@ class EditorialOrchestrator implements Orchestrator
      */
     public function execute(Request $request): array
     {
+
         /** @var string $id */
         $id = $request->get('id');
 
@@ -94,9 +99,12 @@ class EditorialOrchestrator implements Orchestrator
             return $this->queryLegacyClient->findEditorialById($id);
         }
 
+
+
         if (!$editorial->isVisible()) {
             throw new EditorialNotPublishedYetException();
         }
+
 
         /** @var Section $section */
         $section = $this->querySectionClient->findSectionById($editorial->sectionId());
@@ -106,6 +114,33 @@ class EditorialOrchestrator implements Orchestrator
         /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $resolveData = [];
         $resolveData['multimedia'] = [];
+
+
+
+        /** @var array{multimedia?: array<string, array<int, Promise>>} $resolveData */
+        $resolveData = $this->getAsyncOpening($editorial, $resolveData); // @phpstan-ignore argument.type
+        if (!empty($resolveData['multimediaOpening'])
+        ) {
+            $resolveData['multimediaOpening'] = Utils::settle($resolveData['multimediaOpening'])
+                ->then($this->createCallback([$this, 'fulfilledMultimediaOpening']))
+                ->wait(true);
+        }
+
+        return $editorialResult['multimedia'] = $this->multimediaMediaDataTransformer
+            ->write($resolveData['multimedia'], $editorial->multimedia())
+            ->read();
+
+
+        /** @var array{multimedia?: array<string, array<int, Promise>>} $resolveData */
+        $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData); // @phpstan-ignore argument.type
+        if (!empty($resolveData['multimedia'])
+            && !($editorial->multimedia() instanceof Widget)
+        ) {
+            $resolveData['multimedia'] = Utils::settle($resolveData['multimedia'])
+                ->then($this->createCallback([$this, 'fulfilledMultimedia']))
+                ->wait(true);
+        }
+
 
         /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $resolveData['insertedNews'] = [];
@@ -397,6 +432,24 @@ class EditorialOrchestrator implements Orchestrator
         return $resolveData; // @phpstan-ignore return.type
     }
 
+
+    /**
+     * @param Editorial $editorial
+     * @param array $resolveData
+     * @return array<string, array<int, Promise|\Ec\Multimedia\Domain\Model\Multimedia\Multimedia>>
+     */
+    private function getAsyncOpening(Editorial $editorial, array $resolveData): array
+    {
+        $opening= $editorial->opening();
+
+        if (null !== $opening->multimediaId()) {
+            $resolveData['multimediaOpening'][] = $this->queryMultimediaOpeningClient->findMultimediaById($opening->multimediaId());
+        }
+
+        return $resolveData; // @phpstan-ignore return.type
+    }
+
+
     /**
      * @param array<string, string> ...$parameters
      */
@@ -421,6 +474,26 @@ class EditorialOrchestrator implements Orchestrator
                 /** @var \Ec\Multimedia\Domain\Model\Multimedia $multimedia */
                 $multimedia = $promise['value'];
                 $result[$multimedia->id()] = $multimedia;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array<string, mixed> $promises
+     *
+     * @return array<string, \Ec\Multimedia\Domain\Model\Multimedia>
+     */
+    protected function fulfilledMultimediaOpening(array $promises): array
+    {
+        $result = [];
+        /** @var array<string, string> $promise */
+        foreach ($promises as $promise) {
+            if (Promise::FULFILLED === $promise['state']) {
+                /** @var \Ec\Multimedia\Domain\Model\Multimedia\Multimedia $multimedia */
+                $multimedia = $promise['value'];
+                $result[$multimedia->id()->id()] = $multimedia;
             }
         }
 
