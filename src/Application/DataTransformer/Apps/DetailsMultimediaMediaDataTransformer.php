@@ -9,6 +9,7 @@ namespace App\Application\DataTransformer\Apps;
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\MultimediaTrait;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
+use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia;
 
@@ -169,7 +170,8 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
      * @var array<mixed>
      */
     private array $arrayMultimedia;
-    private MultimediaEditorial $openingMultimedia;
+    private Opening $openingMultimedia;
+
 
     public function __construct(private readonly Thumbor $thumborService)
     {
@@ -178,7 +180,7 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
     /**
      * @param array<mixed> $arrayMultimedia
      */
-    public function write(array $arrayMultimedia, MultimediaEditorial $openingMultimedia): DetailsMultimediaMediaDataTransformer
+    public function write(array $arrayMultimedia, Opening $openingMultimedia): DetailsMultimediaMediaDataTransformer
     {
         $this->arrayMultimedia = $arrayMultimedia;
         $this->openingMultimedia = $openingMultimedia;
@@ -191,8 +193,17 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
      */
     public function read(): array
     {
-        $multimediaId = $this->getMultimediaId($this->openingMultimedia);
-        if (!$multimediaId || empty($this->arrayMultimedia[$multimediaId->id()])) {
+        $multimediaId = $this->openingMultimedia->multimediaId();
+
+        if (!$multimediaId || empty($this->arrayMultimedia[$multimediaId])) {
+            return [
+                'id' => '',
+                'type' => 'multimediaNull',
+            ];
+        }
+
+        $resourceId = $this->arrayMultimedia[$multimediaId]->resourceId();
+        if (!$resourceId && !empty($this->arrayMultimedia[$resourceId->id()])) {
             return [
                 'id' => '',
                 'type' => 'multimediaNull',
@@ -200,16 +211,17 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
         }
 
         /** @var Multimedia $multimedia */
-        $multimedia = $this->arrayMultimedia[$multimediaId->id()];
+        $multimedia = $this->arrayMultimedia[$multimediaId];
+        $resource = $this->arrayMultimedia[$resourceId->id()];
         $clippings = $multimedia->clippings();
 
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_MULTIMEDIA_BIG);
 
         $allShots = [];
         foreach (self::SIZES_RELATIONS as $aspectRatio => $sizes) {
-            $shots = array_map(function ($size) use ($clipping, $multimedia) {
+            $shots = array_map(function ($size) use ($clipping, $resource) {
                 return $this->thumborService->retriveCropBodyTagPicture(
-                    $multimedia->file(),
+                    $resource->file(),
                     $size[self::WIDTH],
                     $size[self::HEIGHT],
                     $clipping->topLeftX(),
@@ -223,7 +235,7 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
         }
 
         return [
-            'id' => $multimedia->id(),
+            'id' => $multimediaId,
             'type' => 'photo',
             'caption' => $multimedia->caption(),
             'shots' => (object) $allShots,
