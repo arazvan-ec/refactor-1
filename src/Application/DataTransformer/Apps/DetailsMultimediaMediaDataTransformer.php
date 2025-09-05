@@ -203,6 +203,7 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
         }
 
         $resourceId = $this->arrayMultimedia[$multimediaId]->resourceId();
+
         if (!$resourceId && !empty($this->arrayMultimedia[$resourceId->id()])) {
             return [
                 'id' => '',

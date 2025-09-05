@@ -114,8 +114,7 @@ class EditorialOrchestrator implements Orchestrator
         /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $resolveData = [];
         $resolveData['multimedia'] = [];
-
-
+        $resolveData['multimediaOpening'] = [];
 
         /** @var array{multimedia?: array<string, array<int, Promise>>} $resolveData */
         $resolveData = $this->getAsyncOpening($editorial, $resolveData); // @phpstan-ignore argument.type
@@ -125,11 +124,6 @@ class EditorialOrchestrator implements Orchestrator
                 ->then($this->createCallback([$this, 'fulfilledMultimediaOpening']))
                 ->wait(true);
         }
-
-        return $editorialResult['multimedia'] = $this->multimediaMediaDataTransformer
-            ->write($resolveData['multimedia'], $editorial->multimedia())
-            ->read();
-
 
         /** @var array{multimedia?: array<string, array<int, Promise>>} $resolveData */
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData); // @phpstan-ignore argument.type
@@ -258,9 +252,15 @@ class EditorialOrchestrator implements Orchestrator
             $resolveData
         );
 
-        $editorialResult['multimedia'] = $this->multimediaDataTransformer
-            ->write($resolveData['multimedia'], $editorial->multimedia())
-            ->read();
+        if (!empty($resolveData['multimediaOpening'])) {
+            $editorialResult['multimedia'] = $this->multimediaMediaDataTransformer
+                ->write($resolveData['multimediaOpening'], $editorial->opening())
+                ->read();
+        } elseif (!empty($resolveData['multimedia'])) {
+            $editorialResult['multimedia'] = $this->multimediaDataTransformer
+                ->write($resolveData['multimedia'], $editorial->multimedia())
+                ->read();
+        }
 
         $editorialResult['standfirst'] = $this->standFirstDataTransformer
             ->write($editorial->standFirst())
@@ -269,6 +269,7 @@ class EditorialOrchestrator implements Orchestrator
         $editorialResult['recommendedEditorials'] = $this->recommendedEditorialsDataTransformer
             ->write($recommendedNews, $resolveData)
             ->read();
+
 
         return $editorialResult;
     }
@@ -440,12 +441,16 @@ class EditorialOrchestrator implements Orchestrator
      */
     private function getAsyncOpening(Editorial $editorial, array $resolveData): array
     {
-        $opening= $editorial->opening();
+        $opening = $editorial->opening();
 
-        if (null !== $opening->multimediaId()) {
-            $resolveData['multimediaOpening'][] = $this->queryMultimediaOpeningClient->findMultimediaById($opening->multimediaId());
+        if (!empty($opening->multimediaId())) {
+            $multimedia = $this->queryMultimediaOpeningClient->findMultimediaById($opening->multimediaId());
+            $resource = $this->queryMultimediaOpeningClient->findPhotoById($multimedia->resourceId());
+
+            $resolveData['multimediaOpening']['opening'] = $multimedia;
+            $resolveData['multimediaOpening']['resource'] = $resource;
+
         }
-
         return $resolveData; // @phpstan-ignore return.type
     }
 
