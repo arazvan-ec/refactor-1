@@ -71,6 +71,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         $elementArray['editorial'] = $this->editorialUrl($editorial, $sectionInserted);
 
         $shots = [];
+
         if ($this->getMultimediaOpening($editorialId)) {
             $shots = $this->getMultimediaOpening($editorialId);
         } else {

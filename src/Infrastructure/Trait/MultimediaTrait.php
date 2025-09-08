@@ -92,10 +92,10 @@ trait MultimediaTrait
     /**
      * @return array<string, string>
      */
-    private function getShotsLandscapeFromMedia(Media $multimedia, $resource = []): array
+    private function getShotsLandscapeFromMedia(array $multimediaOpening): array
     {
         $shots = [];
-        $clippings = $multimedia->clippings();
+        $clippings = $multimediaOpening['opening']->clippings();
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_ARTICLE_4_3);
 
         $sizes = [
@@ -115,7 +115,7 @@ trait MultimediaTrait
 
         foreach ($sizes as $type => $size) {
             $shots[$type] = $this->thumbor->retriveCropBodyTagPicture(
-                $multimedia->file(),
+                $multimediaOpening['resource']->file(),
                 $size['width'],
                 $size['height'],
                 $clipping->topLeftX(),
