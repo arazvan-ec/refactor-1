@@ -92,7 +92,7 @@ trait MultimediaTrait
     /**
      * @return array<string, string>
      */
-    private function getShotsLandscapeFromMedia(Media $multimedia): array
+    private function getShotsLandscapeFromMedia(Media $multimedia, $resource = []): array
     {
         $shots = [];
         $clippings = $multimedia->clippings();

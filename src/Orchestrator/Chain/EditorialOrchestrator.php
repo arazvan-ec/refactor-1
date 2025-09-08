@@ -427,13 +427,13 @@ class EditorialOrchestrator implements Orchestrator
     private function getAsyncOpening(Editorial $editorial, array $resolveData): array
     {
         $opening = $editorial->opening();
-
+        $resolveData['multimediaOpening'] = [];
         if (!empty($opening->multimediaId())) {
             $multimedia = $this->queryMultimediaOpeningClient->findMultimediaById($opening->multimediaId());
             $resource = $this->queryMultimediaOpeningClient->findPhotoById($multimedia->resourceId());
 
-            $resolveData['multimediaOpening'][]['opening'] = $multimedia;
-            $resolveData['multimediaOpening'][]['resource'] = $resource;
+            $resolveData['multimediaOpening'][$opening->multimediaId()]['opening'] = $multimedia;
+            $resolveData['multimediaOpening'][$opening->multimediaId()]['resource'] = $resource;
         }
 
         return $resolveData; // @phpstan-ignore return.type
@@ -480,9 +480,14 @@ class EditorialOrchestrator implements Orchestrator
         /** @var array<string, string> $promise */
         foreach ($promises as $promise) {
             if (Promise::FULFILLED === $promise['state']) {
-                /** @var \Ec\Multimedia\Domain\Model\Multimedia\Multimedia $multimedia */
+                /** @var array<string, mixed> $multimedia */
                 $multimedia = $promise['value'];
-                $result[$multimedia->id()->id()] = $multimedia;
+                $opening = $multimedia['opening'] ?? null;
+                if (null === $opening) {
+                    continue;
+                }
+                $id = $opening->id()->id();
+                $result[$id] = $multimedia;
             }
         }
 

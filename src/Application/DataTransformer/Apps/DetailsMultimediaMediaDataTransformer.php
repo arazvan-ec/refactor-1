@@ -10,7 +10,7 @@ use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\MultimediaTrait;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
-use Ec\Multimedia\Domain\Model\Multimedia;
+use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
@@ -200,7 +200,7 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
             ];
         }
 
-        $resourceId = $this->arrayMultimedia[$multimediaId]->resourceId();
+        $resourceId = $this->arrayMultimedia[$multimediaId]['opening']->resourceId();
 
         if (!$resourceId && !empty($this->arrayMultimedia[$resourceId->id()])) {
             return [
@@ -210,8 +210,8 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
         }
 
         /** @var Multimedia $multimedia */
-        $multimedia = $this->arrayMultimedia[$multimediaId];
-        $resource = $this->arrayMultimedia[$resourceId->id()];
+        $multimedia = $this->arrayMultimedia[$multimediaId]['opening'];
+        $resource = $this->arrayMultimedia[$multimediaId]['resource'];
         $clippings = $multimedia->clippings();
 
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_MULTIMEDIA_BIG);
