@@ -482,6 +482,7 @@ class EditorialOrchestratorTest extends TestCase
         $resolveData['insertedNews'] = $expectedInsertedNews;
         $resolveData['multimedia'] = [];
         $resolveData['recommendedEditorials'] = $expectedRecommendedNews;
+        $resolveData['multimediaOpening'] = [];
 
         $this->bodyDataTransformer->expects(static::once())
             ->method('execute')
