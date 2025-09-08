@@ -14,7 +14,6 @@ use Ec\Editorial\Domain\Model\Multimedia\Video;
 use Ec\Editorial\Domain\Model\Multimedia\Widget;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia as MultimediaModel;
-use Ec\Multimedia\Domain\Model\Multimedia\Multimedia as Media;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
@@ -92,10 +91,10 @@ trait MultimediaTrait
     /**
      * @return array<string, string>
      */
-    private function getShotsLandscapeFromMedia(Media $multimedia): array
+    private function getShotsLandscapeFromMedia(array $multimediaOpening): array
     {
         $shots = [];
-        $clippings = $multimedia->clippings();
+        $clippings = $multimediaOpening['opening']->clippings();
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_ARTICLE_4_3);
 
         $sizes = [
@@ -115,7 +114,7 @@ trait MultimediaTrait
 
         foreach ($sizes as $type => $size) {
             $shots[$type] = $this->thumbor->retriveCropBodyTagPicture(
-                $multimedia->file(),
+                $multimediaOpening['resource']->file(),
                 $size['width'],
                 $size['height'],
                 $clipping->topLeftX(),
