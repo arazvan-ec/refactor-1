@@ -14,7 +14,6 @@ use Ec\Editorial\Domain\Model\Multimedia\Video;
 use Ec\Editorial\Domain\Model\Multimedia\Widget;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia as MultimediaModel;
-use Ec\Multimedia\Domain\Model\Multimedia\Multimedia as Media;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>

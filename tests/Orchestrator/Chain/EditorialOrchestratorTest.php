@@ -9,6 +9,7 @@ namespace App\Tests\Orchestrator\Chain;
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
+use App\Application\DataTransformer\Apps\MultimediaMediaDataTransformer;
 use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
 use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
@@ -39,6 +40,7 @@ use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
+use Ec\Multimedia\Infrastructure\Client\Http\Media\QueryMultimediaClient as QueryMultimediaOpeningClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
@@ -116,6 +118,15 @@ class EditorialOrchestratorTest extends TestCase
      */
     private RecommendedEditorialsDataTransformer $recommendedEditorialsDataTransformer;
 
+    /**
+     * @var QueryMultimediaOpeningClient|MockObject
+     */
+    private QueryMultimediaOpeningClient $queryMultimediaOpeningClient;
+    /**
+     * @var MultimediaMediaDataTransformer|MockObject
+     */
+    private MultimediaMediaDataTransformer $multimediaMediaDataTransformer;
+
     protected function setUp(): void
     {
         $this->queryEditorialClient = $this->createMock(QueryEditorialClient::class);
@@ -134,6 +145,8 @@ class EditorialOrchestratorTest extends TestCase
         $this->multimediaDataTransformer = $this->createMock(MultimediaDataTransformer::class);
         $this->standfirstDataTransformer = $this->createMock(StandfirstDataTransformer::class);
         $this->recommendedEditorialsDataTransformer = $this->createMock(RecommendedEditorialsDataTransformer::class);
+        $this->queryMultimediaOpeningClient = $this->createMock(QueryMultimediaOpeningClient::class);
+        $this->multimediaMediaDataTransformer = $this->createMock(MultimediaMediaDataTransformer::class);
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
             $this->queryEditorialClient,
@@ -151,6 +164,8 @@ class EditorialOrchestratorTest extends TestCase
             $this->multimediaDataTransformer,
             $this->standfirstDataTransformer,
             $this->recommendedEditorialsDataTransformer,
+            $this->queryMultimediaOpeningClient,
+            $this->multimediaMediaDataTransformer,
             'dev'
         );
     }
@@ -177,6 +192,8 @@ class EditorialOrchestratorTest extends TestCase
             $this->multimediaDataTransformer,
             $this->standfirstDataTransformer,
             $this->recommendedEditorialsDataTransformer,
+            $this->queryMultimediaOpeningClient,
+            $this->multimediaMediaDataTransformer,
         );
     }
 

@@ -503,6 +503,7 @@ class EditorialOrchestrator implements Orchestrator
                 $result[$id] = $multimedia;
             }
         }
+
         return $result;
     }
 }
