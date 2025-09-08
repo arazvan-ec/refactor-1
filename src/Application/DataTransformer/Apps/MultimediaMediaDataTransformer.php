@@ -6,7 +6,6 @@
 
 namespace App\Application\DataTransformer\Apps;
 
-use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
 use Ec\Editorial\Domain\Model\Opening;
 
 /**

@@ -8,7 +8,6 @@ namespace App\Application\DataTransformer\Apps;
 
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\MultimediaTrait;
-use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia;
@@ -171,7 +170,6 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
      */
     private array $arrayMultimedia;
     private Opening $openingMultimedia;
-
 
     public function __construct(private readonly Thumbor $thumborService)
     {

@@ -14,6 +14,7 @@ use Ec\Editorial\Domain\Model\Multimedia\Video;
 use Ec\Editorial\Domain\Model\Multimedia\Widget;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia as MultimediaModel;
+use Ec\Multimedia\Domain\Model\Multimedia\Multimedia as Media;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
@@ -55,7 +56,45 @@ trait MultimediaTrait
     private function getShotsLandscape(MultimediaModel $multimedia): array
     {
         $shots = [];
+        $clippings = $multimedia->clippings();
+        $clipping = $clippings->clippingByType(ClippingTypes::SIZE_ARTICLE_4_3);
 
+        $sizes = [
+            '202w' => [
+                'width' => '202',
+                'height' => '152',
+            ],
+            '144w' => [
+                'width' => '144',
+                'height' => '108',
+            ],
+            '128w' => [
+                'width' => '128',
+                'height' => '96',
+            ],
+        ];
+
+        foreach ($sizes as $type => $size) {
+            $shots[$type] = $this->thumbor->retriveCropBodyTagPicture(
+                $multimedia->file(),
+                $size['width'],
+                $size['height'],
+                $clipping->topLeftX(),
+                $clipping->topLeftY(),
+                $clipping->bottomRightX(),
+                $clipping->bottomRightY()
+            );
+        }
+
+        return $shots;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getShotsLandscapeFromMedia(Media $multimedia): array
+    {
+        $shots = [];
         $clippings = $multimedia->clippings();
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_ARTICLE_4_3);
 

@@ -2,7 +2,6 @@
 
 namespace App\DependencyInjection\Compiler;
 
-
 use Ec\Multimedia\Application\Factory\Multimedia;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -22,5 +21,4 @@ class MultimediaFactoryCompiler implements CompilerPassInterface
             $definedHandler->addMethodCall('addFactory', [$definition]);
         }
     }
-
 }

@@ -70,7 +70,12 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         $elementArray['signatures'] = $signatures;
         $elementArray['editorial'] = $this->editorialUrl($editorial, $sectionInserted);
 
-        $shots = $this->getMultimedia($editorialId);
+        $shots = [];
+        if ($this->getMultimediaOpening($editorialId)) {
+            $shots = $this->getMultimediaOpening($editorialId);
+        } else {
+            $shots = $this->getMultimedia($editorialId);
+        }
 
         $elementArray['shots'] = $shots;
         $elementArray['photo'] = empty($shots) ? '' : reset($shots);
@@ -109,5 +114,19 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         }
 
         return $this->getShotsLandscape($multimedia);
+    }
+
+    private function getMultimediaOpening(string $editorialId)
+    {
+        $shots = [];
+
+        /** @var array<string, array<string, array<string, string>>> $resolveData */
+        $resolveData = $this->resolveData();
+        $multimedia = $resolveData['multimediaOpening'][$resolveData['insertedNews'][$editorialId]['multimediaId']] ?? null;
+        if (null === $multimedia) {
+            return $shots;
+        }
+
+        return $this->getShotsLandscapeFromMedia($multimedia);
     }
 }
