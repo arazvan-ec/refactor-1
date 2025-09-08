@@ -26,6 +26,7 @@ use Ec\Editorial\Domain\Model\Body\MembershipCardButtons;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\NewsBase;
+use Ec\Editorial\Domain\Model\Opening;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Editorial\Domain\Model\RecommendedEditorials;
 use Ec\Editorial\Domain\Model\Signature;
@@ -370,6 +371,9 @@ class EditorialOrchestratorTest extends TestCase
         $editorialMock->expects(self::exactly(4))
             ->method('body')
             ->willReturn($bodyMock);
+        $openingMock = $this->createMock(Opening::class);
+        $editorialMock->method('opening')
+            ->willReturn($openingMock);
 
         [
             $expectedRecommendedNews,
@@ -839,6 +843,8 @@ class EditorialOrchestratorTest extends TestCase
         foreach ($editorial['insertedNews'] as $bodyTag) {
             $bodyElementMock = $this->createMock(BodyTagInsertedNews::class);
 
+            $openingMock = $this->createMock(Opening::class);
+
             $bodyElementEditorialIdInsertedMock = $this->createMock(EditorialId::class);
             $bodyElementEditorialIdInsertedMock->expects(static::once())
                 ->method('id')
@@ -847,10 +853,15 @@ class EditorialOrchestratorTest extends TestCase
                 ->method('editorialId')
                 ->willReturn($bodyElementEditorialIdInsertedMock);
 
-            $editorialInsertedMock = $this->createMock(Editorial::class);
+            $editorialInsertedMock = $this->createMock(NewsBase::class);
             $editorialInsertedMock->expects(static::once())
                 ->method('isVisible')
                 ->willReturn(true);
+
+            $editorialInsertedMock
+                ->method('opening')
+                ->willReturn($openingMock);
+
             $promisesEditorials[] = $editorialInsertedMock;
             $withEditorials[] = $bodyTag['id'];
             $sectionInsertedMock = $this->createMock(Section::class);
@@ -958,10 +969,13 @@ class EditorialOrchestratorTest extends TestCase
                 ->method('id')
                 ->willReturn($editorialId);
             $recommenderIds[] = $editorialIdRecommendedMock;
-            $editorialRecommendedMock = $this->createMock(Editorial::class);
+            $openingMock = $this->createMock(Opening::class);
+            $editorialRecommendedMock = $this->createMock(NewsBase::class);
             $editorialRecommendedMock->expects(static::once())
                 ->method('isVisible')
                 ->willReturn(true);
+            $editorialRecommendedMock->method('opening')
+                ->willReturn($openingMock);
             $promisesEditorials[] = $editorialRecommendedMock;
             $withEditorials[] = $editorialId;
             $sectionRecommendedMock = $this->createMock(Section::class);
