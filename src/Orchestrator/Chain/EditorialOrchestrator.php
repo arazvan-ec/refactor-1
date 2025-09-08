@@ -176,9 +176,16 @@ class EditorialOrchestrator implements Orchestrator
 
                 /** @var array<string, array<string, array<int, Promise>>> $resolveData */
                 $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);  // @phpstan-ignore argument.type
-                #$resolveData = $this->getAsyncOpening($recommendedEditorial, $resolveData); // @phpstan-ignore argument.type
+                if (!empty($recommendedEditorial->multimedia()->id()->id())) {
+                    /** @var array<string, array<string, array<int, Promise>>> $resolveData */
+                    $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
+                    $multimediaId = $recommendedEditorial->multimedia()->id()->id();
+                } else {
+                    $resolveData = $this->getAsyncOpening($insertedEditorials, $resolveData); // @phpstan-ignore argument.type
+                    $multimediaId = $recommendedEditorial->opening()->multimediaId();
+                }
 
-                $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $recommendedEditorial->multimedia()->id()->id();
+                $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $multimediaId;
                 $recommendedNews[] = $recommendedEditorial;
             }
         }

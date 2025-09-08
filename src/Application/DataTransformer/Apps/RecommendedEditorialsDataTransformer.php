@@ -77,7 +77,12 @@ class RecommendedEditorialsDataTransformer
             $elementArray['signatures'] = $signatures;
             $elementArray['editorial'] = $this->editorialUrl($editorial, $section);
             $elementArray['title'] = $editorial->editorialTitles()->title();
-            $shots = $this->getMultimedia($editorialId);
+
+            if ($this->getMultimediaOpening($editorialId)) {
+                $shots = $this->getMultimediaOpening($editorialId);
+            } else {
+                $shots = $this->getMultimedia($editorialId);
+            }
 
             $elementArray['shots'] = $shots;
             $elementArray['photo'] = empty($shots) ? '' : reset($shots);
@@ -123,5 +128,17 @@ class RecommendedEditorialsDataTransformer
         }
 
         return $this->getShotsLandscape($multimedia);
+    }
+
+    private function getMultimediaOpening(string $editorialId)
+    {
+        $shots = [];
+
+        $multimedia = $this->resolveData['multimediaOpening'][$this->resolveData['recommendedEditorials'][$editorialId]['multimediaId']] ?? null;
+        if (null === $multimedia) {
+            return $shots;
+        }
+
+        return $this->getShotsLandscapeFromMedia($multimedia);
     }
 }
