@@ -193,11 +193,6 @@ class EditorialOrchestrator implements Orchestrator
 
         /** @var array<string, ?array{multimedia: array<string, array<int, Promise>>}> $resolveData */
         $resolveData = $this->getOpening($editorial, $resolveData); // @phpstan-ignore argument.type
-        if (!empty($resolveData['multimediaOpening'])) {
-            $resolveData['multimediaOpening'] = Utils::settle($resolveData['multimediaOpening'])
-                ->then($this->createCallback([$this, 'fulfilledMultimediaOpening']))
-                ->wait(true);
-        }
         /** @var array{multimedia?: array<string, array<int, Promise>>} $resolveData */
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData); // @phpstan-ignore argument.type
         if (!empty($resolveData['multimedia'])
@@ -260,6 +255,11 @@ class EditorialOrchestrator implements Orchestrator
             $editorialResult['multimedia'] = $this->multimediaDataTransformer
                 ->write($resolveData['multimedia'], $editorial->multimedia())
                 ->read();
+        } else {
+            $editorialResult['multimedia'] = [
+                'id' => '',
+                'type' => 'multimediaNull',
+            ];
         }
 
         $editorialResult['standfirst'] = $this->standFirstDataTransformer
@@ -442,7 +442,6 @@ class EditorialOrchestrator implements Orchestrator
     {
         /** @var NewsBase $editorial */
         $opening = $editorial->opening();
-        $resolveData['multimediaOpening'] = [];
         if (!empty($opening->multimediaId())) {
             /** @var MultimediaPhoto $multimedia */
             $multimedia = $this->queryMultimediaOpeningClient->findMultimediaById($opening->multimediaId());
