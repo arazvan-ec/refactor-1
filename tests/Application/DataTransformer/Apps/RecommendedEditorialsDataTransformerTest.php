@@ -12,7 +12,6 @@ use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialNews;
 use Ec\Editorial\Domain\Model\EditorialTitles;
-use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\Clippings;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
