@@ -104,7 +104,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private function editorialUrl(): string
     {
-        $editorialPath = sprintf(
+        $editorialPath = \sprintf(
             '%s/%s/%s_%s',
             $this->section->getPath(),
             $this->editorial->publicationDate()->format('Y-m-d'),

@@ -16,7 +16,6 @@ use Ec\Editorial\Domain\Model\Body\BodyTagVideo;
 class BodyTagVideoDataTransformer extends ElementTypeDataTransformer
 {
     /** @var BodyTagVideo */
-
     protected BodyElement $bodyElement;
     private string $playerHost;
 

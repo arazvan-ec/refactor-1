@@ -87,7 +87,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 
     private function editorialUrl(Editorial $editorial, Section $section): string
     {
-        $editorialPath = sprintf(
+        $editorialPath = \sprintf(
             '%s/%s/%s_%s',
             $section->getPath(),
             $editorial->publicationDate()->format('Y-m-d'),
