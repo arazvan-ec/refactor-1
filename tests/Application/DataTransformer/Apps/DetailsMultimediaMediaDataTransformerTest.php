@@ -24,8 +24,8 @@ class DetailsMultimediaMediaDataTransformerTest extends TestCase
 {
     private DetailsMultimediaMediaDataTransformer $transformer;
 
-    /** @var Thumbor|MockObject */
-    private Thumbor $thumbor;
+    /** @var MockObject|Thumbor */
+    private Thumbor|MockObject $thumbor;
 
     protected function setUp(): void
     {
@@ -97,5 +97,29 @@ class DetailsMultimediaMediaDataTransformerTest extends TestCase
         $this->assertSame('photo', $result['type']);
         $this->assertSame('Test Caption', $result['caption']);
         $this->assertSame('thumbnail-url', $result['photo']);
+
+        $this->assertArrayHasKey('shots', $result);
+        $this->assertInstanceOf(\stdClass::class, $result['shots']);
+
+        $shots = (array) $result['shots'];
+
+        $this->assertArrayHasKey('4:3', $shots);
+        $this->assertArrayHasKey('16:9', $shots);
+        $this->assertArrayHasKey('3:4', $shots);
+        $this->assertArrayHasKey('3:2', $shots);
+        $this->assertArrayHasKey('2:3', $shots);
+
+        $this->assertCount(10, $shots['4:3']);
+        $this->assertCount(8, $shots['16:9']);
+        $this->assertCount(9, $shots['3:4']);
+        $this->assertCount(11, $shots['3:2']);
+        $this->assertCount(11, $shots['2:3']);
+
+        foreach ($shots as $aspectRatio => $sizesArray) {
+            foreach ($sizesArray as $sizeKey => $url) {
+                $this->assertSame('thumbnail-url', $url,
+                    "Shot for aspect ratio {$aspectRatio} and size {$sizeKey} should be 'thumbnail-url'");
+            }
+        }
     }
 }
