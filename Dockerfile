@@ -1,4 +1,4 @@
-ARG WEBSERVICE_VERSION=v1.9.3
+ARG WEBSERVICE_VERSION=v1
 ARG REGISTRY_HOST=hub.elconfidencial.clo
 
 FROM ${REGISTRY_HOST}/webservice-backend:${WEBSERVICE_VERSION}-local AS builder
@@ -62,7 +62,7 @@ RUN mv .env.dist .env
 
 FROM k8s-dev AS integration
 USER root
-RUN sed -i 's/newrelic.appname = "snaapi"/newrelic.appname = "DEV PHP snaapi"/' /usr/local/etc/php/conf.d/21-newrelic.ini
+RUN sed -i 's/newrelic.appname = "snaapi"/newrelic.appname = "DEV PHP"/' /usr/local/etc/php/conf.d/21-newrelic.ini
 USER www-data
 COPY --chown=www-data:www-data --from=builder /var/www/service /var/www/service
 # RUN rm -rf .env.dist
@@ -73,7 +73,7 @@ USER root
 RUN if echo "$BRANCH_EXECUTE" | grep -Eq '^(master|v[0-9]+\.[0-9]+\.[0-9]+)$'; then \
         sed -i 's/newrelic.appname = "snaapi"/newrelic.appname = "PRO PHP snaapi"/' /usr/local/etc/php/conf.d/21-newrelic.ini; \
     else \
-        sed -i 's/newrelic.appname = "snaapi"/newrelic.appname = "STA PHP snaapi"/' /usr/local/etc/php/conf.d/21-newrelic.ini; \
+        sed -i 's/newrelic.appname = "snaapi"/newrelic.appname = "STA PHP"/' /usr/local/etc/php/conf.d/21-newrelic.ini; \
     fi
 USER  www-data
 COPY --chown=www-data:www-data --from=builder_prod /var/www/service /var/www/service

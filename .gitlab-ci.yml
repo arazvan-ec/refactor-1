@@ -2,7 +2,7 @@ variables:
     REGISTRY_HOST: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
     IMAGE_NAME: snaapi  # ONLY THING TO CHANGE IN EACH PROJECT
     DOCKER_HOST: tcp://docker:2375
-    BACKEND_IMAGE_VERSION: v1.9.3
+    BACKEND_IMAGE_VERSION: v1
 
 default:
     image:
