@@ -10,7 +10,8 @@ use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\MultimediaTrait;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
-use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
+use Ec\Multimedia\Domain\Model\Multimedia\MultimediaPhoto;
+use Ec\Multimedia\Domain\Model\Photo\Photo;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
@@ -166,7 +167,7 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
     ];
 
     /**
-     * @var array<mixed>
+     * @var array{array{opening: MultimediaPhoto, resource: Photo}}
      */
     private array $arrayMultimedia;
     private Opening $openingMultimedia;
@@ -176,7 +177,7 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
     }
 
     /**
-     * @param array<mixed> $arrayMultimedia
+     * @param array{array{opening: MultimediaPhoto, resource: Photo}} $arrayMultimedia
      */
     public function write(array $arrayMultimedia, Opening $openingMultimedia): DetailsMultimediaMediaDataTransformer
     {
@@ -200,17 +201,9 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
             ];
         }
 
-        $resourceId = $this->arrayMultimedia[$multimediaId]['opening']->resourceId();
-
-        if (!$resourceId && !empty($this->arrayMultimedia[$resourceId->id()])) {
-            return [
-                'id' => '',
-                'type' => 'multimediaNull',
-            ];
-        }
-
-        /** @var Multimedia $multimedia */
+        /** @var MultimediaPhoto $multimedia */
         $multimedia = $this->arrayMultimedia[$multimediaId]['opening'];
+        /** @var Photo $resource */
         $resource = $this->arrayMultimedia[$multimediaId]['resource'];
         $clippings = $multimedia->clippings();
 

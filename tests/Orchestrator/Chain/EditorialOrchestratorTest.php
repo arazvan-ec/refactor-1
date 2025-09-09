@@ -41,6 +41,8 @@ use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
+use Ec\Multimedia\Domain\Model\Multimedia;
+use Ec\Multimedia\Domain\Model\Photo\Photo;
 use Ec\Multimedia\Infrastructure\Client\Http\Media\QueryMultimediaClient as QueryMultimediaOpeningClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
@@ -1149,5 +1151,123 @@ class EditorialOrchestratorTest extends TestCase
         }
 
         return [$promisesJournalist, $withAlias];
+    }
+
+    #[Test]
+    public function shouldGetOpeningWithOpeningAndResource(): void
+    {
+        $editorial = $this->createMock(NewsBase::class);
+        $opening = $this->createMock(Opening::class);
+        $opening->method('multimediaId')->willReturn('123');
+        $editorial->method('opening')->willReturn($opening);
+
+        $resourceIdMock = $this->createMock(Multimedia\ResourceId::class);
+        $resourceIdMock->method('id')->willReturn('456');
+        $multimedia = $this->createMock(Multimedia\MultimediaPhoto::class);
+        $multimedia->method('resourceId')->willReturn($resourceIdMock);
+
+        $photoMock = $this->createMock(Photo::class);
+
+        $this->queryMultimediaOpeningClient
+            ->method('findMultimediaById')
+            ->with('123')
+            ->willReturn($multimedia);
+
+        $this->queryMultimediaOpeningClient
+            ->expects(static::once())
+            ->method('findPhotoById')
+            ->with($resourceIdMock)
+            ->willReturn($photoMock);
+
+        $resolveData = [];
+        $reflection = new \ReflectionClass($this->editorialOrchestrator);
+
+        $method = $reflection->getMethod('getOpening');
+        $method->setAccessible(true);
+        /** @var array{
+         *      multimediaOpening?: array{123?: array{opening: Multimedia\MultimediaPhoto, resource: Photo}}
+         * } $result
+         */
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
+
+        $this->assertArrayHasKey('multimediaOpening', $result);
+        $this->assertArrayHasKey('123', $result['multimediaOpening']);
+        $this->assertSame($multimedia, $result['multimediaOpening']['123']['opening']);
+        $this->assertSame($photoMock, $result['multimediaOpening']['123']['resource']);
+    }
+
+    #[Test]
+    public function shouldRetrieveFulfilledWithOpening(): void
+    {
+        $openingId = 'abc123';
+        $multimediaId = $this->createMock(Multimedia\MultimediaId::class);
+        $multimediaId->method('id')->willReturn($openingId);
+        $opening = $this->createMock(Multimedia\MultimediaPhoto::class);
+        $opening->method('id')->willReturn($multimediaId);
+
+        $multimediaData = [
+            'opening' => $opening,
+        ];
+
+        $promises = [
+            [
+                'state' => 'fulfilled',
+                'value' => $multimediaData,
+            ],
+            [
+                'state' => 'rejected',
+                'value' => ['opening' => $opening],
+            ],
+            [
+                'state' => 'fulfilled',
+                'value' => [],
+            ],
+        ];
+
+        $method = new \ReflectionMethod($this->editorialOrchestrator, 'fulfilledMultimediaOpening');
+        $method->setAccessible(true);
+        /** @var array<string, mixed> $result */
+        $result = $method->invoke($this->editorialOrchestrator, $promises);
+
+        $this->assertCount(1, $result);
+        $this->assertArrayHasKey('abc123', $result);
+        $this->assertSame($multimediaData, $result['abc123']);
+    }
+
+    #[Test]
+    public function shouldReturnOnlyFulfilledMultimedia(): void
+    {
+        $mm1 = $this->createMock(Multimedia::class);
+        $mm1->method('id')->willReturn('id1');
+
+        $mm2 = $this->createMock(Multimedia::class);
+        $mm2->method('id')->willReturn('id2');
+
+        $mm3 = $this->createMock(Multimedia::class);
+        $mm3->method('id')->willReturn('id3');
+
+        $promises = [
+            [
+                'state' => 'fulfilled',
+                'value' => $mm1,
+            ],
+            [
+                'state' => 'rejected',
+                'value' => $mm2,
+            ],
+            [
+                'state' => 'fulfilled',
+                'value' => $mm3,
+            ],
+        ];
+
+        $method = new \ReflectionMethod($this->editorialOrchestrator, 'fulfilledMultimedia');
+        $method->setAccessible(true);
+        $result = $method->invoke($this->editorialOrchestrator, $promises);
+
+        $this->assertSame([
+            'id1' => $mm1,
+            'id3' => $mm3,
+        ], $result);
     }
 }

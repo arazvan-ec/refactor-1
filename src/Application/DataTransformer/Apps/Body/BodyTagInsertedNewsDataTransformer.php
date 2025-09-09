@@ -17,6 +17,7 @@ use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Exceptions\BodyDataTransformerNotFoundException;
 use Ec\Encode\Encode;
 use Ec\Multimedia\Domain\Model\Multimedia;
+use Ec\Multimedia\Domain\Model\Photo\Photo;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -117,12 +118,20 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
         return $this->getShotsLandscape($multimedia);
     }
 
-    private function getMultimediaOpening(string $editorialId)
+    /**
+     * @return array<string, string>
+     */
+    private function getMultimediaOpening(string $editorialId): array
     {
         $shots = [];
 
         /** @var array<string, array<string, array<string, string>>> $resolveData */
         $resolveData = $this->resolveData();
+        /** @var ?array{
+         *     opening: Multimedia\MultimediaPhoto,
+         *     resource: Photo
+         * } $multimedia
+         */
         $multimedia = $resolveData['multimediaOpening'][$resolveData['insertedNews'][$editorialId]['multimediaId']] ?? null;
         if (null === $multimedia) {
             return $shots;

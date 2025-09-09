@@ -14,6 +14,7 @@ use Ec\Editorial\Domain\Model\Multimedia\Video;
 use Ec\Editorial\Domain\Model\Multimedia\Widget;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia as MultimediaModel;
+use Ec\Multimedia\Domain\Model\Photo\Photo;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
@@ -89,6 +90,8 @@ trait MultimediaTrait
     }
 
     /**
+     * @param array{opening: MultimediaModel\MultimediaPhoto, resource: Photo} $multimediaOpening
+     *
      * @return array<string, string>
      */
     private function getShotsLandscapeFromMedia(array $multimediaOpening): array

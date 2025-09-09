@@ -12,6 +12,7 @@ use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
 use Ec\Multimedia\Domain\Model\Multimedia;
+use Ec\Multimedia\Domain\Model\Photo\Photo;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -26,8 +27,7 @@ class RecommendedEditorialsDataTransformer
 
     /** @var Editorial[] */
     private array $editorials;
-
-    /** @var array<string, mixed> */
+    /** @var array<string, array<string, array<string, mixed>>> */
     private array $resolveData;
 
     public function __construct(
@@ -39,8 +39,8 @@ class RecommendedEditorialsDataTransformer
     }
 
     /**
-     * @param Editorial[]          $editorials
-     * @param array<string, mixed> $resolveData
+     * @param Editorial[]                                        $editorials
+     * @param array<string, array<string, array<string, mixed>>> $resolveData
      *
      * @return $this
      */
@@ -130,10 +130,21 @@ class RecommendedEditorialsDataTransformer
         return $this->getShotsLandscape($multimedia);
     }
 
-    private function getMultimediaOpening(string $editorialId)
+    /**
+     * @param string $editorialId
+     *
+     * @return array<string, string>
+     */
+    private function getMultimediaOpening(string $editorialId): array
     {
         $shots = [];
 
+        /**
+         * @var ?array{
+         *      opening: Multimedia\MultimediaPhoto,
+         *      resource: Photo
+         *  } $multimedia
+         */
         $multimedia = $this->resolveData['multimediaOpening'][$this->resolveData['recommendedEditorials'][$editorialId]['multimediaId']] ?? null;
         if (null === $multimedia) {
             return $shots;

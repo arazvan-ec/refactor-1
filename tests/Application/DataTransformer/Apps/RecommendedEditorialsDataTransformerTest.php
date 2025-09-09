@@ -47,7 +47,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
 
         $editorials = [$editorialMock1, $editorialMock2];
 
-        $result = $this->transformer->write($editorials, ['test1' => 'resolveData']);
+        $result = $this->transformer->write($editorials, ['test1' => ['test2' => ['test3' => 'value']]]);
 
         self::assertEquals($this->transformer, $result);
     }
