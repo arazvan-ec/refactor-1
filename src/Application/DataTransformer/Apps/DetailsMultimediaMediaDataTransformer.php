@@ -167,7 +167,7 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
     ];
 
     /**
-     * @var array{array{opening: MultimediaPhoto, resource: Photo}}
+     * @var array{array{opening: MultimediaPhoto, resource: Photo}}|array{}
      */
     private array $arrayMultimedia;
     private Opening $openingMultimedia;
@@ -177,7 +177,7 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
     }
 
     /**
-     * @param array{array{opening: MultimediaPhoto, resource: Photo}} $arrayMultimedia
+     * @param array{array{opening: MultimediaPhoto, resource: Photo}}|array{} $arrayMultimedia
      */
     public function write(array $arrayMultimedia, Opening $openingMultimedia): DetailsMultimediaMediaDataTransformer
     {

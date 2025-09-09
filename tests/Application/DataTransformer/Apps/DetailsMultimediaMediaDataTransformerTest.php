@@ -82,6 +82,7 @@ class DetailsMultimediaMediaDataTransformerTest extends TestCase
         $photo = $this->createMock(Photo::class);
         $photo->method('file')->willReturn('file.jpg');
 
+        /** @var array<string, array{opening: MultimediaPhoto, resource: Photo}> $arrayMultimedia */
         $arrayMultimedia = [
             'id1' => [
                 'opening' => $multimedia,
