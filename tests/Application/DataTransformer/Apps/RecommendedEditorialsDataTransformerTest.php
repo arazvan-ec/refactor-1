@@ -12,6 +12,7 @@ use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\EditorialNews;
 use Ec\Editorial\Domain\Model\EditorialTitles;
+use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Multimedia\Domain\Model\Clipping;
 use Ec\Multimedia\Domain\Model\Clippings;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
@@ -80,7 +81,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
         $editorialMock->expects(self::never())
             ->method('id')
             ->willReturn($editorialId2);
-
+        /** @var array<string, (array<int|string, (array<string, array<int, string>|MockObject|string>)|MockObject|string>)|string|null> $resolveData */
         $resolveData = [
             'multimedia' => [
                 '2532' => $multimediaMock,
@@ -199,6 +200,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                 return $thumborPhoto;
             });
 
+        /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $result = $this->transformer->write($editorials, $resolveData)->read();
 
         $expected = [
@@ -266,6 +268,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
             ->method('id')
             ->willReturn($editorialId2);
 
+        /** @var array<string, (array<int|string, (array<string, array<int, string>|MockObject|string>)|MockObject|string>)|string|null> $resolveData */
         $resolveData = [
             'multimedia' => null,
             'recommendedEditorials' => [
@@ -377,6 +380,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                 return $thumborPhoto;
             });
 
+        /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $result = $this->transformer->write($editorials, $resolveData)->read();
 
         $expected = [
