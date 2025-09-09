@@ -198,7 +198,6 @@ class EditorialOrchestrator implements Orchestrator
                 ->then($this->createCallback([$this, 'fulfilledMultimediaOpening']))
                 ->wait(true);
         }
-
         /** @var array{multimedia?: array<string, array<int, Promise>>} $resolveData */
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData); // @phpstan-ignore argument.type
         if (!empty($resolveData['multimedia'])

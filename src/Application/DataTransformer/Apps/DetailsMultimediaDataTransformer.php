@@ -198,7 +198,6 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
                 'type' => 'multimediaNull',
             ];
         }
-
         /** @var Multimedia $multimedia */
         $multimedia = $this->arrayMultimedia[$multimediaId->id()];
         $clippings = $multimedia->clippings();

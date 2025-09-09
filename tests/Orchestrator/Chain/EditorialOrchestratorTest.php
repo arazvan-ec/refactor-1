@@ -1225,13 +1225,16 @@ class EditorialOrchestratorTest extends TestCase
         ];
 
         $method = new \ReflectionMethod($this->editorialOrchestrator, 'fulfilledMultimediaOpening');
+        static::assertFalse($method->isPrivate());
+        static::assertTrue($method->isProtected());
         $method->setAccessible(true);
+
         /** @var array<string, mixed> $result */
         $result = $method->invoke($this->editorialOrchestrator, $promises);
 
-        $this->assertCount(1, $result);
-        $this->assertArrayHasKey('abc123', $result);
-        $this->assertSame($multimediaData, $result['abc123']);
+        static::assertCount(1, $result);
+        static::assertArrayHasKey('abc123', $result);
+        static::assertSame($multimediaData, $result['abc123']);
     }
 
     #[Test]
@@ -1262,10 +1265,12 @@ class EditorialOrchestratorTest extends TestCase
         ];
 
         $method = new \ReflectionMethod($this->editorialOrchestrator, 'fulfilledMultimedia');
+        static::assertFalse($method->isPrivate());
+        static::assertTrue($method->isProtected());
         $method->setAccessible(true);
         $result = $method->invoke($this->editorialOrchestrator, $promises);
 
-        $this->assertSame([
+        static::assertSame([
             'id1' => $mm1,
             'id3' => $mm3,
         ], $result);
