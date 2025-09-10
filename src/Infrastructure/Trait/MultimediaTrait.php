@@ -41,7 +41,6 @@ trait MultimediaTrait
         ],
     ];
 
-
     public function thumbor(): Thumbor
     {
         return $this->thumbor;
