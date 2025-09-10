@@ -12,6 +12,7 @@ use App\Infrastructure\Trait\UrlGeneratorTrait;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Encode\Encode;
 use Ec\Multimedia\Domain\Model\Multimedia;
+use Ec\Multimedia\Domain\Model\Photo\Photo;
 use Ec\Section\Domain\Model\Section;
 
 /**
@@ -26,8 +27,7 @@ class RecommendedEditorialsDataTransformer
 
     /** @var Editorial[] */
     private array $editorials;
-
-    /** @var array<string, mixed> */
+    /** @var array<string, array<string, array<string, mixed>>> */
     private array $resolveData;
 
     public function __construct(
@@ -39,8 +39,8 @@ class RecommendedEditorialsDataTransformer
     }
 
     /**
-     * @param Editorial[]          $editorials
-     * @param array<string, mixed> $resolveData
+     * @param Editorial[]                                        $editorials
+     * @param array<string, array<string, array<string, mixed>>> $resolveData
      *
      * @return $this
      */
@@ -77,7 +77,12 @@ class RecommendedEditorialsDataTransformer
             $elementArray['signatures'] = $signatures;
             $elementArray['editorial'] = $this->editorialUrl($editorial, $section);
             $elementArray['title'] = $editorial->editorialTitles()->title();
-            $shots = $this->getMultimedia($editorialId);
+
+            if ($this->getMultimediaOpening($editorialId)) {
+                $shots = $this->getMultimediaOpening($editorialId);
+            } else {
+                $shots = $this->getMultimedia($editorialId);
+            }
 
             $elementArray['shots'] = $shots;
             $elementArray['photo'] = empty($shots) ? '' : reset($shots);
@@ -90,10 +95,13 @@ class RecommendedEditorialsDataTransformer
 
     private function editorialUrl(Editorial $editorial, Section $section): string
     {
-        $editorialPath = $section->getPath().'/'.
-            $editorial->publicationDate()->format('Y-m-d').'/'.
-            Encode::encodeUrl($editorial->editorialTitles()->urlTitle()).'_'.
-            $editorial->id()->id();
+        $editorialPath = \sprintf(
+            '%s/%s/%s_%s',
+            $section->getPath(),
+            $editorial->publicationDate()->format('Y-m-d'),
+            Encode::encodeUrl($editorial->editorialTitles()->urlTitle()),
+            $editorial->id()->id()
+        );
 
         return $this->generateUrl(
             'https://%s.%s.%s/%s',
@@ -123,5 +131,28 @@ class RecommendedEditorialsDataTransformer
         }
 
         return $this->getShotsLandscape($multimedia);
+    }
+
+    /**
+     * @param string $editorialId
+     *
+     * @return array<string, string>
+     */
+    private function getMultimediaOpening(string $editorialId): array
+    {
+        $shots = [];
+
+        /**
+         * @var ?array{
+         *      opening: Multimedia\MultimediaPhoto,
+         *      resource: Photo
+         *  } $multimedia
+         */
+        $multimedia = $this->resolveData['multimediaOpening'][$this->resolveData['recommendedEditorials'][$editorialId]['multimediaId']] ?? null;
+        if (null === $multimedia) {
+            return $shots;
+        }
+
+        return $this->getShotsLandscapeFromMedia($multimedia);
     }
 }

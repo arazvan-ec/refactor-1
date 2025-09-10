@@ -4,6 +4,7 @@ namespace App;
 
 use App\DependencyInjection\Compiler\BodyDataTransformerCompiler;
 use App\DependencyInjection\Compiler\EditorialOrchestratorCompiler;
+use App\DependencyInjection\Compiler\MultimediaFactoryCompiler;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
@@ -18,5 +19,6 @@ class Kernel extends BaseKernel
 
         $container->addCompilerPass(new EditorialOrchestratorCompiler());
         $container->addCompilerPass(new BodyDataTransformerCompiler());
+        $container->addCompilerPass(new MultimediaFactoryCompiler());
     }
 }

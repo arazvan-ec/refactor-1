@@ -47,7 +47,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
 
         $editorials = [$editorialMock1, $editorialMock2];
 
-        $result = $this->transformer->write($editorials, ['test1' => 'resolveData']);
+        $result = $this->transformer->write($editorials, ['test1' => ['test2' => ['test3' => 'value']]]);
 
         self::assertEquals($this->transformer, $result);
     }
@@ -80,7 +80,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
         $editorialMock->expects(self::never())
             ->method('id')
             ->willReturn($editorialId2);
-
+        /** @var array<string, (array<int|string, (array<string, array<int, string>|MockObject|string>)|MockObject|string>)|string|null> $resolveData */
         $resolveData = [
             'multimedia' => [
                 '2532' => $multimediaMock,
@@ -199,6 +199,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                 return $thumborPhoto;
             });
 
+        /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $result = $this->transformer->write($editorials, $resolveData)->read();
 
         $expected = [
@@ -266,6 +267,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
             ->method('id')
             ->willReturn($editorialId2);
 
+        /** @var array<string, (array<int|string, (array<string, array<int, string>|MockObject|string>)|MockObject|string>)|string|null> $resolveData */
         $resolveData = [
             'multimedia' => null,
             'recommendedEditorials' => [
@@ -377,6 +379,7 @@ class RecommendedEditorialsDataTransformerTest extends TestCase
                 return $thumborPhoto;
             });
 
+        /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $result = $this->transformer->write($editorials, $resolveData)->read();
 
         $expected = [

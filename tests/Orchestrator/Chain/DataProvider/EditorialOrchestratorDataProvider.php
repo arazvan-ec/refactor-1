@@ -101,6 +101,13 @@ class EditorialOrchestratorDataProvider
             ],
         ];
 
+        $multimediaTypes = [
+            'null' => [
+                'id' => '',
+                'type' => 'multimediaNull',
+            ],
+        ];
+
         return [
             'case-empty' => [
                 [
@@ -125,6 +132,7 @@ class EditorialOrchestratorDataProvider
                 [],
                 [$allJournalist['1']],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-empty-with-membership-and-standfirst' => [
                 [
@@ -180,6 +188,7 @@ class EditorialOrchestratorDataProvider
                 ],
                 [$allJournalist['1']],
                 ['' => null],
+                $multimediaTypes['null'],
             ],
             'case-two-journalist' => [
                 [
@@ -207,6 +216,7 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['2'],
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-two-journalist-with-recommended' => [
                 [
@@ -255,6 +265,7 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['1'],
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-two-journalist-with-body-tag-inserted-news' => [
                 [
@@ -303,6 +314,7 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['1'],
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-three-journalist' => [
                 [
@@ -331,6 +343,7 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['7'],
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-three-journalist-with-inserted-and-recommended' => [
                 [
@@ -401,6 +414,7 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['1'],
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-three-journalist-with-inserted' => [
                 [
@@ -450,6 +464,7 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['2'],
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-three-journalist-with-inserted-two' => [
                 [
@@ -500,6 +515,7 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['1'],
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-four-journalist-with-inserted-and-recommended' => [
                 [
@@ -571,6 +587,7 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['6'],
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-with-deactive-journalist-onto-editorial' => [
                 [
@@ -643,6 +660,7 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['9'],
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-with-deactive-journalist-onto-inserted' => [
                 [
@@ -716,6 +734,7 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['9'],
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-with-deactive-journalist-onto-recommender' => [
                 [
@@ -789,6 +808,7 @@ class EditorialOrchestratorDataProvider
                     $allJournalist['9'],
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
             'case-with-not-found-journalist' => [
                 [
@@ -861,6 +881,7 @@ class EditorialOrchestratorDataProvider
                     new \Exception('Journalist not found'),
                 ],
                 [],
+                $multimediaTypes['null'],
             ],
         ];
     }

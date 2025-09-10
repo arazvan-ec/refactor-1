@@ -9,6 +9,7 @@ namespace App\Orchestrator\Chain;
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
+use App\Application\DataTransformer\Apps\MultimediaMediaDataTransformer;
 use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
 use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
@@ -34,6 +35,8 @@ use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
+use Ec\Multimedia\Domain\Model\Multimedia\MultimediaPhoto;
+use Ec\Multimedia\Infrastructure\Client\Http\Media\QueryMultimediaClient as QueryMultimediaOpeningClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
@@ -72,6 +75,8 @@ class EditorialOrchestrator implements Orchestrator
         private readonly MultimediaDataTransformer $multimediaDataTransformer,
         private readonly StandfirstDataTransformer $standFirstDataTransformer,
         private readonly RecommendedEditorialsDataTransformer $recommendedEditorialsDataTransformer,
+        private readonly QueryMultimediaOpeningClient $queryMultimediaOpeningClient,
+        private readonly MultimediaMediaDataTransformer $multimediaMediaDataTransformer,
         string $extension,
     ) {
         $this->setExtension($extension);
@@ -103,11 +108,11 @@ class EditorialOrchestrator implements Orchestrator
 
         [$promise, $links] = $this->getPromiseMembershipLinks($editorial, $section->siteId());
 
-        /** @var array<string, array<string, array<string, mixed>>> $resolveData */
+        /** @var array<string, array<string, array<string, mixed|array<string>>>> $resolveData */
         $resolveData = [];
         $resolveData['multimedia'] = [];
+        $resolveData['multimediaOpening'] = [];
 
-        /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $resolveData['insertedNews'] = [];
         /** @var BodyTagInsertedNews[] $insertedNews */
         $insertedNews = $editorial->body()->bodyElementsOf(BodyTagInsertedNews::class);
@@ -132,10 +137,17 @@ class EditorialOrchestrator implements Orchestrator
                     }
                 }
 
-                /** @var array<string, array<string, array<int, Promise>>> $resolveData */
-                $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
-
-                $resolveData['insertedNews'][$idInserted]['multimediaId'] = $insertedEditorials->multimedia()->id()->id();
+                if (!empty($insertedEditorials->multimedia()->id()->id())) {
+                    /** @var array<string, array<int|string, array<int|string, array<int|string, array<int|string, mixed>>>|\Ec\Multimedia\Domain\Model\Multimedia\Multimedia|Promise>> $resolveData */
+                    $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
+                    $multimediaId = $insertedEditorials->multimedia()->id()->id();
+                } else {
+                    $resolveData = $this->getOpening($insertedEditorials, $resolveData); // @phpstan-ignore argument.type
+                    /** @var NewsBase $insertedEditorials */
+                    $multimediaId = $insertedEditorials->opening()->multimediaId();
+                }
+                /** @var array<string, array<string, array<string, string>>> $resolveData */
+                $resolveData['insertedNews'][$idInserted]['multimediaId'] = $multimediaId;
             }
         }
 
@@ -163,13 +175,24 @@ class EditorialOrchestrator implements Orchestrator
                     }
                 }
 
-                /** @var array<string, array<string, array<int, Promise>>> $resolveData */
-                $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);  // @phpstan-ignore argument.type
-                $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $recommendedEditorial->multimedia()->id()->id();
+                if (!empty($recommendedEditorial->multimedia()->id()->id())) {
+                    /** @var array<string, array<int|string, array<int|string, array<int|string, array<int|string, mixed>>>|\Ec\Multimedia\Domain\Model\Multimedia\Multimedia|Promise>> $resolveData */
+                    $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);
+                    $multimediaId = $recommendedEditorial->multimedia()->id()->id();
+                } else {
+                    $resolveData = $this->getOpening($recommendedEditorial, $resolveData); // @phpstan-ignore argument.type
+                    /** @var NewsBase $recommendedEditorial */
+                    $multimediaId = $recommendedEditorial->opening()->multimediaId();
+                }
+
+                /** @var array<string, array<string, array<string, string>>> $resolveData */
+                $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $multimediaId;
                 $recommendedNews[] = $recommendedEditorial;
             }
         }
 
+        /** @var array<string, ?array{multimedia: array<string, array<int, Promise>>}> $resolveData */
+        $resolveData = $this->getOpening($editorial, $resolveData); // @phpstan-ignore argument.type
         /** @var array{multimedia?: array<string, array<int, Promise>>} $resolveData */
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData); // @phpstan-ignore argument.type
         if (!empty($resolveData['multimedia'])
@@ -223,14 +246,13 @@ class EditorialOrchestrator implements Orchestrator
             $resolveData
         );
 
-        $editorialResult['multimedia'] = $this->multimediaDataTransformer
-            ->write($resolveData['multimedia'], $editorial->multimedia())
-            ->read();
+        $editorialResult['multimedia'] = $this->transformMultimedia($editorial, $resolveData);
 
         $editorialResult['standfirst'] = $this->standFirstDataTransformer
             ->write($editorial->standFirst())
             ->read();
 
+        /** @var array<string, array<string, array<string, mixed>>> $resolveData */
         $editorialResult['recommendedEditorials'] = $this->recommendedEditorialsDataTransformer
             ->write($recommendedNews, $resolveData)
             ->read();
@@ -382,9 +404,9 @@ class EditorialOrchestrator implements Orchestrator
     }
 
     /**
-     * @param array<string, array<string, array<int, Promise>>> $resolveData
+     * @param array<string, array<int|string, array<int|string, mixed>|\Ec\Multimedia\Domain\Model\Multimedia\Multimedia|Promise>> $resolveData
      *
-     * @return array<string, array<int, Promise|\Ec\Multimedia\Domain\Model\Multimedia>>
+     * @return array<string, array<string, array<int, Promise>>>
      */
     private function getAsyncMultimedia(Multimedia $multimedia, array $resolveData): array
     {
@@ -392,6 +414,27 @@ class EditorialOrchestrator implements Orchestrator
 
         if (null !== $multimediaId) {
             $resolveData['multimedia'][] = $this->queryMultimediaClient->findMultimediaById($multimediaId, true);
+        }
+
+        return $resolveData; // @phpstan-ignore return.type
+    }
+
+    /**
+     * @param array<string, array<string, array<int, Promise>>> $resolveData
+     *
+     * @return array<string, array<int, Promise|\Ec\Multimedia\Domain\Model\Multimedia\Multimedia>>
+     */
+    private function getOpening(Editorial $editorial, array $resolveData): array
+    {
+        /** @var NewsBase $editorial */
+        $opening = $editorial->opening();
+        if (!empty($opening->multimediaId())) {
+            /** @var MultimediaPhoto $multimedia */
+            $multimedia = $this->queryMultimediaOpeningClient->findMultimediaById($opening->multimediaId());
+            $resource = $this->queryMultimediaOpeningClient->findPhotoById($multimedia->resourceId());
+
+            $resolveData['multimediaOpening'][$opening->multimediaId()]['opening'] = $multimedia;
+            $resolveData['multimediaOpening'][$opening->multimediaId()]['resource'] = $resource;
         }
 
         return $resolveData; // @phpstan-ignore return.type
@@ -425,5 +468,29 @@ class EditorialOrchestrator implements Orchestrator
         }
 
         return $result;
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $resolveData
+     *
+     * @return array<string, mixed>
+     */
+    protected function transformMultimedia(Editorial $editorial, array $resolveData): array
+    {
+        /** @var NewsBase $editorial */
+        if (!empty($resolveData['multimediaOpening'])) {
+            return $this->multimediaMediaDataTransformer
+                ->write($resolveData['multimediaOpening'], $editorial->opening())
+                ->read();
+        } elseif (!empty($resolveData['multimedia'])) {
+            return $this->multimediaDataTransformer
+                ->write($resolveData['multimedia'], $editorial->multimedia())
+                ->read();
+        }
+
+        return [
+            'id' => '',
+            'type' => 'multimediaNull',
+        ];
     }
 }

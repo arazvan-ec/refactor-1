@@ -104,10 +104,13 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
     private function editorialUrl(): string
     {
-        $editorialPath = $this->section->getPath().'/'.
-            $this->editorial->publicationDate()->format('Y-m-d').'/'.
-            Encode::encodeUrl($this->editorial->editorialTitles()->urlTitle()).'_'.
-            $this->editorial->id()->id();
+        $editorialPath = \sprintf(
+            '%s/%s/%s_%s',
+            $this->section->getPath(),
+            $this->editorial->publicationDate()->format('Y-m-d'),
+            Encode::encodeUrl($this->editorial->editorialTitles()->urlTitle()),
+            $this->editorial->id()->id()
+        );
 
         return $this->generateUrl(
             'https://%s.%s.%s/%s',
