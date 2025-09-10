@@ -122,12 +122,10 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string>|array{}
      */
     private function getMultimediaOpening(string $editorialId): array
     {
-        $shots = [];
-
         /** @var array<string, array<string, array<string, string>>> $resolveData */
         $resolveData = $this->resolveData();
         /** @var ?array{
@@ -137,7 +135,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
          */
         $multimedia = $resolveData['multimediaOpening'][$resolveData['insertedNews'][$editorialId]['multimediaId']] ?? null;
         if (null === $multimedia) {
-            return $shots;
+            return [];
         }
 
         return $this->getShotsLandscapeFromMedia($multimedia);
