@@ -1275,4 +1275,28 @@ class EditorialOrchestratorTest extends TestCase
             'id3' => $mm3,
         ], $result);
     }
+
+    #[Test]
+    public function createCallbackInvokesCallableWithParameters()
+    {
+        $callable = function ($element, ...$params) {
+            return [$element, $params];
+        };
+
+        $element = 'foo';
+        $params = ['bar' => 'baz', 'qux' => 'quux'];
+
+        $method = new \ReflectionMethod($this->editorialOrchestrator, 'createCallback');
+        static::assertFalse($method->isPrivate());
+        static::assertTrue($method->isProtected());
+        $method->setAccessible(true);
+
+        $callback = $method->invokeArgs($this->editorialOrchestrator, [$callable, ...$params]);
+
+        static::assertInstanceOf(\Closure::class, $callback);
+
+        $result = $callback($element);
+
+        static::assertEquals(['foo', $params], $result);
+    }
 }
