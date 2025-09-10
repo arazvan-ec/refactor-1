@@ -85,7 +85,7 @@ class BodyDataTransformerTest extends TestCase
 
         $this->loggerMock
             ->expects(static::once())
-            ->method('critical')
+            ->method('info')
             ->with('Exception message')
             ->willReturnSelf();
 
