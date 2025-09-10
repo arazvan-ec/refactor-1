@@ -38,7 +38,7 @@ class BodyDataTransformer
                     $resolveData
                 );
             } catch (BodyDataTransformerNotFoundException $exception) {
-                $this->logger->critical($exception->getMessage());
+                $this->logger->info($exception->getMessage());
                 continue;
             }
         }
