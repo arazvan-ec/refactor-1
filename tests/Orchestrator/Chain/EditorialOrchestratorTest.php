@@ -60,6 +60,7 @@ use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
@@ -300,6 +301,7 @@ class EditorialOrchestratorTest extends TestCase
      * @param array<string, string>             $membershipLinkCombine
      * @param array<int, array<int, string>>    $expectedJournalistAliasIds
      * @param array<mixed>                      $expectedPhotoFromBodyTags
+     * @param array<string, string>             $expectedOpeningMultimedia
      */
     #[DataProviderExternal(EditorialOrchestratorDataProvider::class, 'getData')]
     #[Test]
@@ -310,6 +312,7 @@ class EditorialOrchestratorTest extends TestCase
         array $membershipLinkCombine,
         array $expectedJournalistAliasIds,
         array $expectedPhotoFromBodyTags,
+        array $expectedOpeningMultimedia,
     ): void {
         $journalistsEditorial = $editorial['signatures'];
 
@@ -525,6 +528,7 @@ class EditorialOrchestratorTest extends TestCase
 
         $expectedResult['standfirst'] = $editorial['standfirstExpected'];
         $expectedResult['recommendedEditorials'] = $editorial['recommenderExpected'];
+        $expectedResult['multimedia'] = $expectedOpeningMultimedia;
 
         $result = $this->editorialOrchestrator->execute($requestMock);
 
@@ -1197,47 +1201,6 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     #[Test]
-    public function shouldRetrieveFulfilledWithOpening(): void
-    {
-        $openingId = 'abc123';
-        $multimediaId = $this->createMock(Multimedia\MultimediaId::class);
-        $multimediaId->method('id')->willReturn($openingId);
-        $opening = $this->createMock(Multimedia\MultimediaPhoto::class);
-        $opening->method('id')->willReturn($multimediaId);
-
-        $multimediaData = [
-            'opening' => $opening,
-        ];
-
-        $promises = [
-            [
-                'state' => 'fulfilled',
-                'value' => $multimediaData,
-            ],
-            [
-                'state' => 'rejected',
-                'value' => ['opening' => $opening],
-            ],
-            [
-                'state' => 'fulfilled',
-                'value' => [],
-            ],
-        ];
-
-        $method = new \ReflectionMethod($this->editorialOrchestrator, 'fulfilledMultimediaOpening');
-        static::assertFalse($method->isPrivate());
-        static::assertTrue($method->isProtected());
-        $method->setAccessible(true);
-
-        /** @var array<string, mixed> $result */
-        $result = $method->invoke($this->editorialOrchestrator, $promises);
-
-        static::assertCount(1, $result);
-        static::assertArrayHasKey('abc123', $result);
-        static::assertSame($multimediaData, $result['abc123']);
-    }
-
-    #[Test]
     public function shouldReturnOnlyFulfilledMultimedia(): void
     {
         $mm1 = $this->createMock(Multimedia::class);
@@ -1298,5 +1261,60 @@ class EditorialOrchestratorTest extends TestCase
         $result = $callback($element);
 
         static::assertEquals(['foo', $params], $result);
+    }
+
+    #[Test]
+    public function shouldTransformMultimediaReturnsMediaOpeningData()
+    {
+        $resolveData = ['multimediaOpening' => ['foo']];
+        $openingMock = $this->createMock(Opening::class);
+        $editorial = $this->createMock(NewsBase::class);
+        $editorial->method('opening')->willReturn($openingMock);
+
+        $this->multimediaMediaDataTransformer
+            ->expects($this->once())
+            ->method('write')
+            ->with(['foo'], $openingMock)
+            ->willReturnSelf();
+        $this->multimediaMediaDataTransformer
+            ->method('read')
+            ->willReturn(['result' => 'media']);
+
+        $method = new \ReflectionMethod($this->editorialOrchestrator, 'transformMultimedia');
+        static::assertFalse($method->isPrivate());
+        static::assertTrue($method->isProtected());
+
+        $method->setAccessible(true);
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
+
+        $this->assertEquals(['result' => 'media'], $result);
+    }
+
+    #[Test]
+    public function shouldTransformMultimediaReturnsMultimediaData()
+    {
+        $resolveData = ['multimedia' => ['bar']];
+
+        $editorial = $this->createMock(Editorial::class);
+        $multimediaMock = $this->createMock(MultimediaEditorial::class);
+        $editorial->method('multimedia')->willReturn($multimediaMock);
+
+        $this->multimediaDataTransformer
+            ->expects(static::once())
+            ->method('write')
+            ->with(['bar'], $multimediaMock)
+            ->willReturnSelf();
+        $this->multimediaDataTransformer
+            ->method('read')
+            ->willReturn(['result' => 'data']);
+
+        $method = new \ReflectionMethod($this->editorialOrchestrator, 'transformMultimedia');
+        static::assertFalse($method->isPrivate());
+        static::assertTrue($method->isProtected());
+
+        $method->setAccessible(true);
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
+
+        static::assertEquals(['result' => 'data'], $result);
     }
 }

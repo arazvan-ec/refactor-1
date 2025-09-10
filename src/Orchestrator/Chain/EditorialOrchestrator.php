@@ -246,21 +246,7 @@ class EditorialOrchestrator implements Orchestrator
             $resolveData
         );
 
-        /** @var array<string, ?array{multimedia: array<string, array<int, Promise>>}> $resolveData */
-        if (!empty($resolveData['multimediaOpening'])) {
-            $editorialResult['multimedia'] = $this->multimediaMediaDataTransformer
-                ->write($resolveData['multimediaOpening'], $editorial->opening())
-                ->read();
-        } elseif (!empty($resolveData['multimedia'])) {
-            $editorialResult['multimedia'] = $this->multimediaDataTransformer
-                ->write($resolveData['multimedia'], $editorial->multimedia())
-                ->read();
-        } else {
-            $editorialResult['multimedia'] = [
-                'id' => '',
-                'type' => 'multimediaNull',
-            ];
-        }
+        $editorialResult['multimedia'] = $this->transformMultimedia($editorial, $resolveData);
 
         $editorialResult['standfirst'] = $this->standFirstDataTransformer
             ->write($editorial->standFirst())
@@ -485,29 +471,25 @@ class EditorialOrchestrator implements Orchestrator
     }
 
     /**
-     * @param array<string, mixed> $promises
+     * @var array<string, ?array{multimedia: array<string, array<int, Promise>>}> $resolveData
      *
-     * @return array<string, array<string, mixed>>
+     * @return array<string, mixed>
      */
-    protected function fulfilledMultimediaOpening(array $promises): array
+    protected function transformMultimedia(Editorial $editorial, array $resolveData): array
     {
-        $result = [];
-
-        /** @var array<string, string> $promise */
-        foreach ($promises as $promise) {
-            if (Promise::FULFILLED === $promise['state']) {
-                /** @var array<string, mixed> $multimedia */
-                $multimedia = $promise['value'];
-                /** @var ?MultimediaPhoto $opening */
-                $opening = $multimedia['opening'] ?? null;
-                if (null === $opening) {
-                    continue;
-                }
-                $id = $opening->id()->id();
-                $result[$id] = $multimedia;
-            }
+        if (!empty($resolveData['multimediaOpening'])) {
+            return $this->multimediaMediaDataTransformer
+                ->write($resolveData['multimediaOpening'], $editorial->opening())
+                ->read();
+        } elseif (!empty($resolveData['multimedia'])) {
+            return $this->multimediaDataTransformer
+                ->write($resolveData['multimedia'], $editorial->multimedia())
+                ->read();
         }
 
-        return $result;
+        return [
+            'id' => '',
+            'type' => 'multimediaNull',
+        ];
     }
 }
