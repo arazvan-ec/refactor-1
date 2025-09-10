@@ -471,12 +471,13 @@ class EditorialOrchestrator implements Orchestrator
     }
 
     /**
-     * @var array<string, ?array{multimedia: array<string, array<int, Promise>>}> $resolveData
+     * @param array<string, array<string, mixed>> $resolveData
      *
      * @return array<string, mixed>
      */
     protected function transformMultimedia(Editorial $editorial, array $resolveData): array
     {
+        /** @var NewsBase $editorial */
         if (!empty($resolveData['multimediaOpening'])) {
             return $this->multimediaMediaDataTransformer
                 ->write($resolveData['multimediaOpening'], $editorial->opening())

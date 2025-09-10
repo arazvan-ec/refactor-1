@@ -25,6 +25,7 @@ use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButtons;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
+use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
 use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
@@ -60,7 +61,6 @@ use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
@@ -1240,7 +1240,7 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     #[Test]
-    public function createCallbackInvokesCallableWithParameters()
+    public function createCallbackInvokesCallableWithParameters(): void
     {
         $callable = function ($element, ...$params) {
             return [$element, $params];
@@ -1264,7 +1264,7 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     #[Test]
-    public function shouldTransformMultimediaReturnsMediaOpeningData()
+    public function shouldTransformMultimediaReturnsMediaOpeningData(): void
     {
         $resolveData = ['multimediaOpening' => ['foo']];
         $openingMock = $this->createMock(Opening::class);
@@ -1291,7 +1291,7 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     #[Test]
-    public function shouldTransformMultimediaReturnsMultimediaData()
+    public function shouldTransformMultimediaReturnsMultimediaData(): void
     {
         $resolveData = ['multimedia' => ['bar']];
 

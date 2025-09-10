@@ -95,13 +95,14 @@ class RecommendedEditorialsDataTransformer
 
     private function editorialUrl(Editorial $editorial, Section $section): string
     {
-        $editorialPath = sprintf(
+        $editorialPath = \sprintf(
             '%s/%s/%s_%s',
             $section->getPath(),
             $editorial->publicationDate()->format('Y-m-d'),
             Encode::encodeUrl($editorial->editorialTitles()->urlTitle()),
             $editorial->id()->id()
         );
+
         return $this->generateUrl(
             'https://%s.%s.%s/%s',
             $section->isBlog() ? 'blog' : 'www',
