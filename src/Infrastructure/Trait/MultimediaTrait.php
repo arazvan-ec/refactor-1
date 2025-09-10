@@ -23,6 +23,25 @@ trait MultimediaTrait
 {
     private Thumbor $thumbor;
 
+    /**
+     * @var array<string, array<string, string>>
+     */
+    private array $sizes = [
+        '202w' => [
+            'width' => '202',
+            'height' => '152',
+        ],
+        '144w' => [
+            'width' => '144',
+            'height' => '108',
+        ],
+        '128w' => [
+            'width' => '128',
+            'height' => '96',
+        ],
+    ];
+
+
     public function thumbor(): Thumbor
     {
         return $this->thumbor;
@@ -31,6 +50,14 @@ trait MultimediaTrait
     private function setThumbor(Thumbor $thumbor): void
     {
         $this->thumbor = $thumbor;
+    }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function sizes(): array
+    {
+        return $this->sizes;
     }
 
     private function getMultimediaId(Multimedia $multimedia): ?MultimediaId
@@ -59,22 +86,7 @@ trait MultimediaTrait
         $clippings = $multimedia->clippings();
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_ARTICLE_4_3);
 
-        $sizes = [
-            '202w' => [
-                'width' => '202',
-                'height' => '152',
-            ],
-            '144w' => [
-                'width' => '144',
-                'height' => '108',
-            ],
-            '128w' => [
-                'width' => '128',
-                'height' => '96',
-            ],
-        ];
-
-        foreach ($sizes as $type => $size) {
+        foreach ($this->sizes() as $type => $size) {
             $shots[$type] = $this->thumbor->retriveCropBodyTagPicture(
                 $multimedia->file(),
                 $size['width'],
@@ -100,22 +112,7 @@ trait MultimediaTrait
         $clippings = $multimediaOpening['opening']->clippings();
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_ARTICLE_4_3);
 
-        $sizes = [
-            '202w' => [
-                'width' => '202',
-                'height' => '152',
-            ],
-            '144w' => [
-                'width' => '144',
-                'height' => '108',
-            ],
-            '128w' => [
-                'width' => '128',
-                'height' => '96',
-            ],
-        ];
-
-        foreach ($sizes as $type => $size) {
+        foreach ($this->sizes() as $type => $size) {
             $shots[$type] = $this->thumbor->retriveCropBodyTagPicture(
                 $multimediaOpening['resource']->file(),
                 $size['width'],
