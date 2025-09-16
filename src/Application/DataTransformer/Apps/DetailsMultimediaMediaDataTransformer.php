@@ -8,14 +8,15 @@ namespace App\Application\DataTransformer\Apps;
 
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\MultimediaTrait;
-use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
+use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\ClippingTypes;
-use Ec\Multimedia\Domain\Model\Multimedia;
+use Ec\Multimedia\Domain\Model\Multimedia\MultimediaPhoto;
+use Ec\Multimedia\Domain\Model\Photo\Photo;
 
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  */
-class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
+class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransformer
 {
     use MultimediaTrait;
 
@@ -33,6 +34,12 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
 
     /** @var string */
     private const ASPECT_RATIO_4_3 = '4:3';
+
+    /** @var string */
+    private const ASPECT_RATIO_3_2 = '3:2';
+
+    /** @var string */
+    private const ASPECT_RATIO_2_3 = '2:3';
 
     /** @var array<string, array<string, array<string, string> > > */
     private const SIZES_RELATIONS = [
@@ -163,22 +170,126 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
                 self::HEIGHT => '480',
             ],
         ],
+        self::ASPECT_RATIO_3_2 => [
+            // High density
+            '1440w' => [
+                self::WIDTH => '1440',
+                self::HEIGHT => '960',
+            ],
+            '1200w' => [
+                self::WIDTH => '1200',
+                self::HEIGHT => '800',
+            ],
+            '996w' => [
+                self::WIDTH => '996',
+                self::HEIGHT => '664',
+            ],
+            // Desktop
+            '557w' => [
+                self::WIDTH => '557',
+                self::HEIGHT => '371',
+            ],
+            // Tablet
+            '381w' => [
+                self::WIDTH => '381',
+                self::HEIGHT => '254',
+            ],
+            // Mobile
+            '600w' => [
+                self::WIDTH => '600',
+                self::HEIGHT => '400',
+            ],
+            '414w' => [
+                self::WIDTH => '414',
+                self::HEIGHT => '276',
+            ],
+            '375w' => [
+                self::WIDTH => '375',
+                self::HEIGHT => '250',
+            ],
+            '360w' => [
+                self::WIDTH => '360',
+                self::HEIGHT => '240',
+            ],
+            // landscapePhotoFull
+            '767w' => [
+                self::WIDTH => '767',
+                self::HEIGHT => '511',
+            ],
+            // Low Quality Placeholder
+            'lo-res' => [
+                self::WIDTH => '48',
+                self::HEIGHT => '32',
+            ],
+        ],
+        self::ASPECT_RATIO_2_3 => [
+            // High density
+            '1440w' => [
+                self::WIDTH => '1440',
+                self::HEIGHT => '2160',
+            ],
+            '1200w' => [
+                self::WIDTH => '1200',
+                self::HEIGHT => '1800',
+            ],
+            '996w' => [
+                self::WIDTH => '996',
+                self::HEIGHT => '1494',
+            ],
+            // Desktop
+            '557w' => [
+                self::WIDTH => '557',
+                self::HEIGHT => '835',
+            ],
+            // Tablet
+            '381w' => [
+                self::WIDTH => '381',
+                self::HEIGHT => '571',
+            ],
+            // Mobile
+            '600w' => [
+                self::WIDTH => '600',
+                self::HEIGHT => '900',
+            ],
+            '414w' => [
+                self::WIDTH => '414',
+                self::HEIGHT => '621',
+            ],
+            '375w' => [
+                self::WIDTH => '375',
+                self::HEIGHT => '562',
+            ],
+            '360w' => [
+                self::WIDTH => '360',
+                self::HEIGHT => '540',
+            ],
+            // landscapePhotoFull
+            '767w' => [
+                self::WIDTH => '767',
+                self::HEIGHT => '1150',
+            ],
+            // Low Quality Placeholder
+            'lo-res' => [
+                self::WIDTH => '48',
+                self::HEIGHT => '72',
+            ],
+        ],
     ];
 
     /**
-     * @var array<mixed>
+     * @var array{array{opening: MultimediaPhoto, resource: Photo}}|array{}
      */
     private array $arrayMultimedia;
-    private MultimediaEditorial $openingMultimedia;
+    private Opening $openingMultimedia;
 
     public function __construct(private readonly Thumbor $thumborService)
     {
     }
 
     /**
-     * @param array<mixed> $arrayMultimedia
+     * @param array{array{opening: MultimediaPhoto, resource: Photo}}|array{} $arrayMultimedia
      */
-    public function write(array $arrayMultimedia, MultimediaEditorial $openingMultimedia): MultimediaDataTransformer
+    public function write(array $arrayMultimedia, Opening $openingMultimedia): DetailsMultimediaMediaDataTransformer
     {
         $this->arrayMultimedia = $arrayMultimedia;
         $this->openingMultimedia = $openingMultimedia;
@@ -191,24 +302,28 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
      */
     public function read(): array
     {
-        $multimediaId = $this->getMultimediaId($this->openingMultimedia);
-        if (!$multimediaId || empty($this->arrayMultimedia[$multimediaId->id()])) {
+        $multimediaId = $this->openingMultimedia->multimediaId();
+
+        if (!$multimediaId || empty($this->arrayMultimedia[$multimediaId])) {
             return [
                 'id' => '',
                 'type' => 'multimediaNull',
             ];
         }
-        /** @var Multimedia $multimedia */
-        $multimedia = $this->arrayMultimedia[$multimediaId->id()];
+
+        /** @var MultimediaPhoto $multimedia */
+        $multimedia = $this->arrayMultimedia[$multimediaId]['opening'];
+        /** @var Photo $resource */
+        $resource = $this->arrayMultimedia[$multimediaId]['resource'];
         $clippings = $multimedia->clippings();
 
         $clipping = $clippings->clippingByType(ClippingTypes::SIZE_MULTIMEDIA_BIG);
 
         $allShots = [];
         foreach (self::SIZES_RELATIONS as $aspectRatio => $sizes) {
-            $shots = array_map(function ($size) use ($clipping, $multimedia) {
+            $shots = array_map(function ($size) use ($clipping, $resource) {
                 return $this->thumborService->retriveCropBodyTagPicture(
-                    $multimedia->file(),
+                    $resource->file(),
                     $size[self::WIDTH],
                     $size[self::HEIGHT],
                     $clipping->topLeftX(),
@@ -222,7 +337,7 @@ class DetailsMultimediaDataTransformer implements MultimediaDataTransformer
         }
 
         return [
-            'id' => $multimedia->id(),
+            'id' => $multimediaId,
             'type' => 'photo',
             'caption' => $multimedia->caption(),
             'shots' => (object) $allShots,

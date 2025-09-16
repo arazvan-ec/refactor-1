@@ -26,6 +26,10 @@ class PictureShots
     /** @var string */
     private const ASPECT_RATIO_1_1 = '1:1';
 
+    private const ASPECT_RATIO_3_2 = '3:2';
+
+    private const ASPECT_RATIO_2_3 = '2:3';
+
     public const SIZES_RELATIONS = [
         self::ASPECT_RATIO_16_9 => [
             '1440w' => [self::WIDTH => '1440', self::HEIGHT => '810'],
@@ -67,6 +71,26 @@ class PictureShots
             '382w' => [self::WIDTH => '382',  self::HEIGHT => '286'],
             '328w' => [self::WIDTH => '328',  self::HEIGHT => '246'],
         ],
+        self::ASPECT_RATIO_3_2 => [
+            '1440w' => [self::WIDTH => '1440', self::HEIGHT => '960'],
+            '1200w' => [self::WIDTH => '1200', self::HEIGHT => '800'],
+            '996w' => [self::WIDTH => '996', self::HEIGHT => '664'],
+            '640w' => [self::WIDTH => '640', self::HEIGHT => '427'],
+            '390w' => [self::WIDTH => '390', self::HEIGHT => '260'],
+            '568w' => [self::WIDTH => '568', self::HEIGHT => '379'],
+            '382w' => [self::WIDTH => '382', self::HEIGHT => '254'],
+            '328w' => [self::WIDTH => '328', self::HEIGHT => '219'],
+        ],
+        self::ASPECT_RATIO_2_3 => [
+            '1440w' => [self::WIDTH => '1440', self::HEIGHT => '2160'],
+            '1200w' => [self::WIDTH => '1200', self::HEIGHT => '1800'],
+            '996w' => [self::WIDTH => '996', self::HEIGHT => '1494'],
+            '560w' => [self::WIDTH => '560', self::HEIGHT => '840'],
+            '390w' => [self::WIDTH => '390', self::HEIGHT => '585'],
+            '568w' => [self::WIDTH => '568', self::HEIGHT => '852'],
+            '382w' => [self::WIDTH => '382', self::HEIGHT => '573'],
+            '328w' => [self::WIDTH => '328', self::HEIGHT => '492'],
+        ],
     ];
 
     public function __construct(
@@ -84,6 +108,10 @@ class PictureShots
             $result = self::ASPECT_RATIO_3_4;
         } elseif (AbstractPicture::ORIENTATION_LANDSCAPE === $orientation) {
             $result = self::ASPECT_RATIO_4_3;
+        } elseif (AbstractPicture::ORIENTATION_LANDSCAPE_3_2 === $orientation) {
+            $result = self::ASPECT_RATIO_3_2;
+        } elseif (AbstractPicture::ORIENTATION_PORTRAIT_2_3 === $orientation) {
+            $result = self::ASPECT_RATIO_2_3;
         }
 
         return $result;

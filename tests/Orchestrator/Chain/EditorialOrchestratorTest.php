@@ -9,6 +9,7 @@ namespace App\Tests\Orchestrator\Chain;
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
+use App\Application\DataTransformer\Apps\MultimediaMediaDataTransformer;
 use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
 use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
@@ -24,7 +25,9 @@ use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
 use Ec\Editorial\Domain\Model\Body\MembershipCardButtons;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
+use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
 use Ec\Editorial\Domain\Model\NewsBase;
+use Ec\Editorial\Domain\Model\Opening;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Editorial\Domain\Model\RecommendedEditorials;
 use Ec\Editorial\Domain\Model\Signature;
@@ -39,6 +42,9 @@ use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
+use Ec\Multimedia\Domain\Model\Multimedia;
+use Ec\Multimedia\Domain\Model\Photo\Photo;
+use Ec\Multimedia\Infrastructure\Client\Http\Media\QueryMultimediaClient as QueryMultimediaOpeningClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
 use Ec\Section\Domain\Model\Section;
@@ -116,6 +122,15 @@ class EditorialOrchestratorTest extends TestCase
      */
     private RecommendedEditorialsDataTransformer $recommendedEditorialsDataTransformer;
 
+    /**
+     * @var QueryMultimediaOpeningClient|MockObject
+     */
+    private QueryMultimediaOpeningClient $queryMultimediaOpeningClient;
+    /**
+     * @var MultimediaMediaDataTransformer|MockObject
+     */
+    private MultimediaMediaDataTransformer $multimediaMediaDataTransformer;
+
     protected function setUp(): void
     {
         $this->queryEditorialClient = $this->createMock(QueryEditorialClient::class);
@@ -134,6 +149,8 @@ class EditorialOrchestratorTest extends TestCase
         $this->multimediaDataTransformer = $this->createMock(MultimediaDataTransformer::class);
         $this->standfirstDataTransformer = $this->createMock(StandfirstDataTransformer::class);
         $this->recommendedEditorialsDataTransformer = $this->createMock(RecommendedEditorialsDataTransformer::class);
+        $this->queryMultimediaOpeningClient = $this->createMock(QueryMultimediaOpeningClient::class);
+        $this->multimediaMediaDataTransformer = $this->createMock(MultimediaMediaDataTransformer::class);
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
             $this->queryEditorialClient,
@@ -151,6 +168,8 @@ class EditorialOrchestratorTest extends TestCase
             $this->multimediaDataTransformer,
             $this->standfirstDataTransformer,
             $this->recommendedEditorialsDataTransformer,
+            $this->queryMultimediaOpeningClient,
+            $this->multimediaMediaDataTransformer,
             'dev'
         );
     }
@@ -177,6 +196,8 @@ class EditorialOrchestratorTest extends TestCase
             $this->multimediaDataTransformer,
             $this->standfirstDataTransformer,
             $this->recommendedEditorialsDataTransformer,
+            $this->queryMultimediaOpeningClient,
+            $this->multimediaMediaDataTransformer,
         );
     }
 
@@ -280,6 +301,7 @@ class EditorialOrchestratorTest extends TestCase
      * @param array<string, string>             $membershipLinkCombine
      * @param array<int, array<int, string>>    $expectedJournalistAliasIds
      * @param array<mixed>                      $expectedPhotoFromBodyTags
+     * @param array<string, string>             $expectedOpeningMultimedia
      */
     #[DataProviderExternal(EditorialOrchestratorDataProvider::class, 'getData')]
     #[Test]
@@ -290,6 +312,7 @@ class EditorialOrchestratorTest extends TestCase
         array $membershipLinkCombine,
         array $expectedJournalistAliasIds,
         array $expectedPhotoFromBodyTags,
+        array $expectedOpeningMultimedia,
     ): void {
         $journalistsEditorial = $editorial['signatures'];
 
@@ -353,6 +376,9 @@ class EditorialOrchestratorTest extends TestCase
         $editorialMock->expects(self::exactly(4))
             ->method('body')
             ->willReturn($bodyMock);
+        $openingMock = $this->createMock(Opening::class);
+        $editorialMock->method('opening')
+            ->willReturn($openingMock);
 
         [
             $expectedRecommendedNews,
@@ -465,6 +491,7 @@ class EditorialOrchestratorTest extends TestCase
         $resolveData['insertedNews'] = $expectedInsertedNews;
         $resolveData['multimedia'] = [];
         $resolveData['recommendedEditorials'] = $expectedRecommendedNews;
+        $resolveData['multimediaOpening'] = [];
 
         $this->bodyDataTransformer->expects(static::once())
             ->method('execute')
@@ -501,6 +528,7 @@ class EditorialOrchestratorTest extends TestCase
 
         $expectedResult['standfirst'] = $editorial['standfirstExpected'];
         $expectedResult['recommendedEditorials'] = $editorial['recommenderExpected'];
+        $expectedResult['multimedia'] = $expectedOpeningMultimedia;
 
         $result = $this->editorialOrchestrator->execute($requestMock);
 
@@ -821,6 +849,8 @@ class EditorialOrchestratorTest extends TestCase
         foreach ($editorial['insertedNews'] as $bodyTag) {
             $bodyElementMock = $this->createMock(BodyTagInsertedNews::class);
 
+            $openingMock = $this->createMock(Opening::class);
+
             $bodyElementEditorialIdInsertedMock = $this->createMock(EditorialId::class);
             $bodyElementEditorialIdInsertedMock->expects(static::once())
                 ->method('id')
@@ -829,10 +859,15 @@ class EditorialOrchestratorTest extends TestCase
                 ->method('editorialId')
                 ->willReturn($bodyElementEditorialIdInsertedMock);
 
-            $editorialInsertedMock = $this->createMock(Editorial::class);
+            $editorialInsertedMock = $this->createMock(NewsBase::class);
             $editorialInsertedMock->expects(static::once())
                 ->method('isVisible')
                 ->willReturn(true);
+
+            $editorialInsertedMock
+                ->method('opening')
+                ->willReturn($openingMock);
+
             $promisesEditorials[] = $editorialInsertedMock;
             $withEditorials[] = $bodyTag['id'];
             $sectionInsertedMock = $this->createMock(Section::class);
@@ -940,10 +975,13 @@ class EditorialOrchestratorTest extends TestCase
                 ->method('id')
                 ->willReturn($editorialId);
             $recommenderIds[] = $editorialIdRecommendedMock;
-            $editorialRecommendedMock = $this->createMock(Editorial::class);
+            $openingMock = $this->createMock(Opening::class);
+            $editorialRecommendedMock = $this->createMock(NewsBase::class);
             $editorialRecommendedMock->expects(static::once())
                 ->method('isVisible')
                 ->willReturn(true);
+            $editorialRecommendedMock->method('opening')
+                ->willReturn($openingMock);
             $promisesEditorials[] = $editorialRecommendedMock;
             $withEditorials[] = $editorialId;
             $sectionRecommendedMock = $this->createMock(Section::class);
@@ -1117,5 +1155,166 @@ class EditorialOrchestratorTest extends TestCase
         }
 
         return [$promisesJournalist, $withAlias];
+    }
+
+    #[Test]
+    public function shouldGetOpeningWithOpeningAndResource(): void
+    {
+        $editorial = $this->createMock(NewsBase::class);
+        $opening = $this->createMock(Opening::class);
+        $opening->method('multimediaId')->willReturn('123');
+        $editorial->method('opening')->willReturn($opening);
+
+        $resourceIdMock = $this->createMock(Multimedia\ResourceId::class);
+        $resourceIdMock->method('id')->willReturn('456');
+        $multimedia = $this->createMock(Multimedia\MultimediaPhoto::class);
+        $multimedia->method('resourceId')->willReturn($resourceIdMock);
+
+        $photoMock = $this->createMock(Photo::class);
+
+        $this->queryMultimediaOpeningClient
+            ->method('findMultimediaById')
+            ->with('123')
+            ->willReturn($multimedia);
+
+        $this->queryMultimediaOpeningClient
+            ->expects(static::once())
+            ->method('findPhotoById')
+            ->with($resourceIdMock)
+            ->willReturn($photoMock);
+
+        $resolveData = [];
+        $reflection = new \ReflectionClass($this->editorialOrchestrator);
+
+        $method = $reflection->getMethod('getOpening');
+        $method->setAccessible(true);
+        /** @var array{
+         *      multimediaOpening?: array{123?: array{opening: Multimedia\MultimediaPhoto, resource: Photo}}
+         * } $result
+         */
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
+
+        $this->assertArrayHasKey('multimediaOpening', $result);
+        $this->assertArrayHasKey('123', $result['multimediaOpening']);
+        $this->assertSame($multimedia, $result['multimediaOpening']['123']['opening']);
+        $this->assertSame($photoMock, $result['multimediaOpening']['123']['resource']);
+    }
+
+    #[Test]
+    public function shouldReturnOnlyFulfilledMultimedia(): void
+    {
+        $mm1 = $this->createMock(Multimedia::class);
+        $mm1->method('id')->willReturn('id1');
+
+        $mm2 = $this->createMock(Multimedia::class);
+        $mm2->method('id')->willReturn('id2');
+
+        $mm3 = $this->createMock(Multimedia::class);
+        $mm3->method('id')->willReturn('id3');
+
+        $promises = [
+            [
+                'state' => 'fulfilled',
+                'value' => $mm1,
+            ],
+            [
+                'state' => 'rejected',
+                'value' => $mm2,
+            ],
+            [
+                'state' => 'fulfilled',
+                'value' => $mm3,
+            ],
+        ];
+
+        $method = new \ReflectionMethod($this->editorialOrchestrator, 'fulfilledMultimedia');
+        static::assertFalse($method->isPrivate());
+        static::assertTrue($method->isProtected());
+        $method->setAccessible(true);
+        $result = $method->invoke($this->editorialOrchestrator, $promises);
+
+        static::assertSame([
+            'id1' => $mm1,
+            'id3' => $mm3,
+        ], $result);
+    }
+
+    #[Test]
+    public function createCallbackInvokesCallableWithParameters(): void
+    {
+        $callable = function ($element, ...$params) {
+            return [$element, $params];
+        };
+
+        $element = 'foo';
+        $params = ['bar' => 'baz', 'qux' => 'quux'];
+
+        $method = new \ReflectionMethod($this->editorialOrchestrator, 'createCallback');
+        static::assertFalse($method->isPrivate());
+        static::assertTrue($method->isProtected());
+        $method->setAccessible(true);
+
+        $callback = $method->invokeArgs($this->editorialOrchestrator, [$callable, ...$params]);
+
+        static::assertInstanceOf(\Closure::class, $callback);
+
+        $result = $callback($element);
+
+        static::assertEquals(['foo', $params], $result);
+    }
+
+    #[Test]
+    public function shouldTransformMultimediaReturnsMediaOpeningData(): void
+    {
+        $resolveData = ['multimediaOpening' => ['foo']];
+        $openingMock = $this->createMock(Opening::class);
+        $editorial = $this->createMock(NewsBase::class);
+        $editorial->method('opening')->willReturn($openingMock);
+
+        $this->multimediaMediaDataTransformer
+            ->expects($this->once())
+            ->method('write')
+            ->with(['foo'], $openingMock)
+            ->willReturnSelf();
+        $this->multimediaMediaDataTransformer
+            ->method('read')
+            ->willReturn(['result' => 'media']);
+
+        $method = new \ReflectionMethod($this->editorialOrchestrator, 'transformMultimedia');
+        static::assertFalse($method->isPrivate());
+        static::assertTrue($method->isProtected());
+
+        $method->setAccessible(true);
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
+
+        $this->assertEquals(['result' => 'media'], $result);
+    }
+
+    #[Test]
+    public function shouldTransformMultimediaReturnsMultimediaData(): void
+    {
+        $resolveData = ['multimedia' => ['bar']];
+
+        $editorial = $this->createMock(Editorial::class);
+        $multimediaMock = $this->createMock(MultimediaEditorial::class);
+        $editorial->method('multimedia')->willReturn($multimediaMock);
+
+        $this->multimediaDataTransformer
+            ->expects(static::once())
+            ->method('write')
+            ->with(['bar'], $multimediaMock)
+            ->willReturnSelf();
+        $this->multimediaDataTransformer
+            ->method('read')
+            ->willReturn(['result' => 'data']);
+
+        $method = new \ReflectionMethod($this->editorialOrchestrator, 'transformMultimedia');
+        static::assertFalse($method->isPrivate());
+        static::assertTrue($method->isProtected());
+
+        $method->setAccessible(true);
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
+
+        static::assertEquals(['result' => 'data'], $result);
     }
 }
