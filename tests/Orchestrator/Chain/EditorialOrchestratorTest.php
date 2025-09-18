@@ -8,8 +8,8 @@ namespace App\Tests\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
+use App\Application\DataTransformer\Apps\Media\MediaDataTransformer;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
-use App\Application\DataTransformer\Apps\MultimediaMediaDataTransformer;
 use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
 use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
@@ -127,9 +127,9 @@ class EditorialOrchestratorTest extends TestCase
      */
     private QueryMultimediaOpeningClient $queryMultimediaOpeningClient;
     /**
-     * @var MultimediaMediaDataTransformer|MockObject
+     * @var MediaDataTransformer|MockObject
      */
-    private MultimediaMediaDataTransformer $multimediaMediaDataTransformer;
+    private MediaDataTransformer $multimediaMediaDataTransformer;
 
     protected function setUp(): void
     {
@@ -150,7 +150,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->standfirstDataTransformer = $this->createMock(StandfirstDataTransformer::class);
         $this->recommendedEditorialsDataTransformer = $this->createMock(RecommendedEditorialsDataTransformer::class);
         $this->queryMultimediaOpeningClient = $this->createMock(QueryMultimediaOpeningClient::class);
-        $this->multimediaMediaDataTransformer = $this->createMock(MultimediaMediaDataTransformer::class);
+        $this->multimediaMediaDataTransformer = $this->createMock(MediaDataTransformer::class);
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
             $this->queryEditorialClient,

@@ -4,7 +4,7 @@
  * @copyright
  */
 
-namespace App\Application\DataTransformer\Apps;
+namespace App\Application\DataTransformer\Apps\Media;
 
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\MultimediaTrait;
@@ -16,7 +16,7 @@ use Ec\Multimedia\Domain\Model\Photo\Photo;
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  */
-class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransformer
+class DetailsMultimediaPhotoDataTransformer implements MediaDataTransformer
 {
     use MultimediaTrait;
 
@@ -289,7 +289,7 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
     /**
      * @param array{array{opening: MultimediaPhoto, resource: Photo}}|array{} $arrayMultimedia
      */
-    public function write(array $arrayMultimedia, Opening $openingMultimedia): DetailsMultimediaMediaDataTransformer
+    public function write(array $arrayMultimedia, Opening $openingMultimedia): DetailsMultimediaPhotoDataTransformer
     {
         $this->arrayMultimedia = $arrayMultimedia;
         $this->openingMultimedia = $openingMultimedia;
@@ -343,5 +343,10 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
             'shots' => (object) $allShots,
             'photo' => current($allShots[self::ASPECT_RATIO_16_9]),
         ];
+    }
+
+    public function canTransform(): string
+    {
+        return MultimediaPhoto::class;
     }
 }

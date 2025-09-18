@@ -8,8 +8,8 @@ namespace App\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
+use App\Application\DataTransformer\Apps\Media\MediaDataTransformerHandler;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
-use App\Application\DataTransformer\Apps\MultimediaMediaDataTransformer;
 use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
 use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
@@ -31,6 +31,7 @@ use Ec\Editorial\Domain\Model\Multimedia\Widget;
 use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Editorial\Domain\Model\Signature;
+use Ec\Editorial\Exceptions\MultimediaDataTransformerNotFoundException;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
@@ -76,7 +77,7 @@ class EditorialOrchestrator implements Orchestrator
         private readonly StandfirstDataTransformer $standFirstDataTransformer,
         private readonly RecommendedEditorialsDataTransformer $recommendedEditorialsDataTransformer,
         private readonly QueryMultimediaOpeningClient $queryMultimediaOpeningClient,
-        private readonly MultimediaMediaDataTransformer $multimediaMediaDataTransformer,
+        private readonly MediaDataTransformerHandler $mediaDataTransformerHandler,
         string $extension,
     ) {
         $this->setExtension($extension);
@@ -474,15 +475,19 @@ class EditorialOrchestrator implements Orchestrator
      * @param array<string, array<string, mixed>> $resolveData
      *
      * @return array<string, mixed>
+     * @throws MultimediaDataTransformerNotFoundException
      */
     protected function transformMultimedia(Editorial $editorial, array $resolveData): array
     {
         /** @var NewsBase $editorial */
         if (!empty($resolveData['multimediaOpening'])) {
-            return $this->multimediaMediaDataTransformer
-                ->write($resolveData['multimediaOpening'], $editorial->opening())
-                ->read();
-        } elseif (!empty($resolveData['multimedia'])) {
+            return $this->mediaDataTransformerHandler->execute(
+                $resolveData['multimediaOpening'],
+                $editorial->opening()
+            );
+        }
+
+        if (!empty($resolveData['multimedia'])) {
             return $this->multimediaDataTransformer
                 ->write($resolveData['multimedia'], $editorial->multimedia())
                 ->read();

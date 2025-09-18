@@ -4,9 +4,9 @@
  * @copyright
  */
 
-namespace App\Tests\Application\DataTransformer\Apps;
+namespace App\Tests\Application\DataTransformer\Apps\Media;
 
-use App\Application\DataTransformer\Apps\DetailsMultimediaMediaDataTransformer;
+use App\Application\DataTransformer\Apps\Media\DetailsMultimediaPhotoDataTransformer;
 use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\Multimedia\Clipping;
@@ -20,9 +20,9 @@ use PHPUnit\Framework\TestCase;
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
  */
-class DetailsMultimediaMediaDataTransformerTest extends TestCase
+class DetailsMultimediaPhotoDataTransformerTest extends TestCase
 {
-    private DetailsMultimediaMediaDataTransformer $transformer;
+    private DetailsMultimediaPhotoDataTransformer $transformer;
 
     /** @var MockObject|Thumbor */
     private Thumbor|MockObject $thumbor;
@@ -30,7 +30,7 @@ class DetailsMultimediaMediaDataTransformerTest extends TestCase
     protected function setUp(): void
     {
         $this->thumbor = $this->createMock(Thumbor::class);
-        $this->transformer = new DetailsMultimediaMediaDataTransformer($this->thumbor);
+        $this->transformer = new DetailsMultimediaPhotoDataTransformer($this->thumbor);
     }
 
     #[Test]
