@@ -49,6 +49,8 @@ use Psr\Http\Message\UriFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+use function PHPUnit\Framework\isInstanceOf;
+
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  */
@@ -430,12 +432,14 @@ class EditorialOrchestrator implements Orchestrator
         /** @var NewsBase $editorial */
         $opening = $editorial->opening();
         if (!empty($opening->multimediaId())) {
-            /** @var MultimediaPhoto $multimedia */
+            /** @var Multimedia $multimedia */
             $multimedia = $this->queryMultimediaOpeningClient->findMultimediaById($opening->multimediaId());
-            $resource = $this->queryMultimediaOpeningClient->findPhotoById($multimedia->resourceId());
+            if ($multimedia instanceof MultimediaPhoto) {
+                $resource = $this->queryMultimediaOpeningClient->findPhotoById($multimedia->resourceId());
+                $resolveData['multimediaOpening'][$opening->multimediaId()]['resource'] = $resource;
+            }
 
             $resolveData['multimediaOpening'][$opening->multimediaId()]['opening'] = $multimedia;
-            $resolveData['multimediaOpening'][$opening->multimediaId()]['resource'] = $resource;
         }
 
         return $resolveData; // @phpstan-ignore return.type
@@ -475,6 +479,7 @@ class EditorialOrchestrator implements Orchestrator
      * @param array<string, array<string, mixed>> $resolveData
      *
      * @return array<string, mixed>
+     *
      * @throws MultimediaDataTransformerNotFoundException
      */
     protected function transformMultimedia(Editorial $editorial, array $resolveData): array
@@ -482,8 +487,8 @@ class EditorialOrchestrator implements Orchestrator
         /** @var NewsBase $editorial */
         if (!empty($resolveData['multimediaOpening'])) {
             return $this->mediaDataTransformerHandler->execute(
-                $resolveData['multimediaOpening'],
-                $editorial->opening()
+                $resolveData['multimediaOpening'][$editorial->opening()->multimediaId()]['opening'],
+                $resolveData
             );
         }
 

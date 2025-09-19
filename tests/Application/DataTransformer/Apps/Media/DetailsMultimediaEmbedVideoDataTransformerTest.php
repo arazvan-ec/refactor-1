@@ -7,14 +7,9 @@
 namespace App\Tests\Application\DataTransformer\Apps\Media;
 
 use App\Application\DataTransformer\Apps\Media\DetailsMultimediaEmbedVideoDataTransformer;
-use App\Application\DataTransformer\Apps\Media\DetailsMultimediaPhotoDataTransformer;
-use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Opening;
-use Ec\Multimedia\Domain\Model\Multimedia\Clipping;
-use Ec\Multimedia\Domain\Model\Multimedia\Clippings;
 use Ec\Multimedia\Domain\Model\Multimedia\MultimediaEmbedVideo;
 use Ec\Multimedia\Domain\Model\Multimedia\MultimediaPhoto;
-use Ec\Multimedia\Domain\Model\Photo\Photo;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -65,7 +60,7 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
 
         /** @var array<string, array{opening: MultimediaPhoto}> $arrayMultimedia */
         $arrayMultimedia = [
-                'opening' => $multimedia,
+            'opening' => $multimedia,
         ];
 
         $result = $this->transformer->write($arrayMultimedia, $opening)->read();

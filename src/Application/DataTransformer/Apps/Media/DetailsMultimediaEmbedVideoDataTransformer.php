@@ -6,13 +6,8 @@
 
 namespace App\Application\DataTransformer\Apps\Media;
 
-use App\Infrastructure\Service\Thumbor;
-use App\Infrastructure\Trait\MultimediaTrait;
 use Ec\Editorial\Domain\Model\Opening;
-use Ec\Multimedia\Domain\Model\ClippingTypes;
 use Ec\Multimedia\Domain\Model\Multimedia\MultimediaEmbedVideo;
-use Ec\Multimedia\Domain\Model\Multimedia\MultimediaPhoto;
-use Ec\Multimedia\Domain\Model\Photo\Photo;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
@@ -36,7 +31,7 @@ class DetailsMultimediaEmbedVideoDataTransformer implements MediaDataTransformer
      */
     public function write(
         array $arrayMultimedia,
-        Opening $openingMultimedia
+        Opening $openingMultimedia,
     ): DetailsMultimediaEmbedVideoDataTransformer {
         $this->arrayMultimedia = $arrayMultimedia;
         $this->openingMultimedia = $openingMultimedia;

@@ -117,16 +117,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.356.19",
+            "version": "3.356.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "4dbc87e689c4e4a6655d6b7e3d02ce2f4e87aa5c"
+                "reference": "7514867a6463fb68a60f5e17b4ccc56b4dc7d4f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4dbc87e689c4e4a6655d6b7e3d02ce2f4e87aa5c",
-                "reference": "4dbc87e689c4e4a6655d6b7e3d02ce2f4e87aa5c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/7514867a6463fb68a60f5e17b4ccc56b4dc7d4f1",
+                "reference": "7514867a6463fb68a60f5e17b4ccc56b4dc7d4f1",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -214,9 +214,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.356.19"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.356.20"
             },
-            "time": "2025-09-16T18:17:04+00:00"
+            "time": "2025-09-17T18:23:32+00:00"
         },
         {
             "name": "beberlei/assert",
@@ -2578,12 +2578,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/domain/multimedia-domain.git",
-                "reference": "01bbfadd6d05ab653676778151857a419c164c22"
+                "reference": "cf24904dbaffa951e404d3c44c169ab26b1ef042"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fmultimedia-domain/repository/archive.zip?sha=01bbfadd6d05ab653676778151857a419c164c22",
-                "reference": "01bbfadd6d05ab653676778151857a419c164c22",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fmultimedia-domain/repository/archive.zip?sha=cf24904dbaffa951e404d3c44c169ab26b1ef042",
+                "reference": "cf24904dbaffa951e404d3c44c169ab26b1ef042",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2656,7 +2656,7 @@
                 "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/multimedia-domain/-/tree/feature/PROD-45181-ms-multimedia-nuevo-modelo-embed-video-y-sus-dependencias-factoria-datatransformer-entidad-etc",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/domain/multimedia-domain/-/issues"
             },
-            "time": "2025-09-17T13:25:11+02:00"
+            "time": "2025-09-17T18:27:09+02:00"
         },
         {
             "name": "ec/persistence-library",
@@ -5681,12 +5681,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "05100174effdc01eeac118dd5904541534d96573"
+                "reference": "eab8db4359fb0334930b388fce1076aef8af9df5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/05100174effdc01eeac118dd5904541534d96573",
-                "reference": "05100174effdc01eeac118dd5904541534d96573",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/eab8db4359fb0334930b388fce1076aef8af9df5",
+                "reference": "eab8db4359fb0334930b388fce1076aef8af9df5",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -5789,7 +5789,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-09-07T06:27:57+00:00"
+            "time": "2025-09-18T00:51:28+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
