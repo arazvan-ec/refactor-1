@@ -6,7 +6,7 @@
 
 namespace App\Tests\Application\DataTransformer\Apps\Media;
 
-use App\Application\DataTransformer\Apps\Media\DetailsMultimediaPhotoDataTransformer;
+use App\Application\DataTransformer\Apps\Media\DataTransformers\DetailsMultimediaPhotoDataTransformer;
 use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\Multimedia\Clipping;

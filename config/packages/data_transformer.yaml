@@ -18,11 +18,8 @@ services:
         lazy: true
         shared: true
 
-    App\Application\DataTransformer\Apps\Media\:
-        resource: '../../src/Application/DataTransformer/Apps/Media/'
-        exclude:
-            - '../../src/Application/DataTransformer/Apps/Media/MediaDataTransformer'
-            - '../../src/Application/DataTransformer/Apps/Media/MediaDataTransformerHandler'
+    App\Application\DataTransformer\Apps\Media\DataTransformers\:
+        resource: '../../src/Application/DataTransformer/Apps/Media/DataTransformers/'
         tags: [ 'app.media_data_transformer' ]
         lazy: true
         shared: true

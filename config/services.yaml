@@ -23,6 +23,7 @@ services:
             - '../src/Controller/V1/'
             - '../src/Ec/Snaapi/Infrastructure/'
             - '../src/Application/DataTransformer/Apps/Body/'
+            - '../src/Application/DataTransformer/Apps/Media/DataTransformers/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -6,6 +6,8 @@
 
 namespace App\Application\DataTransformer\Apps\Media;
 
+use Ec\Editorial\Domain\Model\Editorial;
+use Ec\Editorial\Domain\Model\Opening;
 use Ec\Editorial\Exceptions\MultimediaDataTransformerNotFoundException;
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 
@@ -30,14 +32,15 @@ class MediaDataTransformerHandler
     }
 
     /**
-     * @param array<string, mixed> $resolveData
+     * @param array<string, mixed> $multimediaOpeningData
      *
      * @return array<string, mixed>
      *
      * @throws MultimediaDataTransformerNotFoundException
      */
-    public function execute(Multimedia $multimediaElement, array $resolveData = []): array
+    public function execute(array $multimediaOpeningData, Opening $openingData): array
     {
+        $multimediaElement = $multimediaOpeningData[$openingData->multimediaId()]['opening'];
         if (empty($this->dataTransformers[\get_class($multimediaElement)])) {
             $message = \sprintf('Media data transformer type %s not found', $multimediaElement->type());
             throw new MultimediaDataTransformerNotFoundException($message);
@@ -45,6 +48,6 @@ class MediaDataTransformerHandler
 
         $transformer = $this->dataTransformers[\get_class($multimediaElement)];
 
-        return $transformer->write($multimediaElement, $resolveData)->read();
+        return $transformer->write($multimediaOpeningData, $openingData)->read();
     }
 }

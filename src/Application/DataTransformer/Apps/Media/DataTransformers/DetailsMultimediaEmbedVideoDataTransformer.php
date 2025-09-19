@@ -4,8 +4,9 @@
  * @copyright
  */
 
-namespace App\Application\DataTransformer\Apps\Media;
+namespace App\Application\DataTransformer\Apps\Media\DataTransformers;
 
+use App\Application\DataTransformer\Apps\Media\MediaDataTransformer;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\Multimedia\MultimediaEmbedVideo;
 

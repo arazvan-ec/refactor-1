@@ -487,8 +487,8 @@ class EditorialOrchestrator implements Orchestrator
         /** @var NewsBase $editorial */
         if (!empty($resolveData['multimediaOpening'])) {
             return $this->mediaDataTransformerHandler->execute(
-                $resolveData['multimediaOpening'][$editorial->opening()->multimediaId()]['opening'],
-                $resolveData
+                $resolveData['multimediaOpening'],
+                $editorial->opening()
             );
         }
 

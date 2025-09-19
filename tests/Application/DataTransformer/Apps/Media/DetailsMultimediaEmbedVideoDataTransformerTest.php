@@ -6,7 +6,7 @@
 
 namespace App\Tests\Application\DataTransformer\Apps\Media;
 
-use App\Application\DataTransformer\Apps\Media\DetailsMultimediaEmbedVideoDataTransformer;
+use App\Application\DataTransformer\Apps\Media\DataTransformers\DetailsMultimediaEmbedVideoDataTransformer;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\Multimedia\MultimediaEmbedVideo;
 use Ec\Multimedia\Domain\Model\Multimedia\MultimediaPhoto;
