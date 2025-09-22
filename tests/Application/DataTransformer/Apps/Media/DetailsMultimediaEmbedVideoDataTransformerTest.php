@@ -9,7 +9,6 @@ namespace App\Tests\Application\DataTransformer\Apps\Media;
 use App\Application\DataTransformer\Apps\Media\DataTransformers\DetailsMultimediaEmbedVideoDataTransformer;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\Multimedia\MultimediaEmbedVideo;
-use Ec\Multimedia\Domain\Model\Multimedia\MultimediaPhoto;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
@@ -64,7 +63,6 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
             $result
         );
     }
-
 
     #[Test]
     public function readShouldReturnsEmbedVideoDefaultDataForValidMultimedia(): void

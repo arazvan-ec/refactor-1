@@ -7,8 +7,6 @@
 namespace App\Tests\DependencyInjection\Compiler;
 
 use App\Application\DataTransformer\Apps\Media\MediaDataTransformerHandler;
-use App\Application\DataTransformer\BodyElementDataTransformerHandler;
-use App\DependencyInjection\Compiler\BodyDataTransformerCompiler;
 use App\DependencyInjection\Compiler\MediaDataTransformerCompiler;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;

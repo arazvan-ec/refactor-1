@@ -6,10 +6,8 @@
 
 namespace App\Application\DataTransformer\Apps\Media;
 
-use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Editorial\Exceptions\MultimediaDataTransformerNotFoundException;
-use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>

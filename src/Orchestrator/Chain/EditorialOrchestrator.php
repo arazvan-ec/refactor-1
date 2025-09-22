@@ -49,8 +49,6 @@ use Psr\Http\Message\UriFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use function PHPUnit\Framework\isInstanceOf;
-
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  */

@@ -8,7 +8,6 @@ namespace App\Tests\Orchestrator\Chain;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
-use App\Application\DataTransformer\Apps\Media\MediaDataTransformer;
 use App\Application\DataTransformer\Apps\Media\MediaDataTransformerHandler;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
 use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
