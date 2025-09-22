@@ -80,7 +80,7 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
             ->willReturn('Test Caption');
         $multimedia
             ->expects($this->exactly(2))
-            ->method('text')
+            ->method('html')
             ->willReturn('<iframe src="https://www.testmotion.com/embed/video/x7u5j5"></iframe>');
 
         /** @var array<string, array{opening: MultimediaEmbedVideo}> $arrayMultimedia */
@@ -115,7 +115,7 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
             ->willReturn('Test Caption');
         $multimedia
             ->expects($this->exactly(2))
-            ->method('text')
+            ->method('html')
             ->willReturn('<div itemscope itemtype="https://schema.org/VideoObject"><meta itemprop="name" content="prueba"><meta itemprop="description" content="asdasda"><meta itemprop="uploadDate" content="2025-08-29T12:00:16.000Z"><meta itemprop="thumbnailUrl" content="https://s2.dmcdn.net/v/Z0MUI1ekN8LWSfu6D/x180"><meta itemprop="duration" content="P5S"><meta itemprop="embedUrl" content="https://geo.dailymotion.com/player/x1i0xw.html?video=x9pnrf6"><script src="https://geo.dailymotion.com/player/x1i0xw.js" data-video="x9pnrf6"></script></div>');
 
         /** @var array<string, array{opening: MultimediaEmbedVideo}> $arrayMultimedia */

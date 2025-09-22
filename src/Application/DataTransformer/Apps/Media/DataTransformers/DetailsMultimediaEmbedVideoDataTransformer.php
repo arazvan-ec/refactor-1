@@ -69,7 +69,7 @@ class DetailsMultimediaEmbedVideoDataTransformer implements MediaDataTransformer
 
     private function isDailyMotionVideo(MultimediaEmbedVideo $multimedia): bool
     {
-        return str_contains($multimedia->text(), 'dailymotion.com');
+        return str_contains($multimedia->html(), 'dailymotion.com');
     }
 
     /**
@@ -97,7 +97,7 @@ class DetailsMultimediaEmbedVideoDataTransformer implements MediaDataTransformer
             'id' => $multimediaId,
             'type' => self::EMBED_VIDEO_GENERIC,
             'caption' => $multimedia->caption(),
-            'embedText' => $multimedia->text(),
+            'embedText' => $multimedia->html(),
         ];
     }
 
@@ -106,7 +106,7 @@ class DetailsMultimediaEmbedVideoDataTransformer implements MediaDataTransformer
      */
     private function extractDailyMotionData(MultimediaEmbedVideo $multimedia): array
     {
-        $htmlContent = $multimedia->text();
+        $htmlContent = $multimedia->html();
 
         preg_match('/\/player\/([a-zA-Z0-9]+)\.html\?video=([a-zA-Z0-9]+)/', $htmlContent, $matches);
 

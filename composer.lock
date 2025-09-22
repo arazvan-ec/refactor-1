@@ -2578,12 +2578,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/domain/multimedia-domain.git",
-                "reference": "f625468aa643cd5952f8f41d21e91269534e0892"
+                "reference": "8fc7d3b44ebac246d4c0a80fd1ef1f48a196b5d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fmultimedia-domain/repository/archive.zip?sha=f625468aa643cd5952f8f41d21e91269534e0892",
-                "reference": "f625468aa643cd5952f8f41d21e91269534e0892",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fmultimedia-domain/repository/archive.zip?sha=8fc7d3b44ebac246d4c0a80fd1ef1f48a196b5d1",
+                "reference": "8fc7d3b44ebac246d4c0a80fd1ef1f48a196b5d1",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2656,7 +2656,7 @@
                 "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/multimedia-domain/-/tree/feature/PROD-45181-ms-multimedia-nuevo-modelo-embed-video-y-sus-dependencias-factoria-datatransformer-entidad-etc",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/domain/multimedia-domain/-/issues"
             },
-            "time": "2025-09-22T13:55:33+02:00"
+            "time": "2025-09-22T16:45:55+02:00"
         },
         {
             "name": "ec/persistence-library",
