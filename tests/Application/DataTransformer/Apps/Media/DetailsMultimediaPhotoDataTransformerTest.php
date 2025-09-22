@@ -146,4 +146,10 @@ class DetailsMultimediaPhotoDataTransformerTest extends TestCase
             }
         }
     }
+
+    #[Test]
+    public function canTransformShouldReturnMultimediaPhotoClass(): void
+    {
+        $this->assertSame(MultimediaPhoto::class, $this->transformer->canTransform());
+    }
 }

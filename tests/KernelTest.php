@@ -8,6 +8,7 @@ namespace App\Tests;
 
 use App\DependencyInjection\Compiler\BodyDataTransformerCompiler;
 use App\DependencyInjection\Compiler\EditorialOrchestratorCompiler;
+use App\DependencyInjection\Compiler\MediaDataTransformerCompiler;
 use App\DependencyInjection\Compiler\MultimediaFactoryCompiler;
 use App\Kernel;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -28,7 +29,7 @@ class KernelTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $invokedCount = self::exactly(3);
+        $invokedCount = self::exactly(4);
         $containerBuilder->expects($invokedCount)
             ->method('addCompilerPass')
             ->willReturnCallback(function ($method) use ($containerBuilder, $invokedCount) {
@@ -38,6 +39,8 @@ class KernelTest extends TestCase
                     self::assertInstanceOf(BodyDataTransformerCompiler::class, $method);
                 } elseif (3 == $invokedCount->numberOfInvocations()) {
                     self::assertInstanceOf(MultimediaFactoryCompiler::class, $method);
+                } elseif (4 == $invokedCount->numberOfInvocations()) {
+                    self::assertInstanceOf(MediaDataTransformerCompiler::class, $method);
                 }
 
                 return $containerBuilder;

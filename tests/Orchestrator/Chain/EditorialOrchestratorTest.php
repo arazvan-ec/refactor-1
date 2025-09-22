@@ -9,6 +9,7 @@ namespace App\Tests\Orchestrator\Chain;
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
 use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\Apps\Media\MediaDataTransformer;
+use App\Application\DataTransformer\Apps\Media\MediaDataTransformerHandler;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
 use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
 use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
@@ -127,9 +128,9 @@ class EditorialOrchestratorTest extends TestCase
      */
     private QueryMultimediaOpeningClient $queryMultimediaOpeningClient;
     /**
-     * @var MediaDataTransformer|MockObject
+     * @var MediaDataTransformerHandler|MockObject
      */
-    private MediaDataTransformer $multimediaMediaDataTransformer;
+    private MediaDataTransformerHandler $mediaDataTransformerHandler;
 
     protected function setUp(): void
     {
@@ -150,7 +151,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->standfirstDataTransformer = $this->createMock(StandfirstDataTransformer::class);
         $this->recommendedEditorialsDataTransformer = $this->createMock(RecommendedEditorialsDataTransformer::class);
         $this->queryMultimediaOpeningClient = $this->createMock(QueryMultimediaOpeningClient::class);
-        $this->multimediaMediaDataTransformer = $this->createMock(MediaDataTransformer::class);
+        $this->mediaDataTransformerHandler = $this->createMock(MediaDataTransformerHandler::class);
         $this->editorialOrchestrator = new EditorialOrchestrator(
             $this->queryLegacyClient,
             $this->queryEditorialClient,
@@ -169,7 +170,7 @@ class EditorialOrchestratorTest extends TestCase
             $this->standfirstDataTransformer,
             $this->recommendedEditorialsDataTransformer,
             $this->queryMultimediaOpeningClient,
-            $this->multimediaMediaDataTransformer,
+            $this->mediaDataTransformerHandler,
             'dev'
         );
     }
@@ -1158,7 +1159,7 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     #[Test]
-    public function shouldGetOpeningWithOpeningAndResource(): void
+    public function shouldGetOpeningWithOpeningAndResourceWhenIsTypeMultimediaPhoto(): void
     {
         $editorial = $this->createMock(NewsBase::class);
         $opening = $this->createMock(Opening::class);
@@ -1198,6 +1199,43 @@ class EditorialOrchestratorTest extends TestCase
         $this->assertArrayHasKey('123', $result['multimediaOpening']);
         $this->assertSame($multimedia, $result['multimediaOpening']['123']['opening']);
         $this->assertSame($photoMock, $result['multimediaOpening']['123']['resource']);
+    }
+
+    #[Test]
+    public function shouldGetOpeningWithOpeningAndWithoutResourceWhenIsNotTypeMultimediaPhoto(): void
+    {
+        $editorial = $this->createMock(NewsBase::class);
+        $opening = $this->createMock(Opening::class);
+        $opening->expects(static::exactly(3))
+            ->method('multimediaId')
+            ->willReturn('123');
+        $editorial
+            ->expects(static::once())
+            ->method('opening')
+            ->willReturn($opening);
+
+        $multimedia = $this->createMock(Multimedia\MultimediaEmbedVideo::class);
+
+        $this->queryMultimediaOpeningClient
+            ->expects(static::once())
+            ->method('findMultimediaById')
+            ->with('123')
+            ->willReturn($multimedia);
+
+        $resolveData = [];
+        $reflection = new \ReflectionClass($this->editorialOrchestrator);
+
+        $method = $reflection->getMethod('getOpening');
+
+        /** @var array{
+         *      multimediaOpening?: array{123?: array{opening: Multimedia\MultimediaEmbedVideo}}
+         * } $result
+         */
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
+
+        $this->assertArrayHasKey('multimediaOpening', $result);
+        $this->assertArrayHasKey('123', $result['multimediaOpening']);
+        $this->assertSame($multimedia, $result['multimediaOpening']['123']['opening']);
     }
 
     #[Test]
@@ -1271,20 +1309,16 @@ class EditorialOrchestratorTest extends TestCase
         $editorial = $this->createMock(NewsBase::class);
         $editorial->method('opening')->willReturn($openingMock);
 
-        $this->multimediaMediaDataTransformer
+        $this->mediaDataTransformerHandler
             ->expects($this->once())
-            ->method('write')
+            ->method('execute')
             ->with(['foo'], $openingMock)
-            ->willReturnSelf();
-        $this->multimediaMediaDataTransformer
-            ->method('read')
             ->willReturn(['result' => 'media']);
 
         $method = new \ReflectionMethod($this->editorialOrchestrator, 'transformMultimedia');
         static::assertFalse($method->isPrivate());
         static::assertTrue($method->isProtected());
 
-        $method->setAccessible(true);
         $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
 
         $this->assertEquals(['result' => 'media'], $result);
