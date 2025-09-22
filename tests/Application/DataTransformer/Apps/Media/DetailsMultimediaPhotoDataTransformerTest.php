@@ -48,6 +48,30 @@ class DetailsMultimediaPhotoDataTransformerTest extends TestCase
     }
 
     #[Test]
+    public function readShouldReturnsDefaultForNonExistentMultimediaId(): void
+    {
+        $opening = $this->createMock(Opening::class);
+        $opening->expects($this->once())
+            ->method('multimediaId')
+            ->willReturn('nonExistentId');
+
+        $multimedia = $this->createMock(MultimediaPhoto::class);
+
+        $arrayMultimedia = [
+            'id1' => [
+                'opening' => $multimedia,
+            ],
+        ];
+
+        $result = $this->transformer->write($arrayMultimedia, $opening)->read();
+
+        $this->assertEquals(
+            ['id' => '', 'type' => 'multimediaNull'],
+            $result
+        );
+    }
+
+    #[Test]
     public function shouldReadReturnsDefaultIfNoResourceForId(): void
     {
         $opening = $this->createMock(Opening::class);

@@ -26,10 +26,12 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
     }
 
     #[Test]
-    public function shouldReadReturnsDefaultForEmptyMultimedia(): void
+    public function readShouldReturnsDefaultForEmptyMultimedia(): void
     {
         $opening = $this->createMock(Opening::class);
-        $opening->method('multimediaId')->willReturn('');
+        $opening->expects($this->once())
+            ->method('multimediaId')
+            ->willReturn('');
 
         $result = $this->transformer->write([], $opening)->read();
 
@@ -40,13 +42,38 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
     }
 
     #[Test]
-    public function shouldReadReturnsEmbedVideoDefaultDataForValidMultimedia(): void
+    public function readShouldReturnsDefaultForNonExistentMultimediaId(): void
+    {
+        $opening = $this->createMock(Opening::class);
+        $opening->expects($this->once())
+            ->method('multimediaId')
+            ->willReturn('nonExistentId');
+
+        $multimedia = $this->createMock(MultimediaEmbedVideo::class);
+
+        $arrayMultimedia = [
+            'id1' => [
+                'opening' => $multimedia,
+            ],
+        ];
+
+        $result = $this->transformer->write($arrayMultimedia, $opening)->read();
+
+        $this->assertEquals(
+            ['id' => '', 'type' => 'multimediaNull'],
+            $result
+        );
+    }
+
+
+    #[Test]
+    public function readShouldReturnsEmbedVideoDefaultDataForValidMultimedia(): void
     {
         $opening = $this->createMock(Opening::class);
         $opening
             ->expects($this->once())
             ->method('multimediaId')
-            ->willReturn('id');
+            ->willReturn('id1');
 
         $multimedia = $this->createMock(MultimediaEmbedVideo::class);
         $multimedia
@@ -54,45 +81,65 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
             ->method('caption')
             ->willReturn('Test Caption');
         $multimedia
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('text')
             ->willReturn('<iframe src="https://www.testmotion.com/embed/video/x7u5j5"></iframe>');
 
-        /** @var array<string, array{opening: MultimediaPhoto}> $arrayMultimedia */
+        /** @var array<string, array{opening: MultimediaEmbedVideo}> $arrayMultimedia */
         $arrayMultimedia = [
-            'opening' => $multimedia,
+            'id1' => [
+                'opening' => $multimedia,
+            ],
         ];
 
         $result = $this->transformer->write($arrayMultimedia, $opening)->read();
 
         $this->assertArrayHasKey('id', $result);
         $this->assertSame('id1', $result['id']);
-        $this->assertSame('photo', $result['type']);
+        $this->assertSame('EmbedVideo', $result['type']);
         $this->assertSame('Test Caption', $result['caption']);
-        $this->assertSame('thumbnail-url', $result['photo']);
+        $this->assertSame('<iframe src="https://www.testmotion.com/embed/video/x7u5j5"></iframe>', $result['embedText']);
+    }
 
-        $this->assertArrayHasKey('shots', $result);
-        $this->assertInstanceOf(\stdClass::class, $result['shots']);
+    #[Test]
+    public function readShouldReturnsEmbedVideoDailymotionDataForValidMultimedia(): void
+    {
+        $opening = $this->createMock(Opening::class);
+        $opening
+            ->expects($this->once())
+            ->method('multimediaId')
+            ->willReturn('id1');
 
-        $shots = (array) $result['shots'];
+        $multimedia = $this->createMock(MultimediaEmbedVideo::class);
+        $multimedia
+            ->expects($this->once())
+            ->method('caption')
+            ->willReturn('Test Caption');
+        $multimedia
+            ->expects($this->exactly(2))
+            ->method('text')
+            ->willReturn('<div itemscope itemtype="https://schema.org/VideoObject"><meta itemprop="name" content="prueba"><meta itemprop="description" content="asdasda"><meta itemprop="uploadDate" content="2025-08-29T12:00:16.000Z"><meta itemprop="thumbnailUrl" content="https://s2.dmcdn.net/v/Z0MUI1ekN8LWSfu6D/x180"><meta itemprop="duration" content="P5S"><meta itemprop="embedUrl" content="https://geo.dailymotion.com/player/x1i0xw.html?video=x9pnrf6"><script src="https://geo.dailymotion.com/player/x1i0xw.js" data-video="x9pnrf6"></script></div>');
 
-        $this->assertArrayHasKey('4:3', $shots);
-        $this->assertArrayHasKey('16:9', $shots);
-        $this->assertArrayHasKey('3:4', $shots);
-        $this->assertArrayHasKey('3:2', $shots);
-        $this->assertArrayHasKey('2:3', $shots);
+        /** @var array<string, array{opening: MultimediaEmbedVideo}> $arrayMultimedia */
+        $arrayMultimedia = [
+            'id1' => [
+                'opening' => $multimedia,
+            ],
+        ];
 
-        $this->assertCount(10, $shots['4:3']);
-        $this->assertCount(8, $shots['16:9']);
-        $this->assertCount(9, $shots['3:4']);
-        $this->assertCount(11, $shots['3:2']);
-        $this->assertCount(11, $shots['2:3']);
+        $result = $this->transformer->write($arrayMultimedia, $opening)->read();
 
-        foreach ($shots as $aspectRatio => $sizesArray) {
-            foreach ($sizesArray as $sizeKey => $url) {
-                $this->assertSame('thumbnail-url', $url,
-                    "Shot for aspect ratio {$aspectRatio} and size {$sizeKey} should be 'thumbnail-url'");
-            }
-        }
+        $this->assertArrayHasKey('id', $result);
+        $this->assertSame('id1', $result['id']);
+        $this->assertSame('EmbedVideoDailyMotion', $result['type']);
+        $this->assertSame('Test Caption', $result['caption']);
+        $this->assertSame('x1i0xw', $result['playerDailyMotionId']);
+        $this->assertSame('x9pnrf6', $result['videoDailyMotionId']);
+    }
+
+    #[Test]
+    public function canTransformShouldReturnEmbedVideoClass(): void
+    {
+        $this->assertSame(MultimediaEmbedVideo::class, $this->transformer->canTransform());
     }
 }
