@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8cfec534d7e8655c18ccc84365cf5ab5",
+    "content-hash": "764b3da994ae5e7f18f0b8236b55e76f",
     "packages": [
         {
             "name": "99designs/phumbor",
@@ -2578,12 +2578,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/domain/multimedia-domain.git",
-                "reference": "cf24904dbaffa951e404d3c44c169ab26b1ef042"
+                "reference": "f625468aa643cd5952f8f41d21e91269534e0892"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fmultimedia-domain/repository/archive.zip?sha=cf24904dbaffa951e404d3c44c169ab26b1ef042",
-                "reference": "cf24904dbaffa951e404d3c44c169ab26b1ef042",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fmultimedia-domain/repository/archive.zip?sha=f625468aa643cd5952f8f41d21e91269534e0892",
+                "reference": "f625468aa643cd5952f8f41d21e91269534e0892",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2656,7 +2656,7 @@
                 "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/multimedia-domain/-/tree/feature/PROD-45181-ms-multimedia-nuevo-modelo-embed-video-y-sus-dependencias-factoria-datatransformer-entidad-etc",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/domain/multimedia-domain/-/issues"
             },
-            "time": "2025-09-17T18:27:09+02:00"
+            "time": "2025-09-22T13:55:33+02:00"
         },
         {
             "name": "ec/persistence-library",
@@ -16214,6 +16214,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "ec/multimedia-client": 20,
+        "ec/multimedia-domain": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,
