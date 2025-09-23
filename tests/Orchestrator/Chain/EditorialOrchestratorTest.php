@@ -26,6 +26,7 @@ use Ec\Editorial\Domain\Model\Body\MembershipCardButtons;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
+use Ec\Editorial\Domain\Model\Multimedia\PhotoExist;
 use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
@@ -43,6 +44,7 @@ use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
 use Ec\Multimedia\Domain\Model\Multimedia;
+use Ec\Multimedia\Domain\Model\MultimediaId;
 use Ec\Multimedia\Domain\Model\Photo\Photo;
 use Ec\Multimedia\Infrastructure\Client\Http\Media\QueryMultimediaClient as QueryMultimediaOpeningClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
@@ -1396,5 +1398,24 @@ class EditorialOrchestratorTest extends TestCase
         $result = $reflection->invoke($this->editorialOrchestrator, $id, $inputArray);
 
         $this->assertSame($inputArray, $result);
+    }
+
+    #[Test]
+    public function getMultimediaShouldRequestViaAsync(): void
+    {
+        $multimediaId = 'existing-id';
+        $multimediaIdDomain = new \Ec\Editorial\Domain\Model\Multimedia\MultimediaId($multimediaId);
+        $mockMultimedia = $this->createMock(PhotoExist::class);
+        $mockMultimedia->method('id')->willReturn($multimediaIdDomain);
+
+        $this->queryMultimediaClient
+            ->method('findMultimediaById')
+            ->with($multimediaId, true)
+            ->willReturn(new FulfilledPromise($mockMultimedia));
+
+        $getAsyncMultimedia = new \ReflectionMethod($this->editorialOrchestrator, 'getAsyncMultimedia');
+        self::assertTrue($getAsyncMultimedia->isPrivate());
+        $getAsyncMultimedia->setAccessible(true);
+        $promise = $getAsyncMultimedia->invokeArgs($this->editorialOrchestrator, [$mockMultimedia, ['multimedia'=> []]]);
     }
 }
