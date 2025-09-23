@@ -51,6 +51,7 @@ use Ec\Section\Domain\Model\Section;
 use Ec\Section\Domain\Model\SectionId;
 use Ec\Tag\Domain\Model\QueryTagClient;
 use Ec\Tag\Domain\Model\Tag as TagAlias;
+use Http\Promise\FulfilledPromise;
 use Http\Promise\Promise;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
@@ -1274,6 +1275,7 @@ class EditorialOrchestratorTest extends TestCase
             'id1' => $mm1,
             'id3' => $mm3,
         ], $result);
+        self::assertCount(2, $result);
     }
 
     #[Test]
@@ -1349,5 +1351,50 @@ class EditorialOrchestratorTest extends TestCase
         $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
 
         static::assertEquals(['result' => 'data'], $result);
+    }
+
+    #[Test]
+    public function addPhotoToArrayShouldFullfilledArray(): void
+    {
+        $id = 'photoId';
+        $photo = $this->createMock(Photo::class);
+
+        $this->queryMultimediaClient->expects($this->once())
+            ->method('findPhotoById')
+            ->with($id)
+            ->willReturn($photo);
+
+        $reflection = new \ReflectionMethod($this->editorialOrchestrator, 'addPhotoToArray');
+        $reflection->setAccessible(true);
+
+        $inputArray = [];
+        $result = $reflection->invoke($this->editorialOrchestrator, $id, $inputArray);
+
+        $this->assertArrayHasKey($id, $result);
+        $this->assertSame($photo, $result[$id]);
+    }
+
+    #[Test]
+    public function addPhotoToArrayShouldThrowException(): void
+    {
+        $id = 'photoId';
+        $exceptionMessage = 'Some error';
+
+        $this->queryMultimediaClient->expects($this->once())
+            ->method('findPhotoById')
+            ->with($id)
+            ->willThrowException(new \Exception($exceptionMessage));
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with($exceptionMessage);
+
+        $reflection = new \ReflectionMethod($this->editorialOrchestrator, 'addPhotoToArray');
+        $reflection->setAccessible(true);
+
+        $inputArray = [];
+        $result = $reflection->invoke($this->editorialOrchestrator, $id, $inputArray);
+
+        $this->assertSame($inputArray, $result);
     }
 }

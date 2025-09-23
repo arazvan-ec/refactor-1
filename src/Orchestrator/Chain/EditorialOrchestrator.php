@@ -57,6 +57,7 @@ class EditorialOrchestrator implements Orchestrator
     use UrlGeneratorTrait;
     use MultimediaTrait;
 
+    public const ASYNC = true;
     public const TWITTER_TYPES = [EditorialBlog::EDITORIAL_TYPE];
 
     public function __construct(
@@ -415,7 +416,7 @@ class EditorialOrchestrator implements Orchestrator
         $multimediaId = $this->getMultimediaId($multimedia);
 
         if (null !== $multimediaId) {
-            $resolveData['multimedia'][] = $this->queryMultimediaClient->findMultimediaById($multimediaId, true);
+            $resolveData['multimedia'][] = $this->queryMultimediaClient->findMultimediaById($multimediaId, self::ASYNC);
         }
 
         return $resolveData; // @phpstan-ignore return.type
