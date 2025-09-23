@@ -89,7 +89,7 @@ class DetailsMultimediaEmbedVideoDataTransformer implements MediaDataTransformer
     }
 
     /**
-     * @return array{type: string, playerId: string, videoId: string}
+     * @return array{id: string, type: string, caption: string, embedText: string}
      */
     private function buildGenericResponse(string $multimediaId, MultimediaEmbedVideo $multimedia): array
     {
@@ -102,7 +102,7 @@ class DetailsMultimediaEmbedVideoDataTransformer implements MediaDataTransformer
     }
 
     /**
-     * @return array{type: string, playerId: string, videoId: string}
+     * @return array{playerId: string, videoId: string}
      */
     private function extractDailyMotionData(MultimediaEmbedVideo $multimedia): array
     {

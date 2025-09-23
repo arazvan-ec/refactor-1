@@ -13,7 +13,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
+ * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  */
 class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
 {

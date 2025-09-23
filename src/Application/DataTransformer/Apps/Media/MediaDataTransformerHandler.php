@@ -30,7 +30,7 @@ class MediaDataTransformerHandler
     }
 
     /**
-     * @param array<string, mixed> $multimediaOpeningData
+     * @param array<string, array{opening: object}> $multimediaOpeningData
      *
      * @return array<string, mixed>
      *
