@@ -2566,16 +2566,16 @@
         },
         {
             "name": "ec/multimedia-domain",
-            "version": "v3.13.0",
+            "version": "v3.14.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/domain/multimedia-domain.git",
-                "reference": "f13f1134acb4d321a4226afabf1b95aea350413e"
+                "reference": "cdd176c612161769e439c4c3549dc18e487380ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fmultimedia-domain/repository/archive.zip?sha=f13f1134acb4d321a4226afabf1b95aea350413e",
-                "reference": "f13f1134acb4d321a4226afabf1b95aea350413e",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fmultimedia-domain/repository/archive.zip?sha=cdd176c612161769e439c4c3549dc18e487380ea",
+                "reference": "cdd176c612161769e439c4c3549dc18e487380ea",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2645,10 +2645,10 @@
             ],
             "description": "Multimedia Domain Base",
             "support": {
-                "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/multimedia-domain/-/tree/v3.13.0",
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/multimedia-domain/-/tree/v3.14.0",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/domain/multimedia-domain/-/issues"
             },
-            "time": "2025-09-23T08:11:39+00:00"
+            "time": "2025-09-23T14:07:26+00:00"
         },
         {
             "name": "ec/persistence-library",
