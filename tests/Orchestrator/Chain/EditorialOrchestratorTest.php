@@ -1277,7 +1277,6 @@ class EditorialOrchestratorTest extends TestCase
             'id1' => $mm1,
             'id3' => $mm3,
         ], $result);
-        self::assertCount(2, $result);
     }
 
     #[Test]
@@ -1370,6 +1369,7 @@ class EditorialOrchestratorTest extends TestCase
         $reflection->setAccessible(true);
 
         $inputArray = [];
+        /** @var array<string, Photo> $result */
         $result = $reflection->invoke($this->editorialOrchestrator, $id, $inputArray);
 
         $this->assertArrayHasKey($id, $result);
@@ -1416,6 +1416,6 @@ class EditorialOrchestratorTest extends TestCase
         $getAsyncMultimedia = new \ReflectionMethod($this->editorialOrchestrator, 'getAsyncMultimedia');
         self::assertTrue($getAsyncMultimedia->isPrivate());
         $getAsyncMultimedia->setAccessible(true);
-        $promise = $getAsyncMultimedia->invokeArgs($this->editorialOrchestrator, [$mockMultimedia, ['multimedia'=> []]]);
+        $promise = $getAsyncMultimedia->invokeArgs($this->editorialOrchestrator, [$mockMultimedia, ['multimedia' => []]]);
     }
 }
