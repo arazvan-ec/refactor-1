@@ -143,12 +143,24 @@ class RecommendedEditorialsDataTransformer
         $shots = [];
 
         /**
+         * @var array{
+         *          recommendedEditorials: array<string, array{
+         *          multimediaId: string
+         *      }>,
+         *          multimediaOpening: array<string, array{
+         *          opening: Multimedia\MultimediaPhoto,
+         *          resource: Photo
+         *      }>
+         * } $resolveData
+         */
+        $resolveData = $this->resolveData;
+        /**
          * @var ?array{
          *      opening: Multimedia\MultimediaPhoto,
          *      resource: Photo
          *  } $multimedia
          */
-        $multimedia = $this->resolveData['multimediaOpening'][$this->resolveData['recommendedEditorials'][$editorialId]['multimediaId']] ?? null;
+        $multimedia = $resolveData['multimediaOpening'][$resolveData['recommendedEditorials'][$editorialId]['multimediaId']] ?? null;
         if (null === $multimedia) {
             return $shots;
         }
