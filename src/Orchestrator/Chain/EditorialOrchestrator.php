@@ -247,6 +247,7 @@ class EditorialOrchestrator implements Orchestrator
             $resolveData
         );
 
+        /** @var array{multimedia: array<string, array<string, mixed>>} $resolveData */
         $editorialResult['multimedia'] = $this->transformMultimedia($editorial, $resolveData);
 
         $editorialResult['standfirst'] = $this->standFirstDataTransformer
@@ -474,7 +475,7 @@ class EditorialOrchestrator implements Orchestrator
     }
 
     /**
-     * @param array<string, array<string, mixed>> $resolveData
+     * @param array<string, array<string, array<string, mixed>> > $resolveData
      *
      * @return array<string, mixed>
      *

@@ -10,7 +10,6 @@ use App\Application\DataTransformer\Apps\Media\MediaDataTransformer;
 use App\Application\DataTransformer\Apps\Media\MediaDataTransformerHandler;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Editorial\Exceptions\MultimediaDataTransformerNotFoundException;
-use Ec\Multimedia\Domain\Model\Multimedia\MultimediaId;
 use Ec\Multimedia\Domain\Model\Multimedia\MultimediaEmbedVideo;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;

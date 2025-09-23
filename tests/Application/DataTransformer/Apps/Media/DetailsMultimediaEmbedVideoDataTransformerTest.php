@@ -50,6 +50,7 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
 
         $multimedia = $this->createMock(MultimediaEmbedVideo::class);
 
+        /** @var array<string, array{opening: MultimediaEmbedVideo}>|array{} $arrayMultimedia */
         $arrayMultimedia = [
             'id1' => [
                 'opening' => $multimedia,

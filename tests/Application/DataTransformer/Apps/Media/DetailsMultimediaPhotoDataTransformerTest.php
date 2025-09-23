@@ -57,6 +57,7 @@ class DetailsMultimediaPhotoDataTransformerTest extends TestCase
 
         $multimedia = $this->createMock(MultimediaPhoto::class);
 
+        /** @var array<string, array{opening: MultimediaPhoto}>|array{} $arrayMultimedia */
         $arrayMultimedia = [
             'id1' => [
                 'opening' => $multimedia,
