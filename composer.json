@@ -1,8 +1,8 @@
 {
     "type": "project",
     "license": "proprietary",
-    "minimum-stability": "dev",
-    "prefer-stable": false,
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
@@ -14,8 +14,7 @@
         "ec/journalist-client": "^5.1",
         "ec/membership-client": "^1.5",
         "ec/microservice-bundle": "^1.0",
-        "ec/multimedia-client": "dev-feature/PROD-45181-ms-multimedia-nuevo-modelo-embedvideo-y-sus-dependencias-factoria-datatransformer",
-        "ec/multimedia-domain": "dev-feature/PROD-45181-ms-multimedia-nuevo-modelo-embed-video-y-sus-dependencias-factoria-datatransformer-entidad-etc",
+        "ec/multimedia-client": "^4.0",
         "ec/section-client": "^3.0",
         "ec/tag-client": "^4.0",
         "elasticsearch/elasticsearch": "^8.0",
