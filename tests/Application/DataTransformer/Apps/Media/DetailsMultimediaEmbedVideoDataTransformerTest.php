@@ -137,7 +137,7 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
     }
 
     #[Test]
-    public function testReturnsEmptyArrayWhenPregMatchFails(): void
+    public function shouldReturnEmptyArrayWhenPregMatchFails(): void
     {
         $multimedia = $this->createMock(MultimediaEmbedVideo::class);
         $multimedia->method('html')->willReturn('some invalid html');

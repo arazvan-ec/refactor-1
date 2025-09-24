@@ -24,9 +24,6 @@ class DetailsMultimediaEmbedVideoDataTransformer implements MediaDataTransformer
     /** @var string */
     private const REGEX_PATTERN = '/\/player\/([a-zA-Z0-9]+)\.html\?video=([a-zA-Z0-9]+)/';
 
-    /** @var bool */
-    private const FALSE_RESULT_MATCHED = false;
-
     /** @var int */
     private const PLAYER_ID_POSITION = 1;
 
@@ -121,10 +118,10 @@ class DetailsMultimediaEmbedVideoDataTransformer implements MediaDataTransformer
         $htmlContent = $multimedia->html();
 
         $matches = [];
-        $matchResult = @preg_match(self::REGEX_PATTERN, $htmlContent, $matches);
 
-        if (self::FALSE_RESULT_MATCHED === $matchResult
-            || !isset($matches[self::PLAYER_ID_POSITION], $matches[self::VIDEO_ID_POSITION])) {
+        @preg_match(self::REGEX_PATTERN, $htmlContent, $matches);
+
+        if (!isset($matches[self::PLAYER_ID_POSITION], $matches[self::VIDEO_ID_POSITION])) {
             return [];
         }
 

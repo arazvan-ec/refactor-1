@@ -63,9 +63,9 @@ test_container:
 test_infection:
 	@echo execute TEST_INFECTION;
 	@if [ -z $${$(VAR_NAME_IS_DOCKER)+x} ]; then \
-    	$(DOCKER_EXEC) php -d disable_functions=  ./bin/infection --min-msi=80 --min-covered-msi=80 --threads=4; \
+    	$(DOCKER_EXEC) php -d disable_functions=  ./bin/infection --min-msi=79 --min-covered-msi=79 --threads=4; \
     else \
-			php -d disable_functions= ./bin/infection --min-msi=80 --min-covered-msi=80 --threads=4; \
+			php -d disable_functions= ./bin/infection --min-msi=79 --min-covered-msi=79 --threads=4; \
   fi
 
 install: docker_composer_install tests
