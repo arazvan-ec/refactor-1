@@ -154,7 +154,6 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
     public function shouldReturnEmptyArrayWhenMatchesAreMissing(): void
     {
         $multimedia = $this->createMock(MultimediaEmbedVideo::class);
-        // html that triggers preg_match success but missing expected capture groups
         $htmlContent = '<div>Some HTML but no expected player and video id</div>';
         $multimedia->method('html')->willReturn($htmlContent);
 
@@ -182,6 +181,20 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
         static::assertArrayHasKey('videoId', $result);
         static::assertNotEmpty($result['playerId']);
         static::assertNotEmpty($result['videoId']);
+    }
+
+    #[Test]
+    public function buildDailyMotionResponseShouldReturnEmptyArrayForInvalidData(): void
+    {
+        $multimedia = $this->createMock(MultimediaEmbedVideo::class);
+        $multimedia->method('html')->willReturn('some invalid html');
+
+        $method = new \ReflectionMethod($this->transformer, 'buildDailyMotionResponse');
+        $method->setAccessible(true);
+
+        $result = $method->invoke($this->transformer, 'id1', $multimedia);
+
+        static::assertSame([], $result, 'Should return empty array for invalid DailyMotion data');
     }
 
     public function tearDown(): void
