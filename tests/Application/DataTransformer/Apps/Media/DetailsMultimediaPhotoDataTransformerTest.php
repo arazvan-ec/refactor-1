@@ -41,10 +41,7 @@ class DetailsMultimediaPhotoDataTransformerTest extends TestCase
 
         $result = $this->transformer->write([], $opening)->read();
 
-        $this->assertEquals(
-            ['id' => '', 'type' => 'multimediaNull'],
-            $result
-        );
+        static::assertEquals([], $result);
     }
 
     #[Test]
@@ -66,10 +63,7 @@ class DetailsMultimediaPhotoDataTransformerTest extends TestCase
 
         $result = $this->transformer->write($arrayMultimedia, $opening)->read();
 
-        $this->assertEquals(
-            ['id' => '', 'type' => 'multimediaNull'],
-            $result
-        );
+        static::assertEquals([], $result);
     }
 
     #[Test]
@@ -80,7 +74,7 @@ class DetailsMultimediaPhotoDataTransformerTest extends TestCase
 
         $result = $this->transformer->write([], $opening)->read();
 
-        $this->assertSame(['id' => '', 'type' => 'multimediaNull'], $result);
+        static::assertEquals([], $result);
     }
 
     #[Test]

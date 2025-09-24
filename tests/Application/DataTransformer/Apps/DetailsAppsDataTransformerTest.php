@@ -103,6 +103,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $this->assertEquals('article', $result['contentType']);
         $this->assertEquals('54321', $result['canonicalEditorialId']);
         $this->assertEquals('2023-01-01 00:00:00', $result['urlDate']);
+        $this->assertCount(23, $result);
     }
 
     /**

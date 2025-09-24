@@ -498,9 +498,6 @@ class EditorialOrchestrator implements Orchestrator
                 ->read();
         }
 
-        return [
-            'id' => '',
-            'type' => 'multimediaNull',
-        ];
+        return [];
     }
 }

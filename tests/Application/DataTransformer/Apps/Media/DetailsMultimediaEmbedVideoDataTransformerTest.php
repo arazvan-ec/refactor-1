@@ -34,10 +34,7 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
 
         $result = $this->transformer->write([], $opening)->read();
 
-        $this->assertEquals(
-            ['id' => '', 'type' => 'multimediaNull'],
-            $result
-        );
+        static::assertEquals([], $result);
     }
 
     #[Test]
@@ -59,10 +56,7 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
 
         $result = $this->transformer->write($arrayMultimedia, $opening)->read();
 
-        $this->assertEquals(
-            ['id' => '', 'type' => 'multimediaNull'],
-            $result
-        );
+        static::assertEquals([], $result);
     }
 
     #[Test]
@@ -95,9 +89,9 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
 
         $this->assertArrayHasKey('id', $result);
         $this->assertSame('id1', $result['id']);
-        $this->assertSame('EmbedVideo', $result['type']);
+        $this->assertSame('embedVideo', $result['type']);
         $this->assertSame('Test Caption', $result['caption']);
-        $this->assertSame('<iframe src="https://www.testmotion.com/embed/video/x7u5j5"></iframe>', $result['embedText']);
+        $this->assertSame('<iframe src="https://www.testmotion.com/embed/video/x7u5j5"></iframe>', $result['html']);
     }
 
     #[Test]
@@ -130,15 +124,68 @@ class DetailsMultimediaEmbedVideoDataTransformerTest extends TestCase
 
         $this->assertArrayHasKey('id', $result);
         $this->assertSame('id1', $result['id']);
-        $this->assertSame('EmbedVideoDailyMotion', $result['type']);
+        $this->assertSame('embedVideoDailyMotion', $result['type']);
         $this->assertSame('Test Caption', $result['caption']);
-        $this->assertSame('x1i0xw', $result['playerDailyMotionId']);
-        $this->assertSame('x9pnrf6', $result['videoDailyMotionId']);
+        $this->assertSame('x1i0xw', $result['playerId']);
+        $this->assertSame('x9pnrf6', $result['videoId']);
     }
 
     #[Test]
     public function canTransformShouldReturnEmbedVideoClass(): void
     {
         $this->assertSame(MultimediaEmbedVideo::class, $this->transformer->canTransform());
+    }
+
+    #[Test]
+    public function testReturnsEmptyArrayWhenPregMatchFails(): void
+    {
+        $multimedia = $this->createMock(MultimediaEmbedVideo::class);
+        $multimedia->method('html')->willReturn('some invalid html');
+
+        $method = new \ReflectionMethod($this->transformer, 'extractDailyMotionData');
+        $method->setAccessible(true);
+
+        $result = $method->invoke($this->transformer, $multimedia);
+
+        static::assertSame([], $result, 'Should return empty array when preg_match fails');
+    }
+
+    #[Test]
+    public function shouldReturnEmptyArrayWhenMatchesAreMissing(): void
+    {
+        $multimedia = $this->createMock(MultimediaEmbedVideo::class);
+        // html that triggers preg_match success but missing expected capture groups
+        $htmlContent = '<div>Some HTML but no expected player and video id</div>';
+        $multimedia->method('html')->willReturn($htmlContent);
+
+        $method = new \ReflectionMethod($this->transformer, 'extractDailyMotionData');
+        $method->setAccessible(true);
+
+        $result = $method->invoke($this->transformer, $multimedia);
+
+        static::assertSame([], $result, 'Should return empty array when matches are missing');
+    }
+
+    #[Test]
+    public function shouldReturnPlayerIdAndVideoIdWhenMatchesExist(): void
+    {
+        $multimedia = $this->createMock(MultimediaEmbedVideo::class);
+        $htmlContent = '<iframe src="https://geo.dailymotion.com/player/x1i0xw.html?video=x9pnrf6"></iframe>';
+        $multimedia->method('html')->willReturn($htmlContent);
+
+        $method = new \ReflectionMethod($this->transformer, 'extractDailyMotionData');
+        $method->setAccessible(true);
+
+        /** @var string[] $result */
+        $result = $method->invoke($this->transformer, $multimedia);
+        static::assertArrayHasKey('playerId', $result);
+        static::assertArrayHasKey('videoId', $result);
+        static::assertNotEmpty($result['playerId']);
+        static::assertNotEmpty($result['videoId']);
+    }
+
+    public function tearDown(): void
+    {
+        unset($this->transformer);
     }
 }

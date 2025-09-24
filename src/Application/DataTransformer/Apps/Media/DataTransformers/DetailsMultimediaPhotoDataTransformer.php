@@ -299,17 +299,14 @@ class DetailsMultimediaPhotoDataTransformer implements MediaDataTransformer
     }
 
     /**
-     * @return array<string, \stdClass|string>
+     * @return array<string, \stdClass|string>|array{}
      */
     public function read(): array
     {
         $multimediaId = $this->openingMultimedia->multimediaId();
 
         if (!$multimediaId || empty($this->arrayMultimedia[$multimediaId])) {
-            return [
-                'id' => '',
-                'type' => 'multimediaNull',
-            ];
+            return [];
         }
 
         /** @var MultimediaPhoto $multimedia */
