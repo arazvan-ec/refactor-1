@@ -129,8 +129,8 @@ class DetailsMultimediaEmbedVideoDataTransformer implements MediaDataTransformer
         }
 
         return [
-            'playerId' => $matches[1],
-            'videoId' => $matches[2],
+            'playerId' => $matches[self::PLAYER_ID_POSITION],
+            'videoId' => $matches[self::VIDEO_ID_POSITION],
         ];
     }
 }
