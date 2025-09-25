@@ -18,6 +18,12 @@ services:
         lazy: true
         shared: true
 
+    App\Application\DataTransformer\Apps\Media\DataTransformers\:
+        resource: '../../src/Application/DataTransformer/Apps/Media/DataTransformers/'
+        tags: [ 'app.media_data_transformer' ]
+        lazy: true
+        shared: true
+
     App\Application\DataTransformer\Apps\Body\BodyTagVideoYoutubeDataTransformer:
         class: App\Application\DataTransformer\Apps\Body\BodyTagVideoYoutubeDataTransformer
         arguments:

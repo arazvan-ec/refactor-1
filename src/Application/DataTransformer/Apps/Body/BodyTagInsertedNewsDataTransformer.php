@@ -43,7 +43,7 @@ class BodyTagInsertedNewsDataTransformer extends ElementTypeDataTransformer
 
     public function read(): array
     {
-        $message = 'BodyElement should be instance of '.BodyTagInsertedNews::class;
+        $message = \sprintf('BodyElement should be instance of %s', BodyTagInsertedNews::class);
         /** @var BodyTagInsertedNews $bodyElement */
         $bodyElement = $this->bodyElement;
         Assertion::isInstanceOf($bodyElement, BodyTagInsertedNews::class, $message);

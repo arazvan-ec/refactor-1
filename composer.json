@@ -14,7 +14,7 @@
         "ec/journalist-client": "^5.1",
         "ec/membership-client": "^1.5",
         "ec/microservice-bundle": "^1.0",
-        "ec/multimedia-client": "^4.3",
+        "ec/multimedia-client": "^4.0",
         "ec/section-client": "^3.0",
         "ec/tag-client": "^4.0",
         "elasticsearch/elasticsearch": "^8.0",
