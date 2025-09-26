@@ -102,7 +102,7 @@ class EditorialOrchestratorDataProvider
         ];
 
         $multimediaTypes = [
-            'null' => [],
+            'null' => null,
         ];
 
         return [
