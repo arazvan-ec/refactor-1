@@ -315,7 +315,7 @@ class EditorialOrchestratorTest extends TestCase
         array $membershipLinkCombine,
         array $expectedJournalistAliasIds,
         array $expectedPhotoFromBodyTags,
-        array $expectedOpeningMultimedia,
+        ?array $expectedOpeningMultimedia,
     ): void {
         $journalistsEditorial = $editorial['signatures'];
 
