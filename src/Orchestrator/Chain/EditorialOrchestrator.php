@@ -478,11 +478,11 @@ class EditorialOrchestrator implements Orchestrator
     /**
      * @param array<string, array<string, array<string, mixed>> > $resolveData
      *
-     * @return array<string, mixed>
+     * @return ?array<string, mixed>
      *
      * @throws MultimediaDataTransformerNotFoundException
      */
-    protected function transformMultimedia(Editorial $editorial, array $resolveData): array
+    protected function transformMultimedia(Editorial $editorial, array $resolveData): ?array
     {
         /** @var NewsBase $editorial */
         if (!empty($resolveData['multimediaOpening'])) {
@@ -498,6 +498,6 @@ class EditorialOrchestrator implements Orchestrator
                 ->read();
         }
 
-        return [];
+        return null;
     }
 }
