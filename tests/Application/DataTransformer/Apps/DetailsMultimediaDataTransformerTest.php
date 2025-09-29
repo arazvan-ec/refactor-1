@@ -180,9 +180,6 @@ class DetailsMultimediaDataTransformerTest extends TestCase
         $this->transformer->write(['2' => $multimedia], $openingMultimedia);
         $result = $this->transformer->read();
 
-        static::assertSame([
-            'id' => '',
-            'type' => 'multimediaNull',
-        ], $result);
+        static::assertSame([], $result);
     }
 }

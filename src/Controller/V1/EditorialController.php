@@ -34,15 +34,15 @@ class EditorialController extends AbstractController
     #[OA\Get(
         path: '/editorials/{id}',
         operationId: 'getEditorialById',
-        summary: 'Get editorial by id',
         description: 'Get editorial by id',
+        summary: 'Get editorial by id',
         tags: ['Editorials'],
         parameters: [
             new OA\Parameter(
                 name: 'id',
+                description: 'Editorial id',
                 in: 'path',
                 required: true,
-                description: 'Editorial id',
                 schema: new OA\Schema(type: 'string', example: '4433')
             ),
         ],
@@ -61,11 +61,11 @@ class EditorialController extends AbstractController
                         new OA\Property(property: 'endOn', type: 'string', format: 'date-time', example: '2024-10-10 13:09:00'),
                         new OA\Property(
                             property: 'type',
-                            type: 'object',
                             properties: [
                                 new OA\Property(property: 'id', type: 'string', example: '1'),
                                 new OA\Property(property: 'name', type: 'string', example: 'news'),
-                            ]
+                            ],
+                            type: 'object'
                         ),
                         new OA\Property(property: 'indexable', type: 'boolean', example: true),
                         new OA\Property(property: 'deleted', type: 'boolean', example: false),

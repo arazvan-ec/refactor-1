@@ -26,7 +26,7 @@ class BodyTagPictureDataTransformer extends ElementTypeDataTransformer
 
     public function read(): array
     {
-        $message = 'BodyElement should be instance of '.BodyTagPicture::class;
+        $message = \sprintf('BodyElement should be instance of %s', BodyTagPicture::class);
         Assertion::isInstanceOf($this->bodyElement, BodyTagPicture::class, $message);
 
         $elementArray = parent::read();

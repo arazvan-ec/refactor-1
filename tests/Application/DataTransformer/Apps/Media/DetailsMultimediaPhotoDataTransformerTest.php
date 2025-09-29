@@ -4,9 +4,9 @@
  * @copyright
  */
 
-namespace App\Tests\Application\DataTransformer\Apps;
+namespace App\Tests\Application\DataTransformer\Apps\Media;
 
-use App\Application\DataTransformer\Apps\DetailsMultimediaMediaDataTransformer;
+use App\Application\DataTransformer\Apps\Media\DataTransformers\DetailsMultimediaPhotoDataTransformer;
 use App\Infrastructure\Service\Thumbor;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\Multimedia\Clipping;
@@ -20,9 +20,9 @@ use PHPUnit\Framework\TestCase;
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
  */
-class DetailsMultimediaMediaDataTransformerTest extends TestCase
+class DetailsMultimediaPhotoDataTransformerTest extends TestCase
 {
-    private DetailsMultimediaMediaDataTransformer $transformer;
+    private DetailsMultimediaPhotoDataTransformer $transformer;
 
     /** @var MockObject|Thumbor */
     private Thumbor|MockObject $thumbor;
@@ -30,7 +30,7 @@ class DetailsMultimediaMediaDataTransformerTest extends TestCase
     protected function setUp(): void
     {
         $this->thumbor = $this->createMock(Thumbor::class);
-        $this->transformer = new DetailsMultimediaMediaDataTransformer($this->thumbor);
+        $this->transformer = new DetailsMultimediaPhotoDataTransformer($this->thumbor);
     }
 
     #[Test]
@@ -41,10 +41,29 @@ class DetailsMultimediaMediaDataTransformerTest extends TestCase
 
         $result = $this->transformer->write([], $opening)->read();
 
-        $this->assertEquals(
-            ['id' => '', 'type' => 'multimediaNull'],
-            $result
-        );
+        static::assertEquals([], $result);
+    }
+
+    #[Test]
+    public function readShouldReturnsDefaultForNonExistentMultimediaId(): void
+    {
+        $opening = $this->createMock(Opening::class);
+        $opening->expects($this->once())
+            ->method('multimediaId')
+            ->willReturn('nonExistentId');
+
+        $multimedia = $this->createMock(MultimediaPhoto::class);
+
+        /** @var array<string, array{opening: MultimediaPhoto}>|array{} $arrayMultimedia */
+        $arrayMultimedia = [
+            'id1' => [
+                'opening' => $multimedia,
+            ],
+        ];
+
+        $result = $this->transformer->write($arrayMultimedia, $opening)->read();
+
+        static::assertEquals([], $result);
     }
 
     #[Test]
@@ -55,7 +74,7 @@ class DetailsMultimediaMediaDataTransformerTest extends TestCase
 
         $result = $this->transformer->write([], $opening)->read();
 
-        $this->assertSame(['id' => '', 'type' => 'multimediaNull'], $result);
+        static::assertEquals([], $result);
     }
 
     #[Test]
@@ -121,5 +140,11 @@ class DetailsMultimediaMediaDataTransformerTest extends TestCase
                     "Shot for aspect ratio {$aspectRatio} and size {$sizeKey} should be 'thumbnail-url'");
             }
         }
+    }
+
+    #[Test]
+    public function canTransformShouldReturnMultimediaPhotoClass(): void
+    {
+        $this->assertSame(MultimediaPhoto::class, $this->transformer->canTransform());
     }
 }

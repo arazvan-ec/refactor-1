@@ -4,8 +4,9 @@
  * @copyright
  */
 
-namespace App\Application\DataTransformer\Apps;
+namespace App\Application\DataTransformer\Apps\Media\DataTransformers;
 
+use App\Application\DataTransformer\Apps\Media\MediaDataTransformer;
 use App\Infrastructure\Service\Thumbor;
 use App\Infrastructure\Trait\MultimediaTrait;
 use Ec\Editorial\Domain\Model\Opening;
@@ -16,7 +17,7 @@ use Ec\Multimedia\Domain\Model\Photo\Photo;
 /**
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  */
-class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransformer
+class DetailsMultimediaPhotoDataTransformer implements MediaDataTransformer
 {
     use MultimediaTrait;
 
@@ -289,7 +290,7 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
     /**
      * @param array{array{opening: MultimediaPhoto, resource: Photo}}|array{} $arrayMultimedia
      */
-    public function write(array $arrayMultimedia, Opening $openingMultimedia): DetailsMultimediaMediaDataTransformer
+    public function write(array $arrayMultimedia, Opening $openingMultimedia): DetailsMultimediaPhotoDataTransformer
     {
         $this->arrayMultimedia = $arrayMultimedia;
         $this->openingMultimedia = $openingMultimedia;
@@ -298,17 +299,14 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
     }
 
     /**
-     * @return array<string, \stdClass|string>
+     * @return array<string, \stdClass|string>|array{}
      */
     public function read(): array
     {
         $multimediaId = $this->openingMultimedia->multimediaId();
 
         if (!$multimediaId || empty($this->arrayMultimedia[$multimediaId])) {
-            return [
-                'id' => '',
-                'type' => 'multimediaNull',
-            ];
+            return [];
         }
 
         /** @var MultimediaPhoto $multimedia */
@@ -343,5 +341,10 @@ class DetailsMultimediaMediaDataTransformer implements MultimediaMediaDataTransf
             'shots' => (object) $allShots,
             'photo' => current($allShots[self::ASPECT_RATIO_16_9]),
         ];
+    }
+
+    public function canTransform(): string
+    {
+        return MultimediaPhoto::class;
     }
 }

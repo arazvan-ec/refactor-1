@@ -34,19 +34,29 @@ class SitesEnumTest extends TestCase
     }
 
     #[Test]
-    public function getHostnameByIdMustReturnCorrectValue(): void
+    public function getHostnameByIdMustReturnDefaultForElConfidencial(): void
     {
         $this->assertSame('elconfidencial', SitesEnum::getHostnameById($this->elConfidencial->value));
+    }
+
+    #[Test]
+    public function getEncodenameByIdMustReturnDefaultForElConfidencial(): void
+    {
+        $this->assertSame('el-confidencial', SitesEnum::getEncodenameById($this->elConfidencial->value));
+    }
+
+    #[Test]
+    public function getHostnameByIdMustReturnCorrectValue(): void
+    {
+        $this->assertSame('elconfidencial', SitesEnum::getHostnameById('999'));
         $this->assertSame('vanitatis.elconfidencial', SitesEnum::getHostnameById($this->vanitatis->value));
         $this->assertSame('alimente.elconfidencial', SitesEnum::getHostnameById($this->alimente->value));
-        $this->assertSame('elconfidencial', SitesEnum::getHostnameById('999'));
     }
 
     #[Test]
     public function getEncodenameByIdMustReturnCorrectValue(): void
     {
         $this->assertSame('el-confidencial', SitesEnum::getEncodenameById('69'));
-        $this->assertSame('el-confidencial', SitesEnum::getEncodenameById($this->elConfidencial->value));
         $this->assertSame('vanitatis', SitesEnum::getEncodenameById($this->vanitatis->value));
         $this->assertSame('alimente', SitesEnum::getEncodenameById($this->alimente->value));
     }

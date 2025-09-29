@@ -62,7 +62,8 @@ class WorkerCommand extends Command
 
         while (('dev' === $this->env) && ((0 === $timeLimit) || ($executeEnd >= $executeStart))) {
             $executeStart = time();
-            $output->writeln((new \DateTime())->format('Y-m-d H:i:s').': Test OK');
+            $log = \sprintf('%s: Test OK', (new \DateTime())->format('Y-m-d H:i:s'));
+            $output->writeln($log);
             sleep($timeSleep);
         }
 
