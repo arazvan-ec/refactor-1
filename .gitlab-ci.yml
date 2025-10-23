@@ -148,4 +148,3 @@ mandatory_job_start:
         - echo "running with data $CI_COMMIT_REF_NAME and CI_PIPELINE_SOURCE $CI_PIPELINE_SOURCE and CI_EC_ACTION $CI_EC_ACTION"
     rules:
         - if: $RUN_DUMMY == "true"
-
