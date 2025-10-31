@@ -138,7 +138,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section->method('id')->willReturn($sectionId);
         $section->method('name')->willReturn('SectionName');
         $section->method('siteId')->willReturn('siteId');
-        $section->method('isBlog')->willReturn(false);
+        $section->method('isSubdomainBlog')->willReturn(false);
         $section->method('getPath')->willReturn('section-path');
 
         $editorial = $this->createMock(Editorial::class);
@@ -162,7 +162,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section->method('name')->willReturn('Section Name');
         $section->method('getPath')->willReturn('section-path');
         $section->method('siteId')->willReturn('siteId');
-        $section->method('isBlog')->willReturn(false);
+        $section->method('isSubdomainBlog')->willReturn(false);
         $section->method('encodeName')->willReturn('espana');
 
         $editorial = $this->createMock(Editorial::class);
@@ -233,7 +233,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section->method('name')->willReturn('Section Name');
         $section->method('getPath')->willReturn('section-path');
         $section->method('siteId')->willReturn('siteId');
-        $section->method('isBlog')->willReturn(false);
+        $section->method('isSubdomainBlog')->willReturn(false);
         $section->method('encodeName')->willReturn('espana');
 
         $this->transformer->write($editorial, $section, []);
