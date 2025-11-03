@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c5ecd615e5fef7b101511a55d61319d",
+    "content-hash": "874176e4946a411cac5502cde524ce61",
     "packages": [
         {
             "name": "99designs/phumbor",
@@ -2730,16 +2730,16 @@
         },
         {
             "name": "ec/section-client",
-            "version": "dev-feature/PROD-45041-s-poder-migrar-todos-los-editoriales-secciones-y-subsecciones-de-subdominio-blogs-a",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/clients/section-client.git",
-                "reference": "83eea24bab7e8d02484e39ddc0920c270945b60b"
+                "reference": "2a01bcd31db42aad0b377ba79fb19c7fff73d5d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fclients%2Fsection-client/repository/archive.zip?sha=83eea24bab7e8d02484e39ddc0920c270945b60b",
-                "reference": "83eea24bab7e8d02484e39ddc0920c270945b60b",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fclients%2Fsection-client/repository/archive.zip?sha=2a01bcd31db42aad0b377ba79fb19c7fff73d5d7",
+                "reference": "2a01bcd31db42aad0b377ba79fb19c7fff73d5d7",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2751,7 +2751,7 @@
             "require": {
                 "beberlei/assert": "^3.0",
                 "ec/mock-client": "^1.4",
-                "ec/section-domain": "dev-feature/PROD-45041-s-poder-migrar-todos-los-editoriales-secciones-y-subsecciones-de-subdominio-blogs-a",
+                "ec/section-domain": "^2.0",
                 "ec/service-client": "^2.0",
                 "ext-json": "*",
                 "nyholm/psr7": "^1.8",
@@ -2804,23 +2804,23 @@
             ],
             "description": "Section Client",
             "support": {
-                "source": "https://gitlab.com/ec-awesomemakers1/microservices/clients/section-client/-/tree/feature/PROD-45041-s-poder-migrar-todos-los-editoriales-secciones-y-subsecciones-de-subdominio-blogs-a",
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/clients/section-client/-/tree/v3.1.1",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/clients/section-client/-/issues"
             },
-            "time": "2025-10-30T10:16:53+01:00"
+            "time": "2025-10-31T12:44:46+00:00"
         },
         {
             "name": "ec/section-domain",
-            "version": "dev-feature/PROD-45041-s-poder-migrar-todos-los-editoriales-secciones-y-subsecciones-de-subdominio-blogs-a",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/domain/section-domain.git",
-                "reference": "6200695946e67e9331b55fe52409f1ae920e5cfa"
+                "reference": "63e96e0a1b36ebee785e37d014d56aae9d9352c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fsection-domain/repository/archive.zip?sha=6200695946e67e9331b55fe52409f1ae920e5cfa",
-                "reference": "6200695946e67e9331b55fe52409f1ae920e5cfa",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fsection-domain/repository/archive.zip?sha=63e96e0a1b36ebee785e37d014d56aae9d9352c8",
+                "reference": "63e96e0a1b36ebee785e37d014d56aae9d9352c8",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -2869,10 +2869,10 @@
             ],
             "description": "Section Domain Base",
             "support": {
-                "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/section-domain/-/tree/feature/PROD-45041-s-poder-migrar-todos-los-editoriales-secciones-y-subsecciones-de-subdominio-blogs-a",
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/section-domain/-/tree/v2.1.1",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/domain/section-domain/-/issues"
             },
-            "time": "2025-10-30T10:09:37+01:00"
+            "time": "2025-10-31T12:03:08+00:00"
         },
         {
             "name": "ec/service-client",
@@ -16330,7 +16330,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "ec/section-client": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
