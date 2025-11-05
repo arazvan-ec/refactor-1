@@ -105,7 +105,7 @@ class RecommendedEditorialsDataTransformer
 
         return $this->generateUrl(
             'https://%s.%s.%s/%s',
-            $section->isBlog() ? 'blog' : 'www',
+            $section->isSubdomainBlog() ? 'blog' : 'www',
             $section->siteId(),
             $editorialPath
         );

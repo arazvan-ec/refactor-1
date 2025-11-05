@@ -114,7 +114,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
 
         return $this->generateUrl(
             'https://%s.%s.%s/%s',
-            $this->section->isBlog() ? 'blog' : 'www',
+            $this->section->isSubdomainBlog() ? 'blog' : 'www',
             $this->section->siteId(),
             $editorialPath
         );
@@ -137,7 +137,7 @@ class DetailsAppsDataTransformer implements AppsDataTransformer
         }
         $url = $this->generateUrl(
             'https://%s.%s.%s/%s',
-            $section->isBlog() ? 'blog' : 'www',
+            $section->isSubdomainBlog() ? 'blog' : 'www',
             $section->siteId(),
             $section->getPath()
         );

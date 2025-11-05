@@ -562,7 +562,7 @@ class JournalistsDataTransformerTest extends TestCase
             ->willReturn($siteId);
         $sectionMock->method('getPath')
             ->willReturn('path');
-        $sectionMock->method('isBlog')
+        $sectionMock->method('isSubdomainBlog')
             ->willReturn(false);
 
         $this->transformer->write($this->aliasId, $journalistMock, $sectionMock, false);
