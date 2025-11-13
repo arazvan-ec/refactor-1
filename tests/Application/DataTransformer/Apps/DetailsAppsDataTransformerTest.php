@@ -50,14 +50,36 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section = $this->createMock(Section::class);
         $tag = $this->createMock(Tag::class);
 
-        $journalists = ['aliasId' => $journalist];
-
         $this->transformer->write($editorial, $section, [$tag]);
         $result = $this->transformer->read();
 
         $this->assertArrayHasKey('id', $result);
         $this->assertArrayHasKey('section', $result);
         $this->assertArrayHasKey('tags', $result);
+        $this->assertArrayHasKey('url', $result);
+        $this->assertArrayHasKey('titles', $result);
+        $this->assertArrayHasKey('title', (array) $result['titles']);
+        $this->assertArrayHasKey('preTitle', (array) $result['titles']);
+        $this->assertArrayHasKey('urlTitle', (array) $result['titles']);
+        $this->assertArrayHasKey('mobileTitle', (array) $result['titles']);
+        $this->assertArrayHasKey('lead', $result);
+        $this->assertArrayHasKey('publicationDate', $result);
+        $this->assertArrayHasKey('updatedOn', $result);
+        $this->assertArrayHasKey('endOn', $result);
+        $this->assertArrayHasKey('type', $result);
+        $this->assertArrayHasKey('id', (array) $result['type']);
+        $this->assertArrayHasKey('name', (array) $result['type']);
+        $this->assertArrayHasKey('indexable', $result);
+        $this->assertArrayHasKey('deleted', $result);
+        $this->assertArrayHasKey('published', $result);
+        $this->assertArrayHasKey('closingModeId', $result);
+        $this->assertArrayHasKey('commentable', $result);
+        $this->assertArrayHasKey('isBrand', $result);
+        $this->assertArrayHasKey('isAmazonOnsite', $result);
+        $this->assertArrayHasKey('contentType', $result);
+        $this->assertArrayHasKey('canonicalEditorialId', $result);
+        $this->assertArrayHasKey('urlDate', $result);
+        $this->assertArrayHasKey('countWords', $result);
     }
 
     #[Test]
@@ -138,7 +160,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section->method('id')->willReturn($sectionId);
         $section->method('name')->willReturn('SectionName');
         $section->method('siteId')->willReturn('siteId');
-        $section->method('isBlog')->willReturn(false);
+        $section->method('isSubdomainBlog')->willReturn(false);
         $section->method('getPath')->willReturn('section-path');
 
         $editorial = $this->createMock(Editorial::class);
@@ -162,7 +184,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section->method('name')->willReturn('Section Name');
         $section->method('getPath')->willReturn('section-path');
         $section->method('siteId')->willReturn('siteId');
-        $section->method('isBlog')->willReturn(false);
+        $section->method('isSubdomainBlog')->willReturn(false);
         $section->method('encodeName')->willReturn('espana');
 
         $editorial = $this->createMock(Editorial::class);
@@ -183,8 +205,6 @@ class DetailsAppsDataTransformerTest extends TestCase
     public function transformerTagsShouldReturnCorrectTags(): void
     {
         $editorial = $this->createMock(Editorial::class);
-        $journalist = $this->createMock(Journalist::class);
-        $journalists = ['aliasId' => $journalist];
         $section = $this->createMock(Section::class);
         $tag = $this->createMock(Tag::class);
         $tagId = $this->createMock(TagId::class);
@@ -211,8 +231,6 @@ class DetailsAppsDataTransformerTest extends TestCase
     public function transformerShouldReturnEmptyTagsArrayWhenNoTagsAreProvided(): void
     {
         $editorial = $this->createMock(Editorial::class);
-        $journalist = $this->createMock(Journalist::class);
-        $journalists = ['aliasId' => $journalist];
         $section = $this->createMock(Section::class);
         $tags = [];
 
@@ -233,7 +251,7 @@ class DetailsAppsDataTransformerTest extends TestCase
         $section->method('name')->willReturn('Section Name');
         $section->method('getPath')->willReturn('section-path');
         $section->method('siteId')->willReturn('siteId');
-        $section->method('isBlog')->willReturn(false);
+        $section->method('isSubdomainBlog')->willReturn(false);
         $section->method('encodeName')->willReturn('espana');
 
         $this->transformer->write($editorial, $section, []);
