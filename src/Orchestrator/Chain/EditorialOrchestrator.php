@@ -204,7 +204,6 @@ class EditorialOrchestrator implements Orchestrator
                 ->then($this->createCallback([$this, 'fulfilledMultimedia']))
                 ->wait(true);
         }
-
         $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
 
         $tags = [];
