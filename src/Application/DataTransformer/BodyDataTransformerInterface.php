@@ -13,5 +13,10 @@ use Ec\Editorial\Domain\Model\Body\Body;
  */
 interface BodyDataTransformerInterface
 {
+    /**
+     * @param array<string, mixed> $resolveData
+     *
+     * @return array<string, mixed>
+     */
     public function execute(Body $body, array $resolveData): array;
 }

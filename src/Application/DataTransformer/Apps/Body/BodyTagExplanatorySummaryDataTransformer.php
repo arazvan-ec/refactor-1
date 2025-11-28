@@ -16,7 +16,9 @@ use Ec\Editorial\Domain\Model\Body\BodyTagExplanatorySummary;
  */
 class BodyTagExplanatorySummaryDataTransformer extends ElementContentDataTransformer
 {
-    /** @var BodyTagExplanatorySummary */
+    /**
+     * @param BodyTagExplanatorySummary $bodyElement
+     */
     protected BodyElement $bodyElement;
 
     public function __construct(
@@ -29,12 +31,10 @@ class BodyTagExplanatorySummaryDataTransformer extends ElementContentDataTransfo
         $message = 'BodyElement should be instance of '.BodyTagExplanatorySummary::class;
         Assertion::isInstanceOf($this->bodyElement, BodyTagExplanatorySummary::class, $message);
 
-        $bodyArray = $this->bodyElementDataTransformer->execute($this->bodyElement->body(), []);
-
         return [
             'type' => $this->bodyElement->type(),
             'title' => $this->bodyElement->title(),
-            'body' => $bodyArray,
+            'body' => $this->bodyElementDataTransformer->execute($this->bodyElement->body(), []),
         ];
     }
 
