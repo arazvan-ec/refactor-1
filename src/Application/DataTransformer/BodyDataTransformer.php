@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @author Juanma Santos <jmsantos@elconfidencial.com>
  */
-class BodyDataTransformer
+class BodyDataTransformer implements BodyDataTransformerInterface
 {
     public function __construct(
         private readonly BodyElementDataTransformerHandler $bodyElementDataTransformerHandler,
