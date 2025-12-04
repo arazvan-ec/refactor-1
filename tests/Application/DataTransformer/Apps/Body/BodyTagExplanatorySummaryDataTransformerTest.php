@@ -23,7 +23,8 @@ use PHPUnit\Framework\TestCase;
 class BodyTagExplanatorySummaryDataTransformerTest extends TestCase
 {
     private BodyTagExplanatorySummaryDataTransformer $bodyTagExplanatorySummaryDataTransformer;
-    private BodyDataTransformerInterface|MockObject $bodyDataTransformer;
+    /** @var BodyDataTransformerInterface|(BodyDataTransformerInterface&object&MockObject)|(BodyDataTransformerInterface&MockObject)|(object&MockObject)|MockObject */
+    private BodyDataTransformerInterface $bodyDataTransformer;
 
     protected function setUp(): void
     {
@@ -45,7 +46,7 @@ class BodyTagExplanatorySummaryDataTransformerTest extends TestCase
         $expectedArray = [
             'type' => 'bodytagexplanatorysummary',
             'title' => 'this is a title for bodytagexplanatorysummary',
-            'body' => [],
+            'elements' => [],
         ];
 
         $bodyElementMock = $this->createMock(BodyTagExplanatorySummary::class);
@@ -54,6 +55,14 @@ class BodyTagExplanatorySummaryDataTransformerTest extends TestCase
         $bodyElementMock->expects(static::once())
             ->method('body')
             ->willReturn($bodyNormalMock);
+
+        $this->bodyDataTransformer->expects(static::once())
+            ->method('execute')
+            ->with($bodyNormalMock, [])
+            ->willReturn([
+                'type' => '',
+                'elements' => [],
+            ]);
 
         $bodyElementMock->expects(static::once())
             ->method('type')

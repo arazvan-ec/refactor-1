@@ -31,10 +31,12 @@ class BodyTagExplanatorySummaryDataTransformer extends ElementContentDataTransfo
         $message = 'BodyElement should be instance of '.BodyTagExplanatorySummary::class;
         Assertion::isInstanceOf($this->bodyElement, BodyTagExplanatorySummary::class, $message);
 
+        $body = $this->bodyElementDataTransformer->execute($this->bodyElement->body(), []);
+
         return [
             'type' => $this->bodyElement->type(),
             'title' => $this->bodyElement->title(),
-            'body' => $this->bodyElementDataTransformer->execute($this->bodyElement->body(), []),
+            'elements' => $body['elements'],
         ];
     }
 
