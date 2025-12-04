@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 class BodyTagExplanatorySummaryDataTransformerTest extends TestCase
 {
     private BodyTagExplanatorySummaryDataTransformer $bodyTagExplanatorySummaryDataTransformer;
-    /** @var BodyDataTransformerInterface|(BodyDataTransformerInterface&object&MockObject)|(BodyDataTransformerInterface&MockObject)|(object&MockObject)|MockObject */
+    /** @var BodyDataTransformerInterface|MockObject */
     private BodyDataTransformerInterface $bodyDataTransformer;
 
     protected function setUp(): void
