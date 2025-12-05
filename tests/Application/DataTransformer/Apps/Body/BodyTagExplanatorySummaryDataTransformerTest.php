@@ -46,7 +46,7 @@ class BodyTagExplanatorySummaryDataTransformerTest extends TestCase
         $expectedArray = [
             'type' => 'bodytagexplanatorysummary',
             'title' => 'this is a title for bodytagexplanatorysummary',
-            'elements' => [],
+            'items' => [],
         ];
 
         $bodyElementMock = $this->createMock(BodyTagExplanatorySummary::class);

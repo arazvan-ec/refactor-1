@@ -36,7 +36,7 @@ class BodyTagExplanatorySummaryDataTransformer extends ElementContentDataTransfo
         return [
             'type' => $this->bodyElement->type(),
             'title' => $this->bodyElement->title(),
-            'elements' => $body['elements'],
+            'items' => $body['elements'],
         ];
     }
 
