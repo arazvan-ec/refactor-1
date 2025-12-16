@@ -158,43 +158,48 @@ class EditorialOrchestrator implements Orchestrator
         $recommendedNews = [];
         /** @var EditorialId $recommendedEditorialId */
         foreach ($recommendedEditorials->editorialIds() as $recommendedEditorialId) {
-            $idRecommended = $recommendedEditorialId->id();
+            try {
+                $idRecommended = $recommendedEditorialId->id();
 
-            /** @var Editorial $recommendedEditorial */
-            $recommendedEditorial = $this->queryEditorialClient->findEditorialById($idRecommended);
-            if ($recommendedEditorial->isVisible()) {
-                /** @var Section $sectionInserted */
-                $sectionInserted = $this->querySectionClient->findSectionById($recommendedEditorial->sectionId());
+                /** @var Editorial $recommendedEditorial */
+                $recommendedEditorial = $this->queryEditorialClient->findEditorialById($idRecommended);
+                if ($recommendedEditorial->isVisible()) {
+                    /** @var Section $sectionInserted */
+                    $sectionInserted = $this->querySectionClient->findSectionById($recommendedEditorial->sectionId());
 
-                $resolveData['recommendedEditorials'][$idRecommended]['editorial'] = $recommendedEditorial;
-                $resolveData['recommendedEditorials'][$idRecommended]['section'] = $sectionInserted;
-                $resolveData['recommendedEditorials'][$idRecommended]['signatures'] = [];
-                /** @var Signature $signature */
-                foreach ($recommendedEditorial->signatures()->getArrayCopy() as $signature) {
-                    $result = $this->retrieveAliasFormat($signature->id()->id(), $sectionInserted);
-                    if (!empty($result)) {
-                        $resolveData['recommendedEditorials'][$idRecommended]['signatures'][] = $result;
+                    $resolveData['recommendedEditorials'][$idRecommended]['editorial'] = $recommendedEditorial;
+                    $resolveData['recommendedEditorials'][$idRecommended]['section'] = $sectionInserted;
+                    $resolveData['recommendedEditorials'][$idRecommended]['signatures'] = [];
+                    /** @var Signature $signature */
+                    foreach ($recommendedEditorial->signatures()->getArrayCopy() as $signature) {
+                        $result = $this->retrieveAliasFormat($signature->id()->id(), $sectionInserted);
+                        if (!empty($result)) {
+                            $resolveData['recommendedEditorials'][$idRecommended]['signatures'][] = $result;
+                        }
                     }
-                }
 
-                if (!empty($recommendedEditorial->multimedia()->id()->id())) {
-                    /** @var array<string, array<int|string, array<int|string, array<int|string, array<int|string, mixed>>>|\Ec\Multimedia\Domain\Model\Multimedia\Multimedia|Promise>> $resolveData */
-                    $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);
-                    $multimediaId = $recommendedEditorial->multimedia()->id()->id();
-                } else {
-                    $resolveData = $this->getOpening($recommendedEditorial, $resolveData); // @phpstan-ignore argument.type
-                    /** @var NewsBase $recommendedEditorial */
-                    $multimediaId = $recommendedEditorial->opening()->multimediaId();
-                }
+                    if (!empty($recommendedEditorial->multimedia()->id()->id())) {
+                        /** @var array<string, array<int|string, array<int|string, array<int|string, array<int|string, mixed>>>|\Ec\Multimedia\Domain\Model\Multimedia\Multimedia|Promise>> $resolveData */
+                        $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);
+                        $multimediaId = $recommendedEditorial->multimedia()->id()->id();
+                    } else {
+                        $resolveData = $this->getOpening($recommendedEditorial, $resolveData);
+                        /** @var NewsBase $recommendedEditorial */
+                        $multimediaId = $recommendedEditorial->opening()->multimediaId();
+                    }
 
-                /** @var array<string, array<string, array<string, string>>> $resolveData */
-                $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $multimediaId;
-                $recommendedNews[] = $recommendedEditorial;
+                    /** @var array<string, array<string, array<string, string>>> $resolveData */
+                    $resolveData['recommendedEditorials'][$idRecommended]['multimediaId'] = $multimediaId;
+                    $recommendedNews[] = $recommendedEditorial;
+                }
+            } catch (\Throwable $throwable) {
+                $this->logger->error($throwable->getMessage());
+                continue;
             }
         }
 
         /** @var array<string, ?array{multimedia: array<string, array<int, Promise>>}> $resolveData */
-        $resolveData = $this->getOpening($editorial, $resolveData); // @phpstan-ignore argument.type
+        $resolveData = $this->getOpening($editorial, $resolveData);
         /** @var array{multimedia?: array<string, array<int, Promise>>} $resolveData */
         $resolveData = $this->getAsyncMultimedia($editorial->multimedia(), $resolveData); // @phpstan-ignore argument.type
         if (!empty($resolveData['multimedia'])
