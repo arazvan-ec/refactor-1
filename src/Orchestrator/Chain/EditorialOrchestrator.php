@@ -144,9 +144,8 @@ class EditorialOrchestrator implements Orchestrator
                     $resolveData = $this->getAsyncMultimedia($insertedEditorials->multimedia(), $resolveData);
                     $multimediaId = $insertedEditorials->multimedia()->id()->id();
                 } else {
-                    $resolveData = $this->getOpening($insertedEditorials, $resolveData); // @phpstan-ignore argument.type
-                    /** @var NewsBase $insertedEditorials */
-                    $multimediaId = $insertedEditorials->opening()->multimediaId();
+                    $resolveData = $this->getMetaImage($insertedEditorials, $resolveData); // @phpstan-ignore argument.type
+                    $multimediaId = $insertedEditorials->metaImage();
                 }
                 /** @var array<string, array<string, array<string, string>>> $resolveData */
                 $resolveData['insertedNews'][$idInserted]['multimediaId'] = $multimediaId;
@@ -183,9 +182,8 @@ class EditorialOrchestrator implements Orchestrator
                         $resolveData = $this->getAsyncMultimedia($recommendedEditorial->multimedia(), $resolveData);
                         $multimediaId = $recommendedEditorial->multimedia()->id()->id();
                     } else {
-                        $resolveData = $this->getOpening($recommendedEditorial, $resolveData);
-                        /** @var NewsBase $recommendedEditorial */
-                        $multimediaId = $recommendedEditorial->opening()->multimediaId();
+                        $resolveData = $this->getMetaImage($recommendedEditorial, $resolveData);
+                        $multimediaId = $recommendedEditorial->metaImage();
                     }
 
                     /** @var array<string, array<string, array<string, string>>> $resolveData */
@@ -444,6 +442,28 @@ class EditorialOrchestrator implements Orchestrator
             }
 
             $resolveData['multimediaOpening'][$opening->multimediaId()]['opening'] = $multimedia;
+        }
+
+        return $resolveData; // @phpstan-ignore return.type
+    }
+
+    /**
+     * @param array<string, array<string, array<int, Promise>>> $resolveData
+     *
+     * @return array<string, array<int, Promise|\Ec\Multimedia\Domain\Model\Multimedia\Multimedia>>
+     */
+    private function getMetaImage(Editorial $editorial, array $resolveData): array
+    {
+        if (!empty($editorial->metaImage())) {
+            /** @var Multimedia $multimedia */
+            $multimedia = $this->queryMultimediaOpeningClient->findMultimediaById($editorial->metaImage());
+            if (!$multimedia instanceof MultimediaPhoto) {
+                return $resolveData; // @phpstan-ignore return.type
+            }
+
+            $resource = $this->queryMultimediaOpeningClient->findPhotoById($multimedia->resourceId());
+            $resolveData['multimediaOpening'][$editorial->metaImage()]['resource'] = $resource;
+            $resolveData['multimediaOpening'][$editorial->metaImage()]['opening'] = $multimedia;
         }
 
         return $resolveData; // @phpstan-ignore return.type

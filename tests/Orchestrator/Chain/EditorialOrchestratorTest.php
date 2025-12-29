@@ -26,6 +26,7 @@ use Ec\Editorial\Domain\Model\Body\MembershipCardButtons;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
+use Ec\Editorial\Domain\Model\Multimedia\MultimediaId;
 use Ec\Editorial\Domain\Model\Multimedia\PhotoExist;
 use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\Opening;
@@ -44,7 +45,8 @@ use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
 use Ec\Multimedia\Domain\Model\Multimedia;
-use Ec\Multimedia\Domain\Model\MultimediaId;
+use Ec\Multimedia\Domain\Model\Multimedia\MultimediaPhoto;
+use Ec\Multimedia\Domain\Model\Multimedia\ResourceId;
 use Ec\Multimedia\Domain\Model\Photo\Photo;
 use Ec\Multimedia\Infrastructure\Client\Http\Media\QueryMultimediaClient as QueryMultimediaOpeningClient;
 use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
@@ -1168,9 +1170,9 @@ class EditorialOrchestratorTest extends TestCase
         $opening->method('multimediaId')->willReturn('123');
         $editorial->method('opening')->willReturn($opening);
 
-        $resourceIdMock = $this->createMock(Multimedia\ResourceId::class);
+        $resourceIdMock = $this->createMock(ResourceId::class);
         $resourceIdMock->method('id')->willReturn('456');
-        $multimedia = $this->createMock(Multimedia\MultimediaPhoto::class);
+        $multimedia = $this->createMock(MultimediaPhoto::class);
         $multimedia->method('resourceId')->willReturn($resourceIdMock);
 
         $photoMock = $this->createMock(Photo::class);
@@ -1192,7 +1194,7 @@ class EditorialOrchestratorTest extends TestCase
         $method = $reflection->getMethod('getOpening');
         $method->setAccessible(true);
         /** @var array{
-         *      multimediaOpening?: array{123?: array{opening: Multimedia\MultimediaPhoto, resource: Photo}}
+         *      multimediaOpening?: array{123?: array{opening: MultimediaPhoto, resource: Photo}}
          * } $result
          */
         $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
@@ -1404,7 +1406,7 @@ class EditorialOrchestratorTest extends TestCase
     public function getMultimediaShouldRequestViaAsync(): void
     {
         $multimediaId = 'existing-id';
-        $multimediaIdDomain = new \Ec\Editorial\Domain\Model\Multimedia\MultimediaId($multimediaId);
+        $multimediaIdDomain = new MultimediaId($multimediaId);
         $mockMultimedia = $this->createMock(PhotoExist::class);
         $mockMultimedia->method('id')->willReturn($multimediaIdDomain);
 
@@ -1417,5 +1419,199 @@ class EditorialOrchestratorTest extends TestCase
         self::assertTrue($getAsyncMultimedia->isPrivate());
         $getAsyncMultimedia->setAccessible(true);
         $promise = $getAsyncMultimedia->invokeArgs($this->editorialOrchestrator, [$mockMultimedia, ['multimedia' => []]]);
+    }
+
+    #[Test]
+    public function shouldGetMetaImageWithResourceWhenIsTypeMultimediaPhoto(): void
+    {
+        $metaImageId = '456';
+
+        $editorial = $this->createMock(Editorial::class);
+        $editorial->method('metaImage')->willReturn($metaImageId);
+
+        $resourceIdMock = $this->createMock(ResourceId::class);
+        $resourceIdMock->method('id')->willReturn('789');
+
+        $multimedia = $this->createMock(MultimediaPhoto::class);
+        $multimedia->method('resourceId')->willReturn($resourceIdMock);
+
+        $photoMock = $this->createMock(Photo::class);
+
+        $this->queryMultimediaOpeningClient
+            ->expects(static::once())
+            ->method('findMultimediaById')
+            ->with($metaImageId)
+            ->willReturn($multimedia);
+
+        $this->queryMultimediaOpeningClient
+            ->expects(static::once())
+            ->method('findPhotoById')
+            ->with($resourceIdMock)
+            ->willReturn($photoMock);
+
+        $resolveData = [];
+        $reflection = new \ReflectionClass($this->editorialOrchestrator);
+
+        $method = $reflection->getMethod('getMetaImage');
+        $method->setAccessible(true);
+
+        /** @var array{
+         *      multimediaOpening?: array{456?: array{opening: MultimediaPhoto, resource: Photo}}
+         * } $result
+         */
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
+
+        $this->assertArrayHasKey('multimediaOpening', $result);
+        $this->assertArrayHasKey($metaImageId, $result['multimediaOpening']);
+        $this->assertSame($multimedia, $result['multimediaOpening'][$metaImageId]['opening']);
+        $this->assertSame($photoMock, $result['multimediaOpening'][$metaImageId]['resource']);
+    }
+
+    #[Test]
+    public function shouldGetMetaImageReturnUnchangedResolveDataWhenIsNotTypeMultimediaPhoto(): void
+    {
+        $metaImageId = '456';
+
+        $editorial = $this->createMock(Editorial::class);
+        $editorial->method('metaImage')->willReturn($metaImageId);
+
+        $multimedia = $this->createMock(Multimedia\MultimediaEmbedVideo::class);
+
+        $this->queryMultimediaOpeningClient
+            ->expects(static::once())
+            ->method('findMultimediaById')
+            ->with($metaImageId)
+            ->willReturn($multimedia);
+
+        $this->queryMultimediaOpeningClient
+            ->expects(static::never())
+            ->method('findPhotoById');
+
+        $resolveData = ['existingKey' => 'existingValue'];
+        $reflection = new \ReflectionClass($this->editorialOrchestrator);
+
+        $method = $reflection->getMethod('getMetaImage');
+        $method->setAccessible(true);
+
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
+
+        $this->assertSame($resolveData, $result);
+        $this->assertArrayNotHasKey('multimediaOpening', $result);
+    }
+
+    #[Test]
+    public function shouldGetMetaImageReturnUnchangedResolveDataWhenMetaImageIsEmpty(): void
+    {
+        $editorial = $this->createMock(Editorial::class);
+        $editorial->method('metaImage')->willReturn('');
+
+        $this->queryMultimediaOpeningClient
+            ->expects(static::never())
+            ->method('findMultimediaById');
+
+        $this->queryMultimediaOpeningClient
+            ->expects(static::never())
+            ->method('findPhotoById');
+
+        $resolveData = ['existingKey' => 'existingValue'];
+        $reflection = new \ReflectionClass($this->editorialOrchestrator);
+
+        $method = $reflection->getMethod('getMetaImage');
+        $method->setAccessible(true);
+
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
+
+        $this->assertSame($resolveData, $result);
+    }
+
+    #[Test]
+    public function shouldLogErrorAndContinueWhenRecommendedEditorialThrowsException(): void
+    {
+        $mainEditorialId = 'main-editorial-123';
+        $recommendedEditorialId = 'recommended-456';
+        $errorMessage = 'Recommended editorial not found';
+
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->method('get')->with('id')->willReturn($mainEditorialId);
+
+        $recommendedEditorialIdMock = $this->createMock(EditorialId::class);
+        $recommendedEditorialIdMock->method('id')->willReturn($recommendedEditorialId);
+
+        $recommendedEditorialsMock = $this->createMock(RecommendedEditorials::class);
+        $recommendedEditorialsMock->method('editorialIds')->willReturn([$recommendedEditorialIdMock]);
+
+        $bodyMock = $this->createMock(Body::class);
+        $bodyMock->method('bodyElementsOf')->willReturn([]);
+
+        $openingMock = $this->createMock(Opening::class);
+        $openingMock->method('multimediaId')->willReturn('');
+
+        $multimediaIdMock = $this->createMock(MultimediaId::class);
+        $multimediaIdMock->method('id')->willReturn('');
+        $multimediaMock = $this->createMock(MultimediaEditorial::class);
+        $multimediaMock->method('id')->willReturn($multimediaIdMock);
+
+        $signaturesMock = $this->createMock(Signatures::class);
+        $signaturesMock->method('getArrayCopy')->willReturn([]);
+
+        $tagsMock = new Tags();
+
+        $sourceEditorialMock = $this->createMock(SourceEditorial::class);
+
+        $mainEditorialMock = $this->createMock(NewsBase::class);
+        $mainEditorialMock->method('sourceEditorial')->willReturn($sourceEditorialMock);
+        $mainEditorialMock->method('isVisible')->willReturn(true);
+        $mainEditorialMock->method('sectionId')->willReturn('section-1');
+        $mainEditorialMock->method('body')->willReturn($bodyMock);
+        $mainEditorialMock->method('recommendedEditorials')->willReturn($recommendedEditorialsMock);
+        $mainEditorialMock->method('opening')->willReturn($openingMock);
+        $mainEditorialMock->method('multimedia')->willReturn($multimediaMock);
+        $mainEditorialMock->method('signatures')->willReturn($signaturesMock);
+        $mainEditorialMock->method('tags')->willReturn($tagsMock);
+
+        $sectionMock = $this->createMock(Section::class);
+        $sectionMock->method('siteId')->willReturn('el-confidencial');
+
+        $this->queryEditorialClient->method('findEditorialById')
+            ->willReturnCallback(function ($id) use ($mainEditorialId, $mainEditorialMock, $recommendedEditorialId, $errorMessage) {
+                if ($id === $mainEditorialId) {
+                    return $mainEditorialMock;
+                }
+                if ($id === $recommendedEditorialId) {
+                    throw new \Exception($errorMessage);
+                }
+
+                return $mainEditorialMock;
+            });
+
+        $this->querySectionClient->method('findSectionById')->willReturn($sectionMock);
+
+        $promiseMock = $this->createMock(Promise::class);
+        $promiseMock->method('wait')->willReturn([]);
+        $this->queryMembershipClient->method('getMembershipUrl')->willReturn($promiseMock);
+
+        $this->appsDataTransformer->method('write')->willReturnSelf();
+        $this->appsDataTransformer->method('read')->willReturn([
+            'id' => $mainEditorialId,
+            'section' => [],
+            'countComments' => 0,
+            'tags' => [],
+            'multimedia' => [],
+        ]);
+        $this->bodyDataTransformer->method('execute')->willReturn([]);
+        $this->standfirstDataTransformer->method('write')->willReturnSelf();
+        $this->standfirstDataTransformer->method('read')->willReturn([]);
+        $this->recommendedEditorialsDataTransformer->method('write')->willReturnSelf();
+        $this->recommendedEditorialsDataTransformer->method('read')->willReturn([]);
+
+        $this->queryLegacyClient->method('findCommentsByEditorialId')->willReturn(['options' => ['totalrecords' => 0]]);
+
+        $this->logger->expects(static::once())
+            ->method('error')
+            ->with($errorMessage);
+
+        $result = $this->editorialOrchestrator->execute($requestMock);
+
+        static::assertArrayHasKey('id', $result);
     }
 }
