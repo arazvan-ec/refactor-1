@@ -26,6 +26,7 @@ use Ec\Editorial\Domain\Model\Body\MembershipCardButtons;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;
 use Ec\Editorial\Domain\Model\Multimedia\Multimedia as MultimediaEditorial;
+use Ec\Editorial\Domain\Model\Multimedia\MultimediaId;
 use Ec\Editorial\Domain\Model\Multimedia\PhotoExist;
 use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\Opening;
@@ -1405,7 +1406,7 @@ class EditorialOrchestratorTest extends TestCase
     public function getMultimediaShouldRequestViaAsync(): void
     {
         $multimediaId = 'existing-id';
-        $multimediaIdDomain = new \Ec\Editorial\Domain\Model\Multimedia\MultimediaId($multimediaId);
+        $multimediaIdDomain = new MultimediaId($multimediaId);
         $mockMultimedia = $this->createMock(PhotoExist::class);
         $mockMultimedia->method('id')->willReturn($multimediaIdDomain);
 
@@ -1521,5 +1522,96 @@ class EditorialOrchestratorTest extends TestCase
         $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
 
         $this->assertSame($resolveData, $result);
+    }
+
+    #[Test]
+    public function shouldLogErrorAndContinueWhenRecommendedEditorialThrowsException(): void
+    {
+        $mainEditorialId = 'main-editorial-123';
+        $recommendedEditorialId = 'recommended-456';
+        $errorMessage = 'Recommended editorial not found';
+
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->method('get')->with('id')->willReturn($mainEditorialId);
+
+        $recommendedEditorialIdMock = $this->createMock(EditorialId::class);
+        $recommendedEditorialIdMock->method('id')->willReturn($recommendedEditorialId);
+
+        $recommendedEditorialsMock = $this->createMock(RecommendedEditorials::class);
+        $recommendedEditorialsMock->method('editorialIds')->willReturn([$recommendedEditorialIdMock]);
+
+        $bodyMock = $this->createMock(Body::class);
+        $bodyMock->method('bodyElementsOf')->willReturn([]);
+
+        $openingMock = $this->createMock(Opening::class);
+        $openingMock->method('multimediaId')->willReturn('');
+
+        $multimediaIdMock = $this->createMock(MultimediaId::class);
+        $multimediaIdMock->method('id')->willReturn('');
+        $multimediaMock = $this->createMock(MultimediaEditorial::class);
+        $multimediaMock->method('id')->willReturn($multimediaIdMock);
+
+        $signaturesMock = $this->createMock(Signatures::class);
+        $signaturesMock->method('getArrayCopy')->willReturn([]);
+
+        $tagsMock = new Tags();
+
+        $sourceEditorialMock = $this->createMock(SourceEditorial::class);
+
+        $mainEditorialMock = $this->createMock(NewsBase::class);
+        $mainEditorialMock->method('sourceEditorial')->willReturn($sourceEditorialMock);
+        $mainEditorialMock->method('isVisible')->willReturn(true);
+        $mainEditorialMock->method('sectionId')->willReturn('section-1');
+        $mainEditorialMock->method('body')->willReturn($bodyMock);
+        $mainEditorialMock->method('recommendedEditorials')->willReturn($recommendedEditorialsMock);
+        $mainEditorialMock->method('opening')->willReturn($openingMock);
+        $mainEditorialMock->method('multimedia')->willReturn($multimediaMock);
+        $mainEditorialMock->method('signatures')->willReturn($signaturesMock);
+        $mainEditorialMock->method('tags')->willReturn($tagsMock);
+
+        $sectionMock = $this->createMock(Section::class);
+        $sectionMock->method('siteId')->willReturn('el-confidencial');
+
+        $this->queryEditorialClient->method('findEditorialById')
+            ->willReturnCallback(function ($id) use ($mainEditorialId, $mainEditorialMock, $recommendedEditorialId, $errorMessage) {
+                if ($id === $mainEditorialId) {
+                    return $mainEditorialMock;
+                }
+                if ($id === $recommendedEditorialId) {
+                    throw new \Exception($errorMessage);
+                }
+
+                return $mainEditorialMock;
+            });
+
+        $this->querySectionClient->method('findSectionById')->willReturn($sectionMock);
+
+        $promiseMock = $this->createMock(Promise::class);
+        $promiseMock->method('wait')->willReturn([]);
+        $this->queryMembershipClient->method('getMembershipUrl')->willReturn($promiseMock);
+
+        $this->appsDataTransformer->method('write')->willReturnSelf();
+        $this->appsDataTransformer->method('read')->willReturn([
+            'id' => $mainEditorialId,
+            'section' => [],
+            'countComments' => 0,
+            'tags' => [],
+            'multimedia' => [],
+        ]);
+        $this->bodyDataTransformer->method('execute')->willReturn([]);
+        $this->standfirstDataTransformer->method('write')->willReturnSelf();
+        $this->standfirstDataTransformer->method('read')->willReturn([]);
+        $this->recommendedEditorialsDataTransformer->method('write')->willReturnSelf();
+        $this->recommendedEditorialsDataTransformer->method('read')->willReturn([]);
+
+        $this->queryLegacyClient->method('findCommentsByEditorialId')->willReturn(['options' => ['totalrecords' => 0]]);
+
+        $this->logger->expects(static::once())
+            ->method('error')
+            ->with($errorMessage);
+
+        $result = $this->editorialOrchestrator->execute($requestMock);
+
+        static::assertArrayHasKey('id', $result);
     }
 }
