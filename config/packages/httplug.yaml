@@ -4,7 +4,6 @@ services:
         arguments:
             $time: '%env(int:SERVICE_HTTP_TIME_DELAY)%'
 
-
     httplug.plugin.retry:
         class: Http\Client\Common\Plugin\RetryPlugin
         arguments:
@@ -51,7 +50,7 @@ httplug:
                 - 'httplug.plugin.redirect'
                 - 'httplug.plugin.logger'
                 - 'httplug.plugin.authentication.elasticsearch_auth'
+                - 'httplug.plugin.retry'
                 - header_defaults:
                     headers:
                         'User-Agent': '%env(string:EC_USER_AGENT)%'
-                - 'httplug.plugin.retry'
