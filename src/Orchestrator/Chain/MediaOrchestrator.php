@@ -19,14 +19,13 @@ class MediaOrchestrator implements Orchestrator
 {
     public function __construct(
         private readonly QueryMultimediaOpeningClient $queryMultimediaOpeningClient,
-        private readonly MediaDataTransformerHandler $mediaDataTransformerHandler,
         private readonly LoggerInterface $logger,
     ) {
     }
 
     public function canOrchestrate(): string
     {
-        return 'opening_media';
+        return 'media';
     }
 
     /**
@@ -75,7 +74,7 @@ class MediaOrchestrator implements Orchestrator
             }
 
             /** @var NewsBase $editorial */
-            return $this->mediaDataTransformerHandler->execute($resolveData, $editorial->opening());
+            return $resolveData;
         } catch (\Throwable $throwable) {
             $this->logger->error('Error handling opening multimedia', [
                 'multimediaId' => $multimediaId,
@@ -99,20 +98,20 @@ class MediaOrchestrator implements Orchestrator
             /** @var Multimedia $multimedia */
             $multimedia = $this->queryMultimediaClient->findMultimediaById($editorial->metaImage());
 
+            // APLICA STRATEGIA POR TIPO DE MEDIA
+            // Photo, widget, video, ....
             if (!$multimedia instanceof MultimediaPhoto) {
                 return null;
             }
 
             $resource = $this->queryMultimediaClient->findPhotoById($multimedia->resourceId());
-            $resolveData = [
+
+            return [
                 $editorial->metaImage() => [
                     'opening' => $multimedia,
                     'resource' => $resource,
                 ],
             ];
-
-            /** @var NewsBase $editorial */
-            return $this->mediaDataTransformerHandler->execute($resolveData, $editorial->opening());
         } catch (\Throwable $throwable) {
             $this->logger->error('Error handling meta image', [
                 'metaImage' => $editorial->metaImage(),
