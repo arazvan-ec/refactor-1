@@ -30,3 +30,7 @@ services:
 
     App\Orchestrator\Chain\MultimediaType\MultimediaOrchestratorChain: '@App\Orchestrator\Chain\MultimediaType\MultimediaTypeOrchestratorHandler'
 
+    App\Orchestrator\Chain\MultimediaType\MultimediaWidgetOrchestrator:
+        tags: [ 'app.multimedia.orchestrators' ]
+        arguments:
+            $queryWidgetClient: '@Ec\Widget\Domain\Model\QueryWidgetClient'

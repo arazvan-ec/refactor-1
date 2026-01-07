@@ -19,8 +19,6 @@ services:
     Ec\Multimedia\Domain\Model\QueryPhotoClient: '@Ec\Multimedia\Infrastructure\Client\Http\QueryPhotoClient'
     Ec\Multimedia\Domain\Model\QueryMultimediaClient: '@Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient'
 
-
-
     Ec\Multimedia\Application\Service\MultimediaFactory: ~
     Ec\Multimedia\Domain\Model\MultimediaFactory: '@Ec\Multimedia\Application\Service\MultimediaFactory'
 
@@ -44,7 +42,6 @@ services:
             - '../../../vendor/ec/multimedia-domain/src/Application/Factory/Multimedia.php'
             - '../../../vendor/ec/multimedia-domain/src/Application/Factory/MultimediaStrategy.php'
         tags: [ 'ec.multimedia.factory' ]
-
 
 
 

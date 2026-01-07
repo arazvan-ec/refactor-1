@@ -436,11 +436,8 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
         /** @var NewsBase $editorial */
         $opening = $editorial->opening();
         if (!empty($opening->multimediaId())) {
-
-            // Service
             /** @var Multimedia $multimedia */
             $multimedia = $this->queryMultimediaOpeningClient->findMultimediaById($opening->multimediaId());
-
             $resolveData['multimediaOpening'] = $this->multimediaTypeOrchestratorHandler->handler($multimedia);
         }
 
