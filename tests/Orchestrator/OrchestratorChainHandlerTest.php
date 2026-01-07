@@ -7,7 +7,6 @@
 namespace App\Tests\Orchestrator;
 
 use App\Orchestrator\Chain\EditorialOrchestrator;
-use App\Orchestrator\Chain\Orchestrator;
 use App\Orchestrator\Exceptions\DuplicateChainInOrchestratorHandlerException;
 use App\Orchestrator\Exceptions\OrchestratorTypeNotExistException;
 use App\Orchestrator\OrchestratorChainHandler;

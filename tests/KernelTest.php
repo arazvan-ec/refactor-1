@@ -43,7 +43,7 @@ class KernelTest extends TestCase
                     self::assertInstanceOf(MultimediaFactoryCompiler::class, $method);
                 } elseif (4 == $invokedCount->numberOfInvocations()) {
                     self::assertInstanceOf(MediaDataTransformerCompiler::class, $method);
-                } elseif(5 == $invokedCount->numberOfInvocations()) {
+                } elseif (5 == $invokedCount->numberOfInvocations()) {
                     self::assertInstanceOf(MultimediaOrchestratorCompiler::class, $method);
                 } elseif (6 == $invokedCount->numberOfInvocations()) {
                     self::assertInstanceOf(WidgetLegacyCreatorHandlerCompiler::class, $method);

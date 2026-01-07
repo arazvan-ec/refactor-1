@@ -6,10 +6,8 @@
 
 namespace App\Tests\DependencyInjection\Compiler;
 
-use App\DependencyInjection\Compiler\EditorialOrchestratorCompiler;
 use App\DependencyInjection\Compiler\MultimediaOrchestratorCompiler;
 use App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorHandler;
-use App\Orchestrator\OrchestratorChainHandler;
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractCompilerPassTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
