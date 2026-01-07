@@ -7,6 +7,7 @@ use App\DependencyInjection\Compiler\EditorialOrchestratorCompiler;
 use App\DependencyInjection\Compiler\MediaDataTransformerCompiler;
 use App\DependencyInjection\Compiler\MultimediaFactoryCompiler;
 use App\DependencyInjection\Compiler\MultimediaTypeOrchestratorCompiler;
+use App\DependencyInjection\Compiler\WidgetLegacyCreatorHandlerCompiler;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
@@ -24,5 +25,6 @@ class Kernel extends BaseKernel
         $container->addCompilerPass(new BodyDataTransformerCompiler());
         $container->addCompilerPass(new MultimediaFactoryCompiler());
         $container->addCompilerPass(new MediaDataTransformerCompiler());
+        $container->addCompilerPass(new WidgetLegacyCreatorHandlerCompiler());
     }
 }

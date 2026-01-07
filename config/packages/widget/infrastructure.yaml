@@ -20,3 +20,5 @@ services:
             $client: '@httplug.client.app_guzzle7.http_methods.inner'
 
     Ec\Widget\Domain\Model\QueryWidgetClient: '@Ec\Widget\Infrastructure\Client\Http\QueryWidgetClient'
+
+

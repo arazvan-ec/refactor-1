@@ -1,0 +1,17 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Ec\Widget\Application\Service\Factories\:
+        resource: '../../../vendor/ec/widget-domain/src/Application/Service/Factories/'
+        exclude:
+            - '../../../vendor/ec/widget-domain/src/Application/Service/Factories/*Exception.php'
+            - '../../../vendor/ec/widget-domain/src/Application/Service/Factories/WidgetLegacyCreator.php'
+        autowire: true
+        autoconfigure: true
+        tags: ['ec.widget.legacyCreator']
+
+    Ec\Widget\Application\Service\WidgetLegacyCreatorHandler:
+        public: true
+        autowire: true
