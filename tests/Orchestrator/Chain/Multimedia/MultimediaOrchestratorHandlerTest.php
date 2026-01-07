@@ -6,7 +6,6 @@ use App\Orchestrator\Chain\Multimedia\MultimediaEmbedVideoOrchestrator;
 use App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorHandler;
 use App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorInterface;
 use App\Orchestrator\Chain\Multimedia\MultimediaPhotoOrchestrator;
-use App\Orchestrator\Chain\Multimedia\MultimediaWidgetOrchestrator;
 use App\Orchestrator\Exceptions\DuplicateChainInOrchestratorHandlerException;
 use App\Orchestrator\Exceptions\OrchestratorTypeNotExistException;
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
@@ -44,12 +43,10 @@ class MultimediaOrchestratorHandlerTest extends TestCase
             ->with($multimedia)
             ->willReturn($expectedResult);
 
-
         $result = $this->handler->handler($multimedia);
 
         static::assertSame($expectedResult, $result);
     }
-
 
     #[Test]
     public function handlerSelectsFirstMatchingOrchestrator(): void
@@ -95,8 +92,6 @@ class MultimediaOrchestratorHandlerTest extends TestCase
     #[Test]
     public function addOrchestratorThrowsExceptionWhenDuplicateTypeIsAdded(): void
     {
-        $multimedia = $this->createMock(Multimedia::class);
-
         $orchestrator1 = $this->createMock(MultimediaOrchestratorInterface::class);
         $orchestrator1->method('canOrchestrate')
             ->willReturn('photo');

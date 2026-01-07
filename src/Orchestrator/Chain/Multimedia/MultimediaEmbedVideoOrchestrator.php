@@ -3,6 +3,7 @@
 /**
  * @copyright
  */
+
 namespace App\Orchestrator\Chain\Multimedia;
 
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;

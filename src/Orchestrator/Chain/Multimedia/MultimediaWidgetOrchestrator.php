@@ -3,6 +3,7 @@
 /**
  * @copyright
  */
+
 namespace App\Orchestrator\Chain\Multimedia;
 
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
@@ -17,8 +18,7 @@ class MultimediaWidgetOrchestrator implements MultimediaOrchestratorInterface
 {
     public function __construct(
         private readonly QueryWidgetClient $queryWidgetClient,
-    )
-    {
+    ) {
     }
 
     public function canOrchestrate(): string
@@ -30,14 +30,14 @@ class MultimediaWidgetOrchestrator implements MultimediaOrchestratorInterface
     {
         /**
          * @var MultimediaWidget $multimedia
-         * @var EveryWidget $widget
+         * @var EveryWidget      $widget
          */
         $widget = $this->queryWidgetClient->findWidgetById($multimedia->resourceId()->id());
 
         return [
             $multimedia->id()->id() => [
                 'opening' => $multimedia,
-                'resource' => $widget
+                'resource' => $widget,
             ],
         ];
     }

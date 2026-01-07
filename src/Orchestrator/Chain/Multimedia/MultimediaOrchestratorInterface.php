@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -12,6 +13,10 @@ use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
  */
 interface MultimediaOrchestratorInterface
 {
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public function execute(Multimedia $multimedia): array;
+
     public function canOrchestrate(): string;
 }

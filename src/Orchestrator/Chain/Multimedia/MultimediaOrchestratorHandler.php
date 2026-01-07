@@ -9,13 +9,14 @@ use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 class MultimediaOrchestratorHandler implements MultimediaOrchestratorChain
 {
     /**
-     * @param MultimediaOrchestratorInterface[] $orchestrators
+     * @var MultimediaOrchestratorInterface[]
      */
     private array $orchestrators = [];
 
     /**
-     * @throws OrchestratorTypeNotExistException
      * @return array<string, mixed>
+     *
+     * @throws OrchestratorTypeNotExistException
      */
     public function handler(Multimedia $multimedia): array
     {
