@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f77fdd9d3df389d034f59f1d823f1ce",
+    "content-hash": "c08fecb9e3ce98e279ae906ba6ad3bb4",
     "packages": [
         {
             "name": "99designs/phumbor",
@@ -3112,16 +3112,16 @@
         },
         {
             "name": "ec/widget-client",
-            "version": "dev-feature/HP-54-s-incluir-widgets-en-la-noticias-hacer-el-microservicio",
+            "version": "v2.27.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/clients/widget-client.git",
-                "reference": "44fafd14f3bafd7817dc39ae58639ebf34b3a296"
+                "reference": "fdf5610903e5b8c4dd84e3d7df39a76ae9724ed1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fclients%2Fwidget-client/repository/archive.zip?sha=44fafd14f3bafd7817dc39ae58639ebf34b3a296",
-                "reference": "44fafd14f3bafd7817dc39ae58639ebf34b3a296",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fclients%2Fwidget-client/repository/archive.zip?sha=fdf5610903e5b8c4dd84e3d7df39a76ae9724ed1",
+                "reference": "fdf5610903e5b8c4dd84e3d7df39a76ae9724ed1",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3185,10 +3185,10 @@
             ],
             "description": "Widget Client",
             "support": {
-                "source": "https://gitlab.com/ec-awesomemakers1/microservices/clients/widget-client/-/tree/feature/HP-54-s-incluir-widgets-en-la-noticias-hacer-el-microservicio",
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/clients/widget-client/-/tree/v2.27.0",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/clients/widget-client/-/issues"
             },
-            "time": "2026-01-05T14:38:31+01:00"
+            "time": "2026-01-05T17:13:49+01:00"
         },
         {
             "name": "ec/widget-domain",
@@ -16516,7 +16516,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "ec/widget-client": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
