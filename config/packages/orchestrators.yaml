@@ -16,10 +16,12 @@ services:
         shared: true
     App\Orchestrator\OrchestratorChain: '@App\Orchestrator\OrchestratorChainHandler'
 
-
     # Multimedia Orchestration
     App\Orchestrator\Chain\Multimedia\:
         resource: '../../src/Orchestrator/Chain/Multimedia/'
+        exclude:
+            - '../../src/Orchestrator/Chain/Multimedia/MultimediaOrchestratorHandler.php'
+            - '../../src/Orchestrator/Chain/Multimedia/MultimediaOrchestratorChain.php'
         tags: [ 'app.multimedia.orchestrators' ]
         lazy: true
         shared: true
