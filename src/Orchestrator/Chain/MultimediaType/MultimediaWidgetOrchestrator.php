@@ -12,11 +12,6 @@ use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
  */
 class MultimediaWidgetOrchestrator implements MultimediaTypeOrchestratorInterface
 {
-    public function __construct(
-    )
-    {
-    }
-
     public function canOrchestrate(): string
     {
         return 'widget';
