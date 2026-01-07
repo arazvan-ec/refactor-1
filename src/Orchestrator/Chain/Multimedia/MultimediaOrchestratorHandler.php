@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Orchestrator\Chain\MultimediaType;
+namespace App\Orchestrator\Chain\Multimedia;
 
 use App\Orchestrator\Exceptions\OrchestratorTypeNotExistException;
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 
-class MultimediaTypeOrchestratorHandler implements MultimediaOrchestratorChain
+class MultimediaOrchestratorHandler implements MultimediaOrchestratorChain
 {
     /**
-     * @param MultimediaTypeOrchestratorInterface[] $orchestrators
+     * @param MultimediaOrchestratorInterface[] $orchestrators
      */
     private array $orchestrators = [];
 
@@ -25,7 +25,7 @@ class MultimediaTypeOrchestratorHandler implements MultimediaOrchestratorChain
         return $this->orchestrators[$multimedia->type()]->execute($multimedia);
     }
 
-    public function addOrchestrator(MultimediaTypeOrchestratorInterface $orchestrator): void
+    public function addOrchestrator(MultimediaOrchestratorInterface $orchestrator): void
     {
         $key = $orchestrator->canOrchestrate();
         if (isset($this->orchestrators[$key])) {

@@ -3,7 +3,7 @@
 /**
  * @copyright
  */
-namespace App\Orchestrator\Chain\MultimediaType;
+namespace App\Orchestrator\Chain\Multimedia;
 
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 use Ec\Multimedia\Infrastructure\Client\Http\Media\QueryMultimediaClient;
@@ -12,7 +12,7 @@ use Ec\Multimedia\Domain\Model\Multimedia\ResourceId;
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
  */
-class MultimediaPhotoOrchestrator implements MultimediaTypeOrchestratorInterface
+class MultimediaPhotoOrchestrator implements MultimediaOrchestratorInterface
 {
     public function __construct(
         private readonly QueryMultimediaClient $queryMultimediaClient,

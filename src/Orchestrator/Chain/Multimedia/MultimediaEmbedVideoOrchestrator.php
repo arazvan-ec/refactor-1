@@ -3,14 +3,14 @@
 /**
  * @copyright
  */
-namespace App\Orchestrator\Chain\MultimediaType;
+namespace App\Orchestrator\Chain\Multimedia;
 
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
  */
-class MultimediaEmbedVideoOrchestrator implements MultimediaTypeOrchestratorInterface
+class MultimediaEmbedVideoOrchestrator implements MultimediaOrchestratorInterface
 {
     public function canOrchestrate(): string
     {

@@ -18,7 +18,7 @@ use App\Exception\EditorialNotPublishedYetException;
 use App\Infrastructure\Enum\SitesEnum;
 use App\Infrastructure\Trait\MultimediaTrait;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
-use App\Orchestrator\Chain\MultimediaType\MultimediaTypeOrchestratorHandler;
+use App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorHandler;
 use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
@@ -70,18 +70,18 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
         private readonly QueryTagClient $queryTagClient,
         private readonly BodyDataTransformer $bodyDataTransformer,
         private readonly UriFactoryInterface $uriFactory,
-        private readonly QueryMembershipClient $queryMembershipClient,
-        private readonly LoggerInterface $logger,
-        private readonly JournalistsDataTransformer $journalistsDataTransformer,
-        private readonly QueryJournalistClient $queryJournalistClient,
-        private readonly JournalistFactory $journalistFactory,
-        private readonly MultimediaDataTransformer $multimediaDataTransformer,
-        private readonly StandfirstDataTransformer $standFirstDataTransformer,
+        private readonly QueryMembershipClient                $queryMembershipClient,
+        private readonly LoggerInterface                      $logger,
+        private readonly JournalistsDataTransformer           $journalistsDataTransformer,
+        private readonly QueryJournalistClient                $queryJournalistClient,
+        private readonly JournalistFactory                    $journalistFactory,
+        private readonly MultimediaDataTransformer            $multimediaDataTransformer,
+        private readonly StandfirstDataTransformer            $standFirstDataTransformer,
         private readonly RecommendedEditorialsDataTransformer $recommendedEditorialsDataTransformer,
-        private readonly QueryMultimediaOpeningClient $queryMultimediaOpeningClient,
-        private readonly MediaDataTransformerHandler $mediaDataTransformerHandler,
-        private readonly MultimediaTypeOrchestratorHandler $multimediaTypeOrchestratorHandler,
-        string $extension,
+        private readonly QueryMultimediaOpeningClient         $queryMultimediaOpeningClient,
+        private readonly MediaDataTransformerHandler          $mediaDataTransformerHandler,
+        private readonly MultimediaOrchestratorHandler        $multimediaTypeOrchestratorHandler,
+        string                                                $extension,
     ) {
         $this->setExtension($extension);
     }

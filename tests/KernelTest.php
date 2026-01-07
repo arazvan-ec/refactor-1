@@ -10,6 +10,8 @@ use App\DependencyInjection\Compiler\BodyDataTransformerCompiler;
 use App\DependencyInjection\Compiler\EditorialOrchestratorCompiler;
 use App\DependencyInjection\Compiler\MediaDataTransformerCompiler;
 use App\DependencyInjection\Compiler\MultimediaFactoryCompiler;
+use App\DependencyInjection\Compiler\MultimediaOrchestratorCompiler;
+use App\DependencyInjection\Compiler\WidgetLegacyCreatorHandlerCompiler;
 use App\Kernel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -29,7 +31,7 @@ class KernelTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $invokedCount = self::exactly(4);
+        $invokedCount = self::exactly(6);
         $containerBuilder->expects($invokedCount)
             ->method('addCompilerPass')
             ->willReturnCallback(function ($method) use ($containerBuilder, $invokedCount) {
@@ -41,6 +43,10 @@ class KernelTest extends TestCase
                     self::assertInstanceOf(MultimediaFactoryCompiler::class, $method);
                 } elseif (4 == $invokedCount->numberOfInvocations()) {
                     self::assertInstanceOf(MediaDataTransformerCompiler::class, $method);
+                } elseif(5 == $invokedCount->numberOfInvocations()) {
+                    self::assertInstanceOf(MultimediaOrchestratorCompiler::class, $method);
+                } elseif (6 == $invokedCount->numberOfInvocations()) {
+                    self::assertInstanceOf(WidgetLegacyCreatorHandlerCompiler::class, $method);
                 }
 
                 return $containerBuilder;

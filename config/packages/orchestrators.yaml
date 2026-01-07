@@ -18,19 +18,19 @@ services:
 
 
     # Multimedia Orchestration
-    App\Orchestrator\Chain\MultimediaType\:
-        resource: '../../src/Orchestrator/Chain/MultimediaType/'
+    App\Orchestrator\Chain\Multimedia\:
+        resource: '../../src/Orchestrator/Chain/Multimedia/'
         tags: [ 'app.multimedia.orchestrators' ]
         lazy: true
         shared: true
 
-    App\Orchestrator\Chain\MultimediaType\MultimediaTypeOrchestratorHandler:
+    App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorHandler:
         lazy: true
         shared: true
 
-    App\Orchestrator\Chain\MultimediaType\MultimediaOrchestratorChain: '@App\Orchestrator\Chain\MultimediaType\MultimediaTypeOrchestratorHandler'
+    App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorChain: '@App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorHandler'
 
-    App\Orchestrator\Chain\MultimediaType\MultimediaWidgetOrchestrator:
+    App\Orchestrator\Chain\Multimedia\MultimediaWidgetOrchestrator:
         tags: [ 'app.multimedia.orchestrators' ]
         arguments:
             $queryWidgetClient: '@Ec\Widget\Domain\Model\QueryWidgetClient'

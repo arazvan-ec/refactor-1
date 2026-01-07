@@ -6,19 +6,19 @@
 
 namespace App\DependencyInjection\Compiler;
 
-use App\Orchestrator\Chain\MultimediaType\MultimediaTypeOrchestratorHandler;
+use App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorHandler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
  */
-class MultimediaTypeOrchestratorCompiler implements CompilerPassInterface
+class MultimediaOrchestratorCompiler implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
         $orchestrators = $container->findTaggedServiceIds('app.multimedia.orchestrators');
-        $orchestratorsHandler = $container->findDefinition(MultimediaTypeOrchestratorHandler::class);
+        $orchestratorsHandler = $container->findDefinition(MultimediaOrchestratorHandler::class);
 
         foreach ($orchestrators as $idService => $parameters) {
             $definition = $container->getDefinition($idService);

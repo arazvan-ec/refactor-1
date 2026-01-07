@@ -3,7 +3,7 @@
 /**
  * @copyright
  */
-namespace App\Orchestrator\Chain\MultimediaType;
+namespace App\Orchestrator\Chain\Multimedia;
 
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 use Ec\Multimedia\Domain\Model\Multimedia\MultimediaWidget;
@@ -13,7 +13,7 @@ use Ec\Widget\Domain\Model\QueryWidgetClient;
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
  */
-class MultimediaWidgetOrchestrator implements MultimediaTypeOrchestratorInterface
+class MultimediaWidgetOrchestrator implements MultimediaOrchestratorInterface
 {
     public function __construct(
         private readonly QueryWidgetClient $queryWidgetClient,

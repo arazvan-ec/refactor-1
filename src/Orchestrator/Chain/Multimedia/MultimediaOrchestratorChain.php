@@ -4,7 +4,7 @@
  * @copyright
  */
 
-namespace App\Orchestrator\Chain\MultimediaType;
+namespace App\Orchestrator\Chain\Multimedia;
 
 use App\Orchestrator\Chain\EditorialOrchestratorInterface;
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
@@ -20,5 +20,5 @@ interface MultimediaOrchestratorChain
      */
     public function handler(Multimedia $multimedia): array;
 
-    public function addOrchestrator(MultimediaTypeOrchestratorInterface $orchestrator): void;
+    public function addOrchestrator(MultimediaOrchestratorInterface $orchestrator): void;
 }
