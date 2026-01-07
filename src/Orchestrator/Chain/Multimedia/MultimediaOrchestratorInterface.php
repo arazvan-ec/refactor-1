@@ -12,6 +12,6 @@ use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
  */
 interface MultimediaOrchestratorInterface
 {
-    public function execute(Multimedia $multimediaData): array;
+    public function execute(Multimedia $multimedia): array;
     public function canOrchestrate(): string;
 }

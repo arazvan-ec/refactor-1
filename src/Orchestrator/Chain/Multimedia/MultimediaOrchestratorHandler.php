@@ -2,6 +2,7 @@
 
 namespace App\Orchestrator\Chain\Multimedia;
 
+use App\Orchestrator\Exceptions\DuplicateChainInOrchestratorHandlerException;
 use App\Orchestrator\Exceptions\OrchestratorTypeNotExistException;
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 
@@ -25,12 +26,14 @@ class MultimediaOrchestratorHandler implements MultimediaOrchestratorChain
         return $this->orchestrators[$multimedia->type()]->execute($multimedia);
     }
 
-    public function addOrchestrator(MultimediaOrchestratorInterface $orchestrator): void
+    public function addOrchestrator(MultimediaOrchestratorInterface $orchestrator): MultimediaOrchestratorHandler
     {
         $key = $orchestrator->canOrchestrate();
         if (isset($this->orchestrators[$key])) {
-            throw new \Exception("$key orchestrator duplicate.");
+            throw new DuplicateChainInOrchestratorHandlerException("$key orchestrator duplicate.");
         }
         $this->orchestrators[$key] = $orchestrator;
+
+        return $this;
     }
 }
