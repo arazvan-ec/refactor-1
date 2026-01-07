@@ -1632,4 +1632,25 @@ class EditorialOrchestratorTest extends TestCase
 
         static::assertArrayHasKey('id', $result);
     }
+
+    #[Test]
+    public function shouldLogErrorWhenResolvingMembershipLinksThrowsException(): void
+    {
+        $errorMessage = 'Promise resolution failed';
+        $exception = new \Exception($errorMessage);
+
+        $promiseMock = $this->createMock(Promise::class);
+        $promiseMock
+            ->expects(static::once())
+            ->method('wait')
+            ->willThrowException($exception);
+
+        $reflection = new \ReflectionClass($this->editorialOrchestrator);
+        $method = $reflection->getMethod('resolvePromiseMembershipLinks');
+        $method->setAccessible(true);
+
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$promiseMock, []]);
+
+        static::assertSame([], $result);
+    }
 }
