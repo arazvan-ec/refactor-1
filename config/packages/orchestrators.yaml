@@ -15,3 +15,18 @@ services:
         lazy: true
         shared: true
     App\Orchestrator\OrchestratorChain: '@App\Orchestrator\OrchestratorChainHandler'
+
+
+    # Multimedia Orchestration
+    App\Orchestrator\Chain\MultimediaType\:
+        resource: '../../src/Orchestrator/Chain/MultimediaType/'
+        tags: [ 'app.multimedia.orchestrators' ]
+        lazy: true
+        shared: true
+
+    App\Orchestrator\Chain\MultimediaType\MultimediaTypeOrchestratorHandler:
+        lazy: true
+        shared: true
+
+    App\Orchestrator\Chain\MultimediaType\MultimediaOrchestratorChain: '@App\Orchestrator\Chain\MultimediaType\MultimediaTypeOrchestratorHandler'
+

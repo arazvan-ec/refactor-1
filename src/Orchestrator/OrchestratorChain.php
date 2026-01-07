@@ -6,7 +6,7 @@
 
 namespace App\Orchestrator;
 
-use App\Orchestrator\Chain\Orchestrator;
+use App\Orchestrator\Chain\EditorialOrchestratorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -19,5 +19,5 @@ interface OrchestratorChain
      */
     public function handler(string $contentType, Request $request): array;
 
-    public function addOrchestrator(Orchestrator $orchestratorChain): OrchestratorChain;
+    public function addOrchestrator(EditorialOrchestratorInterface $orchestratorChain): OrchestratorChain;
 }
