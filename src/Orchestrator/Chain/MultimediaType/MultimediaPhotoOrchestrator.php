@@ -6,8 +6,7 @@
 namespace App\Orchestrator\Chain\MultimediaType;
 
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
-use Ec\Multimedia\Domain\Model\Multimedia\MultimediaPhoto;
-use Ec\Multimedia\Domain\Model\Multimedia\QueryMultimediaClient;
+use Ec\Multimedia\Infrastructure\Client\Http\Media\QueryMultimediaClient;
 use Ec\Multimedia\Domain\Model\Multimedia\ResourceId;
 
 /**
@@ -16,7 +15,7 @@ use Ec\Multimedia\Domain\Model\Multimedia\ResourceId;
 class MultimediaPhotoOrchestrator implements MultimediaTypeOrchestratorInterface
 {
     public function __construct(
-        private readonly \Ec\Multimedia\Infrastructure\Client\Http\Media\QueryMultimediaClient $queryMultimediaClient,
+        private readonly QueryMultimediaClient $queryMultimediaClient,
     ) {
     }
     public function canOrchestrate(): string
