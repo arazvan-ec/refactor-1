@@ -40,10 +40,9 @@ class MultimediaEmbedVideoOrchestratorTest extends TestCase
         $multimedia = $this->createMock(MultimediaEmbedVideo::class);
         $multimedia->method('id')->willReturn($multimediaId);
 
+        /** @var array{123: array<string, mixed>}  $result */
         $result = $this->orchestrator->execute($multimedia);
 
-        self::assertIsArray($result);
-        self::assertArrayHasKey('123', $result);
         self::assertArrayHasKey('opening', $result['123']);
         self::assertSame($multimedia, $result['123']['opening']);
     }
@@ -87,9 +86,9 @@ class MultimediaEmbedVideoOrchestratorTest extends TestCase
 
         $result2 = $this->orchestrator->execute($multimedia2);
 
-        self::assertArrayHasKey('abc-123', $result1);
-        self::assertArrayHasKey('xyz-789', $result2);
-        self::assertSame($multimedia1, $result1['abc-123']['opening']);
-        self::assertSame($multimedia2, $result2['xyz-789']['opening']);
+        static::assertArrayHasKey('abc-123', $result1);
+        static::assertArrayHasKey('xyz-789', $result2);
+        static::assertSame($multimedia1, $result1['abc-123']['opening']);
+        static::assertSame($multimedia2, $result2['xyz-789']['opening']);
     }
 }

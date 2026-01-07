@@ -60,9 +60,9 @@ class MultimediaPhotoOrchestratorTest extends TestCase
             ->with('456')
             ->willReturn($photo);
 
+        /** @var array{123: array<string, mixed>}  $result */
         $result = $this->orchestrator->execute($multimedia);
 
-        self::assertArrayHasKey('123', $result);
         self::assertArrayHasKey('opening', $result['123']);
         self::assertArrayHasKey('resource', $result['123']);
         self::assertSame($multimedia, $result['123']['opening']);
