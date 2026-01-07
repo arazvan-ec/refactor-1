@@ -17,7 +17,7 @@
         "ec/multimedia-client": "^5.0",
         "ec/section-client": "^3.0",
         "ec/tag-client": "^4.0",
-        "ec/widget-client": "dev-feature/HP-54-s-incluir-widgets-en-la-noticias-hacer-el-microservicio",
+        "ec/widget-client": "^2.0",
         "elasticsearch/elasticsearch": "^8.0",
         "nelmio/api-doc-bundle": "^4.11",
         "nelmio/cors-bundle": "^2.2",
