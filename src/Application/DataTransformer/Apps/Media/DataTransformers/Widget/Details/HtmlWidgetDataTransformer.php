@@ -67,14 +67,17 @@ class HtmlWidgetDataTransformer implements WidgetTypeDataTransformer
             && str_contains($params['aspect-ratio'], '/')) {
             $parts = explode('/', $params['aspect-ratio']);
 
-            if (2 === \count($parts)
-                && is_numeric(trim($parts[0]))
-                && is_numeric(trim($parts[1]))) {
-                $numerator = (float) trim($parts[0]);
-                $denominator = (float) trim($parts[1]);
+            if (2 === \count($parts)) {
+                $numerator = trim($parts[0]);
+                $denominator = trim($parts[1]);
 
-                if (0.0 !== $denominator) {
-                    $aspectRatio = round($numerator / $denominator, 1);
+                if (is_numeric($numerator) && is_numeric($denominator)) {
+                    $numeratorFloat = (float) $numerator;
+                    $denominatorFloat = (float) $denominator;
+
+                    if (0.0 !== $denominatorFloat) {
+                        $aspectRatio = round($numeratorFloat / $denominatorFloat, 1);
+                    }
                 }
             }
         }

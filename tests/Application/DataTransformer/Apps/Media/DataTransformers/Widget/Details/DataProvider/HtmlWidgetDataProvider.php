@@ -172,6 +172,66 @@ class HtmlWidgetDataProvider
                 'params' => ['aspect-ratio' => 123],
                 'expectedAspectRatio' => null,
             ],
+            'aspect-ratio-numerator-with-leading-space' => [
+                'params' => ['aspect-ratio' => ' 4/3'],
+                'expectedAspectRatio' => 1.3,
+            ],
+            'aspect-ratio-denominator-with-trailing-space' => [
+                'params' => ['aspect-ratio' => '4/3 '],
+                'expectedAspectRatio' => 1.3,
+            ],
+            'aspect-ratio-both-with-spaces' => [
+                'params' => ['aspect-ratio' => ' 4 / 3 '],
+                'expectedAspectRatio' => 1.3,
+            ],
+            'aspect-ratio-first-part-not-numeric' => [
+                'params' => ['aspect-ratio' => 'abc/3'],
+                'expectedAspectRatio' => null,
+            ],
+            'aspect-ratio-second-part-not-numeric' => [
+                'params' => ['aspect-ratio' => '4/xyz'],
+                'expectedAspectRatio' => null,
+            ],
+            'aspect-ratio-only-one-part' => [
+                'params' => ['aspect-ratio' => '4'],
+                'expectedAspectRatio' => null,
+            ],
+            'aspect-ratio-three-parts' => [
+                'params' => ['aspect-ratio' => '4/3/2'],
+                'expectedAspectRatio' => null,
+            ],
+            'aspect-ratio-with-multiple-slashes' => [
+                'params' => ['aspect-ratio' => '4//3'],
+                'expectedAspectRatio' => null,
+            ],
+            'aspect-ratio-different-numerator-denominator' => [
+                'params' => ['aspect-ratio' => '8/4'],
+                'expectedAspectRatio' => 2.0,
+            ],
+            'aspect-ratio-asymmetric-values' => [
+                'params' => ['aspect-ratio' => '3/9'],
+                'expectedAspectRatio' => 0.3,
+            ],
+            'aspect-ratio-numerator-internal-space' => [
+                'params' => ['aspect-ratio' => ' 16 /9'],
+                'expectedAspectRatio' => 1.8,
+            ],
+            'aspect-ratio-denominator-internal-space' => [
+                'params' => ['aspect-ratio' => '16/ 9 '],
+                'expectedAspectRatio' => 1.8,
+            ],
+            'aspect-ratio-large-values-need-cast' => [
+                'params' => ['aspect-ratio' => '10/3'],
+                'expectedAspectRatio' => 3.3,
+            ],
+            'aspect-ratio-decimal-strings' => [
+                'params' => ['aspect-ratio' => '5.5/2.5'],
+                'expectedAspectRatio' => 2.2,
+            ],
+            'aspect-ratio-very-different-values' => [
+                'params' => ['aspect-ratio' => '20/5'],
+                'expectedAspectRatio' => 4.0,
+            ],
         ];
     }
 }
