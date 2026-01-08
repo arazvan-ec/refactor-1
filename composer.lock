@@ -3112,16 +3112,16 @@
         },
         {
             "name": "ec/widget-client",
-            "version": "v2.27.0",
+            "version": "v2.27.1",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/clients/widget-client.git",
-                "reference": "fdf5610903e5b8c4dd84e3d7df39a76ae9724ed1"
+                "reference": "a421c03367e712919465e94c7880e8fbb2972c07"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fclients%2Fwidget-client/repository/archive.zip?sha=fdf5610903e5b8c4dd84e3d7df39a76ae9724ed1",
-                "reference": "fdf5610903e5b8c4dd84e3d7df39a76ae9724ed1",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fclients%2Fwidget-client/repository/archive.zip?sha=a421c03367e712919465e94c7880e8fbb2972c07",
+                "reference": "a421c03367e712919465e94c7880e8fbb2972c07",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3185,10 +3185,10 @@
             ],
             "description": "Widget Client",
             "support": {
-                "source": "https://gitlab.com/ec-awesomemakers1/microservices/clients/widget-client/-/tree/v2.27.0",
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/clients/widget-client/-/tree/v2.27.1",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/clients/widget-client/-/issues"
             },
-            "time": "2026-01-05T17:13:49+01:00"
+            "time": "2026-01-08T08:48:28+00:00"
         },
         {
             "name": "ec/widget-domain",
