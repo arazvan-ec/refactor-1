@@ -1,10 +1,11 @@
 <?php
 
+/**
+ * @copyright
+ */
+
 namespace App\DependencyInjection\Compiler;
 
-/**
- * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
- */
 use Ec\Widget\Application\Service\WidgetLegacyCreatorHandler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
