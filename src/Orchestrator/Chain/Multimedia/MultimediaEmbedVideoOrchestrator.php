@@ -21,6 +21,9 @@ class MultimediaEmbedVideoOrchestrator implements MultimediaOrchestratorInterfac
         return MultimediaEmbedVideo::TYPE;
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public function execute(Multimedia $multimedia): array
     {
         return [
