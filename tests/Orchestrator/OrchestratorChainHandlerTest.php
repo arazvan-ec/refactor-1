@@ -10,6 +10,7 @@ use App\Orchestrator\Chain\EditorialOrchestrator;
 use App\Orchestrator\Exceptions\DuplicateChainInOrchestratorHandlerException;
 use App\Orchestrator\Exceptions\OrchestratorTypeNotExistException;
 use App\Orchestrator\OrchestratorChainHandler;
+use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;

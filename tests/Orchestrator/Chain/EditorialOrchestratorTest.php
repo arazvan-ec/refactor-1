@@ -17,6 +17,7 @@ use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
 use App\Exception\EditorialNotPublishedYetException;
 use App\Orchestrator\Chain\EditorialOrchestrator;
 use App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorHandler;
+use App\Orchestrator\Exceptions\OrchestratorTypeNotExistException;
 use App\Tests\Orchestrator\Chain\DataProvider\EditorialOrchestratorDataProvider;
 use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
@@ -386,7 +387,7 @@ class EditorialOrchestratorTest extends TestCase
                 return $arrayMocks[\count($callArgumentsBodyElements) - 1][$strClass];
             });
 
-        $editorialMock->expects(self::exactly(4))
+        $editorialMock->expects(static::exactly(4))
             ->method('body')
             ->willReturn($bodyMock);
         $openingMock = $this->createMock(Opening::class);
@@ -631,7 +632,7 @@ class EditorialOrchestratorTest extends TestCase
         $this->queryJournalistClient->expects($invokedCount)
             ->method('findJournalistByAliasId')
              ->willReturnCallback(function ($aliasId) use ($promisesJournalist, $withConsecutiveArgs, $invokedCount) {
-                 self::assertEquals($withConsecutiveArgs[$invokedCount->numberOfInvocations() - 1][0], $aliasId);
+                 static::assertEquals($withConsecutiveArgs[$invokedCount->numberOfInvocations() - 1][0], $aliasId);
 
                  return $promisesJournalist[$invokedCount->numberOfInvocations() - 1];
              });
@@ -677,7 +678,7 @@ class EditorialOrchestratorTest extends TestCase
         $tags->addItem($editorialTag);
 
         $editorialMock
-            ->expects(self::once())
+            ->expects(static::once())
             ->method('tags')
             ->willReturn($tags);
 
@@ -1434,7 +1435,7 @@ class EditorialOrchestratorTest extends TestCase
             ->willReturn(new FulfilledPromise($mockMultimedia));
 
         $getAsyncMultimedia = new \ReflectionMethod($this->editorialOrchestrator, 'getAsyncMultimedia');
-        self::assertTrue($getAsyncMultimedia->isPrivate());
+        static::assertTrue($getAsyncMultimedia->isPrivate());
         $getAsyncMultimedia->setAccessible(true);
         $promise = $getAsyncMultimedia->invokeArgs($this->editorialOrchestrator, [$mockMultimedia, ['multimedia' => []]]);
     }
@@ -1652,5 +1653,49 @@ class EditorialOrchestratorTest extends TestCase
         $result = $method->invokeArgs($this->editorialOrchestrator, [$promiseMock, []]);
 
         static::assertSame([], $result);
+    }
+
+    #[Test]
+    public function getOpeningLogsWarningWhenOrchestratorTypeNotExist(): void
+    {
+        $editorialId = '123';
+        $multimediaId = 'multimedia-456';
+        $multimediaType = 'unsupported-type';
+
+        $opening = $this->createMock(Opening::class);
+        $opening->method('multimediaId')->willReturn($multimediaId);
+
+        $editorial = $this->createMock(NewsBase::class);
+        $editorial->method('opening')->willReturn($opening);
+
+        $multimedia = $this->createMock(Multimedia\Multimedia::class);
+        $multimedia->method('type')->willReturn($multimediaType);
+
+        $this->queryMultimediaOpeningClient
+            ->expects(static::once())
+            ->method('findMultimediaById')
+            ->with($multimediaId)
+            ->willReturn($multimedia);
+
+        $this->multimediaOrchestratorHandler
+            ->expects(static::once())
+            ->method('handler')
+            ->with($multimedia)
+            ->willThrowException(new OrchestratorTypeNotExistException());
+
+        $this->logger
+            ->expects(static::once())
+            ->method('warning')
+            ->with('Multimedia type not supported', ['type' => $multimediaType]);
+
+        $reflection = new \ReflectionClass($this->editorialOrchestrator);
+        $method = $reflection->getMethod('getOpening');
+        $method->setAccessible(true);
+
+        $resolveData = [];
+        $result = $method->invokeArgs($this->editorialOrchestrator, [$editorial, $resolveData]);
+
+        static::assertIsArray($result);
+        static::assertArrayNotHasKey('multimediaOpening', $result);
     }
 }
