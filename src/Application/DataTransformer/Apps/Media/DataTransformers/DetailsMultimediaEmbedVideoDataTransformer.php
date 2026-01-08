@@ -38,10 +38,8 @@ class DetailsMultimediaEmbedVideoDataTransformer implements MediaDataTransformer
     /**
      * @param array{array{opening: MultimediaEmbedVideo}}|array{} $arrayMultimedia
      */
-    public function write(
-        array $arrayMultimedia,
-        Opening $openingMultimedia,
-    ): DetailsMultimediaEmbedVideoDataTransformer {
+    public function write(array $arrayMultimedia, Opening $openingMultimedia): self
+    {
         $this->arrayMultimedia = $arrayMultimedia;
         $this->openingMultimedia = $openingMultimedia;
 

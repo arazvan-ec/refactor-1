@@ -290,7 +290,7 @@ class DetailsMultimediaPhotoDataTransformer implements MediaDataTransformer
     /**
      * @param array{array{opening: MultimediaPhoto, resource: Photo}}|array{} $arrayMultimedia
      */
-    public function write(array $arrayMultimedia, Opening $openingMultimedia): DetailsMultimediaPhotoDataTransformer
+    public function write(array $arrayMultimedia, Opening $openingMultimedia): self
     {
         $this->arrayMultimedia = $arrayMultimedia;
         $this->openingMultimedia = $openingMultimedia;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c08fecb9e3ce98e279ae906ba6ad3bb4",
+    "content-hash": "b007c87ce7f1ef315ed7e750d92b5d37",
     "packages": [
         {
             "name": "99designs/phumbor",
@@ -682,16 +682,16 @@
         },
         {
             "name": "doctrine/collections",
-            "version": "2.4.0",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/collections.git",
-                "reference": "9acfeea2e8666536edff3d77c531261c63680160"
+                "reference": "6108e0cd57d7ef125fb84696346a68860403a25d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/collections/zipball/9acfeea2e8666536edff3d77c531261c63680160",
-                "reference": "9acfeea2e8666536edff3d77c531261c63680160",
+                "url": "https://api.github.com/repos/doctrine/collections/zipball/6108e0cd57d7ef125fb84696346a68860403a25d",
+                "reference": "6108e0cd57d7ef125fb84696346a68860403a25d",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -754,7 +754,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/collections/issues",
-                "source": "https://github.com/doctrine/collections/tree/2.4.0"
+                "source": "https://github.com/doctrine/collections/tree/2.5.0"
             },
             "funding": [
                 {
@@ -770,7 +770,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-10-25T09:18:13+00:00"
+            "time": "2026-01-07T17:26:56+00:00"
         },
         {
             "name": "doctrine/common",
@@ -3192,16 +3192,16 @@
         },
         {
             "name": "ec/widget-domain",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:ec-awesomemakers1/microservices/domain/widget-domain.git",
-                "reference": "d078736beb5ddec0f13e4690767870a6fe30fa29"
+                "reference": "8182a0860b0e5cef6fd0b7cee81a41a92dc6ffb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fwidget-domain/repository/archive.zip?sha=d078736beb5ddec0f13e4690767870a6fe30fa29",
-                "reference": "d078736beb5ddec0f13e4690767870a6fe30fa29",
+                "url": "https://gitlab.com/api/v4/projects/ec-awesomemakers1%2Fmicroservices%2Fdomain%2Fwidget-domain/repository/archive.zip?sha=8182a0860b0e5cef6fd0b7cee81a41a92dc6ffb6",
+                "reference": "8182a0860b0e5cef6fd0b7cee81a41a92dc6ffb6",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -3251,10 +3251,10 @@
             ],
             "description": "Widget Domain",
             "support": {
-                "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/widget-domain/-/tree/v1.0.0",
+                "source": "https://gitlab.com/ec-awesomemakers1/microservices/domain/widget-domain/-/tree/v1.1.0",
                 "issues": "https://gitlab.com/ec-awesomemakers1/microservices/domain/widget-domain/-/issues"
             },
-            "time": "2026-01-05T13:30:56+00:00"
+            "time": "2026-01-08T11:19:47+01:00"
         },
         {
             "name": "elastic/transport",
@@ -16514,7 +16514,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
         "roave/security-advisories": 20
     },

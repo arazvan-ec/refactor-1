@@ -13,7 +13,7 @@ services:
     Ec\Widget\Application\Service\WidgetLegacyCreatorHandler:
 
     # ========================================
-    # WIDGET DATA TRANSFORMERS
+    # DATA TRANSFORMERS
     # ========================================
 
     App\Application\DataTransformer\Apps\Media\DataTransformers\Widget\Details\:

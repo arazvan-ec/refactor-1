@@ -23,7 +23,7 @@ class MediaDataTransformerHandler
         $this->dataTransformers = [];
     }
 
-    public function addDataTransformer(MediaDataTransformer $dataTransformer): MediaDataTransformerHandler
+    public function addDataTransformer(MediaDataTransformer $dataTransformer): self
     {
         $this->dataTransformers[$dataTransformer->canTransform()] = $dataTransformer;
 
