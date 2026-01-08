@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright
  */
@@ -10,7 +11,6 @@ use App\Application\DataTransformer\Apps\Media\MediaDataTransformer;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\Multimedia\MultimediaWidget;
 use Ec\Widget\Domain\Model\EveryWidget;
-use Ec\Widget\Domain\Model\HtmlWidget;
 use Ec\Widget\Domain\Model\Widget;
 
 /**
@@ -25,7 +25,7 @@ class DetailsMultimediaWidgetDataTransformer implements MediaDataTransformer
     private Opening $openingMultimedia;
 
     public function __construct(
-        private readonly DataTransformerHandler $widgetDataTransformerHandler
+        private readonly DataTransformerHandler $widgetDataTransformerHandler,
     ) {
     }
 
@@ -65,12 +65,13 @@ class DetailsMultimediaWidgetDataTransformer implements MediaDataTransformer
 
     /**
      * @param MultimediaWidget $multimedia
-     * @param array $specificWidgetTypeData
+     * @param array            $specificWidgetTypeData
+     *
      * @return array<string, mixed>
      */
     private function buildBaseResponse(
         MultimediaWidget $multimedia,
-        array $specificWidgetTypeData
+        array $specificWidgetTypeData,
     ): array {
         return [
             'type' => MultimediaWidget::TYPE,
@@ -79,4 +80,3 @@ class DetailsMultimediaWidgetDataTransformer implements MediaDataTransformer
         ];
     }
 }
-

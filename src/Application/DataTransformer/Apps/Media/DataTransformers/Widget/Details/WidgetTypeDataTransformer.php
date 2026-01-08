@@ -23,4 +23,3 @@ interface WidgetTypeDataTransformer
 
     public function canTransform(): string;
 }
-

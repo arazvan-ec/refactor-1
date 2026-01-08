@@ -16,8 +16,8 @@ interface DataTransformerHandler
 
     /**
      * @param Widget $widget
+     *
      * @return array<string, mixed>
      */
     public function execute(Widget $widget): array;
 }
-

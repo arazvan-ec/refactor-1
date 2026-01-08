@@ -30,12 +30,7 @@ class DetailWidgetDataTransformerHandler implements DataTransformerHandler
         $widgetType = $dataTransformer->canTransform();
 
         if (isset($this->dataTransformers[$widgetType])) {
-            throw new WidgetDataTransformerAlreadyExistsException(
-                \sprintf(
-                    'Data transformer for widget type %s already exists',
-                    $widgetType
-                )
-            );
+            throw new WidgetDataTransformerAlreadyExistsException(\sprintf('Data transformer for widget type %s already exists', $widgetType));
         }
 
         $this->dataTransformers[$widgetType] = $dataTransformer;
@@ -44,19 +39,18 @@ class DetailWidgetDataTransformerHandler implements DataTransformerHandler
     }
 
     /**
-     * @throws WidgetDataTransformerNotFoundException
-     *
      * @param Widget $widget
+     *
      * @return array<string, mixed>
+     *
+     * @throws WidgetDataTransformerNotFoundException
      */
     public function execute(Widget $widget): array
     {
         $widgetType = $widget->type();
 
         if (!$widgetType || empty($this->dataTransformers[$widgetType])) {
-            throw new WidgetDataTransformerNotFoundException(
-                \sprintf('No data transformer found for widget type %s', $widgetType ?? 'unknown')
-            );
+            throw new WidgetDataTransformerNotFoundException(\sprintf('No data transformer found for widget type %s', $widgetType ?: 'unknown'));
         }
 
         $transformer = $this->dataTransformers[$widgetType];

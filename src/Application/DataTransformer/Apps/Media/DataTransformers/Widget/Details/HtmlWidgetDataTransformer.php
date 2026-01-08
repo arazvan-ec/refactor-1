@@ -16,6 +16,7 @@ class HtmlWidgetDataTransformer implements WidgetTypeDataTransformer
 
     /**
      * @param Widget $widget
+     *
      * @return HtmlWidgetDataTransformer
      */
     public function write(Widget $widget): self
@@ -61,21 +62,19 @@ class HtmlWidgetDataTransformer implements WidgetTypeDataTransformer
     {
         $aspectRatio = null;
 
-        if (!empty($params['aspect-ratio']) &&
-            is_string($params['aspect-ratio']) &&
-            str_contains($params['aspect-ratio'], '/')) {
-
+        if (!empty($params['aspect-ratio'])
+            && \is_string($params['aspect-ratio'])
+            && str_contains($params['aspect-ratio'], '/')) {
             $parts = explode('/', $params['aspect-ratio']);
 
-            if (count($parts) === 2 &&
-                is_numeric(trim($parts[0])) &&
-                is_numeric(trim($parts[1]))) {
-
+            if (2 === \count($parts)
+                && is_numeric(trim($parts[0]))
+                && is_numeric(trim($parts[1]))) {
                 $numerator = (float) trim($parts[0]);
                 $denominator = (float) trim($parts[1]);
 
-                if ($denominator !== 0.0) {
-                    $aspectRatio = round($numerator / $denominator, 2);
+                if (0.0 !== $denominator) {
+                    $aspectRatio = round($numerator / $denominator, 1);
                 }
             }
         }
