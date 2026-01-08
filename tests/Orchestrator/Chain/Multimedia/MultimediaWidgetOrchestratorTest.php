@@ -78,4 +78,40 @@ class MultimediaWidgetOrchestratorTest extends TestCase
         static::assertSame($multimedia, $result[$multimediaId]['opening']);
         static::assertSame($widget, $result[$multimediaId]['resource']);
     }
+
+    #[Test]
+    public function executeLogsErrorAndReturnsEmptyArrayWhenExceptionIsThrown(): void
+    {
+        $resourceId = '456';
+        $exceptionMessage = 'Connection timeout';
+
+        $multimediaId = $this->createMock(MultimediaId::class);
+        $multimediaId->method('id')->willReturn('123');
+
+        $resourceIdMock = $this->createMock(ResourceId::class);
+        $resourceIdMock->method('id')->willReturn($resourceId);
+
+        $multimedia = $this->createMock(MultimediaWidget::class);
+        $multimedia->method('id')->willReturn($multimediaId);
+        $multimedia->method('resourceId')->willReturn($resourceIdMock);
+
+        $this->queryWidgetClient
+            ->expects(self::once())
+            ->method('findWidgetById')
+            ->with($resourceId)
+            ->willThrowException(new \Exception($exceptionMessage));
+
+        $this->logger
+            ->expects(self::once())
+            ->method('error')
+            ->with(\sprintf(
+                'Failed to retrieve widget with ID %s: %s',
+                $resourceId,
+                $exceptionMessage
+            ));
+
+        $result = $this->orchestrator->execute($multimedia);
+
+        self::assertSame([], $result);
+    }
 }

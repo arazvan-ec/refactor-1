@@ -72,4 +72,40 @@ class MultimediaPhotoOrchestratorTest extends TestCase
         self::assertSame($multimedia, $result['123']['opening']);
         self::assertSame($photo, $result['123']['resource']);
     }
+
+    #[Test]
+    public function executeLogsErrorAndReturnsEmptyArrayWhenExceptionIsThrown(): void
+    {
+        $resourceId = '456';
+        $exceptionMessage = 'Connection timeout';
+
+        $multimediaId = $this->createMock(MultimediaId::class);
+        $multimediaId->method('id')->willReturn('123');
+
+        $resourceIdMock = $this->createMock(ResourceId::class);
+        $resourceIdMock->method('id')->willReturn($resourceId);
+
+        $multimedia = $this->createMock(MultimediaPhoto::class);
+        $multimedia->method('id')->willReturn($multimediaId);
+        $multimedia->method('resourceId')->willReturn($resourceIdMock);
+
+        $this->queryMultimediaClient
+            ->expects(self::once())
+            ->method('findPhotoById')
+            ->with($resourceId)
+            ->willThrowException(new \Exception($exceptionMessage));
+
+        $this->logger
+            ->expects(self::once())
+            ->method('error')
+            ->with(\sprintf(
+                'Failed to retrieve photo with ID %s: %s',
+                $resourceId,
+                $exceptionMessage
+            ));
+
+        $result = $this->orchestrator->execute($multimedia);
+
+        self::assertSame([], $result);
+    }
 }
