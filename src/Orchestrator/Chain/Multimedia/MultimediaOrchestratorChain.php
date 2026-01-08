@@ -18,5 +18,5 @@ interface MultimediaOrchestratorChain
      */
     public function handler(Multimedia $multimedia): array;
 
-    public function addOrchestrator(MultimediaOrchestratorInterface $orchestrator): MultimediaOrchestratorHandler;
+    public function addOrchestrator(MultimediaOrchestratorInterface $orchestrator): self;
 }

@@ -19,6 +19,7 @@ use App\Infrastructure\Enum\SitesEnum;
 use App\Infrastructure\Trait\MultimediaTrait;
 use App\Infrastructure\Trait\UrlGeneratorTrait;
 use App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorHandler;
+use App\Orchestrator\Exceptions\OrchestratorTypeNotExistException;
 use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\BodyTagInsertedNews;
 use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
@@ -444,7 +445,11 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
         if (!empty($opening->multimediaId())) {
             /** @var AbstractMultimedia $multimedia */
             $multimedia = $this->queryMultimediaOpeningClient->findMultimediaById($opening->multimediaId());
-            $resolveData['multimediaOpening'] = $this->multimediaTypeOrchestratorHandler->handler($multimedia);
+            try {
+                $resolveData['multimediaOpening'] = $this->multimediaTypeOrchestratorHandler->handler($multimedia);
+            } catch (OrchestratorTypeNotExistException $e) {
+                $this->logger->warning('Multimedia type not supported', ['type' => $multimedia->type()]);
+            }
         }
 
         return $resolveData; // @phpstan-ignore return.type

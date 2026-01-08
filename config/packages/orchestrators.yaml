@@ -8,6 +8,8 @@ services:
     App\Orchestrator\Chain\:
         resource: '../../src/Orchestrator/Chain/'
         tags: ['app.orchestrators']
+        exclude:
+            - '../../src/Orchestrator/Chain/Multimedia/'
         lazy: true
         shared: true
 
@@ -23,12 +25,8 @@ services:
             - '../../src/Orchestrator/Chain/Multimedia/MultimediaOrchestratorHandler.php'
             - '../../src/Orchestrator/Chain/Multimedia/MultimediaOrchestratorChain.php'
         tags: [ 'app.multimedia.orchestrators' ]
-        lazy: true
-        shared: true
 
-    App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorHandler:
-        lazy: true
-        shared: true
+    App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorHandler: ~
 
     App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorChain: '@App\Orchestrator\Chain\Multimedia\MultimediaOrchestratorHandler'
 
@@ -36,3 +34,10 @@ services:
         tags: [ 'app.multimedia.orchestrators' ]
         arguments:
             $queryWidgetClient: '@Ec\Widget\Domain\Model\QueryWidgetClient'
+            $logger: '@logger'
+
+    App\Orchestrator\Chain\Multimedia\MultimediaPhotoOrchestrator:
+        tags: [ 'app.multimedia.orchestrators' ]
+        arguments:
+            $queryMultimediaClient: '@Ec\Multimedia\Infrastructure\Client\Http\Media\QueryMultimediaClient'
+            $logger: '@logger'

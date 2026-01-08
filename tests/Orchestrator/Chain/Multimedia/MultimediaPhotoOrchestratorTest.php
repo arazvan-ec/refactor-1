@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
@@ -25,12 +26,15 @@ class MultimediaPhotoOrchestratorTest extends TestCase
 {
     /** @var QueryMultimediaClient|MockObject */
     private QueryMultimediaClient $queryMultimediaClient;
+    /** @var LoggerInterface|MockObject */
+    private LoggerInterface $logger;
     private MultimediaPhotoOrchestrator $orchestrator;
 
     protected function setUp(): void
     {
         $this->queryMultimediaClient = $this->createMock(QueryMultimediaClient::class);
-        $this->orchestrator = new MultimediaPhotoOrchestrator($this->queryMultimediaClient);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->orchestrator = new MultimediaPhotoOrchestrator($this->queryMultimediaClient, $this->logger);
     }
 
     #[Test]

@@ -12,7 +12,6 @@ services:
     Ec\Widget\Domain\Model\WidgetFactory: '@Ec\Widget\Application\Service\WidgetFactory'
 
     Ec\Widget\Infrastructure\Client\Http\QueryWidgetClient:
-        lazy: true
         shared: true
         arguments:
             $hostname: '%env(WIDGET_CLIENT_HOST)%'

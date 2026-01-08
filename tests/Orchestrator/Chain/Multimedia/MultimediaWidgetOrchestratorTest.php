@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Ken Serikawa <kserikawa@ext.elconfidencial.com>
@@ -25,12 +26,16 @@ class MultimediaWidgetOrchestratorTest extends TestCase
 {
     /** @var QueryWidgetClient|MockObject */
     private QueryWidgetClient $queryWidgetClient;
+    /** @var LoggerInterface|MockObject */
+    private LoggerInterface $logger;
     private MultimediaWidgetOrchestrator $orchestrator;
 
     protected function setUp(): void
     {
         $this->queryWidgetClient = $this->createMock(QueryWidgetClient::class);
-        $this->orchestrator = new MultimediaWidgetOrchestrator($this->queryWidgetClient);
+        $this->logger = $this->createMock(LoggerInterface::class);
+
+        $this->orchestrator = new MultimediaWidgetOrchestrator($this->queryWidgetClient, $this->logger);
     }
 
     #[Test]

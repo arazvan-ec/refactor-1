@@ -116,4 +116,19 @@ class MultimediaOrchestratorHandlerTest extends TestCase
 
         $this->handler->handler($multimedia);
     }
+
+    #[Test]
+    public function handlerThrowsExceptionWhenMultimediaTypeHasNoOrchestrator(): void
+    {
+        $multimedia = $this->createMock(Multimedia::class);
+        $multimedia->method('type')->willReturn('unsupported_type');
+
+        $orchestrator = $this->createMock(MultimediaOrchestratorInterface::class);
+        $orchestrator->method('canOrchestrate')->willReturn('photo');
+
+        $this->handler->addOrchestrator($orchestrator);
+
+        $this->expectException(OrchestratorTypeNotExistException::class);
+        $this->handler->handler($multimedia);
+    }
 }
