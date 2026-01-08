@@ -21,7 +21,8 @@ class MultimediaOrchestratorHandler implements MultimediaOrchestratorChain
     public function handler(Multimedia $multimedia): array
     {
         if (!\array_key_exists($multimedia->type(), $this->orchestrators)) {
-            throw new OrchestratorTypeNotExistException('Orchestrator '.$multimedia->type().' not exist');
+            $message = \sprintf('Orchestrator %s not exist', $multimedia->type());
+            throw new OrchestratorTypeNotExistException($message);
         }
 
         return $this->orchestrators[$multimedia->type()]->execute($multimedia);

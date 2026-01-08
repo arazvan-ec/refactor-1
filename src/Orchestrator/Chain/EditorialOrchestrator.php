@@ -61,6 +61,7 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
 
     public const ASYNC = true;
     public const TWITTER_TYPES = [EditorialBlog::EDITORIAL_TYPE];
+    public const UNWRAPPED = true;
 
     public function __construct(
         private readonly QueryLegacyClient $queryLegacyClient,
@@ -212,7 +213,7 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
         ) {
             $resolveData['multimedia'] = Utils::settle($resolveData['multimedia'])
                 ->then($this->createCallback([$this, 'fulfilledMultimedia']))
-                ->wait(true);
+                ->wait(self::UNWRAPPED);
         }
         $resolveData['photoFromBodyTags'] = $this->retrievePhotosFromBodyTags($editorial->body());
 
