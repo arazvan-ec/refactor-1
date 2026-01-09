@@ -43,6 +43,10 @@ class HtmlWidgetDataTransformerTest extends TestCase
         static::assertSame('html', $this->transformer->canTransform());
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * @param array<string, mixed> $expectedResult
+     */
     #[Test]
     #[DataProviderExternal(HtmlWidgetDataProvider::class, 'getData')]
     public function shouldTransformHtmlWidgetCorrectly(
@@ -82,6 +86,9 @@ class HtmlWidgetDataTransformerTest extends TestCase
         static::assertSame($expectedResult['cache'], $result['cache']);
     }
 
+    /**
+     * @param array<string, mixed> $params
+     */
     #[Test]
     #[DataProviderExternal(HtmlWidgetDataProvider::class, 'getAspectRatioData')]
     public function shouldCalculateAspectRatioCorrectly(

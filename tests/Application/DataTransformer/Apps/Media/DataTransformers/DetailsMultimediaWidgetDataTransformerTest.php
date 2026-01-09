@@ -11,6 +11,7 @@ use App\Application\DataTransformer\Apps\Media\DataTransformers\Widget\DataTrans
 use App\Tests\Application\DataTransformer\Apps\Media\DataTransformers\DataProvider\DetailsMultimediaWidgetDataProvider;
 use Ec\Editorial\Domain\Model\Opening;
 use Ec\Multimedia\Domain\Model\Multimedia\MultimediaWidget;
+use Ec\Widget\Domain\Model\EveryWidget;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -50,15 +51,13 @@ class DetailsMultimediaWidgetDataTransformerTest extends TestCase
         $opening->method('multimediaId')->willReturn('nonexistent-id');
 
         $multimedia = $this->createMock(MultimediaWidget::class);
+        $widget = $this->createMock(EveryWidget::class);
 
-        /** @var array<string, array{opening: MultimediaWidget, resource: array<string, mixed>}> $arrayMultimedia */
+        /** @var array<string, array{opening: MultimediaWidget, resource: EveryWidget}> $arrayMultimedia */
         $arrayMultimedia = [
             'id1' => [
                 'opening' => $multimedia,
-                'resource' => [
-                    'widgetType' => 'html',
-                    'url' => 'https://example.com',
-                ],
+                'resource' => $widget,
             ],
         ];
 
@@ -73,11 +72,12 @@ class DetailsMultimediaWidgetDataTransformerTest extends TestCase
         static::assertSame(MultimediaWidget::class, $this->transformer->canTransform());
     }
 
+    /**
+     * @param array<string, mixed> $specificWidgetData
+     * @param array<string, mixed> $expectedResult
+     */
     #[Test]
     #[DataProviderExternal(DetailsMultimediaWidgetDataProvider::class, 'getData')]
-    /**
-     * @return array<string, array<string, mixed>>
-     */
     public function shouldTransformMultimediaWidgetCorrectly(
         string $multimediaId,
         string $caption,

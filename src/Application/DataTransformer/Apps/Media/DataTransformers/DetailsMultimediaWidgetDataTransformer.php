@@ -19,9 +19,9 @@ use Ec\Widget\Domain\Model\Widget;
 class DetailsMultimediaWidgetDataTransformer implements MediaDataTransformer
 {
     /**
-     * @var array<string, array{opening: MultimediaWidget, resource: EveryWidget|array<string, mixed>}>|array{}
+     * @var array<string, array{opening: MultimediaWidget, resource: EveryWidget}>
      */
-    private array $arrayMultimedia;
+    private array $arrayMultimedia = [];
     private Opening $openingMultimedia;
 
     public function __construct(
@@ -29,6 +29,9 @@ class DetailsMultimediaWidgetDataTransformer implements MediaDataTransformer
     ) {
     }
 
+    /**
+     * @param array<string, array{opening: MultimediaWidget, resource: EveryWidget}> $arrayMultimedia
+     */
     public function write(array $arrayMultimedia, Opening $openingMultimedia): self
     {
         $this->arrayMultimedia = $arrayMultimedia;
@@ -64,8 +67,8 @@ class DetailsMultimediaWidgetDataTransformer implements MediaDataTransformer
     }
 
     /**
-     * @param MultimediaWidget $multimedia
-     * @param array            $specificWidgetTypeData
+     * @param MultimediaWidget     $multimedia
+     * @param array<string, mixed> $specificWidgetTypeData
      *
      * @return array<string, mixed>
      */
@@ -75,7 +78,7 @@ class DetailsMultimediaWidgetDataTransformer implements MediaDataTransformer
     ): array {
         return [
             'type' => MultimediaWidget::TYPE,
-            'caption' => $multimedia->caption() ?? '',
+            'caption' => $multimedia->caption(),
             ...$specificWidgetTypeData,
         ];
     }
