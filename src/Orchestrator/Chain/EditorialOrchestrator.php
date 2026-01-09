@@ -34,6 +34,7 @@ use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Editorial\Domain\Model\Signature;
 use Ec\Editorial\Exceptions\MultimediaDataTransformerNotFoundException;
+use Ec\Infrastructure\Client\Exceptions\InvalidBodyException;
 use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
@@ -443,12 +444,12 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
         /** @var NewsBase $editorial */
         $opening = $editorial->opening();
         if (!empty($opening->multimediaId())) {
-            /** @var AbstractMultimedia $multimedia */
-            $multimedia = $this->queryMultimediaOpeningClient->findMultimediaById($opening->multimediaId());
             try {
+                /** @var AbstractMultimedia $multimedia */
+                $multimedia = $this->queryMultimediaOpeningClient->findMultimediaById($opening->multimediaId());
                 $resolveData['multimediaOpening'] = $this->multimediaTypeOrchestratorHandler->handler($multimedia);
-            } catch (OrchestratorTypeNotExistException $e) {
-                $this->logger->warning('Multimedia type not supported', ['type' => $multimedia->type()]);
+            } catch (OrchestratorTypeNotExistException|InvalidBodyException $e) {
+                $this->logger->warning($e->getMessage());
             }
         }
 

@@ -1685,8 +1685,7 @@ class EditorialOrchestratorTest extends TestCase
 
         $this->logger
             ->expects(static::once())
-            ->method('warning')
-            ->with('Multimedia type not supported', ['type' => $multimediaType]);
+            ->method('warning');
 
         $reflection = new \ReflectionClass($this->editorialOrchestrator);
         $method = $reflection->getMethod('getOpening');
