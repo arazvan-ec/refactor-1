@@ -3,7 +3,7 @@ module.exports = {
     'master',
     { name: 'develop', prerelease: 'beta' },
     {
-      name: 'feature/PROD-*',
+      name: 'feature/[\w]+-[0-9]+(-.*)?',
       prerelease: '${name.replace(/^feature\\//g, "").split("-", 2).join("")}'
     },
     {
