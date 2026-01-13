@@ -78,12 +78,6 @@ class HtmlWidgetDataTransformerTest extends TestCase
 
         static::assertSame($expectedResult['url'], $result['url']);
         static::assertSame($expectedResult['aspectRatio'], $result['aspectRatio']);
-        static::assertSame($expectedResult['name'], $result['name']);
-        static::assertSame($expectedResult['description'], $result['description']);
-        static::assertSame($expectedResult['body'], $result['body']);
-        static::assertSame($expectedResult['visible'], $result['visible']);
-        static::assertSame($expectedResult['home'], $result['home']);
-        static::assertSame($expectedResult['cache'], $result['cache']);
     }
 
     /**

@@ -41,12 +41,6 @@ class HtmlWidgetDataTransformer implements WidgetTypeDataTransformer
         return [
             'url' => $htmlWidget->url(),
             'aspectRatio' => $this->calculateAspectRatio($htmlWidget->params()),
-            'name' => $htmlWidget->name(),
-            'description' => $htmlWidget->description(),
-            'body' => $htmlWidget->body(),
-            'visible' => $htmlWidget->isVisible(),
-            'home' => $htmlWidget->home(),
-            'cache' => $htmlWidget->cache(),
         ];
     }
 
