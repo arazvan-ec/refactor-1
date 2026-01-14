@@ -16,12 +16,7 @@ use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 class MediaDataTransformerHandler
 {
     /** @var MediaDataTransformer[] */
-    private array $dataTransformers;
-
-    public function __construct()
-    {
-        $this->dataTransformers = [];
-    }
+    private array $dataTransformers = [];
 
     public function addDataTransformer(MediaDataTransformer $dataTransformer): self
     {

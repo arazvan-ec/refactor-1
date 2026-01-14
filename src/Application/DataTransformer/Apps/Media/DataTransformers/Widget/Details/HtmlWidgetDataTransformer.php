@@ -12,10 +12,10 @@ use Ec\Widget\Domain\Model\Widget;
  */
 class HtmlWidgetDataTransformer implements WidgetTypeDataTransformer
 {
-    protected Widget $widget;
+    private Widget $widget;
 
     /**
-     * @param Widget $widget
+     * @param HtmlWidget $widget
      *
      * @return HtmlWidgetDataTransformer
      */
@@ -35,12 +35,9 @@ class HtmlWidgetDataTransformer implements WidgetTypeDataTransformer
             return [];
         }
 
-        /** @var HtmlWidget $htmlWidget */
-        $htmlWidget = $this->widget;
-
         return [
-            'url' => $htmlWidget->url() ?: null,
-            'aspectRatio' => $this->calculateAspectRatio($htmlWidget->params()),
+            'url' => $this->widget->url() ?: null,
+            'aspectRatio' => $this->calculateAspectRatio($this->widget->params()),
         ];
     }
 
@@ -54,28 +51,35 @@ class HtmlWidgetDataTransformer implements WidgetTypeDataTransformer
      */
     private function calculateAspectRatio(array $params): ?float
     {
-        $aspectRatio = null;
-
-        if (!empty($params['aspect-ratio'])
-            && \is_string($params['aspect-ratio'])
-            && str_contains($params['aspect-ratio'], '/')) {
-            $parts = explode('/', $params['aspect-ratio']);
-
-            if (2 === \count($parts)) {
-                $numerator = trim($parts[0]);
-                $denominator = trim($parts[1]);
-
-                if (is_numeric($numerator) && is_numeric($denominator)) {
-                    $numeratorFloat = (float) $numerator;
-                    $denominatorFloat = (float) $denominator;
-
-                    if (0.0 !== $denominatorFloat) {
-                        $aspectRatio = round($numeratorFloat / $denominatorFloat, 1);
-                    }
-                }
-            }
+        if (empty($params['aspect-ratio']) || !\is_string($params['aspect-ratio'])) {
+            return null;
         }
 
-        return $aspectRatio;
+        $aspectRatioValue = $params['aspect-ratio'];
+
+        if (!str_contains($aspectRatioValue, '/')) {
+            return null;
+        }
+
+        $parts = explode('/', $aspectRatioValue);
+
+        if (2 !== \count($parts)) {
+            return null;
+        }
+
+        $numerator = trim($parts[0]);
+        $denominator = trim($parts[1]);
+
+        if (!is_numeric($numerator) || !is_numeric($denominator)) {
+            return null;
+        }
+
+        $denominatorFloat = (float) $denominator;
+
+        if (0.0 === $denominatorFloat) {
+            return null;
+        }
+
+        return round((float) $numerator / $denominatorFloat, 1);
     }
 }

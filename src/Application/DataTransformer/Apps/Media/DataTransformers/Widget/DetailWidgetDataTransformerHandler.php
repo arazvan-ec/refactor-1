@@ -15,12 +15,7 @@ use Ec\Widget\Exceptions\WidgetDataTransformerNotFoundException;
 class DetailWidgetDataTransformerHandler implements DataTransformerHandler
 {
     /** @var array<string, WidgetTypeDataTransformer> */
-    private array $dataTransformers;
-
-    public function __construct()
-    {
-        $this->dataTransformers = [];
-    }
+    private array $dataTransformers = [];
 
     /**
      * @throws WidgetDataTransformerAlreadyExistsException
