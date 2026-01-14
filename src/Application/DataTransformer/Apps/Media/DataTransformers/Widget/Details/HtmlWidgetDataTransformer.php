@@ -39,7 +39,7 @@ class HtmlWidgetDataTransformer implements WidgetTypeDataTransformer
         $htmlWidget = $this->widget;
 
         return [
-            'url' => $htmlWidget->url(),
+            'url' => $htmlWidget->url() ?: null,
             'aspectRatio' => $this->calculateAspectRatio($htmlWidget->params()),
         ];
     }

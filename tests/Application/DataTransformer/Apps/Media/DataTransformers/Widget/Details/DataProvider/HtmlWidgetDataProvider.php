@@ -115,6 +115,28 @@ class HtmlWidgetDataProvider
                     'cache' => 30,
                 ],
             ],
+            'widget-with-empty-url' => [
+                'name' => 'Widget con URL vacía',
+                'description' => 'Widget sin URL válida',
+                'body' => '<div>Empty URL widget</div>',
+                'url' => '',
+                'visible' => true,
+                'home' => false,
+                'cache' => 0,
+                'params' => [
+                    'aspect-ratio' => '16/9',
+                ],
+                'expectedResult' => [
+                    'url' => null,
+                    'aspectRatio' => 1.8,
+                    'name' => 'Widget con URL vacía',
+                    'description' => 'Widget sin URL válida',
+                    'body' => '<div>Empty URL widget</div>',
+                    'visible' => true,
+                    'home' => false,
+                    'cache' => 0,
+                ],
+            ],
         ];
     }
 
@@ -231,6 +253,18 @@ class HtmlWidgetDataProvider
             'aspect-ratio-very-different-values' => [
                 'params' => ['aspect-ratio' => '20/5'],
                 'expectedAspectRatio' => 4.0,
+            ],
+            'aspect-ratio-with-leading-space-numerator' => [
+                'params' => ['aspect-ratio' => ' 7/2'],
+                'expectedAspectRatio' => 3.5,
+            ],
+            'aspect-ratio-with-trailing-space-denominator' => [
+                'params' => ['aspect-ratio' => '7/2 '],
+                'expectedAspectRatio' => 3.5,
+            ],
+            'aspect-ratio-requires-float-precision' => [
+                'params' => ['aspect-ratio' => '10/3'],
+                'expectedAspectRatio' => 3.3,
             ],
         ];
     }
