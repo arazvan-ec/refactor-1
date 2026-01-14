@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @copyright
+ */
+
 namespace App\DependencyInjection\Compiler;
 
 use Ec\Multimedia\Application\Factory\Multimedia;

@@ -6,7 +6,7 @@
 
 namespace App\Tests\Orchestrator;
 
-use App\Orchestrator\Chain\Orchestrator;
+use App\Orchestrator\Chain\EditorialOrchestrator;
 use App\Orchestrator\Exceptions\DuplicateChainInOrchestratorHandlerException;
 use App\Orchestrator\Exceptions\OrchestratorTypeNotExistException;
 use App\Orchestrator\OrchestratorChainHandler;
@@ -22,13 +22,13 @@ use Symfony\Component\HttpFoundation\Request;
 #[CoversClass(OrchestratorChainHandler::class)]
 class OrchestratorChainHandlerTest extends TestCase
 {
-    /** @var Orchestrator|MockObject */
-    private Orchestrator $orchestratorChainMock;
+    /** @var EditorialOrchestrator|MockObject */
+    private EditorialOrchestrator $orchestratorChainMock;
     private OrchestratorChainHandler $orchestratorChainHandler;
 
     protected function setUp(): void
     {
-        $this->orchestratorChainMock = $this->createMock(Orchestrator::class);
+        $this->orchestratorChainMock = $this->createMock(EditorialOrchestrator::class);
         $this->orchestratorChainMock
             ->method('canOrchestrate')
             ->willReturn('fake-ochestrator');
@@ -85,7 +85,7 @@ class OrchestratorChainHandlerTest extends TestCase
     #[Test]
     public function addOrchestratorShouldReturnException(): void
     {
-        $orchestratorDuplicate = $this->createMock(Orchestrator::class);
+        $orchestratorDuplicate = $this->createMock(EditorialOrchestrator::class);
         $orchestratorDuplicate
             ->method('canOrchestrate')
             ->willReturn('fake-ochestrator');

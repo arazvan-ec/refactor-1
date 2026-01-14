@@ -6,7 +6,7 @@
 
 namespace App\Orchestrator;
 
-use App\Orchestrator\Chain\Orchestrator;
+use App\Orchestrator\Chain\EditorialOrchestratorInterface;
 use App\Orchestrator\Exceptions\DuplicateChainInOrchestratorHandlerException;
 use App\Orchestrator\Exceptions\OrchestratorTypeNotExistException;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class OrchestratorChainHandler implements OrchestratorChain
 {
-    /** @var Orchestrator[] */
+    /** @var EditorialOrchestratorInterface[] */
     private array $orchestratorChain = [];
 
     /**
@@ -34,7 +34,7 @@ class OrchestratorChainHandler implements OrchestratorChain
     /**
      * @throws DuplicateChainInOrchestratorHandlerException
      */
-    public function addOrchestrator(Orchestrator $orchestratorChain): OrchestratorChain
+    public function addOrchestrator(EditorialOrchestratorInterface $orchestratorChain): OrchestratorChain
     {
         $key = $orchestratorChain->canOrchestrate();
         if (isset($this->orchestratorChain[$key])) {

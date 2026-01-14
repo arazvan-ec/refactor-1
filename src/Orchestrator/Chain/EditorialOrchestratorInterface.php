@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  */
-interface Orchestrator
+interface EditorialOrchestratorInterface
 {
     /**
      * @return array<string, mixed>
