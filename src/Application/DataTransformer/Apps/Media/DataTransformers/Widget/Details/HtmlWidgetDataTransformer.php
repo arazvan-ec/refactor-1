@@ -14,11 +14,6 @@ class HtmlWidgetDataTransformer implements WidgetTypeDataTransformer
 {
     private Widget $widget;
 
-    /**
-     * @param HtmlWidget $widget
-     *
-     * @return HtmlWidgetDataTransformer
-     */
     public function write(Widget $widget): self
     {
         $this->widget = $widget;

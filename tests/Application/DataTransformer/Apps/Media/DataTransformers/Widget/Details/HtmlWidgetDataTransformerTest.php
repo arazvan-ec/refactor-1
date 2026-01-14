@@ -31,7 +31,7 @@ class HtmlWidgetDataTransformerTest extends TestCase
     #[Test]
     public function shouldReturnEmptyArrayWhenWidgetIsNotHtmlWidget(): void
     {
-        /** @var HtmlWidget|MockObject $widget */
+        /** @var Widget|MockObject $widget */
         $widget = $this->createMock(Widget::class);
 
         $result = $this->transformer->write($widget)->read();
