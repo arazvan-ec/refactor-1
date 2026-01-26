@@ -1,11 +1,11 @@
 <?php
 
-/**
- * @copyright
- */
+declare(strict_types=1);
 
 namespace App\EventSubscriber;
 
+use App\Exception\DomainExceptionInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +13,13 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
+ * Handles exceptions and converts them to JSON responses.
+ *
+ * Provides consistent error handling for the API with:
+ * - Domain exceptions with proper HTTP status codes
+ * - Structured error responses
+ * - Cache headers for error responses
+ *
  * @author Razvan Alin Munteanu <arazvan@elconfidencial.com>
  */
 class ExceptionSubscriber implements EventSubscriberInterface
@@ -25,11 +32,11 @@ class ExceptionSubscriber implements EventSubscriberInterface
     private const STALE_IF_ERROR = 259200;
 
     private const KERNEL_DEV = 'dev';
-    private string $appEnv;
 
-    public function __construct(string $appEnv)
-    {
-        $this->appEnv = $appEnv;
+    public function __construct(
+        private readonly string $appEnv,
+        private readonly ?LoggerInterface $logger = null,
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -43,8 +50,12 @@ class ExceptionSubscriber implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event): void
     {
+        $throwable = $event->getThrowable();
+
+        // Log exceptions based on type
+        $this->logException($throwable);
+
         if ($this->isProductionEnvironment()) {
-            $throwable = $event->getThrowable();
             $response = $this->createErrorResponse($throwable);
 
             $this->setHttpCache(
@@ -66,15 +77,51 @@ class ExceptionSubscriber implements EventSubscriberInterface
 
     private function createErrorResponse(\Throwable $throwable): JsonResponse
     {
-        $message = [
-            'errors' => [$throwable->getMessage()],
+        if ($throwable instanceof DomainExceptionInterface) {
+            return $this->createDomainErrorResponse($throwable);
+        }
+
+        return $this->createGenericErrorResponse($throwable);
+    }
+
+    private function createDomainErrorResponse(DomainExceptionInterface $exception): JsonResponse
+    {
+        $data = [
+            'errors' => [
+                [
+                    'code' => $exception->getErrorCode(),
+                    'message' => $exception->getUserMessage(),
+                ],
+            ],
         ];
 
-        return new JsonResponse($message, $this->getStatusCode($throwable));
+        return new JsonResponse($data, $exception->getStatusCode());
+    }
+
+    private function createGenericErrorResponse(\Throwable $throwable): JsonResponse
+    {
+        $statusCode = $this->getStatusCode($throwable);
+
+        $data = [
+            'errors' => [
+                [
+                    'code' => 'INTERNAL_ERROR',
+                    'message' => $this->isProductionEnvironment()
+                        ? 'An unexpected error occurred'
+                        : $throwable->getMessage(),
+                ],
+            ],
+        ];
+
+        return new JsonResponse($data, $statusCode);
     }
 
     private function getStatusCode(\Throwable $throwable): int
     {
+        if ($throwable instanceof DomainExceptionInterface) {
+            return $throwable->getStatusCode();
+        }
+
         $statusCode = $throwable->getCode();
         if (method_exists($throwable, 'getStatusCode')) {
             $statusCode = $throwable->getStatusCode();
@@ -90,5 +137,29 @@ class ExceptionSubscriber implements EventSubscriberInterface
     private function isValidHttpStatusCode(int $statusCode): bool
     {
         return $statusCode >= 100 && $statusCode <= 599;
+    }
+
+    private function logException(\Throwable $throwable): void
+    {
+        if (null === $this->logger) {
+            return;
+        }
+
+        // Domain exceptions are expected, log at info level
+        if ($throwable instanceof DomainExceptionInterface) {
+            $this->logger->info('Domain exception occurred', [
+                'code' => $throwable->getErrorCode(),
+                'message' => $throwable->getMessage(),
+            ]);
+
+            return;
+        }
+
+        // Unexpected exceptions are errors
+        $this->logger->error('Unexpected exception occurred', [
+            'exception' => $throwable::class,
+            'message' => $throwable->getMessage(),
+            'trace' => $throwable->getTraceAsString(),
+        ]);
     }
 }
