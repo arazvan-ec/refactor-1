@@ -2,7 +2,7 @@
 
 **Feature**: snaapi-refactor
 **Last Updated**: 2026-01-25
-**Current Phase**: PHASE 1 - EditorialOrchestrator Decomposition
+**Current Phase**: PHASE 1 - EditorialOrchestrator Decomposition (80% Complete)
 
 ---
 
@@ -11,7 +11,7 @@
 | Phase | Status | Progress |
 |-------|--------|----------|
 | Planning | COMPLETED | 100% |
-| Phase 1: Orchestrator Decomposition | IN_PROGRESS | 0% |
+| Phase 1: Orchestrator Decomposition | IN_PROGRESS | 80% |
 | Phase 2: Type Safety | PENDING | 0% |
 | Phase 3: Error Handling | PENDING | 0% |
 | Phase 4: Namespace Cleanup | PENDING | 0% |
@@ -23,36 +23,58 @@
 ### Planner
 **Status**: COMPLETED
 **Checkpoint**: All planning documents created
-**Notes**:
-- Architecture documented (10_architecture.md)
-- Tasks broken down (30_tasks.md)
-- 15 tasks defined with TDD approach
-**Next**: Hand off to Backend Engineer
 
 ### Backend Engineer
 **Status**: IN_PROGRESS
-**Checkpoint**: Starting Phase 1
-**Current Task**: BE-001 - Create PromiseResolver Service
-**Notes**: Ready to implement
-**Next**: Complete BE-001 through BE-005
+**Checkpoint**: 4 of 5 services created
+**Current Task**: BE-005 - Refactor EditorialOrchestrator to use new services
+**Notes**:
+- PromiseResolver ✅
+- EditorialFetcher ✅
+- EmbeddedContentFetcher ✅
+- ResponseAggregator ✅
+- Integration pending
 
 ### QA Engineer
 **Status**: PENDING
-**Checkpoint**: -
-**Notes**: Waiting for QA-001 (Golden Master Tests)
-**Next**: Create golden master tests
+**Next**: Create golden master tests before integration
 
 ---
 
 ## Phase 1 Tasks
 
-| Task | Description | Status | Notes |
-|------|-------------|--------|-------|
-| BE-001 | Create PromiseResolver Service | IN_PROGRESS | Starting |
-| BE-002 | Create EditorialFetcher Service | PENDING | |
-| BE-003 | Create EmbeddedContentFetcher Service | PENDING | |
-| BE-004 | Create ResponseAggregator Service | PENDING | |
-| BE-005 | Refactor EditorialOrchestrator | PENDING | |
+| Task | Description | Status | Commit |
+|------|-------------|--------|--------|
+| BE-001 | Create PromiseResolver Service | COMPLETED | 54359f4 |
+| BE-002 | Create EditorialFetcher Service | COMPLETED | e4a8de5 |
+| BE-003 | Create EmbeddedContentFetcher Service | COMPLETED | 062ff01 |
+| BE-004 | Create ResponseAggregator Service | COMPLETED | 6397d97 |
+| BE-005 | Refactor EditorialOrchestrator | PENDING | - |
+
+---
+
+## New Files Created
+
+### Services (src/Application/Service/)
+- `Promise/PromiseResolver.php`
+- `Promise/PromiseResolverInterface.php`
+- `Editorial/EditorialFetcher.php`
+- `Editorial/EditorialFetcherInterface.php`
+- `Editorial/EmbeddedContentFetcher.php`
+- `Editorial/EmbeddedContentFetcherInterface.php`
+- `Editorial/ResponseAggregator.php`
+- `Editorial/ResponseAggregatorInterface.php`
+
+### DTOs (src/Application/DTO/)
+- `FetchedEditorialDTO.php`
+- `EmbeddedContentDTO.php`
+- `EmbeddedEditorialDTO.php`
+
+### Tests (tests/Unit/Application/Service/)
+- `Promise/PromiseResolverTest.php`
+- `Editorial/EditorialFetcherTest.php`
+- `Editorial/EmbeddedContentFetcherTest.php`
+- `Editorial/ResponseAggregatorTest.php`
 
 ---
 
@@ -61,52 +83,41 @@
 - [x] Install workflow plugin
 - [x] Configure project-specific rules
 - [x] Create feature directory
-- [x] Write 00_requirements.md
-- [x] Write 10_architecture.md
-- [x] Write 30_tasks.md
-- [x] Update 50_state.md
+- [x] Write planning documents
+- [x] BE-001: PromiseResolver
+- [x] BE-002: EditorialFetcher
+- [x] BE-003: EmbeddedContentFetcher
+- [x] BE-004: ResponseAggregator
 
 ---
 
 ## Current Tasks
 
-- [ ] BE-001: Create PromiseResolver Service
-- [ ] QA-001: Create Golden Master Tests
+- [ ] BE-005: Refactor EditorialOrchestrator to use new services
+- [ ] QA-001: Create golden master tests
 
 ---
 
-## Blocked Tasks
+## Next Session Actions
 
-None currently.
-
----
-
-## Session History
-
-| Session | Role | Actions | Outcome |
-|---------|------|---------|---------|
-| 2026-01-25 #1 | Setup | Installed workflow, configured rules | Success |
-| 2026-01-25 #2 | Planner | Created architecture and task breakdown | Success |
-| 2026-01-25 #3 | Backend | Starting Phase 1 implementation | In Progress |
+1. Create service configuration in `config/services.yaml`
+2. Refactor EditorialOrchestrator to inject new services
+3. Update constructor to reduce dependencies from 18 to ~6
+4. Run tests to verify no regression
+5. Create golden master tests for API response verification
 
 ---
 
 ## Commit Log
 
-| Commit | Description | Phase |
-|--------|-------------|-------|
-| dbc2a65 | feat: add multi-agent workflow plugin | Setup |
-| PENDING | docs: complete planning for snaapi-refactor | Planning |
-| PENDING | feat(orchestrator): extract PromiseResolver | Phase 1 |
-
----
-
-## Notes for Next Session
-
-1. Continue with BE-001 (PromiseResolver)
-2. Run tests after each change
-3. Commit after each completed task
-4. Push after completing Phase 1
+| Commit | Description |
+|--------|-------------|
+| dbc2a65 | feat: add multi-agent workflow plugin |
+| 2e46cfc | docs(refactor): complete planning |
+| 54359f4 | feat(orchestrator): extract PromiseResolver [BE-001] |
+| e4a8de5 | feat(orchestrator): extract EditorialFetcher [BE-002] |
+| 062ff01 | feat(orchestrator): extract EmbeddedContentFetcher [BE-003] |
+| 6397d97 | feat(orchestrator): extract ResponseAggregator [BE-004] |
 
 ---
 
@@ -114,18 +125,18 @@ None currently.
 
 ```
 Continuing SNAAPI refactor. Current state:
-- Planning COMPLETED
-- Phase 1 IN_PROGRESS
-- Current task: BE-001 (PromiseResolver)
+- Phase 1: 80% complete (4/5 tasks)
+- Services created: PromiseResolver, EditorialFetcher, EmbeddedContentFetcher, ResponseAggregator
+- Pending: BE-005 (integrate services into EditorialOrchestrator)
 
 Files to reference:
-- .claude/features/snaapi-refactor/30_tasks.md (task details)
-- .claude/features/snaapi-refactor/10_architecture.md (target architecture)
-- src/Orchestrator/Chain/EditorialOrchestrator.php (source to refactor)
+- src/Orchestrator/Chain/EditorialOrchestrator.php (to refactor)
+- src/Application/Service/ (new services to use)
 
 Next actions:
-1. Create PromiseResolver service following TDD
-2. Test with: ./bin/phpunit tests/Unit/Application/Service/Promise/
-3. Commit after task complete
-4. Continue to BE-002
+1. Add service configuration to config/services.yaml
+2. Refactor EditorialOrchestrator::__construct()
+3. Refactor EditorialOrchestrator::execute()
+4. Run tests
+5. Commit and push
 ```
