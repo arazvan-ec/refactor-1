@@ -672,15 +672,16 @@ class BodyTagPictureDataTransformer implements BodyElementDataTransformerInterfa
 
 ---
 
-## 11. Questions to Resolve
+## 11. Questions Resolved
 
 1. **Does `QueryMultimediaClient::findPhotoById()` support async?**
-   - If not, need to add support first
+   - ✅ YES - Confirmed. Can proceed with Phase 2 directly.
 
 2. **Are there cache implications?**
-   - Parallel requests might hit cache differently
+   - TODO: Verify cache behavior with parallel requests
 
 3. **Error handling strategy?**
-   - What if one photo fails but others succeed?
+   - TODO: Define - What if one photo fails but others succeed?
 
-4. **Priority**: Start with Phase 1 or jump to Phase 2?
+4. **Priority**:
+   - ✅ DECIDED: Can start with Phase 2 (async photos) since client supports it
