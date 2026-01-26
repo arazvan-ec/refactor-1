@@ -15,7 +15,7 @@ use App\Application\DTO\EmbeddedContentDTO;
 use App\Application\DTO\FetchedEditorialDTO;
 use App\Application\Service\Editorial\ResponseAggregator;
 use App\Application\Service\Editorial\ResponseAggregatorInterface;
-use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Infrastructure\Client\Legacy\QueryLegacyClient;
 use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\EditorialId;

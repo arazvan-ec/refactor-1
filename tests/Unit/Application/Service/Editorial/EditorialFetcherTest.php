@@ -7,7 +7,7 @@ namespace App\Tests\Unit\Application\Service\Editorial;
 use App\Application\DTO\FetchedEditorialDTO;
 use App\Application\Service\Editorial\EditorialFetcher;
 use App\Application\Service\Editorial\EditorialFetcherInterface;
-use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Infrastructure\Client\Legacy\QueryLegacyClient;
 use App\Exception\EditorialNotPublishedYetException;
 use Ec\Editorial\Domain\Model\Editorial;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;

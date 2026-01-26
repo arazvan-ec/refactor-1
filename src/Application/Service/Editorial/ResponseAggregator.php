@@ -13,7 +13,7 @@ use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Application\DTO\EmbeddedContentDTO;
 use App\Application\DTO\FetchedEditorialDTO;
-use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Infrastructure\Client\Legacy\QueryLegacyClient;
 use Ec\Editorial\Domain\Model\EditorialBlog;
 use Ec\Editorial\Domain\Model\Multimedia\Widget;
 use Ec\Editorial\Domain\Model\NewsBase;

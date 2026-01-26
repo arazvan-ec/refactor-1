@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Application\Service\Editorial;
 
 use App\Application\DTO\FetchedEditorialDTO;
-use App\Ec\Snaapi\Infrastructure\Client\Http\QueryLegacyClient;
+use App\Infrastructure\Client\Legacy\QueryLegacyClient;
 use App\Exception\EditorialNotPublishedYetException;
 use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
