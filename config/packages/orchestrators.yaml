@@ -5,6 +5,14 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
             $extension: '%env(URL_ENV)%'
+
+    # Orchestrator Services (SignatureFetcher, CommentsFetcher, etc.)
+    App\Orchestrator\Service\:
+        resource: '../../src/Orchestrator/Service/'
+
+    App\Orchestrator\Service\SignatureFetcherInterface: '@App\Orchestrator\Service\SignatureFetcher'
+    App\Orchestrator\Service\CommentsFetcherInterface: '@App\Orchestrator\Service\CommentsFetcher'
+
     App\Orchestrator\Chain\:
         resource: '../../src/Orchestrator/Chain/'
         tags: ['app.orchestrators']
