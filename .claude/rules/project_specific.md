@@ -2,7 +2,7 @@
 
 **Project**: SNAAPI - API Gateway for Mobile Apps
 **Framework**: Symfony 6.4
-**Last Updated**: 2026-01-25
+**Last Updated**: 2026-01-27
 
 ---
 
@@ -46,16 +46,21 @@ SNAAPI is an API Gateway that aggregates content from multiple microservices to 
 ```
 src/
 ├── Controller/          # Infrastructure: HTTP entry points (THIN!)
-├── Application/         # Application Layer
-│   └── DataTransformer/ # Anti-Corruption Layer (transforms external → API response)
-├── Orchestrator/        # Application Layer: Aggregates multiple services
-│   └── Chain/           # Chain of Responsibility pattern
+├── Application/         # Application Layer (NO HTTP calls!)
+│   ├── DataTransformer/ # Anti-Corruption Layer (transforms external → API response)
+│   ├── Service/         # ResponseAggregator (transformation only)
+│   └── DTO/             # Data Transfer Objects
+├── Orchestrator/        # Orchestrator Layer (HTTP calls allowed here)
+│   ├── Chain/           # Chain of Responsibility (EditorialOrchestrator, etc.)
+│   └── Service/         # Fetchers (EditorialFetcher, EmbeddedContentFetcher, etc.)
 ├── Infrastructure/      # External services, traits, enums
-│   ├── Service/         # Thumbor, PictureShots
+│   ├── Client/          # HTTP client implementations
+│   ├── Service/         # Thumbor, PictureShots (no HTTP)
+│   ├── Config/          # MultimediaImageSizes
 │   ├── Trait/           # MultimediaTrait, UrlGeneratorTrait
 │   └── Enum/            # EditorialTypesEnum, SitesEnum
-├── EventSubscriber/     # Cache control, exception handling
-├── Exception/           # Domain exceptions
+├── EventSubscriber/     # Cache control, exception handling (no HTTP)
+├── Exception/           # Domain exceptions (no dependencies)
 └── DependencyInjection/ # Compiler passes for extensibility
 ```
 
@@ -112,7 +117,39 @@ class ResponseAggregator {
 ### Orchestrator Layer (CAN make HTTP calls)
 
 **Applies to:**
-- `App\Orchestrator\*`
+- `App\Orchestrator\Chain\*` - Chain of Responsibility orchestrators
+- `App\Orchestrator\Service\*` - Specialized fetchers
+
+**Sub-layers:**
+
+#### Orchestrator/Chain (Main orchestrators)
+```php
+// Entry point for content type routing
+class EditorialOrchestrator implements EditorialOrchestratorInterface {
+    public function __construct(
+        private EditorialFetcherInterface $editorialFetcher,     // ✅ OK
+        private EmbeddedContentFetcherInterface $embeddedFetcher, // ✅ OK
+        private ResponseAggregatorInterface $responseAggregator, // ✅ OK
+    ) {}
+}
+```
+
+#### Orchestrator/Service (Specialized fetchers)
+```php
+// HTTP call specialists
+class EditorialFetcher implements EditorialFetcherInterface {
+    public function __construct(
+        private QueryEditorialClient $editorialClient, // ✅ HTTP OK here
+        private QuerySectionClient $sectionClient,     // ✅ HTTP OK here
+    ) {}
+}
+
+class SignatureFetcher implements SignatureFetcherInterface {
+    public function __construct(
+        private QueryJournalistClient $client,         // ✅ HTTP OK here
+    ) {}
+}
+```
 
 **Rules:**
 - ✅ CAN inject HTTP clients
@@ -140,6 +177,27 @@ return $this->responseAggregator->aggregate(
 2. **Performance**: All HTTP calls visible in Orchestrator, easy to parallelize
 3. **Single Responsibility**: Transformers transform, Orchestrators orchestrate
 4. **Debugging**: Clear separation makes issues easier to locate
+
+### Architecture Tests (ENFORCED)
+
+All layer rules are enforced by PHPUnit architecture tests:
+
+```bash
+./bin/phpunit --group architecture
+```
+
+| Test Class | Validates |
+|------------|-----------|
+| `ApplicationServiceArchitectureTest` | Application Services don't inject HTTP clients |
+| `ControllerLayerArchitectureTest` | Controllers only inject OrchestratorChain |
+| `InfrastructureServiceArchitectureTest` | Infrastructure Services don't inject HTTP clients |
+| `EventSubscriberArchitectureTest` | EventSubscribers don't inject HTTP clients |
+| `ExceptionArchitectureTest` | Exceptions have no service dependencies |
+| `TransformationLayerArchitectureTest` | DataTransformers/Aggregators don't inject HTTP clients |
+
+**Location**: `tests/Architecture/`
+
+**CI Integration**: Add `--group architecture` to your CI pipeline to fail fast on violations.
 
 ---
 
