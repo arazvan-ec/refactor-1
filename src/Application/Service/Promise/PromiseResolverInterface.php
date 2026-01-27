@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Promise;
 
+use App\Application\DTO\BatchResult;
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 use GuzzleHttp\Promise\PromiseInterface;
 use Http\Promise\Promise;
@@ -15,6 +16,17 @@ use Http\Promise\Promise;
  */
 interface PromiseResolverInterface
 {
+    /**
+     * Resolve any array of promises in parallel.
+     *
+     * Generic method for resolving multiple promises of any type.
+     * Returns a BatchResult with fulfilled values and rejected errors.
+     *
+     * @param array<string, PromiseInterface|Promise> $promises Keyed by identifier
+     *
+     * @return BatchResult Contains fulfilled values and rejected errors
+     */
+    public function resolveAll(array $promises): BatchResult;
     /**
      * Resolve an array of multimedia promises into a keyed array.
      *
