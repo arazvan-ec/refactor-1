@@ -9,8 +9,8 @@ declare(strict_types=1);
 namespace App\Orchestrator\Chain;
 
 use App\Application\DTO\PreFetchedDataDTO;
-use App\Application\Service\Editorial\EditorialFetcherInterface;
 use App\Application\Service\Editorial\EmbeddedContentFetcherInterface;
+use App\Orchestrator\Service\EditorialFetcherInterface;
 use App\Application\Service\Editorial\ResponseAggregatorInterface;
 use App\Application\Service\Promise\PromiseResolverInterface;
 use App\Infrastructure\Enum\SitesEnum;

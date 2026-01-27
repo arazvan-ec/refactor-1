@@ -22,10 +22,11 @@ final class ApplicationServiceArchitectureTest extends AbstractArchitectureTest
      * Classes that are KNOWN violations - tracked as technical debt.
      * These classes SHOULD be refactored to move HTTP calls to Orchestrator.
      *
+     * EditorialFetcher was moved to Orchestrator\Service in Phase 2.
+     *
      * @var list<string>
      */
     private const KNOWN_VIOLATIONS = [
-        'App\\Application\\Service\\Editorial\\EditorialFetcher',
         'App\\Application\\Service\\Editorial\\EmbeddedContentFetcher',
     ];
 
