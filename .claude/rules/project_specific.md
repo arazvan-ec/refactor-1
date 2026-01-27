@@ -69,6 +69,80 @@ Controller → OrchestratorChain → EditorialOrchestrator
 
 ---
 
+## Layer Purity Rules (ENFORCED)
+
+These rules are enforced by architecture tests. Run: `./bin/phpunit --group architecture`
+
+### Transformation Layer (MUST NOT make HTTP calls)
+
+**Applies to:**
+- `App\Application\DataTransformer\*`
+- `App\Application\Service\*Aggregator`
+
+**Rules:**
+- ❌ NO HTTP clients injected (`*Client` dependencies forbidden)
+- ❌ NO network calls of any kind
+- ✅ Only transform data structures
+- ✅ Receive pre-fetched data as parameters
+
+**Example violation:**
+```php
+// ❌ WRONG - HTTP client in transformation layer
+class ResponseAggregator {
+    public function __construct(
+        private QueryLegacyClient $client,  // VIOLATION!
+    ) {}
+}
+```
+
+**Correct pattern:**
+```php
+// ✅ CORRECT - Data passed in, no HTTP dependencies
+class ResponseAggregator {
+    public function __construct(
+        private AppsDataTransformer $transformer,  // OK - transformer
+    ) {}
+
+    public function aggregate(PreFetchedDataDTO $data): array {
+        // Only transforms, never fetches
+    }
+}
+```
+
+### Orchestrator Layer (CAN make HTTP calls)
+
+**Applies to:**
+- `App\Orchestrator\*`
+
+**Rules:**
+- ✅ CAN inject HTTP clients
+- ✅ CAN make network calls
+- ✅ Coordinates fetching and transformation
+- ✅ Passes pre-fetched data to transformers via DTOs
+
+**Pattern:**
+```php
+// Orchestrator fetches, then passes to transformer
+$preFetchedData = new PreFetchedDataDTO(
+    commentsCount: $this->commentsFetcher->fetchCommentsCount($id),
+    signatures: $this->signatureFetcher->fetchSignatures($editorial),
+);
+
+return $this->responseAggregator->aggregate(
+    ...,
+    $preFetchedData,  // Data already fetched
+);
+```
+
+### Why This Matters
+
+1. **Testability**: Transformers testable without HTTP mocks
+2. **Performance**: All HTTP calls visible in Orchestrator, easy to parallelize
+3. **Single Responsibility**: Transformers transform, Orchestrators orchestrate
+4. **Debugging**: Clear separation makes issues easier to locate
+
+---
+
 ## Code Conventions
 
 ### Naming Conventions
