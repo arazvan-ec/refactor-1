@@ -3,6 +3,7 @@
 namespace App;
 
 use App\DependencyInjection\Compiler\BodyDataTransformerCompiler;
+use App\DependencyInjection\Compiler\ContentEnricherCompiler;
 use App\DependencyInjection\Compiler\EditorialOrchestratorCompiler;
 use App\DependencyInjection\Compiler\MediaDataTransformerCompiler;
 use App\DependencyInjection\Compiler\MultimediaFactoryCompiler;
@@ -22,6 +23,7 @@ class Kernel extends BaseKernel
         parent::build($container);
 
         $container->addCompilerPass(new EditorialOrchestratorCompiler());
+        $container->addCompilerPass(new ContentEnricherCompiler());
         $container->addCompilerPass(new BodyDataTransformerCompiler());
         $container->addCompilerPass(new MultimediaFactoryCompiler());
         $container->addCompilerPass(new MediaDataTransformerCompiler());

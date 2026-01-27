@@ -9,35 +9,32 @@ declare(strict_types=1);
 namespace App\Orchestrator\Chain;
 
 use App\Application\DTO\PreFetchedDataDTO;
-use App\Orchestrator\Service\EditorialFetcherInterface;
-use App\Orchestrator\Service\EmbeddedContentFetcherInterface;
 use App\Application\Service\Editorial\ResponseAggregatorInterface;
 use App\Application\Service\Promise\PromiseResolverInterface;
-use App\Infrastructure\Enum\SitesEnum;
+use App\Orchestrator\DTO\EditorialContext;
+use App\Orchestrator\Enricher\ContentEnricherChainHandler;
 use App\Orchestrator\Service\CommentsFetcherInterface;
+use App\Orchestrator\Service\EditorialFetcherInterface;
+use App\Orchestrator\Service\EmbeddedContentFetcherInterface;
 use App\Orchestrator\Service\SignatureFetcherInterface;
-use Ec\Editorial\Domain\Model\Body\Body;
-use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
-use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
-use Ec\Editorial\Domain\Model\Body\MembershipCardButton;
-use Ec\Editorial\Domain\Model\Editorial;
-use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
-use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
-use Ec\Section\Domain\Model\Section;
-use Ec\Tag\Domain\Model\QueryTagClient;
-use Ec\Tag\Domain\Model\Tag;
-use Http\Promise\Promise;
-use Psr\Http\Message\UriFactoryInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Orchestrates the complete editorial response.
  *
- * Coordinates fetching, promise resolution, and response aggregation
+ * Coordinates fetching, content enrichment, promise resolution, and response aggregation
  * by delegating to specialized services.
  *
- * HTTP calls are made HERE in the Orchestrator layer, not in the transformation layer.
+ * HTTP calls are made in the Orchestrator layer via:
+ * - EditorialFetcher (editorial + section)
+ * - EmbeddedContentFetcher (inserted news, recommended, multimedia)
+ * - ContentEnricherChainHandler (tags, membership links, photos from body)
+ * - SignatureFetcher (journalist signatures)
+ * - CommentsFetcher (comment count)
+ *
+ * To add new data to the editorial response, create a ContentEnricher
+ * implementing ContentEnricherInterface with the 'app.content_enricher' tag.
+ * No changes to this class are needed.
  *
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  */
@@ -48,11 +45,7 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
         private readonly EmbeddedContentFetcherInterface $embeddedContentFetcher,
         private readonly PromiseResolverInterface $promiseResolver,
         private readonly ResponseAggregatorInterface $responseAggregator,
-        private readonly QueryTagClient $queryTagClient,
-        private readonly QueryMembershipClient $queryMembershipClient,
-        private readonly QueryMultimediaClient $queryMultimediaClient,
-        private readonly UriFactoryInterface $uriFactory,
-        private readonly LoggerInterface $logger,
+        private readonly ContentEnricherChainHandler $enricherChain,
         private readonly SignatureFetcherInterface $signatureFetcher,
         private readonly CommentsFetcherInterface $commentsFetcher,
     ) {
@@ -114,25 +107,21 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
         // Fetch all embedded content (inserted news, recommended, multimedia)
         $embeddedContent = $this->embeddedContentFetcher->fetch($editorial, $section);
 
-        // Fetch tags
-        $tags = $this->fetchTags($editorial);
+        // Create context for enrichers
+        $context = new EditorialContext(
+            editorial: $editorial,
+            section: $section,
+            embeddedContent: $embeddedContent,
+        );
 
-        // Get membership links promise
-        [$membershipPromise, $membershipLinks] = $this->getPromiseMembershipLinks($editorial, $section);
+        // Enrich context with additional data (tags, membership links, photos)
+        // New enrichers can be added by simply creating a class with the tag
+        $this->enricherChain->enrichAll($context);
 
         // Resolve multimedia promises
         $resolvedMultimedia = $this->promiseResolver->resolveMultimedia(
             $embeddedContent->multimediaPromises
         );
-
-        // Resolve membership links
-        $resolvedMembershipLinks = $this->promiseResolver->resolveMembershipLinks(
-            $membershipPromise,
-            $membershipLinks
-        );
-
-        // Get photos from body tags
-        $photoBodyTags = $this->retrievePhotosFromBodyTags($editorial->body());
 
         // Fetch external data (HTTP calls happen here in the Orchestrator layer)
         $preFetchedData = new PreFetchedDataDTO(
@@ -144,10 +133,10 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
         return $this->responseAggregator->aggregate(
             $fetchedEditorial,
             $embeddedContent,
-            $tags,
+            $context->getTags(),
             $resolvedMultimedia,
-            $resolvedMembershipLinks,
-            $photoBodyTags,
+            $context->getMembershipLinks(),
+            $context->getPhotoBodyTags(),
             $preFetchedData,
         );
     }
@@ -155,124 +144,5 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
     public function canOrchestrate(): string
     {
         return 'editorial';
-    }
-
-    /**
-     * Fetch tags for the editorial.
-     *
-     * @return array<int, Tag>
-     */
-    private function fetchTags(Editorial $editorial): array
-    {
-        $tags = [];
-
-        foreach ($editorial->tags()->getArrayCopy() as $tag) {
-            try {
-                $tags[] = $this->queryTagClient->findTagById($tag->id());
-            } catch (\Throwable $exception) {
-                $this->logger->warning('Failed to fetch tag: ' . $exception->getMessage());
-            }
-        }
-
-        return $tags;
-    }
-
-    /**
-     * Get membership links promise from editorial body.
-     *
-     * @return array{0: Promise|null, 1: array<int, string>}
-     */
-    private function getPromiseMembershipLinks(Editorial $editorial, Section $section): array
-    {
-        $linksData = $this->getLinksFromBody($editorial->body());
-
-        $links = [];
-        $uris = [];
-
-        foreach ($linksData as $membershipLink) {
-            $uris[] = $this->uriFactory->createUri($membershipLink);
-            $links[] = $membershipLink;
-        }
-
-        if (empty($uris)) {
-            return [null, []];
-        }
-
-        /** @var Promise $promise */
-        $promise = $this->queryMembershipClient->getMembershipUrl(
-            $editorial->id()->id(),
-            $uris,
-            SitesEnum::getEncodenameById($section->siteId()),
-            true
-        );
-
-        return [$promise, $links];
-    }
-
-    /**
-     * Get membership links from editorial body.
-     *
-     * @return array<int, string>
-     */
-    private function getLinksFromBody(Body $body): array
-    {
-        $linksData = [];
-
-        /** @var BodyTagMembershipCard[] $bodyElementsMembership */
-        $bodyElementsMembership = $body->bodyElementsOf(BodyTagMembershipCard::class);
-
-        foreach ($bodyElementsMembership as $bodyElement) {
-            /** @var MembershipCardButton $button */
-            foreach ($bodyElement->buttons()->buttons() as $button) {
-                $linksData[] = $button->urlMembership();
-                $linksData[] = $button->url();
-            }
-        }
-
-        return $linksData;
-    }
-
-    /**
-     * Retrieve photos from body tags.
-     *
-     * @return array<string, mixed>
-     */
-    private function retrievePhotosFromBodyTags(Body $body): array
-    {
-        $result = [];
-
-        /** @var BodyTagPicture[] $arrayOfBodyTagPicture */
-        $arrayOfBodyTagPicture = $body->bodyElementsOf(BodyTagPicture::class);
-        foreach ($arrayOfBodyTagPicture as $bodyTagPicture) {
-            $result = $this->addPhotoToArray($bodyTagPicture->id()->id(), $result);
-        }
-
-        /** @var BodyTagMembershipCard[] $arrayOfBodyTagMembershipCard */
-        $arrayOfBodyTagMembershipCard = $body->bodyElementsOf(BodyTagMembershipCard::class);
-        foreach ($arrayOfBodyTagMembershipCard as $bodyTagMembershipCard) {
-            $id = $bodyTagMembershipCard->bodyTagPictureMembership()->id()->id();
-            $result = $this->addPhotoToArray($id, $result);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Add a photo to the result array.
-     *
-     * @param array<string, mixed> $result
-     *
-     * @return array<string, mixed>
-     */
-    private function addPhotoToArray(string $id, array $result): array
-    {
-        try {
-            $photo = $this->queryMultimediaClient->findPhotoById($id);
-            $result[$id] = $photo;
-        } catch (\Throwable $throwable) {
-            $this->logger->error('Failed to fetch photo: ' . $throwable->getMessage());
-        }
-
-        return $result;
     }
 }
