@@ -53,6 +53,11 @@ final class ResponseAggregator implements ResponseAggregatorInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @param array<int, \Ec\Tag\Domain\Model\Tag> $tags
+     * @param array<string, mixed> $resolvedMultimedia
+     * @param array<string, string> $membershipLinks
+     * @param array<string, mixed> $photoBodyTags
      */
     public function aggregate(
         FetchedEditorialDTO $fetchedEditorial,
@@ -169,7 +174,18 @@ final class ResponseAggregator implements ResponseAggregatorInterface
     /**
      * Build the resolve data array for body transformer.
      *
-     * @return array<string, mixed>
+     * @param array<string, mixed> $resolvedMultimedia
+     * @param array<string, string> $membershipLinks
+     * @param array<string, mixed> $photoBodyTags
+     *
+     * @return array{
+     *   insertedNews: array<string, array{editorial: mixed, section: mixed, signatures: list<mixed>}>,
+     *   recommendedNews: list<mixed>,
+     *   multimedia: array<string, mixed>,
+     *   multimediaOpening?: mixed,
+     *   membershipLinkCombine: array<string, string>,
+     *   photoFromBodyTags: array<string, mixed>
+     * }
      */
     private function buildResolveData(
         EmbeddedContentDTO $embeddedContent,
