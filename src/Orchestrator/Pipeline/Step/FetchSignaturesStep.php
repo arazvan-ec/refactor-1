@@ -4,24 +4,21 @@ declare(strict_types=1);
 
 namespace App\Orchestrator\Pipeline\Step;
 
-use App\Application\DTO\PreFetchedDataDTO;
 use App\Orchestrator\Pipeline\EditorialPipelineContext;
 use App\Orchestrator\Pipeline\EditorialPipelineStepInterface;
 use App\Orchestrator\Pipeline\StepResult;
-use App\Orchestrator\Service\CommentsFetcherInterface;
 use App\Orchestrator\Service\SignatureFetcherInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 /**
- * Pipeline step that fetches external data.
+ * Pipeline step that fetches journalist signatures for an editorial.
  *
- * Retrieves comments count and journalist signatures.
+ * Single responsibility: retrieve and transform journalist signatures.
  */
 #[AutoconfigureTag('app.editorial_pipeline_step', ['priority' => 500])]
-final class FetchExternalDataStep implements EditorialPipelineStepInterface
+final class FetchSignaturesStep implements EditorialPipelineStepInterface
 {
     public function __construct(
-        private readonly CommentsFetcherInterface $commentsFetcher,
         private readonly SignatureFetcherInterface $signatureFetcher,
     ) {
     }
@@ -35,12 +32,9 @@ final class FetchExternalDataStep implements EditorialPipelineStepInterface
         $editorial = $context->getEditorial();
         $section = $context->getSection();
 
-        $preFetchedData = new PreFetchedDataDTO(
-            commentsCount: $this->commentsFetcher->fetchCommentsCount($editorial->id()->id()),
-            signatures: $this->signatureFetcher->fetchSignatures($editorial, $section),
-        );
+        $signatures = $this->signatureFetcher->fetchSignatures($editorial, $section);
 
-        $context->setPreFetchedData($preFetchedData);
+        $context->setSignatures($signatures);
 
         return StepResult::continue();
     }
@@ -52,6 +46,6 @@ final class FetchExternalDataStep implements EditorialPipelineStepInterface
 
     public function getName(): string
     {
-        return 'FetchExternalData';
+        return 'FetchSignatures';
     }
 }

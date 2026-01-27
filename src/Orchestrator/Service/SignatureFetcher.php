@@ -12,6 +12,9 @@ use Ec\Journalist\Domain\Model\Journalist;
 use Ec\Journalist\Domain\Model\JournalistFactory;
 use Ec\Journalist\Domain\Model\QueryJournalistClient;
 use Ec\Section\Domain\Model\Section;
+use GuzzleHttp\Promise\FulfilledPromise;
+use GuzzleHttp\Promise\PromiseInterface;
+use GuzzleHttp\Promise\RejectedPromise;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -55,6 +58,20 @@ final class SignatureFetcher implements SignatureFetcherInterface
         }
 
         return $signatures;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function fetchSignaturesAsync(NewsBase $editorial, Section $section): PromiseInterface
+    {
+        try {
+            $result = $this->fetchSignatures($editorial, $section);
+
+            return new FulfilledPromise($result);
+        } catch (\Throwable $e) {
+            return new RejectedPromise($e);
+        }
     }
 
     /**

@@ -44,6 +44,12 @@ final class EditorialPipelineContext
     /** @var array<string, Multimedia> */
     private array $resolvedMultimedia = [];
 
+    // External data (fetched by separate steps)
+    private int $commentsCount = 0;
+
+    /** @var array<int, array{id: string, name: string, picture: string|null, url: string, twitter?: string}> */
+    private array $signatures = [];
+
     private ?PreFetchedDataDTO $preFetchedData = null;
 
     // Extensible custom data
@@ -63,6 +69,16 @@ final class EditorialPipelineContext
         $this->fetchedEditorial = $dto;
         $this->editorial = $dto->editorial;
         $this->section = $dto->section;
+    }
+
+    public function setEditorial(Editorial $editorial): void
+    {
+        $this->editorial = $editorial;
+    }
+
+    public function setSection(Section $section): void
+    {
+        $this->section = $section;
     }
 
     public function setEmbeddedContent(EmbeddedContentDTO $content): void
@@ -100,6 +116,19 @@ final class EditorialPipelineContext
     public function setResolvedMultimedia(array $multimedia): void
     {
         $this->resolvedMultimedia = $multimedia;
+    }
+
+    public function setCommentsCount(int $count): void
+    {
+        $this->commentsCount = $count;
+    }
+
+    /**
+     * @param array<int, array{id: string, name: string, picture: string|null, url: string, twitter?: string}> $signatures
+     */
+    public function setSignatures(array $signatures): void
+    {
+        $this->signatures = $signatures;
     }
 
     public function setPreFetchedData(PreFetchedDataDTO $data): void
@@ -164,6 +193,19 @@ final class EditorialPipelineContext
     public function getResolvedMultimedia(): array
     {
         return $this->resolvedMultimedia;
+    }
+
+    public function getCommentsCount(): int
+    {
+        return $this->commentsCount;
+    }
+
+    /**
+     * @return array<int, array{id: string, name: string, picture: string|null, url: string, twitter?: string}>
+     */
+    public function getSignatures(): array
+    {
+        return $this->signatures;
     }
 
     public function getPreFetchedData(): ?PreFetchedDataDTO
