@@ -8,11 +8,14 @@ declare(strict_types=1);
 
 namespace App\Orchestrator\Chain;
 
+use App\Application\DTO\PreFetchedDataDTO;
 use App\Application\Service\Editorial\EditorialFetcherInterface;
 use App\Application\Service\Editorial\EmbeddedContentFetcherInterface;
 use App\Application\Service\Editorial\ResponseAggregatorInterface;
 use App\Application\Service\Promise\PromiseResolverInterface;
 use App\Infrastructure\Enum\SitesEnum;
+use App\Orchestrator\Service\CommentsFetcherInterface;
+use App\Orchestrator\Service\SignatureFetcherInterface;
 use Ec\Editorial\Domain\Model\Body\Body;
 use Ec\Editorial\Domain\Model\Body\BodyTagMembershipCard;
 use Ec\Editorial\Domain\Model\Body\BodyTagPicture;
@@ -34,6 +37,8 @@ use Symfony\Component\HttpFoundation\Request;
  * Coordinates fetching, promise resolution, and response aggregation
  * by delegating to specialized services.
  *
+ * HTTP calls are made HERE in the Orchestrator layer, not in the transformation layer.
+ *
  * @author Laura Gómez Cabero <lgomez@ext.elconfidencial.com>
  */
 class EditorialOrchestrator implements EditorialOrchestratorInterface
@@ -48,6 +53,8 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
         private readonly QueryMultimediaClient $queryMultimediaClient,
         private readonly UriFactoryInterface $uriFactory,
         private readonly LoggerInterface $logger,
+        private readonly SignatureFetcherInterface $signatureFetcher,
+        private readonly CommentsFetcherInterface $commentsFetcher,
     ) {
     }
 
@@ -127,7 +134,13 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
         // Get photos from body tags
         $photoBodyTags = $this->retrievePhotosFromBodyTags($editorial->body());
 
-        // Aggregate final response
+        // Fetch external data (HTTP calls happen here in the Orchestrator layer)
+        $preFetchedData = new PreFetchedDataDTO(
+            commentsCount: $this->commentsFetcher->fetchCommentsCount($editorial->id()->id()),
+            signatures: $this->signatureFetcher->fetchSignatures($editorial, $section),
+        );
+
+        // Aggregate final response (no HTTP calls in aggregator)
         return $this->responseAggregator->aggregate(
             $fetchedEditorial,
             $embeddedContent,
@@ -135,6 +148,7 @@ class EditorialOrchestrator implements EditorialOrchestratorInterface
             $resolvedMultimedia,
             $resolvedMembershipLinks,
             $photoBodyTags,
+            $preFetchedData,
         );
     }
 

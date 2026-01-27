@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Service\Editorial;
 
 use App\Application\DataTransformer\Apps\AppsDataTransformer;
-use App\Application\DataTransformer\Apps\JournalistsDataTransformer;
 use App\Application\DataTransformer\Apps\Media\MediaDataTransformerHandler;
 use App\Application\DataTransformer\Apps\MultimediaDataTransformer;
 use App\Application\DataTransformer\Apps\RecommendedEditorialsDataTransformer;
@@ -13,41 +12,29 @@ use App\Application\DataTransformer\Apps\StandfirstDataTransformer;
 use App\Application\DataTransformer\BodyDataTransformer;
 use App\Application\DTO\EmbeddedContentDTO;
 use App\Application\DTO\FetchedEditorialDTO;
-use App\Infrastructure\Client\Legacy\QueryLegacyClient;
-use Ec\Editorial\Domain\Model\EditorialBlog;
+use App\Application\DTO\PreFetchedDataDTO;
 use Ec\Editorial\Domain\Model\Multimedia\Widget;
 use Ec\Editorial\Domain\Model\NewsBase;
-use Ec\Editorial\Domain\Model\Signature;
 use Ec\Editorial\Exceptions\MultimediaDataTransformerNotFoundException;
-use Ec\Journalist\Domain\Model\Journalist;
-use Ec\Journalist\Domain\Model\JournalistFactory;
-use Ec\Journalist\Domain\Model\QueryJournalistClient;
-use Ec\Section\Domain\Model\Section;
-use Ec\Tag\Domain\Model\Tag;
-use Psr\Log\LoggerInterface;
 
 /**
  * Aggregates all fetched data into final editorial response.
  *
  * Coordinates all transformers to build the complete API response.
  * Extracted from EditorialOrchestrator to improve single responsibility.
+ *
+ * IMPORTANT: This class must NOT make HTTP calls. All external data must
+ * be pre-fetched by the Orchestrator and passed via parameters/DTOs.
  */
 final class ResponseAggregator implements ResponseAggregatorInterface
 {
-    private const TWITTER_TYPES = [EditorialBlog::EDITORIAL_TYPE];
-
     public function __construct(
         private readonly AppsDataTransformer $appsDataTransformer,
         private readonly BodyDataTransformer $bodyDataTransformer,
-        private readonly JournalistsDataTransformer $journalistsDataTransformer,
         private readonly MultimediaDataTransformer $multimediaDataTransformer,
         private readonly StandfirstDataTransformer $standfirstDataTransformer,
         private readonly RecommendedEditorialsDataTransformer $recommendedEditorialsDataTransformer,
         private readonly MediaDataTransformerHandler $mediaDataTransformerHandler,
-        private readonly QueryLegacyClient $legacyClient,
-        private readonly QueryJournalistClient $journalistClient,
-        private readonly JournalistFactory $journalistFactory,
-        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -66,6 +53,7 @@ final class ResponseAggregator implements ResponseAggregatorInterface
         array $resolvedMultimedia,
         array $membershipLinks,
         array $photoBodyTags,
+        PreFetchedDataDTO $preFetchedData,
     ): array {
         $editorial = $fetchedEditorial->editorial;
         $section = $fetchedEditorial->section;
@@ -75,11 +63,9 @@ final class ResponseAggregator implements ResponseAggregatorInterface
             ->write($editorial, $section, $tags)
             ->read();
 
-        // Add comments count
-        $result['countComments'] = $this->getCommentsCount($editorial->id()->id());
-
-        // Add signatures
-        $result['signatures'] = $this->buildSignatures($editorial, $section);
+        // Add pre-fetched data (no HTTP calls here!)
+        $result['countComments'] = $preFetchedData->commentsCount;
+        $result['signatures'] = $preFetchedData->signatures;
 
         // Build resolve data for body transformer
         $resolveData = $this->buildResolveData(
@@ -109,66 +95,6 @@ final class ResponseAggregator implements ResponseAggregatorInterface
             ->read();
 
         return $result;
-    }
-
-    /**
-     * Get comments count from legacy client.
-     */
-    private function getCommentsCount(string $editorialId): int
-    {
-        /** @var array{options: array{totalrecords?: int}} $comments */
-        $comments = $this->legacyClient->findCommentsByEditorialId($editorialId);
-
-        return $comments['options']['totalrecords'] ?? 0;
-    }
-
-    /**
-     * Build signatures array for the editorial.
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    private function buildSignatures(NewsBase $editorial, Section $section): array
-    {
-        $signatures = [];
-        $hasTwitter = \in_array($editorial->editorialType(), self::TWITTER_TYPES, true);
-
-        /** @var Signature $signature */
-        foreach ($editorial->signatures()->getArrayCopy() as $signature) {
-            $result = $this->formatSignature(
-                $signature->id()->id(),
-                $section,
-                $hasTwitter
-            );
-
-            if (!empty($result)) {
-                $signatures[] = $result;
-            }
-        }
-
-        return $signatures;
-    }
-
-    /**
-     * Format a single signature.
-     *
-     * @return array<string, mixed>
-     */
-    private function formatSignature(string $aliasId, Section $section, bool $hasTwitter): array
-    {
-        try {
-            $aliasIdModel = $this->journalistFactory->buildAliasId($aliasId);
-
-            /** @var Journalist $journalist */
-            $journalist = $this->journalistClient->findJournalistByAliasId($aliasIdModel);
-
-            return $this->journalistsDataTransformer
-                ->write($aliasId, $journalist, $section, $hasTwitter)
-                ->read();
-        } catch (\Throwable $e) {
-            $this->logger->error($e->getMessage());
-
-            return [];
-        }
     }
 
     /**

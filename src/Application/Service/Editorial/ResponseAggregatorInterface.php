@@ -6,12 +6,16 @@ namespace App\Application\Service\Editorial;
 
 use App\Application\DTO\EmbeddedContentDTO;
 use App\Application\DTO\FetchedEditorialDTO;
+use App\Application\DTO\PreFetchedDataDTO;
 use Ec\Tag\Domain\Model\Tag;
 
 /**
  * Aggregates all fetched data into final editorial response.
  *
  * Coordinates transformers and builds the complete API response.
+ *
+ * IMPORTANT: This class must NOT make HTTP calls. All external data must
+ * be pre-fetched by the Orchestrator and passed via PreFetchedDataDTO.
  */
 interface ResponseAggregatorInterface
 {
@@ -24,6 +28,7 @@ interface ResponseAggregatorInterface
      * @param array<string, mixed> $resolvedMultimedia Resolved multimedia data
      * @param array<string, string> $membershipLinks Resolved membership links
      * @param array<string, mixed> $photoBodyTags Photos from body tags
+     * @param PreFetchedDataDTO $preFetchedData Pre-fetched external data (comments, signatures)
      *
      * @return array{
      *   id: string,
@@ -64,5 +69,6 @@ interface ResponseAggregatorInterface
         array $resolvedMultimedia,
         array $membershipLinks,
         array $photoBodyTags,
+        PreFetchedDataDTO $preFetchedData,
     ): array;
 }
