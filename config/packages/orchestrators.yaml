@@ -13,6 +13,7 @@ services:
     App\Orchestrator\Service\SignatureFetcherInterface: '@App\Orchestrator\Service\SignatureFetcher'
     App\Orchestrator\Service\CommentsFetcherInterface: '@App\Orchestrator\Service\CommentsFetcher'
     App\Orchestrator\Service\EditorialFetcherInterface: '@App\Orchestrator\Service\EditorialFetcher'
+    App\Orchestrator\Service\EmbeddedContentFetcherInterface: '@App\Orchestrator\Service\EmbeddedContentFetcher'
 
     App\Orchestrator\Chain\:
         resource: '../../src/Orchestrator/Chain/'

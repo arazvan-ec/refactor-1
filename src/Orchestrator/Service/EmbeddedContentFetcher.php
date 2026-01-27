@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Service\Editorial;
+namespace App\Orchestrator\Service;
 
 use App\Application\DTO\EmbeddedContentDTO;
 use App\Application\DTO\EmbeddedEditorialDTO;
@@ -28,8 +28,15 @@ use Psr\Log\LoggerInterface;
 /**
  * Fetches embedded content (inserted news, recommended editorials) for an editorial.
  *
- * Extracted from EditorialOrchestrator to improve single responsibility.
- * Handles the complex logic of fetching nested editorial content.
+ * Located in Orchestrator layer because it makes HTTP calls via:
+ * - QueryEditorialClient
+ * - QuerySectionClient
+ * - QueryMultimediaClient
+ * - QueryMultimediaOpeningClient
+ * - QueryJournalistClient
+ *
+ * This follows the architecture rule: HTTP calls belong in the Orchestrator layer,
+ * NOT in the Application/transformation layer.
  */
 final class EmbeddedContentFetcher implements EmbeddedContentFetcherInterface
 {

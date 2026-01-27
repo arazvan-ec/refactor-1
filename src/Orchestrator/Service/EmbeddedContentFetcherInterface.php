@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Service\Editorial;
+namespace App\Orchestrator\Service;
 
 use App\Application\DTO\EmbeddedContentDTO;
 use Ec\Editorial\Domain\Model\NewsBase;
@@ -11,7 +11,8 @@ use Ec\Section\Domain\Model\Section;
 /**
  * Fetches embedded content (inserted news, recommended editorials) for an editorial.
  *
- * Extracted from EditorialOrchestrator to improve single responsibility.
+ * Located in Orchestrator layer as it makes HTTP calls to external services.
+ * This follows the architecture rule: HTTP calls belong in the Orchestrator layer.
  */
 interface EmbeddedContentFetcherInterface
 {
