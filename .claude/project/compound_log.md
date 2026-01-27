@@ -213,3 +213,197 @@ After implementing pragmatic refactor v2, capture:
 - Did PHPDoc approach work?
 - Was Image Sizes extraction smooth?
 - Any new patterns discovered?
+
+---
+
+## 2026-01-27: Architecture Enforcement - Transformation Layer Purity
+
+### Summary
+
+Detectado y corregido violación arquitectónica: ResponseAggregator hacía llamadas HTTP cuando solo debería transformar datos. Implementado mecanismo de validación automática.
+
+**Resultado clave**: Creado test de arquitectura que previene futuras violaciones + refactorizado ResponseAggregator para cumplir con principio de responsabilidad única.
+
+### Time Investment
+- Detection: 5 min (user feedback)
+- Analysis: 10 min
+- Implementation: 30 min
+- Testing: 10 min
+- Compound: 15 min
+- **Total**: ~1 hour
+
+### The 70% Boundary Analysis
+
+#### Where did the 70% end?
+**Milestone**: Architecture test created, interfaces defined
+**Time spent**: 20 min (33% of total)
+
+#### What made the 30% hard?
+1. **Wiring new services**
+   - Symfony service configuration needed updates
+   - Interface bindings for DI
+   - **Lección**: Siempre verificar `config/packages/` después de crear servicios
+
+2. **Preserving JournalistsDataTransformer dependency**
+   - SignatureFetcher necesita el transformer para formatear
+   - Transformer está en Application layer, Fetcher en Orchestrator
+   - **Lección**: Los Fetchers pueden usar Transformers, pero no al revés
+
+### Patterns to Reuse (HIGH VALUE)
+
+#### Pattern 4: Architecture Validation Tests
+**Where**: `tests/Architecture/TransformationLayerArchitectureTest.php`
+**Why it works**:
+- Detecta violaciones automáticamente en CI
+- Usa reflection para inspeccionar constructores
+- Falla con mensaje claro explicando la violación
+- Corre con `--group architecture`
+
+**Recomendación**: Crear tests de arquitectura para cada restricción de capas
+```php
+// Pattern para detectar dependencias prohibidas
+foreach ($constructor->getParameters() as $param) {
+    $typeName = $param->getType()->getName();
+    if ($this->isForbiddenDependency($typeName)) {
+        $this->fail("Layer violation: {$className} injects {$typeName}");
+    }
+}
+```
+
+#### Pattern 5: Pre-Fetched Data DTO
+**Where**: `src/Application/DTO/PreFetchedDataDTO.php`
+**Why it works**:
+- Separa claramente "quién fetch" de "quién transforma"
+- DTO inmutable con datos ya resueltos
+- Elimina la tentación de hacer HTTP en capas incorrectas
+
+**Recomendación**: Cuando una capa de transformación necesita datos externos:
+```
+INCORRECTO:
+Transformer → HTTP Client → External Service
+
+CORRECTO:
+Orchestrator → HTTP Client → External Service
+           ↓
+    PreFetchedDataDTO
+           ↓
+       Transformer
+```
+
+#### Pattern 6: Service Extraction to Correct Layer
+**Where**: `src/Orchestrator/Service/SignatureFetcher.php`
+**Why it works**:
+- Servicio vive donde debe hacer HTTP (Orchestrator layer)
+- Usa transformer para formato (no duplica lógica)
+- Interface permite testing fácil
+
+**Template**:
+```php
+// Orchestrator layer - CAN make HTTP calls
+final class DataFetcher implements DataFetcherInterface
+{
+    public function __construct(
+        private readonly HttpClient $client,      // ✅ OK here
+        private readonly DataTransformer $transformer, // For formatting
+    ) {}
+
+    public function fetch(): FormattedData
+    {
+        $raw = $this->client->get();  // HTTP call in correct layer
+        return $this->transformer->format($raw);
+    }
+}
+```
+
+### Anti-Patterns Documented (AVOID)
+
+#### Anti-Pattern 5: HTTP Calls in Transformation Layer
+**Example**: ResponseAggregator tenía QueryLegacyClient y QueryJournalistClient
+**Problem**:
+- Viola Single Responsibility Principle
+- Dificulta testing (necesita mocks de HTTP)
+- Oculta latencia de red en "transformers"
+- Hace imposible paralelizar fetches
+
+**Symptoms**:
+```php
+// RED FLAG: Transformer/Aggregator con "Client" en constructor
+class ResponseAggregator {
+    public function __construct(
+        private QueryLegacyClient $client,  // ❌ VIOLATION
+    ) {}
+}
+```
+
+**Rule**: Clases en `Application\DataTransformer` y `Application\Service\*Aggregator`:
+- NO pueden inyectar *Client
+- NO pueden hacer llamadas HTTP
+- Solo reciben datos ya fetched como parámetros
+
+### Rules Updated
+
+#### Addition to project_specific.md
+```markdown
+## Layer Purity Rules
+
+### Transformation Layer (DataTransformers, Aggregators)
+- ❌ NO HTTP clients injected
+- ❌ NO network calls
+- ✅ Only transform data structures
+- ✅ Receive pre-fetched data as parameters
+
+### Orchestrator Layer (Orchestrators, Fetchers)
+- ✅ CAN inject HTTP clients
+- ✅ CAN make network calls
+- ✅ Coordinates fetching and transformation
+- ✅ Passes pre-fetched data to transformers
+
+### Validation
+Run architecture tests: `./bin/phpunit --group architecture`
+```
+
+### Impact on Future Work
+
+#### Immediate benefits:
+- ResponseAggregator ahora testeable sin mocks HTTP
+- Fácil paralelizar fetches en Orchestrator
+- Clara separación de responsabilidades
+
+#### For next refactor:
+- Revisar otros Transformers por violaciones similares
+- Considerar extender ArchitectureTest a más capas
+- Documentar patrones de capas en CLAUDE.md
+
+### Files Reference
+
+**Created:**
+- `tests/Architecture/TransformationLayerArchitectureTest.php` - Validador
+- `src/Application/DTO/PreFetchedDataDTO.php` - DTO para datos pre-fetched
+- `src/Orchestrator/Service/SignatureFetcher.php` - Extrae HTTP a capa correcta
+- `src/Orchestrator/Service/CommentsFetcher.php` - Extrae HTTP a capa correcta
+
+**Modified:**
+- `src/Application/Service/Editorial/ResponseAggregator.php` - Limpio, sin HTTP
+- `src/Orchestrator/Chain/EditorialOrchestrator.php` - Usa nuevos fetchers
+- `config/packages/orchestrators.yaml` - Service wiring
+
+---
+
+## Compound Metrics (Updated)
+
+| Feature | Planning | Implementation | Review | Compound | Total | Patterns |
+|---------|----------|----------------|--------|----------|-------|----------|
+| snaapi-refactor-phase1 | 3h | 5h | 1h | 1h | 10h | 3 new, 4 anti-patterns |
+| pragmatic-refactor-v1 | 0.5h | 1h | 0.25h | 0.25h | 2h | PHPDoc shapes, Config extraction |
+| architecture-enforcement | 0.25h | 0.5h | 0.1h | 0.25h | 1.1h | 3 new, 1 anti-pattern fixed |
+
+**Trend**: Trabajo más enfocado = ciclos más cortos. Patterns compound acelerando.
+
+---
+
+## Next Compound Capture
+
+Después de QA approval, capturar:
+- ¿El architecture test detectó algún false positive?
+- ¿Se necesitan más capas validadas?
+- ¿Hubo resistencia al nuevo patrón PreFetchedDataDTO?

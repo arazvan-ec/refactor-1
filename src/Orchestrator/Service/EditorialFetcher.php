@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Service\Editorial;
+namespace App\Orchestrator\Service;
 
 use App\Application\DTO\FetchedEditorialDTO;
-use App\Infrastructure\Client\Legacy\QueryLegacyClient;
 use App\Exception\EditorialNotPublishedYetException;
+use App\Infrastructure\Client\Legacy\QueryLegacyClient;
 use Ec\Editorial\Domain\Model\NewsBase;
 use Ec\Editorial\Domain\Model\QueryEditorialClient;
 use Ec\Section\Domain\Model\QuerySectionClient;
@@ -15,8 +15,13 @@ use Ec\Section\Domain\Model\Section;
 /**
  * Fetches editorial and associated data from external services.
  *
- * Extracted from EditorialOrchestrator to improve single responsibility.
- * Handles the initial data fetching phase of editorial processing.
+ * Located in Orchestrator layer because it makes HTTP calls via:
+ * - QueryEditorialClient
+ * - QuerySectionClient
+ * - QueryLegacyClient
+ *
+ * This follows the architecture rule: HTTP calls belong in the Orchestrator layer,
+ * NOT in the Application/transformation layer.
  */
 final class EditorialFetcher implements EditorialFetcherInterface
 {
