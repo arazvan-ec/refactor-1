@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Orchestrator\Pipeline\Step;
 
+use App\Application\DTO\PreFetchedDataDTO;
 use App\Application\Service\Editorial\ResponseAggregatorInterface;
 use App\Orchestrator\Pipeline\EditorialPipelineContext;
 use App\Orchestrator\Pipeline\EditorialPipelineStepInterface;
@@ -32,6 +33,12 @@ final class AggregateResponseStep implements EditorialPipelineStepInterface
             );
         }
 
+        // Build PreFetchedDataDTO from context (populated by FetchCommentsStep and FetchSignaturesStep)
+        $preFetchedData = new PreFetchedDataDTO(
+            commentsCount: $context->getCommentsCount(),
+            signatures: $context->getSignatures(),
+        );
+
         $response = $this->responseAggregator->aggregate(
             $context->getFetchedEditorial(),
             $context->getEmbeddedContent(),
@@ -39,7 +46,7 @@ final class AggregateResponseStep implements EditorialPipelineStepInterface
             $context->getResolvedMultimedia(),
             $context->getMembershipLinks(),
             $context->getPhotoBodyTags(),
-            $context->getPreFetchedData(),
+            $preFetchedData,
         );
 
         return StepResult::terminate($response);
