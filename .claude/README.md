@@ -7,10 +7,10 @@ A **compound engineering** framework for Claude Code that coordinates multiple A
 ## Features
 
 - **16 Specialized Agents** in 5 categories: roles, review, research, workflow, design
-- **7 Workflow Commands**: plan, work, review, compound, role, sync, status
+- **15 Workflow Commands**: Core (4), Collaboration (4), Parallel Agents (3), Quality (4)
 - **10 Skills**: Core, Quality, Workflow, and Compound automation
 - **3 Parallelization Modes**: By roles, by layers (DDD), or by stacks
-- **Quality Gates**: Blocking checkpoints with auto-correction loops
+- **Quality Gates**: TDD enforcement, trust model, spec validation
 - **Compound Learning**: Capture insights from each feature
 
 ## Installation
@@ -103,11 +103,36 @@ Backend complete + Frontend complete (parallel)
 
 ## Multi-Agent Commands
 
+### Core Workflows (4)
+| Command | Description |
+|---------|-------------|
+| `/workflows:plan <feature>` | Convert ideas into implementable strategies |
+| `/workflows:work <feature>` | Execute with parallelization modes |
+| `/workflows:review <feature>` | Multi-agent review before merge |
+| `/workflows:compound <feature>` | Capture insights for future work |
+
+### Collaboration (4)
 | Command | Description |
 |---------|-------------|
 | `/workflows:role <role> <feature>` | Work as a specific role |
 | `/workflows:sync <feature>` | Synchronize state |
 | `/workflows:status <feature>` | View all roles' status |
+| `/workflows:checkpoint <feature>` | Save progress checkpoint |
+
+### Parallel Agents (3) - NEW
+| Command | Description |
+|---------|-------------|
+| `/workflows:parallel <feature>` | Launch multiple agents in parallel with git worktrees |
+| `/workflows:monitor` | Monitor status of parallel agents in real-time |
+| `/workflows:progress` | Track session progress for long-running agents |
+
+### Quality & Enforcement (4) - NEW
+| Command | Description |
+|---------|-------------|
+| `/workflows:tdd <check\|display\|generate>` | TDD compliance and test templates |
+| `/workflows:trust <file\|--task>` | Check trust level and supervision requirements |
+| `/workflows:validate <spec>` | Validate YAML specs against JSON schemas |
+| `/workflows:interview <feature\|api>` | Create specs through guided interview |
 
 ## Skills
 
@@ -152,42 +177,48 @@ After each feature:
 
 ## Project Structure
 
+### Plugin Files (Generic - updatable from workflow repo)
 ```
-plugins/multi-agent-workflow/
-├── .claude-plugin/
-│   └── plugin.json
-├── agents/
-│   ├── roles/           # 4 core roles
-│   ├── review/          # 4 review agents
-│   ├── research/        # 3 research agents
-│   ├── workflow/        # 3 workflow agents
-│   └── design/          # 2 design agents
-├── commands/
-│   └── workflows/
-│       ├── plan.md
-│       ├── work.md
-│       ├── review.md
-│       ├── compound.md
-│       ├── role.md
-│       ├── sync.md
-│       └── status.md
-├── skills/
-│   ├── consultant/
-│   ├── checkpoint/
-│   ├── git-sync/
-│   ├── test-runner/
-│   ├── coverage-checker/
-│   ├── lint-fixer/
-│   ├── worktree-manager/
-│   ├── commit-formatter/
-│   ├── changelog-generator/
-│   └── layer-validator/
-├── rules/
-│   ├── global_rules.md
-│   ├── ddd_rules.md
-│   └── project_specific.md
+.claude/
+├── .claude-plugin/plugin.json
 ├── CLAUDE.md
-└── README.md
+├── README.md
+├── agents/
+│   ├── roles/           # backend, frontend, planner, qa
+│   ├── review/          # code, security, ddd, performance
+│   ├── research/        # analyzer, git, dependencies
+│   ├── workflow/        # bug, spec, style
+│   └── design/          # api, ui
+├── commands/workflows/  # 15 commands
+│   ├── plan.md          # Core
+│   ├── work.md          # Core
+│   ├── review.md        # Core
+│   ├── compound.md      # Core
+│   ├── checkpoint.md    # Collaboration
+│   ├── role.md          # Collaboration
+│   ├── status.md        # Collaboration
+│   ├── sync.md          # Collaboration
+│   ├── parallel.md      # Parallel (NEW)
+│   ├── monitor.md       # Parallel (NEW)
+│   ├── progress.md      # Parallel (NEW)
+│   ├── tdd.md           # Quality (NEW)
+│   ├── trust.md         # Quality (NEW)
+│   ├── validate.md      # Quality (NEW)
+│   └── interview.md     # Quality (NEW)
+└── skills/              # 10 skills
+```
+
+### Project-Specific Files (DO NOT UPDATE from repo)
+```
+.claude/
+├── rules/               # Project-specific rules
+│   ├── ddd_rules.md
+│   ├── global_rules.md
+│   └── project_specific.md
+├── features/            # Feature work in progress
+├── specs/               # Architecture analysis docs
+└── skills/
+    └── code-simplifier.md  # Project-specific skill
 ```
 
 ## State Management
@@ -240,5 +271,7 @@ arazvan-ec
 
 ---
 
-**Version**: 2.0.0
+**Version**: 2.1.0
 **Aligned with**: Compound Engineering principles
+**Source**: https://github.com/arazvan-ec/workflow
+**Last updated**: 2026-01-28

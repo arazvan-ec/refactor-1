@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Service\Promise;
 
+use App\Application\DTO\BatchResult;
 use Ec\Multimedia\Domain\Model\Multimedia\Multimedia;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Promise\Utils;
@@ -23,6 +24,39 @@ final class PromiseResolver implements PromiseResolverInterface
     public function __construct(
         private readonly LoggerInterface $logger,
     ) {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function resolveAll(array $promises): BatchResult
+    {
+        if (empty($promises)) {
+            return new BatchResult([], []);
+        }
+
+        $settled = Utils::settle($promises)->wait();
+
+        $fulfilled = [];
+        $rejected = [];
+
+        foreach ($settled as $key => $result) {
+            if (self::PROMISE_STATE_FULFILLED === $result['state']) {
+                $fulfilled[$key] = $result['value'];
+            } else {
+                $reason = $result['reason'] ?? new \RuntimeException('Unknown error');
+                $rejected[$key] = $reason instanceof \Throwable
+                    ? $reason
+                    : new \RuntimeException((string) $reason);
+
+                $this->logger->warning('Promise rejected during batch resolution', [
+                    'key' => $key,
+                    'reason' => $rejected[$key]->getMessage(),
+                ]);
+            }
+        }
+
+        return new BatchResult($fulfilled, $rejected);
     }
 
     /**

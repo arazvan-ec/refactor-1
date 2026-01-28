@@ -75,11 +75,36 @@ Best for: Independent features or separate teams
 
 ## Multi-Agent Commands
 
+### Core Workflows
+| Command | Description |
+|---------|-------------|
+| `/workflows:plan` | Convert ideas into implementable strategies |
+| `/workflows:work` | Execute with worktrees and task management |
+| `/workflows:review` | Multi-agent review before merge |
+| `/workflows:compound` | Capture insights for future work |
+
+### Collaboration
 | Command | Description |
 |---------|-------------|
 | `/workflows:role` | Work as a specific role on a feature |
 | `/workflows:sync` | Synchronize state between agents |
 | `/workflows:status` | View status of all roles |
+| `/workflows:checkpoint` | Save progress checkpoint |
+
+### Parallel Agents (NEW)
+| Command | Description |
+|---------|-------------|
+| `/workflows:parallel` | Launch multiple agents in parallel with git worktree isolation |
+| `/workflows:monitor` | Monitor status of parallel agents in real-time |
+| `/workflows:progress` | Track session progress for long-running agents |
+
+### Quality & Enforcement (NEW)
+| Command | Description |
+|---------|-------------|
+| `/workflows:tdd` | Check TDD compliance and generate test templates |
+| `/workflows:trust` | Check trust level and supervision requirements |
+| `/workflows:validate` | Validate YAML specs against JSON schemas |
+| `/workflows:interview` | Create feature specs through guided interview
 
 ## Skills
 
@@ -131,26 +156,34 @@ Status values: `PENDING`, `IN_PROGRESS`, `BLOCKED`, `WAITING_API`, `COMPLETED`, 
 
 ## Project Structure
 
+### Plugin Files (Generic - from workflow repo)
 ```
-plugins/multi-agent-workflow/
+.claude/
 ├── .claude-plugin/
 │   └── plugin.json
 ├── agents/
-│   ├── roles/           # 4 core roles
-│   ├── review/          # 4 review agents
-│   ├── research/        # 3 research agents
-│   ├── workflow/        # 3 workflow agents
-│   └── design/          # 2 design agents
-├── commands/
-│   └── workflows/
-│       ├── plan.md
-│       ├── work.md
-│       ├── review.md
-│       ├── compound.md
-│       ├── role.md
-│       ├── sync.md
-│       └── status.md
-├── skills/
+│   ├── roles/           # 4 core roles (backend, frontend, planner, qa)
+│   ├── review/          # 4 review agents (code, security, ddd, performance)
+│   ├── research/        # 3 research agents (analyzer, git, dependencies)
+│   ├── workflow/        # 3 workflow agents (bug, spec, style)
+│   └── design/          # 2 design agents (api, ui)
+├── commands/workflows/  # 15 commands
+│   ├── plan.md          # Core: planning
+│   ├── work.md          # Core: execution
+│   ├── review.md        # Core: review
+│   ├── compound.md      # Core: learnings capture
+│   ├── checkpoint.md    # Collaboration
+│   ├── role.md          # Collaboration
+│   ├── status.md        # Collaboration
+│   ├── sync.md          # Collaboration
+│   ├── parallel.md      # Parallel agents (NEW)
+│   ├── monitor.md       # Parallel agents (NEW)
+│   ├── progress.md      # Parallel agents (NEW)
+│   ├── tdd.md           # Quality (NEW)
+│   ├── trust.md         # Quality (NEW)
+│   ├── validate.md      # Quality (NEW)
+│   └── interview.md     # Quality (NEW)
+├── skills/              # 10 skills
 │   ├── consultant/
 │   ├── checkpoint/
 │   ├── git-sync/
@@ -161,12 +194,25 @@ plugins/multi-agent-workflow/
 │   ├── commit-formatter/
 │   ├── changelog-generator/
 │   └── layer-validator/
-├── rules/
-│   ├── global_rules.md
-│   ├── ddd_rules.md
-│   └── project_specific.md
 ├── CLAUDE.md
 └── README.md
+```
+
+### Project-Specific Files (SNAAPI - preserved)
+```
+.claude/
+├── rules/               # Project rules (DO NOT UPDATE from repo)
+│   ├── ddd_rules.md
+│   ├── global_rules.md
+│   └── project_specific.md
+├── features/            # Feature work in progress
+│   ├── snaapi-improvements-v2/
+│   └── snaapi-refactor/
+├── specs/               # Architecture analysis docs
+│   ├── 01_architecture_overview.md
+│   └── ...
+└── skills/
+    └── code-simplifier.md  # Project-specific skill
 ```
 
 ## Best Practices
@@ -187,6 +233,7 @@ This plugin works best with:
 
 ---
 
-**Version**: 2.0.0
+**Version**: 2.1.0
 **Aligned with**: Compound Engineering principles
-**Last updated**: 2026-01-16
+**Last updated**: 2026-01-28
+**Source**: https://github.com/arazvan-ec/workflow

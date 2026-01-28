@@ -4,67 +4,28 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Orchestrator\Chain;
 
-use App\Application\DTO\EmbeddedContentDTO;
-use App\Application\DTO\FetchedEditorialDTO;
-use App\Application\Service\Editorial\EditorialFetcherInterface;
-use App\Application\Service\Editorial\EmbeddedContentFetcherInterface;
-use App\Application\Service\Editorial\ResponseAggregatorInterface;
-use App\Application\Service\Promise\PromiseResolverInterface;
 use App\Orchestrator\Chain\EditorialOrchestrator;
 use App\Orchestrator\Chain\EditorialOrchestratorInterface;
-use Ec\Editorial\Domain\Model\Body\Body;
-use Ec\Editorial\Domain\Model\Editorial;
-use Ec\Editorial\Domain\Model\EditorialId;
-use Ec\Editorial\Domain\Model\RecommendedEditorials;
-use Ec\Editorial\Domain\Model\Tags;
-use Ec\Membership\Infrastructure\Client\Http\QueryMembershipClient;
-use Ec\Multimedia\Infrastructure\Client\Http\QueryMultimediaClient;
-use Ec\Section\Domain\Model\Section;
-use Ec\Tag\Domain\Model\QueryTagClient;
+use App\Orchestrator\Pipeline\EditorialPipelineContext;
+use App\Orchestrator\Pipeline\EditorialPipelineHandler;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\UriFactoryInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 #[CoversClass(EditorialOrchestrator::class)]
 class EditorialOrchestratorTest extends TestCase
 {
     private EditorialOrchestratorInterface $orchestrator;
-    private MockObject&EditorialFetcherInterface $editorialFetcher;
-    private MockObject&EmbeddedContentFetcherInterface $embeddedContentFetcher;
-    private MockObject&PromiseResolverInterface $promiseResolver;
-    private MockObject&ResponseAggregatorInterface $responseAggregator;
-    private MockObject&QueryTagClient $queryTagClient;
-    private MockObject&QueryMembershipClient $queryMembershipClient;
-    private MockObject&QueryMultimediaClient $queryMultimediaClient;
-    private MockObject&UriFactoryInterface $uriFactory;
-    private MockObject&LoggerInterface $logger;
+    private MockObject&EditorialPipelineHandler $pipeline;
 
     protected function setUp(): void
     {
-        $this->editorialFetcher = $this->createMock(EditorialFetcherInterface::class);
-        $this->embeddedContentFetcher = $this->createMock(EmbeddedContentFetcherInterface::class);
-        $this->promiseResolver = $this->createMock(PromiseResolverInterface::class);
-        $this->responseAggregator = $this->createMock(ResponseAggregatorInterface::class);
-        $this->queryTagClient = $this->createMock(QueryTagClient::class);
-        $this->queryMembershipClient = $this->createMock(QueryMembershipClient::class);
-        $this->queryMultimediaClient = $this->createMock(QueryMultimediaClient::class);
-        $this->uriFactory = $this->createMock(UriFactoryInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->pipeline = $this->createMock(EditorialPipelineHandler::class);
 
         $this->orchestrator = new EditorialOrchestrator(
-            $this->editorialFetcher,
-            $this->embeddedContentFetcher,
-            $this->promiseResolver,
-            $this->responseAggregator,
-            $this->queryTagClient,
-            $this->queryMembershipClient,
-            $this->queryMultimediaClient,
-            $this->uriFactory,
-            $this->logger,
+            $this->pipeline,
         );
     }
 
@@ -81,81 +42,18 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     #[Test]
-    public function execute_returns_legacy_response_when_should_use_legacy(): void
+    public function execute_creates_context_and_delegates_to_pipeline(): void
     {
         $request = new Request([], [], ['id' => 'test-id']);
-        $editorial = $this->createEditorialMock();
-        $section = $this->createMock(Section::class);
-
-        $fetchedEditorial = new FetchedEditorialDTO($editorial, $section);
-        $legacyResponse = ['legacy' => 'data'];
-
-        $this->editorialFetcher
-            ->expects(self::once())
-            ->method('fetch')
-            ->with('test-id')
-            ->willReturn($fetchedEditorial);
-
-        $this->editorialFetcher
-            ->expects(self::once())
-            ->method('shouldUseLegacy')
-            ->with($editorial)
-            ->willReturn(true);
-
-        $this->editorialFetcher
-            ->expects(self::once())
-            ->method('fetchLegacy')
-            ->with('test-id')
-            ->willReturn($legacyResponse);
-
-        $result = $this->orchestrator->execute($request);
-
-        self::assertSame($legacyResponse, $result);
-    }
-
-    #[Test]
-    public function execute_delegates_to_services_and_returns_aggregated_response(): void
-    {
-        $request = new Request([], [], ['id' => 'test-id']);
-        $editorial = $this->createEditorialMock();
-        $section = $this->createMock(Section::class);
-        $section->method('siteId')->willReturn('site-1');
-
-        $fetchedEditorial = new FetchedEditorialDTO($editorial, $section);
-        $embeddedContent = new EmbeddedContentDTO();
         $expectedResponse = ['id' => 'test-id', 'title' => 'Test'];
 
-        $this->editorialFetcher
+        $this->pipeline
             ->expects(self::once())
-            ->method('fetch')
-            ->with('test-id')
-            ->willReturn($fetchedEditorial);
-
-        $this->editorialFetcher
-            ->expects(self::once())
-            ->method('shouldUseLegacy')
-            ->with($editorial)
-            ->willReturn(false);
-
-        $this->embeddedContentFetcher
-            ->expects(self::once())
-            ->method('fetch')
-            ->with($editorial, $section)
-            ->willReturn($embeddedContent);
-
-        $this->promiseResolver
-            ->expects(self::once())
-            ->method('resolveMultimedia')
-            ->willReturn([]);
-
-        $this->promiseResolver
-            ->expects(self::once())
-            ->method('resolveMembershipLinks')
-            ->willReturn([]);
-
-        $this->responseAggregator
-            ->expects(self::once())
-            ->method('aggregate')
+            ->method('execute')
+            ->with(self::callback(function (EditorialPipelineContext $context): bool {
+                return $context->editorialId === 'test-id'
+                    && $context->request instanceof Request;
+            }))
             ->willReturn($expectedResponse);
 
         $result = $this->orchestrator->execute($request);
@@ -164,118 +62,56 @@ class EditorialOrchestratorTest extends TestCase
     }
 
     #[Test]
-    public function execute_fetches_tags_for_editorial(): void
+    public function execute_passes_request_to_context(): void
     {
-        $request = new Request([], [], ['id' => 'test-id']);
-        $editorial = $this->createEditorialMockWithTags(['tag-1', 'tag-2']);
-        $section = $this->createMock(Section::class);
-        $section->method('siteId')->willReturn('site-1');
+        $request = new Request([], [], ['id' => 'another-id']);
 
-        $fetchedEditorial = new FetchedEditorialDTO($editorial, $section);
-        $embeddedContent = new EmbeddedContentDTO();
-
-        $this->editorialFetcher->method('fetch')->willReturn($fetchedEditorial);
-        $this->editorialFetcher->method('shouldUseLegacy')->willReturn(false);
-        $this->embeddedContentFetcher->method('fetch')->willReturn($embeddedContent);
-        $this->promiseResolver->method('resolveMultimedia')->willReturn([]);
-        $this->promiseResolver->method('resolveMembershipLinks')->willReturn([]);
-        $this->responseAggregator->method('aggregate')->willReturn([]);
-
-        // Expect tag client to be called for each tag
-        $this->queryTagClient
-            ->expects(self::exactly(2))
-            ->method('findTagById');
+        $capturedContext = null;
+        $this->pipeline
+            ->method('execute')
+            ->willReturnCallback(function (EditorialPipelineContext $context) use (&$capturedContext): array {
+                $capturedContext = $context;
+                return [];
+            });
 
         $this->orchestrator->execute($request);
+
+        self::assertNotNull($capturedContext);
+        self::assertSame('another-id', $capturedContext->editorialId);
+        self::assertSame($request, $capturedContext->request);
     }
 
     #[Test]
-    public function execute_handles_tag_fetch_failure_gracefully(): void
+    public function execute_returns_pipeline_response(): void
     {
         $request = new Request([], [], ['id' => 'test-id']);
-        $editorial = $this->createEditorialMockWithTags(['tag-1']);
-        $section = $this->createMock(Section::class);
-        $section->method('siteId')->willReturn('site-1');
+        $pipelineResponse = [
+            'id' => 'test-id',
+            'url' => 'https://example.com/article',
+            'titles' => ['title' => 'Test Article'],
+        ];
 
-        $fetchedEditorial = new FetchedEditorialDTO($editorial, $section);
-        $embeddedContent = new EmbeddedContentDTO();
+        $this->pipeline
+            ->method('execute')
+            ->willReturn($pipelineResponse);
 
-        $this->editorialFetcher->method('fetch')->willReturn($fetchedEditorial);
-        $this->editorialFetcher->method('shouldUseLegacy')->willReturn(false);
-        $this->embeddedContentFetcher->method('fetch')->willReturn($embeddedContent);
-        $this->promiseResolver->method('resolveMultimedia')->willReturn([]);
-        $this->promiseResolver->method('resolveMembershipLinks')->willReturn([]);
-        $this->responseAggregator->method('aggregate')->willReturn([]);
-
-        // Tag client throws exception
-        $this->queryTagClient
-            ->method('findTagById')
-            ->willThrowException(new \RuntimeException('Tag not found'));
-
-        // Logger should receive warning
-        $this->logger
-            ->expects(self::once())
-            ->method('warning');
-
-        // Should not throw, execution continues
         $result = $this->orchestrator->execute($request);
 
-        self::assertIsArray($result);
+        self::assertSame($pipelineResponse, $result);
     }
 
-    private function createEditorialMock(): Editorial&MockObject
+    #[Test]
+    public function execute_propagates_pipeline_exception(): void
     {
-        $body = $this->createMock(Body::class);
-        $body->method('bodyElementsOf')->willReturn([]);
+        $request = new Request([], [], ['id' => 'test-id']);
 
-        $tags = $this->createMock(Tags::class);
-        $tags->method('getArrayCopy')->willReturn([]);
+        $this->pipeline
+            ->method('execute')
+            ->willThrowException(new \RuntimeException('Pipeline failed'));
 
-        $editorialId = $this->createMock(EditorialId::class);
-        $editorialId->method('id')->willReturn('test-id');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Pipeline failed');
 
-        $recommendedEditorials = $this->createMock(RecommendedEditorials::class);
-        $recommendedEditorials->method('editorialIds')->willReturn([]);
-
-        $editorial = $this->createMock(Editorial::class);
-        $editorial->method('body')->willReturn($body);
-        $editorial->method('tags')->willReturn($tags);
-        $editorial->method('id')->willReturn($editorialId);
-        $editorial->method('recommendedEditorials')->willReturn($recommendedEditorials);
-
-        return $editorial;
-    }
-
-    /**
-     * @param array<int, string> $tagIds
-     */
-    private function createEditorialMockWithTags(array $tagIds): Editorial&MockObject
-    {
-        $body = $this->createMock(Body::class);
-        $body->method('bodyElementsOf')->willReturn([]);
-
-        $tagMocks = [];
-        foreach ($tagIds as $tagId) {
-            $tagMock = $this->createMock(\Ec\Editorial\Domain\Model\Tag::class);
-            $tagMock->method('id')->willReturn($tagId);
-            $tagMocks[] = $tagMock;
-        }
-
-        $tags = $this->createMock(Tags::class);
-        $tags->method('getArrayCopy')->willReturn($tagMocks);
-
-        $editorialId = $this->createMock(EditorialId::class);
-        $editorialId->method('id')->willReturn('test-id');
-
-        $recommendedEditorials = $this->createMock(RecommendedEditorials::class);
-        $recommendedEditorials->method('editorialIds')->willReturn([]);
-
-        $editorial = $this->createMock(Editorial::class);
-        $editorial->method('body')->willReturn($body);
-        $editorial->method('tags')->willReturn($tags);
-        $editorial->method('id')->willReturn($editorialId);
-        $editorial->method('recommendedEditorials')->willReturn($recommendedEditorials);
-
-        return $editorial;
+        $this->orchestrator->execute($request);
     }
 }
