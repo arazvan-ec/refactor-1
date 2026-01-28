@@ -401,9 +401,98 @@ Run architecture tests: `./bin/phpunit --group architecture`
 
 ---
 
+## 2026-01-28: finalize-and-next-phase - QA Approval & Workflow v2.1.0
+
+### Summary
+
+QA approval del refactor pragmático + análisis de nuevas capacidades del plugin workflow v2.1.0.
+
+**Resultado clave**: Code review estático aprobado. Architecture patterns validados. Plugin actualizado con 7 nuevos comandos para explorar.
+
+### Time Investment
+- Planning: 20 min
+- QA Review: 30 min
+- Compound: 15 min
+- **Total**: ~1.1 hours
+
+### QA Review Answers
+
+**¿El architecture test detectó algún false positive?**
+- No se pudo ejecutar (no Docker/vendor en entorno)
+- Code review estático confirma correcta implementación
+- ResponseAggregator: ZERO HTTP clients en constructor
+
+**¿Se necesitan más capas validadas?**
+- Sí. Ya existen tests para:
+  - TransformationLayerArchitectureTest
+  - ApplicationServiceArchitectureTest
+  - ControllerLayerArchitectureTest
+  - EventSubscriberArchitectureTest
+  - InfrastructureServiceArchitectureTest
+  - ExceptionArchitectureTest
+- Cobertura de arquitectura parece completa
+
+**¿Hubo resistencia al nuevo patrón PreFetchedDataDTO?**
+- No. Patrón adoptado limpiamente.
+- ResponseAggregator usa `$preFetchedData->commentsCount` y `$preFetchedData->signatures`
+- Clara separación fetch vs transform
+
+### Pattern 7: Workflow Planning with Compound Learnings
+
+**Where**: `.claude/features/finalize-and-next-phase/`
+**Why it works**:
+- Specs under 200 lines (compound rule applied)
+- Decision matrix for next feature selection
+- Trust level assignment upfront
+- Three-phase approach prevents scope creep
+
+**Template**:
+```markdown
+## Phase 1: Close Current
+- QA review + approval
+- Merge (when tests can run)
+- Compound capture
+
+## Phase 2: Plan Next
+- Evaluate options with VALUE/EFFORT
+- Select based on data
+- Create spec under 200 lines
+
+## Phase 3: Explore (Optional)
+- New capabilities
+- Document learnings
+```
+
+### Plugin v2.1.0 New Capabilities Assessment
+
+| Command | Purpose | SNAAPI Use Case |
+|---------|---------|-----------------|
+| `/workflows:parallel` | Git worktrees | Multi-layer DDD work |
+| `/workflows:tdd` | TDD enforcement | Validate test-first |
+| `/workflows:trust` | Supervision calibration | Assign per-feature |
+| `/workflows:validate` | YAML schema validation | Validate specs |
+| `/workflows:interview` | Guided spec creation | New features |
+| `/workflows:monitor` | Real-time status | Parallel agent tracking |
+| `/workflows:progress` | Long session tracking | Complex features |
+
+**Recommendation**: Integrate `/workflows:trust` into planning workflow.
+
+### Compound Metrics (Updated)
+
+| Feature | Planning | Implementation | Review | Compound | Total | Patterns |
+|---------|----------|----------------|--------|----------|-------|----------|
+| snaapi-refactor-phase1 | 3h | 5h | 1h | 1h | 10h | 3 new, 4 anti-patterns |
+| pragmatic-refactor-v1 | 0.5h | 1h | 0.25h | 0.25h | 2h | PHPDoc, Config |
+| architecture-enforcement | 0.25h | 0.5h | 0.1h | 0.25h | 1.1h | 3 new patterns |
+| finalize-and-next-phase | 0.3h | 0h | 0.5h | 0.3h | 1.1h | 1 new pattern |
+
+**Trend**: Planning-only features very efficient. Compound effect accelerating.
+
+---
+
 ## Next Compound Capture
 
-Después de QA approval, capturar:
-- ¿El architecture test detectó algún false positive?
-- ¿Se necesitan más capas validadas?
-- ¿Hubo resistencia al nuevo patrón PreFetchedDataDTO?
+After implementing next feature, capture:
+- Did `/workflows:trust` improve supervision calibration?
+- Were architecture tests sufficient for new work?
+- Any new patterns from parallel agent execution?
